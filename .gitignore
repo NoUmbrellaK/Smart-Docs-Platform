@@ -1,0 +1,17 @@
+*
+!*.*
+!*/
+!*.cpp
+!*.h
+!LICENSE
+!makefile
+!Makefile
+
+*.o
+*.1
+*.log
+*.exe
+/.vscode
+
+# Smart Docs Platform: do not import operating-system metadata.
+.DS_Store
