@@ -64,7 +64,7 @@
              data-supported-states="idle loading awaiting reselect uploading assembling interrupted failed cancelled completed"
              hidden>
       <h2 id="uploads-title">Upload tasks</h2>
-      <form id="upload-form">
+      <form id="upload-form" hidden>
         <label for="upload-mode">Upload as</label>
         <select id="upload-mode">
           <option value="create_file">New file</option>
@@ -86,7 +86,7 @@
     <section id="file-detail" aria-labelledby="detail-title" hidden>
       <h2 id="detail-title">File detail</h2>
       <p id="selected-file-summary">Choose a file from the workbench.</p>
-      <form id="file-update-form">
+      <form id="file-update-form" hidden>
         <label for="file-name">File name</label>
         <input id="file-name" required>
         <label for="file-directory">Move to directory</label>
@@ -94,8 +94,8 @@
         <button type="submit">Save name and location</button>
       </form>
       <div class="action-row">
-        <button id="delete-file" type="button">Soft delete</button>
-        <button id="restore-file" type="button">Restore</button>
+        <button id="delete-file" type="button" hidden>Soft delete</button>
+        <button id="restore-file" type="button" hidden>Restore</button>
       </div>
       <h3>Versions</h3>
       <div id="version-list"></div>
@@ -126,7 +126,7 @@
     <section id="project-settings" aria-labelledby="settings-title" hidden>
       <h2 id="settings-title">Project settings</h2>
       <p>Only project administrators can view and edit member roles.</p>
-      <div id="member-list"></div>
+      <div id="member-list" hidden></div>
       <p id="members-status" role="status" aria-live="polite">idle</p>
     </section>
   </main>

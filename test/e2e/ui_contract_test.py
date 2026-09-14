@@ -23,11 +23,13 @@ class WorkbenchParser(HTMLParser):
         self.live_regions = []
         self.links = []
         self.viewport = False
+        self.by_id = {}
 
     def handle_starttag(self, tag, attrs):
         values = dict(attrs)
         if "id" in values:
             self.ids.add(values["id"])
+            self.by_id[values["id"]] = values
         if tag == "label" and "for" in values:
             self.labels.add(values["for"])
         if tag in {"input", "select", "textarea"}:
@@ -90,6 +92,12 @@ class UiContractTest(unittest.TestCase):
         self.assertTrue(any(link.get("href") == "/app.html"
                             for link in self.index_parser.links))
 
+    def test_write_controls_start_hidden(self):
+        for control_id in ("upload-form", "file-update-form", "delete-file",
+                           "restore-file", "remote-ai-form", "member-list"):
+            self.assertIn("hidden", self.parser.by_id[control_id],
+                          f"write control must start hidden: {control_id}")
+
     def test_modules_use_safe_same_origin_api_contract(self):
         combined = "\n".join((self.api, self.app, self.uploads))
         self.assertNotRegex(combined, r"https?://")
@@ -140,6 +148,16 @@ class UiContractTest(unittest.TestCase):
         self.assertEqual(1, len(re.findall(r"\bexport\s+", self.sha256)))
         for method in ("create", "update", "hex"):
             self.assertIn(method, self.sha256)
+        self.assertIn(
+            "Permission is hereby granted, free of charge, to any person",
+            self.sha256)
+        self.assertIn('THE SOFTWARE IS PROVIDED "AS IS"', self.sha256)
+        source_digest = re.search(
+            r"Official source SHA-256:\s*([0-9a-f]{64})", self.sha256)
+        self.assertIsNotNone(source_digest)
+        self.assertEqual(
+            "2db6c8e554fbee14672368a0d7551a8ddd841ee96c91526eb7987a0179cfc717",
+            source_digest.group(1))
 
     def test_css_is_mobile_first_and_touch_safe(self):
         self.assertIn("box-sizing: border-box", self.css)

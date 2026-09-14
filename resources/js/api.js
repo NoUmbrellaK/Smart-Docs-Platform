@@ -35,13 +35,20 @@ export async function parseApiResponse(response) {
   return payload ? payload.data : null;
 }
 
-async function metadata(path, { method = "GET", body } = {}) {
+async function metadata(path, { method = "GET", body, expectedStatus } = {}) {
   const options = { method, credentials: "same-origin", headers: {} };
   if (body !== undefined) {
     options.headers["Content-Type"] = "application/json";
     options.body = JSON.stringify(body);
   }
-  return parseApiResponse(await fetch(API_ROOT + path, options));
+  const response = await fetch(API_ROOT + path, options);
+  const data = await parseApiResponse(response);
+  if (expectedStatus !== undefined && response.status !== expectedStatus) {
+    throw new ApiError(response.status, "invalid_response",
+                       "The server returned an unexpected success response.",
+                       false, response.headers.get("X-Request-ID"));
+  }
+  return data;
 }
 
 const id = encodeURIComponent;
@@ -50,7 +57,7 @@ const projectPath = (projectId) => `/projects/${id(projectId)}`;
 export const login = (username, password) =>
   metadata("/auth/login", { method: "POST", body: { username, password } });
 export const logout = () =>
-  metadata("/auth/logout", { method: "POST", body: {} });
+  metadata("/auth/logout", { method: "POST", body: {}, expectedStatus: 204 });
 export const me = () => metadata("/me");
 export const createProject = (name) =>
   metadata("/projects", { method: "POST", body: { name } });
