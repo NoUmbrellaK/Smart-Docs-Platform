@@ -12,6 +12,8 @@
 #include "file/file_store.h"
 #include "project/project_routes.h"
 #include "project/project_service.h"
+#include "upload/upload_routes.h"
+#include "upload/upload_service.h"
 
 #include <cerrno>
 #include <fcntl.h>
@@ -144,7 +146,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     {
         MySqlConnection connection = database->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 1);
+        Schema::RequireVersion(connection, 2);
     }
     if (!StorageReady(config.storage_root)) {
         throw AppError(503, "storage_unavailable",
@@ -158,12 +160,17 @@ Application::Application(const AppConfig& config, std::string static_root)
     file_store_.reset(new FileStore(storage_root_));
     file_service_.reset(
         new FileService(*database_, *project_service_, *file_store_));
+    upload_service_.reset(new UploadService(
+        *database_, *project_service_, *file_store_, config.max_file_bytes,
+        config.chunk_bytes));
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);
     RegisterProjectRoutes(router_, auth_service_, project_service_,
                           config.max_json_bytes, config.secure_cookie);
     RegisterFileRoutes(router_, auth_service_, file_service_);
+    RegisterUploadRoutes(router_, auth_service_, upload_service_,
+                         config.max_json_bytes, config.secure_cookie);
 }
 
 std::unique_ptr<RequestBodyHandler> Application::Prepare(
@@ -191,7 +198,7 @@ bool Application::Ready() const {
     try {
         MySqlConnection connection = database_->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 1);
+        Schema::RequireVersion(connection, 2);
         return StorageReady(storage_root_);
     } catch (...) {
         return false;

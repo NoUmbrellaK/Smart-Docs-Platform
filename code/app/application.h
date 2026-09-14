@@ -12,6 +12,7 @@ class FileService;
 class FileStore;
 class MySqlPool;
 class ProjectService;
+class UploadService;
 struct AppConfig;
 
 class Application {
@@ -35,4 +36,5 @@ private:
     std::shared_ptr<ProjectService> project_service_;
     std::shared_ptr<FileStore> file_store_;
     std::shared_ptr<FileService> file_service_;
+    std::shared_ptr<UploadService> upload_service_;
 };

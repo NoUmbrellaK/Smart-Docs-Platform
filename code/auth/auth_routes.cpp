@@ -120,7 +120,8 @@ void RequireSameOrigin(const RequestHead& head, bool secure_cookie) {
     }
     const auto origin = head.headers.find("origin");
     if (origin == head.headers.end()) {
-        return;
+        throw AppError(403, "origin_mismatch",
+                       "request Origin does not match Host");
     }
     const std::string expected =
         std::string(secure_cookie ? "https://" : "http://") + host->second;

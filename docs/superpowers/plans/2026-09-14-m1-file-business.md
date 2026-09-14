@@ -819,7 +819,7 @@ struct UploadTaskDetail { UploadTask task; std::vector<PartInfo> confirmed_parts
 struct PartResult { uint32_t part_number; uint64_t size; std::string sha256; bool reused; };
 ```
 
-- [ ] **Step 1: Write failing upload-boundary tests**
+- [x] **Step 1: Write failing upload-boundary tests**
 
 Cover an accepted 0-byte file, rejected over-limit files, invalid SHA strings, invalid part numbers, wrong media type, content-length mismatch, wrong user/project, reader denial, new-file name conflict, new-version target mismatch, cancel ownership, same-part replay, and different-content conflict.
 
@@ -833,7 +833,7 @@ TEST_CASE(same_chunk_replay_returns_existing_part) {
 }
 ```
 
-- [ ] **Step 2: Implement task creation and queries**
+- [x] **Step 2: Implement task creation and queries**
 
 ```cpp
 UploadTask UploadService::Create(const SessionContext&, const std::string& project_id,
@@ -848,17 +848,17 @@ void UploadService::Cancel(const SessionContext&, const std::string& project_id,
 
 `CreateUploadCommand` has mode, directory ID, display name, expected size/SHA-256/media type, optional target file ID, and optional observed current-version ID. The server returns task ID, configured chunk size, total part count, and confirmed parts. New-version creation captures the current version and new versions default to no remote-AI approval.
 
-- [ ] **Step 3: Prepare and stream a chunk before buffering it**
+- [x] **Step 3: Prepare and stream a chunk before buffering it**
 
 `upload_routes.cpp` validates method/path/cookie/project/task/part number, `Content-Type`, `Content-Length`, and `X-Chunk-SHA256` from the request head. It then returns a `ChunkBodyHandler` holding an authorized `PartWriter`. `OnData` writes bounded pieces and aborts if more bytes arrive than declared. `Finish` checks declared length and digest before the repository inserts the part row.
 
 The final part length is `file_size - part_number * chunk_size`; all other parts equal `chunk_size`. A zero-byte file has zero parts and completes through Task 8 without accepting a part upload.
 
-- [ ] **Step 4: Implement part conflict semantics**
+- [x] **Step 4: Implement part conflict semantics**
 
 In a transaction, lock the task, require state `uploading`, and query `(task_id, part_number)`. An existing identical size/digest returns the existing record and deletes the new temporary file. An existing different digest returns `409 chunk_conflict` without replacing the confirmed part. Insert the database row only after the part file has been fsynced and atomically named.
 
-- [ ] **Step 5: Verify all upload query/part routes**
+- [x] **Step 5: Verify all upload query/part routes**
 
 ```bash
 make test
@@ -867,7 +867,7 @@ scripts/test-with-mysql.sh -- ./bin/smartdocs_tests --filter=upload_part_
 
 Expected: all tests pass, including concurrent identical PUTs producing one row and one confirmed part file.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add code/app/application.cpp code/upload test/unit/upload_validation_test.cpp test/integration/upload_part_test.cpp

@@ -35,11 +35,11 @@ void InsertProjectFixture(MySqlConnection& connection) {
 
 }  // namespace
 
-TEST_CASE(mysql_schema_version_is_one) {
+TEST_CASE(mysql_schema_version_is_two) {
     RequireMySqlTests();
     MySqlConnection connection = TestDatabase().Acquire();
-    CHECK(Schema::CurrentVersion(connection) == 1);
-    Schema::RequireVersion(connection, 1);
+    CHECK(Schema::CurrentVersion(connection) == 2);
+    Schema::RequireVersion(connection, 2);
 }
 
 TEST_CASE(mysql_schema_rejects_two_root_directories_for_one_project) {
@@ -105,4 +105,44 @@ TEST_CASE(mysql_schema_rejects_duplicate_upload_part_number) {
              SqlValue(static_cast<uint64_t>(3)), SqlValue(kSha),
              SqlValue("part-1-retry")}),
         "constraint_conflict");
+}
+
+TEST_CASE(mysql_schema_allows_zero_part_upload_tasks) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    MySqlConnection connection = TestDatabase().Acquire();
+    InsertProjectFixture(connection);
+    connection.Execute(
+        "INSERT INTO upload_tasks(id, owner_user_id, project_id, "
+        "target_directory_id, mode, expected_name, expected_size_bytes, "
+        "expected_sha256, chunk_size_bytes, total_parts, state) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        {SqlValue("77777777777777777777777777777777"), SqlValue(kUser),
+         SqlValue(kProject), SqlValue(kRoot), SqlValue("create_file"),
+         SqlValue("empty.txt"), SqlValue(static_cast<uint64_t>(0)),
+         SqlValue(kSha), SqlValue(static_cast<uint64_t>(256)),
+         SqlValue(static_cast<uint64_t>(0)), SqlValue("uploading")});
+}
+
+TEST_CASE(mysql_schema_allows_zero_based_upload_parts) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    MySqlConnection connection = TestDatabase().Acquire();
+    InsertProjectFixture(connection);
+    const std::string task = "88888888888888888888888888888888";
+    connection.Execute(
+        "INSERT INTO upload_tasks(id, owner_user_id, project_id, "
+        "target_directory_id, mode, expected_name, expected_size_bytes, "
+        "expected_sha256, chunk_size_bytes, total_parts, state) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        {SqlValue(task), SqlValue(kUser), SqlValue(kProject), SqlValue(kRoot),
+         SqlValue("create_file"), SqlValue("one-byte.bin"),
+         SqlValue(static_cast<uint64_t>(1)), SqlValue(kSha),
+         SqlValue(static_cast<uint64_t>(256)), SqlValue(static_cast<uint64_t>(1)),
+         SqlValue("uploading")});
+    connection.Execute(
+        "INSERT INTO upload_parts(upload_task_id, part_number, size_bytes, "
+        "sha256, staging_name) VALUES (?, ?, ?, ?, ?)",
+        {SqlValue(task), SqlValue(static_cast<uint64_t>(0)),
+         SqlValue(static_cast<uint64_t>(1)), SqlValue(kSha), SqlValue("0")});
 }
