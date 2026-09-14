@@ -181,6 +181,7 @@ ${SMARTDOCS_STORAGE_ROOT}/
 | 方法与路径 | 用途 |
 | --- | --- |
 | `POST /api/v1/projects/{project_id}/uploads` | 创建新文件或新版本上传任务 |
+| `GET /api/v1/projects/{project_id}/uploads` | 分页列出当前用户的上传任务，支持按状态筛选 |
 | `GET /api/v1/projects/{project_id}/uploads/{task_id}` | 查询任务与已确认分片 |
 | `PUT /api/v1/projects/{project_id}/uploads/{task_id}/parts/{part_number}` | 上传一个原始二进制分片 |
 | `POST /api/v1/projects/{project_id}/uploads/{task_id}/complete` | 校验、合并并幂等发布版本 |
@@ -339,7 +340,7 @@ M1 提供满足阶段验收的最小页面：
 | T-04 | 完成接口与响应丢失重放返回相同三个结果 ID，半成品不可访问 |
 | T-05 | 起始、闭区间、后缀、无效和多段 Range；PDF 页面可加载指定页 |
 | T-06 | 当前版本与指定历史版本内容分别固定，旧 URL 不跳转 |
-| T-07 | M1 证明旧处理任务不能修改当前版本；索引发布部分在 M2 完成 |
+| T-07 | M1 证明基于旧当前版本创建的并发上传不能覆盖新当前版本；旧解析/索引任务的发布防护在 M2 完成 |
 | T-08 | M1 证明列表与下载立即遵循删除、还原和权限变化；索引/报告部分留给 M2/M4 |
 | T-09 | M1 保存并展示处理状态；解析、元数据检索和向量降级在 M2 完成 |
 
