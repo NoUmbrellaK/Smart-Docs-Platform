@@ -31,16 +31,32 @@ mkdir -m 0700 "$mysql_root" "$data_dir" "$test_root/storage" \
     "$test_root/storage/objects" "$test_root/storage/staging" \
     "$test_root/logs" "$driver_log_dir" "$scratch_evidence"
 
-for program in mysqld mysql mysqladmin python3 git; do
+for program in mysqld mysql mysqladmin python3 git make; do
     command -v "$program" >/dev/null || {
         printf 'missing_dependency: %s\n' "$program" >&2
         exit 1
     }
 done
-for artifact in bin/smartdocs-admin bin/smartdocs_test_server \
-    test/fixtures/m1/plain.txt test/fixtures/m1/sample.pdf; do
+for artifact in test/fixtures/m1/plain.txt test/fixtures/m1/sample.pdf; do
     [[ -e "$repo_root/$artifact" ]] || {
         printf 'missing_artifact: %s\n' "$artifact" >&2
+        exit 1
+    }
+done
+
+build_head=$(git -C "$repo_root" rev-parse HEAD)
+if [[ -n $(git -C "$repo_root" status --porcelain --untracked-files=normal) ]]; then
+    build_dirty=true
+else
+    build_dirty=false
+fi
+python3 -B "$repo_root/test/e2e/m1_harness_self_test.py"
+make -C "$repo_root" clean
+make -C "$repo_root" -j"${SMARTDOCS_BUILD_JOBS:-4}" \
+    server admin test-server
+for artifact in bin/server bin/smartdocs-admin bin/smartdocs_test_server; do
+    [[ -x "$repo_root/$artifact" ]] || {
+        printf 'build_artifact_missing: %s\n' "$artifact" >&2
         exit 1
     }
 done
@@ -111,10 +127,13 @@ python3 -B "$repo_root/test/e2e/m1_http_test.py" \
     --pdf "$repo_root/test/fixtures/m1/sample.pdf"
 python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --server-bin "$repo_root/bin/smartdocs_test_server" \
+    --admin-bin "$repo_root/bin/smartdocs-admin" \
     --log-dir "$driver_log_dir/interrupt" \
     --context-file "$scratch_evidence/context.json" \
     --http-evidence "$scratch_evidence/http.json" \
-    --output "$repo_root/docs/evidence/m1/latest/results.json"
+    --output "$repo_root/docs/evidence/m1/latest/results.json" \
+    --build-head "$build_head" \
+    --build-dirty "$build_dirty"
 
 python3 -B - "$repo_root/docs/evidence/m1/latest/results.json" <<'PY'
 import json

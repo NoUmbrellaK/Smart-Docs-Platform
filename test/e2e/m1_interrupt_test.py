@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 from m1_http_test import (HttpClient, ServerProcess, complete, create_upload,
-                          data, digest, login, upload_parts)
+                          data, digest, login, upload_file, upload_parts)
 
 
 FAULT_ROUNDS = (
@@ -28,10 +28,13 @@ FAULT_ROUNDS = (
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--server-bin", required=True)
+    parser.add_argument("--admin-bin", required=True)
     parser.add_argument("--log-dir", required=True)
     parser.add_argument("--context-file", required=True)
     parser.add_argument("--http-evidence", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--build-head", required=True)
+    parser.add_argument("--build-dirty", choices=("true", "false"), required=True)
     return parser.parse_args()
 
 
@@ -60,24 +63,86 @@ def quote(value):
     return "'" + value + "'"
 
 
-def graph_counts(file_id, version_id, job_id, task_id):
+def sql_string(value):
+    if not value or any(not (ch.isascii() and
+                            (ch.isalnum() or ch in "-_./")) for ch in value):
+        raise ValueError("evidence query text is invalid")
+    return "'" + value + "'"
+
+
+def graph_counts(project_id, directory_id, name, observed_version_id,
+                 expected_size, expected_sha256, media_type,
+                 scalar=mysql_scalar):
+    project = quote(project_id)
+    directory = quote(directory_id)
+    observed = quote(observed_version_id)
+    expected_digest = "'" + expected_sha256 + "'"
+    expected_type = sql_string(media_type)
+    expected_name = sql_string(name)
     query = (
+        "WITH scoped_files AS ("
+        f"SELECT id FROM files WHERE project_id={project} "
+        f"AND directory_id={directory} AND name={expected_name}),"
+        "scoped_tasks AS ("
+        "SELECT t.* FROM upload_tasks t JOIN scoped_files f "
+        "ON f.id=t.target_file_id "
+        f"WHERE t.project_id={project} AND t.mode='create_version' "
+        f"AND t.observed_current_version_id={observed} "
+        f"AND t.expected_size_bytes={expected_size} "
+        f"AND t.expected_sha256={expected_digest} "
+        f"AND t.media_type={expected_type}),"
+        "scoped_versions AS ("
+        "SELECT v.* FROM file_versions v JOIN scoped_files f ON f.id=v.file_id) "
         "SELECT "
-        f"(SELECT COUNT(*) FROM files WHERE id={quote(file_id)}),"
-        f"(SELECT COUNT(*) FROM file_versions WHERE file_id={quote(file_id)}),"
-        f"(SELECT COUNT(*) FROM file_versions WHERE id={quote(version_id)} "
-        f"AND file_id={quote(file_id)}),"
-        f"(SELECT COUNT(*) FROM processing_jobs WHERE id={quote(job_id)} "
-        f"AND file_version_id={quote(version_id)}),"
-        f"(SELECT COUNT(*) FROM upload_tasks WHERE id={quote(task_id)} "
-        f"AND result_file_id={quote(file_id)} AND result_version_id={quote(version_id)} "
-        f"AND processing_job_id={quote(job_id)} AND state='completed')")
-    values = [int(value) for value in mysql_scalar(query).split("\t")]
-    if len(values) != 5:
+        "(SELECT COUNT(*) FROM scoped_files),"
+        "(SELECT COUNT(*) FROM scoped_tasks),"
+        "(SELECT COUNT(*) FROM scoped_versions),"
+        "(SELECT COUNT(*) FROM scoped_versions v JOIN scoped_tasks t "
+        "ON v.content_id=t.id),"
+        "(SELECT COUNT(*) FROM processing_jobs j JOIN scoped_versions v "
+        "ON j.file_version_id=v.id),"
+        "(SELECT COUNT(*) FROM scoped_tasks t JOIN scoped_files f "
+        "ON f.id=t.result_file_id JOIN scoped_versions v "
+        "ON v.id=t.result_version_id AND v.file_id=f.id "
+        "JOIN processing_jobs j ON j.id=t.processing_job_id "
+        "AND j.file_version_id=v.id WHERE t.state='completed' "
+        "AND v.content_id=t.id)")
+    values = [int(value) for value in scalar(query).split("\t")]
+    if len(values) != 6:
         raise AssertionError("unexpected graph evidence shape")
-    return {"files": values[0], "versions": values[1],
-            "matching_versions": values[2], "processing_jobs": values[3],
-            "completed_tasks": values[4]}
+    return {"files": values[0], "upload_tasks": values[1],
+            "versions": values[2], "target_versions": values[3],
+            "processing_jobs": values[4], "completed_bindings": values[5]}
+
+
+def round_graph_is_singleton(counts, baseline_versions, baseline_jobs):
+    return counts == {
+        "files": 1,
+        "upload_tasks": 1,
+        "versions": baseline_versions + 1,
+        "target_versions": 1,
+        "processing_jobs": baseline_jobs + 1,
+        "completed_bindings": 1,
+    }
+
+
+def publication_observation(task_state, target_versions, completed_bindings,
+                            http_status, current_sha256, seed_sha256,
+                            target_sha256):
+    committed = task_state == "completed"
+    database_truthful = ((target_versions, completed_bindings) == (1, 1)
+                         if committed else
+                         (target_versions, completed_bindings) == (0, 0))
+    expected_sha256 = target_sha256 if committed else seed_sha256
+    http_truthful = http_status == 200 and current_sha256 == expected_sha256
+    return {
+        "database_target_versions": target_versions,
+        "database_completed_bindings": completed_bindings,
+        "http_status": http_status,
+        "http_current_sha256": current_sha256,
+        "expected_current_sha256": expected_sha256,
+        "half_published_download": not (database_truthful and http_truthful),
+    }
 
 
 def git_metadata(repo_root):
@@ -104,7 +169,9 @@ def trigger_and_wait(client, server, method, path, body=None, headers=None):
 
 def run_round(server, client, project_id, root_directory_id, point, number):
     name = f"interrupt-{number:02d}-{point}.txt"
+    seed_content = f"M1 interruption seed {number:02d} at {point}\n".encode("ascii")
     content = f"M1 interruption round {number:02d} at {point}\n".encode("ascii")
+    seed_sha256 = digest(seed_content)
     expected_sha256 = digest(content)
     assertions = 0
 
@@ -115,8 +182,19 @@ def run_round(server, client, project_id, root_directory_id, point, number):
 
     server.start()
     client.port = server.port
-    task = create_upload(client, project_id, root_directory_id, name, content,
-                         "text/plain")
+    _, seed_result = upload_file(client, project_id, root_directory_id, name,
+                                 seed_content, "text/plain")
+    task = create_upload(
+        client, project_id, None, None, content, "text/plain",
+        seed_result["file_id"], seed_result["version_id"])
+    baseline = graph_counts(
+        project_id, root_directory_id, name, seed_result["version_id"],
+        len(content), expected_sha256, "text/plain")
+    require(baseline == {
+        "files": 1, "upload_tasks": 1, "versions": 1,
+        "target_versions": 0, "processing_jobs": 1,
+        "completed_bindings": 0},
+        f"round baseline is not isolated: {baseline}")
     if point != "AfterPartTempFsync":
         upload_parts(client, project_id, task, content)
     server.stop()
@@ -152,24 +230,35 @@ def run_round(server, client, project_id, root_directory_id, point, number):
 
     listed = data(client.request(
         "GET", f"/api/v1/projects/{project_id}/files?name={urllib_quote(name)}"))
-    if committed_fault:
-        require(listed["total"] == 1, "committed publication was not visible")
-        published_id = restarted["file_id"]
-        visible = client.request(
-            "GET", f"/api/v1/projects/{project_id}/files/{published_id}/content")
-        require(visible.status == 200 and digest(visible.body) == expected_sha256,
-                "committed publication was not a complete downloadable object")
-        half_published = False
-    else:
-        require(listed["total"] == 0, "uncommitted publication became list-visible")
-        candidate = client.request(
-            "GET", f"/api/v1/projects/{project_id}/files/{task['task_id']}/content")
-        require(candidate.status == 404,
-                "uncommitted task-named object became downloadable")
-        require(int(mysql_scalar(
-            f"SELECT COUNT(*) FROM files WHERE name='{name}'")) == 0,
-            "uncommitted publication created file metadata")
-        half_published = False
+    require(listed["total"] == 1 and
+            listed["items"][0]["id"] == seed_result["file_id"],
+            "round-owned file set is not uniquely list-visible")
+    current = client.request(
+        "GET", f"/api/v1/projects/{project_id}/files/"
+               f"{seed_result['file_id']}/content")
+    current_sha256 = digest(current.body) if current.status == 200 else None
+    historical = client.request(
+        "GET", f"/api/v1/projects/{project_id}/files/{seed_result['file_id']}/"
+               f"versions/{seed_result['version_id']}/content")
+    require(historical.status == 200 and digest(historical.body) == seed_sha256,
+            "seed version URL changed during target publication")
+    restart_counts = graph_counts(
+        project_id, root_directory_id, name, seed_result["version_id"],
+        len(content), expected_sha256, "text/plain")
+    observation = publication_observation(
+        restarted["state"], restart_counts["target_versions"],
+        restart_counts["completed_bindings"], current.status,
+        current_sha256, seed_sha256, expected_sha256)
+    require(not observation["half_published_download"],
+            f"database/HTTP publication mismatch: {observation}")
+    require(restart_counts == ({
+        "files": 1, "upload_tasks": 1, "versions": 2,
+        "target_versions": 1, "processing_jobs": 2,
+        "completed_bindings": 1} if committed_fault else {
+        "files": 1, "upload_tasks": 1, "versions": 1,
+        "target_versions": 0, "processing_jobs": 1,
+        "completed_bindings": 0}),
+        f"unexpected restart graph: {restart_counts}")
 
     if point == "AfterPartTempFsync":
         upload_parts(client, project_id, task, content)
@@ -191,11 +280,14 @@ def run_round(server, client, project_id, root_directory_id, point, number):
     final_sha256 = hashlib.sha256(downloaded.body).hexdigest()
     require(downloaded.status == 200 and final_sha256 == expected_sha256,
             "final content hash differs after retry")
-    counts = graph_counts(result["file_id"], result["version_id"],
-                          result["processing_job_id"], task["task_id"])
-    duplicate_version_count = max(0, counts["versions"] - 1)
-    require(counts == {"files": 1, "versions": 1, "matching_versions": 1,
-                       "processing_jobs": 1, "completed_tasks": 1},
+    counts = graph_counts(
+        project_id, root_directory_id, name, seed_result["version_id"],
+        len(content), expected_sha256, "text/plain")
+    duplicate_version_count = max(
+        0, counts["versions"] - baseline["versions"] - 1,
+        counts["target_versions"] - 1)
+    require(round_graph_is_singleton(
+                counts, baseline["versions"], baseline["processing_jobs"]),
             f"published graph is not singleton: {counts}")
     require(duplicate_version_count == 0, "duplicate file version was published")
     server.stop()
@@ -213,7 +305,8 @@ def run_round(server, client, project_id, root_directory_id, point, number):
         "final_sha256": final_sha256,
         "duplicate_version_count": duplicate_version_count,
         "singleton_graph": counts,
-        "half_published_download": half_published,
+        "half_published_download": observation["half_published_download"],
+        "publication_observation_after_restart": observation,
         "assertions": assertions,
         "status": "pass",
     }
@@ -261,11 +354,24 @@ def main():
           "not all twenty interruption rounds passed")
 
     repo_root = str(pathlib.Path(__file__).resolve().parents[2])
+    build_checkout = {"head": arguments.build_head,
+                      "dirty": arguments.build_dirty == "true"}
+    final_checkout = git_metadata(repo_root)
+    check(final_checkout == build_checkout,
+          f"checkout changed after executable build: {build_checkout} -> {final_checkout}")
     now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
     result = {
         "schema_version": 1,
         "generated_at": now.isoformat().replace("+00:00", "Z"),
-        "commit": git_metadata(repo_root),
+        "commit": final_checkout,
+        "build": {
+            "checkout": build_checkout,
+            "executables": {
+                "smartdocs-admin": digest(pathlib.Path(arguments.admin_bin).read_bytes()),
+                "smartdocs_test_server": digest(
+                    pathlib.Path(arguments.server_bin).read_bytes()),
+            },
+        },
         "environment": {"http_transport": "loopback_tcp",
                         "mysql_transport": "private_unix_socket",
                         "server": "smartdocs_test_server",
