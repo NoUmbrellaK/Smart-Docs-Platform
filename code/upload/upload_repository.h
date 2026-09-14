@@ -47,6 +47,8 @@ public:
     bool FindOwn(MySqlConnection& connection, const std::string& project_id,
                  const std::string& owner_id, const std::string& task_id,
                  bool lock, UploadTaskRecord* record) const;
+    bool FindById(MySqlConnection& connection, const std::string& task_id,
+                  bool lock, UploadTaskRecord* record) const;
     std::vector<PartInfo> ListParts(MySqlConnection& connection,
                                     const std::string& task_id) const;
     bool FindPart(MySqlConnection& connection, const std::string& task_id,
@@ -83,6 +85,8 @@ public:
     bool CompletedGraphValid(MySqlConnection& connection,
                              const UploadTaskRecord& task) const;
     std::vector<UploadTaskRecord> ListInFlight(
+        MySqlConnection& connection) const;
+    std::vector<UploadTaskRecord> ListCompleted(
         MySqlConnection& connection) const;
     std::vector<PublishedVersionRecord> ListAvailableVersions(
         MySqlConnection& connection) const;

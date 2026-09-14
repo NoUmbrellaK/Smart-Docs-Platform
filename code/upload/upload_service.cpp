@@ -8,12 +8,15 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <limits>
+#include <thread>
 #include <utility>
 
 namespace {
 
 const uint64_t kMaximumParts = 1000000;
+const int kCompletionWaitAttempts = 5000;
 
 bool IsMediaTypeToken(unsigned char ch) {
     if (std::isalnum(ch)) return true;
@@ -53,11 +56,6 @@ CompleteUploadResult StoredResult(const UploadTaskRecord& record,
                                   bool reused) {
     return CompleteUploadResult{record.task.file_id, record.task.version_id,
                                 record.task.processing_job_id, reused};
-}
-
-bool CompletableState(const std::string& state) {
-    return state == "uploading" || state == "interrupted" ||
-           state == "assembling" || state == "publishing";
 }
 
 void ValidateListQuery(const UploadListQuery& query) {
@@ -377,99 +375,109 @@ CompleteUploadResult UploadService::Complete(
     RequireId(task_id);
     UploadTaskRecord task;
     std::vector<PartInfo> parts;
+    bool claimed = false;
+    for (int attempt = 0; attempt < kCompletionWaitAttempts; ++attempt) {
+        {
+            MySqlConnection connection = pool_.Acquire();
+            MySqlTransaction transaction(connection);
+            projects_.RequireRole(connection, session.user_id, project_id,
+                                  Role::Editor);
+            if (!repository_->FindOwn(connection, project_id, session.user_id,
+                                      task_id, true, &task)) {
+                ResourceNotFound();
+            }
+            if (task.task.state == "completed") {
+                if (!repository_->CompletedGraphValid(connection, task)) {
+                    throw AppError(500, "database_result_invalid",
+                                   "completed upload result graph is invalid");
+                }
+                transaction.Commit();
+                return StoredResult(task, true);
+            }
+            if (task.task.state == "assembling" ||
+                task.task.state == "publishing") {
+                transaction.Commit();
+            } else {
+                if (task.task.state != "uploading" &&
+                    task.task.state != "interrupted") {
+                    throw AppError(
+                        409, "upload_state_conflict",
+                        "upload task cannot be completed in its current state");
+                }
+                parts = repository_->ListParts(connection, task_id);
+                if (parts.size() != task.task.part_count) {
+                    throw AppError(409, "upload_parts_incomplete",
+                                   "not all upload parts have been confirmed");
+                }
+                uint64_t total = 0;
+                for (size_t index = 0; index < parts.size(); ++index) {
+                    if (parts[index].part_number != index ||
+                        parts[index].size != ExpectedUploadPartSize(
+                            task.expected_size, task.task.chunk_size,
+                            static_cast<uint32_t>(index)) ||
+                        total > std::numeric_limits<uint64_t>::max() -
+                                    parts[index].size) {
+                        throw AppError(
+                            409, "upload_parts_invalid",
+                            "confirmed upload parts do not match the task");
+                    }
+                    total += parts[index].size;
+                }
+                if (total != task.expected_size) {
+                    throw AppError(
+                        409, "upload_parts_invalid",
+                        "confirmed upload size does not match the task");
+                }
+                repository_->SetState(connection, task_id, "assembling");
+                transaction.Commit();
+                claimed = true;
+            }
+        }
+        if (claimed) break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    if (!claimed) {
+        throw AppError(503, "upload_completion_in_progress",
+                       "upload completion is still in progress", true);
+    }
+
+    StoredTemp assembled{};
+    bool mismatch = false;
     {
         MySqlConnection connection = pool_.Acquire();
         MySqlTransaction transaction(connection);
-        projects_.RequireRole(connection, session.user_id, project_id,
-                              Role::Editor);
+        UploadTaskRecord current;
         if (!repository_->FindOwn(connection, project_id, session.user_id,
-                                  task_id, true, &task)) {
+                                  task_id, true, &current)) {
             ResourceNotFound();
         }
-        if (task.task.state == "completed") {
-            if (!repository_->CompletedGraphValid(connection, task)) {
-                throw AppError(500, "database_result_invalid",
-                               "completed upload result graph is invalid");
-            }
-            transaction.Commit();
-            return StoredResult(task, true);
+        if (current.task.state != "assembling") {
+            throw AppError(409, "upload_interrupted",
+                           "upload completion was interrupted", true);
         }
-        if (!CompletableState(task.task.state)) {
-            throw AppError(409, "upload_state_conflict",
-                           "upload task cannot be completed in its current state");
+        projects_.RequireRole(connection, session.user_id, project_id,
+                              Role::Editor);
+        assembled = store_.Assemble(task_id, parts);
+        mismatch = assembled.size != current.expected_size ||
+                   assembled.sha256 != current.expected_sha256;
+        if (mismatch) {
+            store_.RemoveTaskTemporaryFiles(task_id);
+            repository_->SetFailed(connection, task_id, "whole_file_mismatch",
+                                   "assembled upload size or SHA-256 did not match");
+        } else {
+            repository_->SetState(connection, task_id, "publishing");
         }
-        parts = repository_->ListParts(connection, task_id);
-        if (parts.size() != task.task.part_count) {
-            throw AppError(409, "upload_parts_incomplete",
-                           "not all upload parts have been confirmed");
-        }
-        uint64_t total = 0;
-        for (size_t index = 0; index < parts.size(); ++index) {
-            if (parts[index].part_number != index ||
-                parts[index].size != ExpectedUploadPartSize(
-                    task.expected_size, task.task.chunk_size,
-                    static_cast<uint32_t>(index)) ||
-                total > std::numeric_limits<uint64_t>::max() -
-                            parts[index].size) {
-                throw AppError(409, "upload_parts_invalid",
-                               "confirmed upload parts do not match the task");
-            }
-            total += parts[index].size;
-        }
-        if (total != task.expected_size) {
-            throw AppError(409, "upload_parts_invalid",
-                           "confirmed upload size does not match the task");
-        }
-        repository_->SetState(connection, task_id, "assembling");
         transaction.Commit();
+        task = current;
     }
-
-    const StoredTemp assembled = store_.Assemble(task_id, parts);
-    if (assembled.size != task.expected_size ||
-        assembled.sha256 != task.expected_sha256) {
-        store_.RemoveTaskTemporaryFiles(task_id);
-        MySqlConnection connection = pool_.Acquire();
-        MySqlTransaction transaction(connection);
-        repository_->SetFailed(connection, task_id, "whole_file_mismatch",
-                               "assembled upload size or SHA-256 did not match");
-        transaction.Commit();
+    if (mismatch) {
         throw AppError(422, "whole_file_mismatch",
                        "assembled upload size or SHA-256 did not match");
     }
 
-    {
-        MySqlConnection connection = pool_.Acquire();
-        MySqlTransaction transaction(connection);
-        projects_.RequireRole(connection, session.user_id, project_id,
-                              Role::Editor);
-        UploadTaskRecord current;
-        if (!repository_->FindOwn(connection, project_id, session.user_id,
-                                  task_id, true, &current)) {
-            ResourceNotFound();
-        }
-        if (current.task.state == "completed") {
-            if (!repository_->CompletedGraphValid(connection, current)) {
-                throw AppError(500, "database_result_invalid",
-                               "completed upload result graph is invalid");
-            }
-            transaction.Commit();
-            return StoredResult(current, true);
-        }
-        if (!CompletableState(current.task.state)) {
-            throw AppError(409, "upload_state_conflict",
-                           "upload task cannot be published in its current state");
-        }
-        repository_->SetState(connection, task_id, "publishing");
-        transaction.Commit();
-    }
-
-    store_.PublishObject(assembled, task_id);
-
     try {
         MySqlConnection connection = pool_.Acquire();
         MySqlTransaction transaction(connection);
-        projects_.RequireRole(connection, session.user_id, project_id,
-                              Role::Editor);
         UploadTaskRecord current;
         if (!repository_->FindOwn(connection, project_id, session.user_id,
                                   task_id, true, &current)) {
@@ -483,10 +491,13 @@ CompleteUploadResult UploadService::Complete(
             transaction.Commit();
             return StoredResult(current, true);
         }
-        if (!CompletableState(current.task.state)) {
-            throw AppError(409, "upload_state_conflict",
-                           "upload task cannot be published in its current state");
+        if (current.task.state != "publishing") {
+            throw AppError(409, "upload_interrupted",
+                           "upload publication was interrupted", true);
         }
+        store_.PublishObject(assembled, task_id);
+        projects_.RequireRole(connection, session.user_id, project_id,
+                              Role::Editor);
 
         std::string file_id;
         uint64_t version_number = 1;

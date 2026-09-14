@@ -1,5 +1,6 @@
 CXX ?= g++
 CPPFLAGS := -I. -Icode -Ithird_party
+TEST_CPPFLAGS := $(CPPFLAGS) -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1
 CXXFLAGS := -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP
 LDLIBS := -pthread -lmysqlclient -lcrypto
 
@@ -44,7 +45,7 @@ build/obj/server/%.o: %.cpp
 
 build/obj/tests/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 build/obj/test-server/%.o: %.cpp
 	@mkdir -p $(@D)

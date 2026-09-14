@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <string>
 #include <unistd.h>
+#include <utility>
 
 namespace {
 
@@ -22,6 +23,13 @@ const char* Name(FaultPoint point) {
 }
 #endif
 
+#ifdef SMARTDOCS_ENABLE_FAULT_OBSERVER
+std::function<void(FaultPoint)>& Observer() {
+    static std::function<void(FaultPoint)> observer;
+    return observer;
+}
+#endif
+
 }  // namespace
 
 void FaultInjector::Hit(FaultPoint point) {
@@ -30,10 +38,23 @@ void FaultInjector::Hit(FaultPoint point) {
     if (configured != nullptr && std::string(configured) == Name(point)) {
         _exit(86);
     }
+#elif defined(SMARTDOCS_ENABLE_FAULT_OBSERVER)
+    if (Observer()) Observer()(point);
 #else
     (void)point;
 #endif
 }
+
+#ifdef SMARTDOCS_ENABLE_FAULT_OBSERVER
+void FaultInjector::SetObserverForTesting(
+    std::function<void(FaultPoint)> observer) {
+    Observer() = std::move(observer);
+}
+
+void FaultInjector::ClearObserverForTesting() {
+    Observer() = std::function<void(FaultPoint)>();
+}
+#endif
 
 void FaultInjector::RejectEnvironmentInNormalBuild() {
 #ifndef SMARTDOCS_ENABLE_FAULT_INJECTION

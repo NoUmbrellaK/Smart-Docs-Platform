@@ -144,6 +144,19 @@ bool UploadRepository::FindOwn(MySqlConnection& connection,
     return true;
 }
 
+bool UploadRepository::FindById(MySqlConnection& connection,
+                                const std::string& task_id, bool lock,
+                                UploadTaskRecord* record) const {
+    std::string sql = std::string("SELECT ") + kTaskColumns +
+        " FROM upload_tasks t WHERE t.id=? LIMIT 1";
+    if (lock) sql += " FOR UPDATE";
+    const std::vector<MySqlRow> rows =
+        connection.Query(sql, {SqlValue(task_id)});
+    if (rows.empty()) return false;
+    *record = RecordFromRow(rows[0]);
+    return true;
+}
+
 std::vector<PartInfo> UploadRepository::ListParts(
     MySqlConnection& connection, const std::string& task_id) const {
     const std::vector<MySqlRow> rows = connection.Query(
@@ -282,14 +295,33 @@ bool UploadRepository::CompletedGraphValid(
         task.task.processing_job_id.empty()) {
         return false;
     }
+    const std::string common =
+        "SELECT COUNT(*) FROM files f JOIN file_versions v ON v.file_id=f.id "
+        "JOIN processing_jobs j ON j.file_version_id=v.id WHERE f.id=? "
+        "AND f.project_id=? AND v.id=? AND j.id=? "
+        "AND j.task_type='parse_and_index' AND v.content_id=? "
+        "AND v.size_bytes=? AND v.sha256=? AND v.media_type=? "
+        "AND v.created_by=? ";
+    std::vector<SqlValue> values = {
+        SqlValue(task.task.file_id), SqlValue(task.task.project_id),
+        SqlValue(task.task.version_id), SqlValue(task.task.processing_job_id),
+        SqlValue(task.task.id), SqlValue(task.expected_size),
+        SqlValue(task.expected_sha256), SqlValue(task.media_type),
+        SqlValue(task.task.owner_id)};
+    if (task.mode == UploadMode::CreateFile) {
+        values.emplace_back(task.task.owner_id);
+        return connection.ScalarInt(
+                   common + "AND v.version_number=1 AND f.created_by=?",
+                   values) == 1;
+    }
+    values.emplace_back(task.target_file_id);
+    values.emplace_back(task.observed_current_version_id);
     return connection.ScalarInt(
-               "SELECT COUNT(*) FROM files f JOIN file_versions v "
-               "ON v.file_id=f.id JOIN processing_jobs j "
-               "ON j.file_version_id=v.id WHERE f.id=? AND f.project_id=? "
-               "AND v.id=? AND j.id=?",
-               {SqlValue(task.task.file_id), SqlValue(task.task.project_id),
-                SqlValue(task.task.version_id),
-                SqlValue(task.task.processing_job_id)}) == 1;
+               common +
+                   "AND f.id=? AND EXISTS (SELECT 1 FROM file_versions ov "
+                   "WHERE ov.id=? AND ov.file_id=f.id AND "
+                   "v.version_number=ov.version_number+1)",
+               values) == 1;
 }
 
 std::vector<UploadTaskRecord> UploadRepository::ListInFlight(
@@ -298,6 +330,17 @@ std::vector<UploadTaskRecord> UploadRepository::ListInFlight(
         std::string("SELECT ") + kTaskColumns +
         " FROM upload_tasks t WHERE t.state IN "
         "('uploading', 'assembling', 'publishing') ORDER BY t.id");
+    std::vector<UploadTaskRecord> tasks;
+    tasks.reserve(rows.size());
+    for (const MySqlRow& row : rows) tasks.push_back(RecordFromRow(row));
+    return tasks;
+}
+
+std::vector<UploadTaskRecord> UploadRepository::ListCompleted(
+    MySqlConnection& connection) const {
+    const std::vector<MySqlRow> rows = connection.Query(
+        std::string("SELECT ") + kTaskColumns +
+        " FROM upload_tasks t WHERE t.state='completed' ORDER BY t.id");
     std::vector<UploadTaskRecord> tasks;
     tasks.reserve(rows.size());
     for (const MySqlRow& row : rows) tasks.push_back(RecordFromRow(row));

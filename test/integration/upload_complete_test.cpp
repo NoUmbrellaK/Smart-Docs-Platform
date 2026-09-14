@@ -2,6 +2,7 @@
 #include "auth/auth_service.h"
 #include "core/app_error.h"
 #include "core/crypto.h"
+#include "core/fault_injector.h"
 #include "file/file_store.h"
 #include "project/project_service.h"
 #include "upload/upload_service.h"
@@ -276,6 +277,14 @@ TEST_CASE(upload_complete_concurrent_calls_return_one_committed_graph) {
     CHECK(results[0].version_id == results[1].version_id);
     CHECK(results[0].processing_job_id == results[1].processing_job_id);
     CHECK(results[0].reused != results[1].reused);
+    MySqlConnection connection = TestDatabase().Acquire();
+    CHECK(connection.ScalarInt("SELECT COUNT(*) FROM files") == 1);
+    CHECK(connection.ScalarInt("SELECT COUNT(*) FROM file_versions") == 1);
+    CHECK(connection.ScalarInt("SELECT COUNT(*) FROM processing_jobs") == 1);
+    CHECK(connection.ScalarInt(
+              "SELECT COUNT(*) FROM audit_records WHERE "
+              "action='upload.complete' AND object_id=?",
+              {SqlValue(task.id)}) == 1);
 }
 
 TEST_CASE(upload_complete_rechecks_name_version_and_transaction_state) {
@@ -385,8 +394,41 @@ TEST_CASE(upload_complete_http_response_replays_stable_result_ids) {
                    tokens.raw_token, "http").status() == 200);
     const std::string complete_path =
         uploads_path + "/" + task_id + "/complete";
+    std::vector<FaultPoint> observed;
+    bool assembled_row_locked = false;
+    bool object_row_locked = false;
+    bool committed_before_response = false;
+    FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+        observed.push_back(point);
+        if (point == FaultPoint::AfterAssembledFsync ||
+            point == FaultPoint::AfterObjectRename) {
+            try {
+                MySqlConnection connection = TestDatabase().Acquire();
+                connection.Execute("SET SESSION innodb_lock_wait_timeout=1");
+                connection.Execute(
+                    "UPDATE upload_tasks SET state='interrupted' WHERE id=?",
+                    {SqlValue(task_id)});
+            } catch (const AppError& error) {
+                CHECK(error.code == "database_busy");
+                if (point == FaultPoint::AfterAssembledFsync) {
+                    assembled_row_locked = true;
+                } else {
+                    object_row_locked = true;
+                }
+            }
+        }
+        if (point == FaultPoint::BeforeHttpResponse) {
+            MySqlConnection connection = TestDatabase().Acquire();
+            committed_before_response = connection.ScalarInt(
+                "SELECT COUNT(*) FROM upload_tasks WHERE id=? AND "
+                "state='completed' AND result_file_id IS NOT NULL AND "
+                "result_version_id IS NOT NULL AND processing_job_id IS NOT NULL",
+                {SqlValue(task_id)}) == 1;
+        }
+    });
     const HttpResponse first = application.Prepare(
         Head("POST", complete_path, tokens.raw_token))->Finish();
+    FaultInjector::ClearObserverForTesting();
     const HttpResponse retry = application.Prepare(
         Head("POST", complete_path, tokens.raw_token))->Finish();
     CHECK(first.status() == 200);
@@ -398,4 +440,13 @@ TEST_CASE(upload_complete_http_response_replays_stable_result_ids) {
     CHECK(first_data["file_id"] == retry_data["file_id"]);
     CHECK(first_data["version_id"] == retry_data["version_id"]);
     CHECK(first_data["processing_job_id"] == retry_data["processing_job_id"]);
+    CHECK(assembled_row_locked);
+    CHECK(object_row_locked);
+    CHECK(committed_before_response);
+    CHECK(observed.size() == 5);
+    CHECK(observed[0] == FaultPoint::AfterAssembledFsync);
+    CHECK(observed[1] == FaultPoint::AfterObjectRename);
+    CHECK(observed[2] == FaultPoint::BeforeDatabaseCommit);
+    CHECK(observed[3] == FaultPoint::AfterDatabaseCommit);
+    CHECK(observed[4] == FaultPoint::BeforeHttpResponse);
 }

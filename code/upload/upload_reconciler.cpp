@@ -14,23 +14,35 @@ UploadReconciler::UploadReconciler(MySqlPool& pool, FileStore& store)
 void UploadReconciler::RunAtStartup() {
     UploadRepository repository;
     std::vector<UploadTaskRecord> tasks;
+    std::vector<UploadTaskRecord> completed;
     std::vector<PublishedVersionRecord> versions;
     {
         MySqlConnection connection = pool_.Acquire();
         MySqlTransaction transaction(connection);
         tasks = repository.ListInFlight(connection);
+        completed = repository.ListCompleted(connection);
         versions = repository.ListAvailableVersions(connection);
         transaction.Commit();
     }
 
-    for (const UploadTaskRecord& task : tasks) {
-        store_.RemoveTaskTemporaryFiles(task.task.id);
+    for (const UploadTaskRecord& task : completed) {
         MySqlConnection connection = pool_.Acquire();
         MySqlTransaction transaction(connection);
         UploadTaskRecord current;
-        if (repository.FindOwn(connection, task.task.project_id,
-                               task.task.owner_id, task.task.id, true,
-                               &current)) {
+        if (repository.FindById(connection, task.task.id, true, &current) &&
+            current.task.state == "completed" &&
+            !repository.CompletedGraphValid(connection, current)) {
+            throw AppError(500, "database_result_invalid",
+                           "completed upload result graph is invalid");
+        }
+        transaction.Commit();
+    }
+
+    for (const UploadTaskRecord& task : tasks) {
+        MySqlConnection connection = pool_.Acquire();
+        MySqlTransaction transaction(connection);
+        UploadTaskRecord current;
+        if (repository.FindById(connection, task.task.id, true, &current)) {
             if (current.task.state == "completed") {
                 if (!repository.CompletedGraphValid(connection, current)) {
                     throw AppError(500, "database_result_invalid",
@@ -40,6 +52,7 @@ void UploadReconciler::RunAtStartup() {
                        current.task.state == "assembling" ||
                        current.task.state == "publishing") {
                 repository.SetState(connection, current.task.id, "interrupted");
+                store_.RemoveTaskTemporaryFiles(current.task.id);
             }
         }
         transaction.Commit();
@@ -57,6 +70,20 @@ void UploadReconciler::RunAtStartup() {
     for (const std::string& content_id : store_.ListObjectsOlderThan(cutoff)) {
         MySqlConnection connection = pool_.Acquire();
         MySqlTransaction transaction(connection);
+        UploadTaskRecord task;
+        if (repository.FindById(connection, content_id, true, &task)) {
+            if (task.task.state == "completed") {
+                if (!repository.CompletedGraphValid(connection, task)) {
+                    throw AppError(500, "database_result_invalid",
+                                   "completed upload result graph is invalid");
+                }
+            } else if (task.task.state == "uploading" ||
+                       task.task.state == "assembling" ||
+                       task.task.state == "publishing") {
+                repository.SetState(connection, task.task.id, "interrupted");
+                store_.RemoveTaskTemporaryFiles(task.task.id);
+            }
+        }
         if (!repository.ContentReferenced(connection, content_id)) {
             store_.RemoveObject(content_id);
         }

@@ -10,12 +10,15 @@
 #include "../test_support.h"
 
 #include <cerrno>
+#include <atomic>
+#include <chrono>
 #include <ctime>
 #include <cstring>
 #include <dirent.h>
 #include <fcntl.h>
 #include <string>
 #include <sys/stat.h>
+#include <thread>
 #include <unistd.h>
 
 namespace {
@@ -210,6 +213,123 @@ TEST_CASE(upload_recovery_keeps_committed_graph_and_marks_missing_object) {
               "action='file.version.missing_object' AND object_id=? AND "
               "result='error' AND detail_code='content_missing'",
               {SqlValue(completed.version_id)}) == 1);
+    UploadReconciler(TestDatabase(), store).RunAtStartup();
+    CHECK(connection.ScalarInt(
+              "SELECT COUNT(*) FROM audit_records WHERE "
+              "action='file.version.missing_object' AND object_id=? AND "
+              "result='error' AND detail_code='content_missing'",
+              {SqlValue(completed.version_id)}) == 1);
+}
+
+TEST_CASE(upload_recovery_rejects_completed_graph_that_mismatches_upload_intent) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    TemporaryStorage storage;
+    AuthService auth(TestDatabase(), 60, 1000);
+    ProjectService projects(TestDatabase());
+    FileStore store(storage.path());
+    UploadService uploads(TestDatabase(), projects, store, 1024, 4);
+    const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
+    const SessionContext session =
+        auth.Login("admin", kPassword, kRequest).session;
+    const Project project = projects.CreateProject(admin.id, "Alpha", kRequest);
+    const UploadTask task = uploads.Create(
+        session, project.id, NewFile(project, "malformed.txt", "data"), kRequest);
+    PutPart(uploads, session, project, task, "data");
+    const CompleteUploadResult completed =
+        uploads.Complete(session, project.id, task.id, kRequest);
+    MySqlConnection connection = TestDatabase().Acquire();
+    connection.Execute(
+        "UPDATE file_versions SET media_type='application/octet-stream' "
+        "WHERE id=?",
+        {SqlValue(completed.version_id)});
+    CHECK_THROWS_CODE(UploadReconciler(TestDatabase(), store).RunAtStartup(),
+                      "database_result_invalid");
+}
+
+TEST_CASE(upload_recovery_locks_upload_rows_before_destructive_cleanup) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    TemporaryStorage storage;
+    AuthService auth(TestDatabase(), 60, 1000);
+    ProjectService projects(TestDatabase());
+    FileStore store(storage.path());
+    UploadService uploads(TestDatabase(), projects, store, 1024, 4);
+    const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
+    const SessionContext session =
+        auth.Login("admin", kPassword, kRequest).session;
+    const Project project = projects.CreateProject(admin.id, "Alpha", kRequest);
+    const UploadTask task = uploads.Create(
+        session, project.id, NewFile(project, "locked.txt", "data"), kRequest);
+    PutPart(uploads, session, project, task, "data");
+    const std::string temporary = storage.path() + "/staging/" + task.id +
+        "/assembled.77777777777777777777777777777777.tmp";
+    WriteFile(temporary, "partial");
+    {
+        MySqlConnection connection = TestDatabase().Acquire();
+        connection.Execute("UPDATE upload_tasks SET state='assembling' WHERE id=?",
+                           {SqlValue(task.id)});
+    }
+
+    MySqlConnection blocker = TestDatabase().Acquire();
+    MySqlTransaction blocker_transaction(blocker);
+    blocker.Query("SELECT id FROM upload_tasks WHERE id=? FOR UPDATE",
+                  {SqlValue(task.id)});
+    std::atomic<bool> started(false);
+    std::thread reconciliation([&]() {
+        started.store(true);
+        UploadReconciler(TestDatabase(), store).RunAtStartup();
+    });
+    while (!started.load()) std::this_thread::yield();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    struct stat entry{};
+    CHECK(lstat(temporary.c_str(), &entry) == 0);
+    blocker_transaction.Commit();
+    reconciliation.join();
+    errno = 0;
+    CHECK(lstat(temporary.c_str(), &entry) != 0);
+    CHECK(errno == ENOENT);
+}
+
+TEST_CASE(upload_recovery_locks_task_named_orphans_before_unlinking) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    TemporaryStorage storage;
+    AuthService auth(TestDatabase(), 60, 1000);
+    ProjectService projects(TestDatabase());
+    FileStore store(storage.path());
+    UploadService uploads(TestDatabase(), projects, store, 1024, 4);
+    const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
+    const SessionContext session =
+        auth.Login("admin", kPassword, kRequest).session;
+    const Project project = projects.CreateProject(admin.id, "Alpha", kRequest);
+    const UploadTask task = uploads.Create(
+        session, project.id, NewFile(project, "orphan.txt", ""), kRequest);
+    {
+        MySqlConnection connection = TestDatabase().Acquire();
+        connection.Execute("UPDATE upload_tasks SET state='interrupted' WHERE id=?",
+                           {SqlValue(task.id)});
+    }
+    Publish(store, "88888888888888888888888888888888", task.id, "orphan");
+    const std::string object_path = storage.path() + "/objects/" +
+        task.id.substr(0, 2) + "/" + task.id.substr(2, 2) + "/" + task.id;
+    MakeOld(object_path);
+
+    MySqlConnection blocker = TestDatabase().Acquire();
+    MySqlTransaction blocker_transaction(blocker);
+    blocker.Query("SELECT id FROM upload_tasks WHERE id=? FOR UPDATE",
+                  {SqlValue(task.id)});
+    std::atomic<bool> started(false);
+    std::thread reconciliation([&]() {
+        started.store(true);
+        UploadReconciler(TestDatabase(), store).RunAtStartup();
+    });
+    while (!started.load()) std::this_thread::yield();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    CHECK(store.ObjectExists(task.id));
+    blocker_transaction.Commit();
+    reconciliation.join();
+    CHECK(!store.ObjectExists(task.id));
 }
 
 TEST_CASE(upload_recovery_removes_only_old_unreferenced_objects) {
