@@ -2,6 +2,7 @@
 #include "auth/auth_service.h"
 #include "core/app_error.h"
 #include "core/crypto.h"
+#include "file/file_service.h"
 #include "file/file_store.h"
 #include "project/project_service.h"
 #include "upload/upload_reconciler.h"
@@ -247,13 +248,14 @@ TEST_CASE(upload_recovery_rejects_completed_graph_that_mismatches_upload_intent)
                       "database_result_invalid");
 }
 
-TEST_CASE(upload_recovery_rejects_completed_create_file_location_or_name_mismatch) {
+TEST_CASE(upload_recovery_accepts_completed_create_file_after_supported_mutation) {
     RequireMySqlTests();
     ResetTestDatabase();
     TemporaryStorage storage;
     AuthService auth(TestDatabase(), 60, 1000);
     ProjectService projects(TestDatabase());
     FileStore store(storage.path());
+    FileService files(TestDatabase(), projects, store);
     UploadService uploads(TestDatabase(), projects, store, 1024, 4);
     const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
     const SessionContext session =
@@ -266,18 +268,10 @@ TEST_CASE(upload_recovery_rejects_completed_create_file_location_or_name_mismatc
     PutPart(uploads, session, project, task, "data");
     const CompleteUploadResult completed =
         uploads.Complete(session, project.id, task.id, kRequest);
-    MySqlConnection connection = TestDatabase().Acquire();
-
-    connection.Execute("UPDATE files SET name='wrong.txt' WHERE id=?",
-                       {SqlValue(completed.file_id)});
-    CHECK_THROWS_CODE(UploadReconciler(TestDatabase(), store).RunAtStartup(),
-                      "database_result_invalid");
-
-    connection.Execute(
-        "UPDATE files SET name='intent.txt', directory_id=? WHERE id=?",
-        {SqlValue(other.id), SqlValue(completed.file_id)});
-    CHECK_THROWS_CODE(UploadReconciler(TestDatabase(), store).RunAtStartup(),
-                      "database_result_invalid");
+    files.Update(session, project.id, completed.file_id,
+                 UpdateFileCommand{"renamed.txt", other.id}, kRequest);
+    UploadReconciler(TestDatabase(), store).RunAtStartup();
+    CHECK(uploads.GetOwn(session, project.id, task.id).task.state == "completed");
 }
 
 TEST_CASE(upload_recovery_locks_upload_rows_before_destructive_cleanup) {

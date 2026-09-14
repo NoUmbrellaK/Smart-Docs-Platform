@@ -314,11 +314,8 @@ bool UploadRepository::CompletedGraphValid(
         SqlValue(task.task.owner_id)};
     if (task.mode == UploadMode::CreateFile) {
         values.emplace_back(task.task.owner_id);
-        values.emplace_back(task.directory_id);
-        values.emplace_back(task.expected_name);
         return connection.ScalarInt(
-                   common + "AND v.version_number=1 AND f.created_by=? "
-                            "AND f.directory_id=? AND f.name=?",
+                   common + "AND v.version_number=1 AND f.created_by=?",
                    values) == 1;
     }
     values.emplace_back(task.target_file_id);

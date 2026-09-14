@@ -1,0 +1,2 @@
+Smart Docs M1 fixture.
+Second line survives restart.
