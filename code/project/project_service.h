@@ -9,6 +9,7 @@
 class MySqlConnection;
 class MySqlPool;
 class ProjectRepository;
+class FileService;
 
 enum class Role { Reader, Editor, Admin };
 
@@ -85,4 +86,6 @@ private:
 
     MySqlPool& pool_;
     std::unique_ptr<ProjectRepository> repository_;
+
+    friend class FileService;
 };

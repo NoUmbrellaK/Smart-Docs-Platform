@@ -702,6 +702,9 @@ git commit -m "feat: add project-scoped authentication and roles"
 - Create: `code/file/file_routes.h`
 - Create: `code/file/file_routes.cpp`
 - Modify: `code/app/application.cpp`
+- Modify: `code/app/application.h`
+- Modify: `code/http/httpresponse.cpp`
+- Modify: `code/project/project_service.h`
 - Create: `test/unit/file_store_test.cpp`
 - Create: `test/integration/file_metadata_test.cpp`
 
@@ -718,11 +721,11 @@ struct AuthorizedVersion { FileSummary file; FileVersionSummary version; int fd;
 
 `AuthorizedVersion` is move-only and closes `fd` unless ownership moves into `HttpResponse::File`.
 
-- [ ] **Step 1: Write failing path and metadata tests**
+- [x] **Step 1: Write failing path and metadata tests**
 
 Tests reject symlink storage roots, user names such as `../../resources/index.html`, object IDs with non-hex characters, cross-project directory/file combinations, and duplicate active names. Tests also prove that soft-deleted names may be reused but restoring the old file then conflicts.
 
-- [ ] **Step 2: Define immutable-store interfaces**
+- [x] **Step 2: Define immutable-store interfaces**
 
 ```cpp
 class FileStore {
@@ -761,7 +764,7 @@ struct PublishedObject {
 
 Every directory traversal uses directory file descriptors and `openat`/`mkdirat` with `O_NOFOLLOW`. `PartWriter` streams bytes through `write(2)`, tracks byte count and OpenSSL SHA-256 state, `fsync`s before atomic rename, and removes its uniquely named temporary file on failure.
 
-- [ ] **Step 3: Implement file repository and read services**
+- [x] **Step 3: Implement file repository and read services**
 
 ```cpp
 Page<FileSummary> FileService::List(const SessionContext&, const std::string& project_id,
@@ -774,11 +777,11 @@ AuthorizedVersion FileService::OpenVersion(const SessionContext&, const std::str
 
 Page size defaults to 50 and is limited to 100. Default listing excludes `deleted_at IS NOT NULL`; deleted listing is explicit. `OpenVersion` checks membership, project/file/version relationship, deletion, version availability, and object existence before returning an already-open file descriptor.
 
-- [ ] **Step 4: Register metadata routes**
+- [x] **Step 4: Register metadata routes**
 
 Implement file listing and version listing from spec section 6.2. Content routes remain registered as `501 not_implemented` until Task 9 so clients cannot fall through to static files.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 make test

@@ -7,6 +7,9 @@
 #include "core/id.h"
 #include "db/mysql.h"
 #include "db/schema.h"
+#include "file/file_routes.h"
+#include "file/file_service.h"
+#include "file/file_store.h"
 #include "project/project_routes.h"
 #include "project/project_service.h"
 
@@ -152,11 +155,15 @@ Application::Application(const AppConfig& config, std::string static_root)
     auth_service_.reset(new AuthService(*database_, config.session_seconds,
                                         config.password_iterations));
     project_service_.reset(new ProjectService(*database_));
+    file_store_.reset(new FileStore(storage_root_));
+    file_service_.reset(
+        new FileService(*database_, *project_service_, *file_store_));
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);
     RegisterProjectRoutes(router_, auth_service_, project_service_,
                           config.max_json_bytes, config.secure_cookie);
+    RegisterFileRoutes(router_, auth_service_, file_service_);
 }
 
 std::unique_ptr<RequestBodyHandler> Application::Prepare(
