@@ -626,7 +626,7 @@ struct Directory { std::string id; std::string project_id; std::string parent_id
 
 Authorization uses an explicit action-to-role switch matching the approved matrix, not numeric enum comparison.
 
-- [ ] **Step 1: Write the role matrix and session tests**
+- [x] **Step 1: Write the role matrix and session tests**
 
 Use three users and two projects. Assert that readers can list but cannot mutate, editors can upload/file-mutate but cannot manage members or AI policy, admins can manage members, and membership in project A grants nothing in project B. Add expired, revoked, malformed, and missing session-cookie cases.
 
@@ -638,7 +638,7 @@ TEST_CASE(account_identity_does_not_grant_other_project_access) {
 }
 ```
 
-- [ ] **Step 2: Implement parameterized repositories and services**
+- [x] **Step 2: Implement parameterized repositories and services**
 
 Exact service methods:
 
@@ -658,13 +658,13 @@ Directory ProjectService::RenameDirectory(const SessionContext&, const std::stri
 
 Project creation uses one transaction: insert project, insert its `/` root, update `root_directory_id`, and add the creator as admin. Directory creation checks the parent belongs to the same project.
 
-- [ ] **Step 3: Implement same-origin API routes**
+- [x] **Step 3: Implement same-origin API routes**
 
 Register all spec section 6.1 and directory routes. Login sets `smartdocs_session=<token>; HttpOnly; SameSite=Strict; Path=/; Max-Age=<seconds>` and adds `Secure` when configured. Mutating cookie-authenticated requests reject a present mismatched `Origin`, require `Host`, and never emit CORS credentials headers.
 
 All responses include `request_id`. Missing/hidden project resources return `404 resource_not_found`; a known project with an insufficient role returns `403 forbidden`.
 
-- [ ] **Step 4: Add the local user-bootstrap CLI**
+- [x] **Step 4: Add the local user-bootstrap CLI**
 
 Command:
 
@@ -674,7 +674,7 @@ printf '%s\n' 'development-password' | ./bin/smartdocs-admin create-user --usern
 
 The CLI refuses a TTY-less invocation without `--password-stdin`, enforces username length 3-64 and password length 12-1024, reads exactly one newline-terminated password, derives it through `AuthService`, and never echoes/logs it. A duplicate username exits `2` with `username_conflict`.
 
-- [ ] **Step 5: Run the vertical-slice integration test**
+- [x] **Step 5: Run the vertical-slice integration test**
 
 ```bash
 make server admin test
@@ -683,7 +683,7 @@ scripts/test-with-mysql.sh -- ./bin/smartdocs_tests --filter=auth_project_
 
 Expected: login, create project, add users, create/rename directories, role denial, and cross-project denial all pass through repositories and services.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add Makefile code/admin code/app/application.cpp code/auth code/project test/unit/authorization_test.cpp test/integration/auth_project_test.cpp

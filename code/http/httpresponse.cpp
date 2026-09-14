@@ -137,6 +137,12 @@ HttpResponse HttpResponse::Json(int status, const nlohmann::json& body,
                  std::move(serialized_body), FileRegion());
 }
 
+HttpResponse HttpResponse::Empty(int status, bool keep_alive,
+                                 Headers headers) {
+    return Build(status, 0, keep_alive, std::move(headers), std::string(),
+                 FileRegion());
+}
+
 HttpResponse HttpResponse::File(int status, FileRegion region, Headers headers,
                                 bool keep_alive) {
     if (region.fd < 0) {

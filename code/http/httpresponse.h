@@ -32,6 +32,8 @@ public:
     static HttpResponse Json(int status, const nlohmann::json& body,
                              bool keep_alive = false,
                              Headers headers = Headers());
+    static HttpResponse Empty(int status, bool keep_alive = false,
+                              Headers headers = Headers());
     static HttpResponse File(int status, FileRegion region, Headers headers,
                              bool keep_alive = false);
 

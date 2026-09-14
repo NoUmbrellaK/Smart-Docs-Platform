@@ -7,7 +7,9 @@
 #include <string>
 
 class AppError;
+class AuthService;
 class MySqlPool;
+class ProjectService;
 struct AppConfig;
 
 class Application {
@@ -27,4 +29,6 @@ private:
     Router router_;
     std::shared_ptr<MySqlPool> database_;
     std::string storage_root_;
+    std::shared_ptr<AuthService> auth_service_;
+    std::shared_ptr<ProjectService> project_service_;
 };

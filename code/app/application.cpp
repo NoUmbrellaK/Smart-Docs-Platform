@@ -1,10 +1,14 @@
 #include "application.h"
 
 #include "config.h"
+#include "auth/auth_routes.h"
+#include "auth/auth_service.h"
 #include "core/app_error.h"
 #include "core/id.h"
 #include "db/mysql.h"
 #include "db/schema.h"
+#include "project/project_routes.h"
+#include "project/project_service.h"
 
 #include <cerrno>
 #include <fcntl.h>
@@ -145,6 +149,14 @@ Application::Application(const AppConfig& config, std::string static_root)
     }
     storage_root_ = config.storage_root;
     database_ = std::move(database);
+    auth_service_.reset(new AuthService(*database_, config.session_seconds,
+                                        config.password_iterations));
+    project_service_.reset(new ProjectService(*database_));
+    RegisterAuthRoutes(router_, auth_service_, project_service_,
+                       config.max_json_bytes, config.secure_cookie,
+                       config.session_seconds);
+    RegisterProjectRoutes(router_, auth_service_, project_service_,
+                          config.max_json_bytes, config.secure_cookie);
 }
 
 std::unique_ptr<RequestBodyHandler> Application::Prepare(
