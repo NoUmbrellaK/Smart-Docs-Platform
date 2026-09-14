@@ -247,7 +247,7 @@ git commit -m "build: add reproducible M1 test harness"
 - Produces: `AppConfig AppConfig::LoadFromEnvironment()`, `std::string GenerateId()`, `std::string GenerateTokenHex(size_t bytes)`, `std::array<unsigned char, 32> Sha256(...)`, `PasswordHash DerivePassword(...)`, and `bool VerifyPassword(...)`.
 - `AppError` has `int http_status`, `std::string code`, `std::string message`, and `bool retryable`.
 
-- [ ] **Step 1: Write failing configuration and crypto tests**
+- [x] **Step 1: Write failing configuration and crypto tests**
 
 Cover these exact cases:
 
@@ -275,7 +275,7 @@ TEST_CASE(password_verification_rejects_wrong_password) {
 
 The test helper adds `CHECK_THROWS_CODE(expression, expected_code)` and an RAII `ScopedEnvironment` that restores each modified variable.
 
-- [ ] **Step 2: Run the focused tests**
+- [x] **Step 2: Run the focused tests**
 
 Run:
 
@@ -287,7 +287,7 @@ make test TEST_FILTER=password_
 
 Expected: compilation fails because the new headers do not exist.
 
-- [ ] **Step 3: Implement exact configuration fields**
+- [x] **Step 3: Implement exact configuration fields**
 
 `AppConfig` contains:
 
@@ -318,7 +318,7 @@ struct AppConfig {
 
 Defaults are port `1316`, 6 threads, 60,000 ms timeout, MySQL port `3306`, pool size `12`, 1 GiB files, 8 MiB chunks, 1 MiB JSON, 43,200-second sessions, 210,000 PBKDF2 iterations, non-secure development cookie, and log level `1`. Host, database, user, password, and absolute storage root have no defaults and are mandatory. `SMARTDOCS_MYSQL_SOCKET` is optional; when present, pass it as `unix_socket` to `mysql_real_connect` and use it instead of TCP in scripts and tests.
 
-- [ ] **Step 4: Implement core utilities with OS/OpenSSL primitives**
+- [x] **Step 4: Implement core utilities with OS/OpenSSL primitives**
 
 Use `getrandom(2)` and retry `EINTR`; throw `AppError(500, "random_failed", ...)` on a short/failing read. Use `EVP_Digest*`, `PKCS5_PBKDF2_HMAC`, and `CRYPTO_memcmp`; never log input secrets or generated tokens.
 
@@ -332,11 +332,11 @@ struct PasswordHash {
 
 The salt is 16 bytes, derived digest is 32 bytes, and session tokens are 32 random bytes represented as 64 lowercase hex characters.
 
-- [ ] **Step 5: Add the no-secret example configuration**
+- [x] **Step 5: Add the no-secret example configuration**
 
 `config/smart-docs.env.example` lists every variable, uses `change-me` for passwords, `/var/lib/smart-docs` for storage, and comments that real secrets belong in a protected environment file outside Git.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 ```bash
 make test

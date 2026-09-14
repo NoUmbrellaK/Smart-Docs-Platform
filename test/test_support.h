@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -27,3 +28,30 @@ struct TestRegistration {
                                      ": CHECK failed: " #expression);          \
         }                                                                      \
     } while (false)
+
+#define CHECK_THROWS_CODE(expression, expected_code)                           \
+    do {                                                                       \
+        bool caught_app_error = false;                                         \
+        try {                                                                  \
+            (void)(expression);                                                \
+        } catch (const AppError& error) {                                      \
+            caught_app_error = true;                                           \
+            CHECK(error.code == (expected_code));                              \
+        }                                                                      \
+        CHECK(caught_app_error);                                               \
+    } while (false)
+
+class ScopedEnvironment {
+public:
+    ScopedEnvironment() = default;
+    ScopedEnvironment(const ScopedEnvironment&) = delete;
+    ScopedEnvironment& operator=(const ScopedEnvironment&) = delete;
+    ~ScopedEnvironment();
+
+    void Set(const std::string& name, const std::string& value);
+    void Unset(const std::string& name);
+
+private:
+    void Remember(const std::string& name);
+    std::map<std::string, std::pair<bool, std::string>> originals_;
+};
