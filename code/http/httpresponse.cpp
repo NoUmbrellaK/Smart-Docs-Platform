@@ -2,179 +2,178 @@
  * @Author       : mark
  * @Date         : 2020-06-27
  * @copyleft Apache 2.0
- */ 
+ * Modified for Smart Docs Platform, 2026.
+ */
 #include "httpresponse.h"
 
-using namespace std;
+#include <algorithm>
+#include <cctype>
+#include <stdexcept>
+#include <unistd.h>
+#include <unordered_set>
 
-const unordered_map<string, string> HttpResponse::SUFFIX_TYPE = {
-    { ".html",  "text/html" },
-    { ".xml",   "text/xml" },
-    { ".xhtml", "application/xhtml+xml" },
-    { ".txt",   "text/plain" },
-    { ".rtf",   "application/rtf" },
-    { ".pdf",   "application/pdf" },
-    { ".word",  "application/nsword" },
-    { ".png",   "image/png" },
-    { ".gif",   "image/gif" },
-    { ".jpg",   "image/jpeg" },
-    { ".jpeg",  "image/jpeg" },
-    { ".au",    "audio/basic" },
-    { ".mpeg",  "video/mpeg" },
-    { ".mpg",   "video/mpeg" },
-    { ".avi",   "video/x-msvideo" },
-    { ".gz",    "application/x-gzip" },
-    { ".tar",   "application/x-tar" },
-    { ".css",   "text/css "},
-    { ".js",    "text/javascript "},
-};
+namespace {
 
-const unordered_map<int, string> HttpResponse::CODE_STATUS = {
-    { 200, "OK" },
-    { 400, "Bad Request" },
-    { 403, "Forbidden" },
-    { 404, "Not Found" },
-};
+std::string Lower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+    return value;
+}
 
-const unordered_map<int, string> HttpResponse::CODE_PATH = {
-    { 400, "/400.html" },
-    { 403, "/403.html" },
-    { 404, "/404.html" },
-};
+bool IsHeaderNameCharacter(unsigned char ch) {
+    if (std::isalnum(ch)) {
+        return true;
+    }
+    const std::string punctuation("!#$%&'*+-.^_`|~");
+    return punctuation.find(static_cast<char>(ch)) != std::string::npos;
+}
 
-HttpResponse::HttpResponse() {
-    code_ = -1;
-    path_ = srcDir_ = "";
-    isKeepAlive_ = false;
-    mmFile_ = nullptr; 
-    mmFileStat_ = { 0 };
-};
+void ValidateHeader(const std::string& name, const std::string& value) {
+    if (name.empty()) {
+        throw std::invalid_argument("response header name cannot be empty");
+    }
+    for (unsigned char ch : name) {
+        if (!IsHeaderNameCharacter(ch)) {
+            throw std::invalid_argument("response header name is invalid");
+        }
+    }
+    if (value.find('\r') != std::string::npos ||
+        value.find('\n') != std::string::npos) {
+        throw std::invalid_argument("response header value cannot contain a line break");
+    }
+}
+
+const char* ReasonPhrase(int status) {
+    switch (status) {
+    case 200: return "OK";
+    case 201: return "Created";
+    case 204: return "No Content";
+    case 206: return "Partial Content";
+    case 400: return "Bad Request";
+    case 401: return "Unauthorized";
+    case 403: return "Forbidden";
+    case 404: return "Not Found";
+    case 405: return "Method Not Allowed";
+    case 411: return "Length Required";
+    case 409: return "Conflict";
+    case 413: return "Payload Too Large";
+    case 414: return "URI Too Long";
+    case 416: return "Range Not Satisfiable";
+    case 431: return "Request Header Fields Too Large";
+    case 500: return "Internal Server Error";
+    case 503: return "Service Unavailable";
+    default: throw std::invalid_argument("unsupported HTTP response status");
+    }
+}
+
+}  // namespace
+
+HttpResponse::HttpResponse()
+    : status_(500) {}
 
 HttpResponse::~HttpResponse() {
-    UnmapFile();
+    CloseFileRegion();
 }
 
-void HttpResponse::Init(const string& srcDir, string& path, bool isKeepAlive, int code){
-    assert(srcDir != "");
-    if(mmFile_) { UnmapFile(); }
-    code_ = code;
-    isKeepAlive_ = isKeepAlive;
-    path_ = path;
-    srcDir_ = srcDir;
-    mmFile_ = nullptr; 
-    mmFileStat_ = { 0 };
+HttpResponse::HttpResponse(HttpResponse&& other) noexcept
+    : status_(other.status_),
+      head_and_body_(std::move(other.head_and_body_)),
+      file_region_(other.file_region_) {
+    other.file_region_ = FileRegion();
 }
 
-void HttpResponse::MakeResponse(Buffer& buff) {
-    /* 判断请求的资源文件 */
-    if(stat((srcDir_ + path_).data(), &mmFileStat_) < 0 || S_ISDIR(mmFileStat_.st_mode)) {
-        code_ = 404;
+HttpResponse& HttpResponse::operator=(HttpResponse&& other) noexcept {
+    if (this == &other) {
+        return *this;
     }
-    else if(!(mmFileStat_.st_mode & S_IROTH)) {
-        code_ = 403;
-    }
-    else if(code_ == -1) { 
-        code_ = 200; 
-    }
-    ErrorHtml_();
-    AddStateLine_(buff);
-    AddHeader_(buff);
-    AddContent_(buff);
+    CloseFileRegion();
+    status_ = other.status_;
+    head_and_body_ = std::move(other.head_and_body_);
+    file_region_ = other.file_region_;
+    other.file_region_ = FileRegion();
+    return *this;
 }
 
-char* HttpResponse::File() {
-    return mmFile_;
+HttpResponse HttpResponse::Build(int status, uint64_t content_length,
+                                 bool keep_alive, Headers headers,
+                                 std::string body, FileRegion region) {
+    HttpResponse response;
+    response.status_ = status;
+    response.file_region_ = region;
+
+    std::unordered_set<std::string> names;
+    std::string serialized = "HTTP/1.1 " + std::to_string(status) + " " +
+                             ReasonPhrase(status) + "\r\n";
+    for (const auto& header : headers) {
+        ValidateHeader(header.first, header.second);
+        const std::string lower_name = Lower(header.first);
+        if (lower_name == "content-length" || lower_name == "connection" ||
+            lower_name == "x-content-type-options" ||
+            !names.insert(lower_name).second) {
+            throw std::invalid_argument("response header duplicates a managed header");
+        }
+        serialized += header.first + ": " + header.second + "\r\n";
+    }
+    serialized += "Content-Length: " + std::to_string(content_length) + "\r\n";
+    serialized += "X-Content-Type-Options: nosniff\r\n";
+    serialized += std::string("Connection: ") + (keep_alive ? "keep-alive" : "close") + "\r\n\r\n";
+    serialized += body;
+    response.head_and_body_ = std::move(serialized);
+    return response;
 }
 
-size_t HttpResponse::FileLen() const {
-    return mmFileStat_.st_size;
+HttpResponse HttpResponse::Json(int status, const nlohmann::json& body,
+                                bool keep_alive, Headers headers) {
+    for (const auto& header : headers) {
+        if (Lower(header.first) == "content-type") {
+            throw std::invalid_argument("JSON Content-Type is fixed");
+        }
+    }
+    headers.emplace_back("Content-Type", "application/json; charset=utf-8");
+    std::string serialized_body = body.dump();
+    const uint64_t content_length = serialized_body.size();
+    return Build(status, content_length, keep_alive, std::move(headers),
+                 std::move(serialized_body), FileRegion());
 }
 
-void HttpResponse::ErrorHtml_() {
-    if(CODE_PATH.count(code_) == 1) {
-        path_ = CODE_PATH.find(code_)->second;
-        stat((srcDir_ + path_).data(), &mmFileStat_);
+HttpResponse HttpResponse::File(int status, FileRegion region, Headers headers,
+                                bool keep_alive) {
+    if (region.fd < 0) {
+        throw std::invalid_argument("file response requires an owned descriptor");
     }
+    bool has_content_type = false;
+    for (const auto& header : headers) {
+        if (Lower(header.first) == "content-type") {
+            has_content_type = true;
+        }
+    }
+    if (!has_content_type) {
+        headers.emplace_back("Content-Type", "application/octet-stream");
+    }
+    return Build(status, region.length, keep_alive, std::move(headers),
+                 std::string(), region);
 }
 
-void HttpResponse::AddStateLine_(Buffer& buff) {
-    string status;
-    if(CODE_STATUS.count(code_) == 1) {
-        status = CODE_STATUS.find(code_)->second;
-    }
-    else {
-        code_ = 400;
-        status = CODE_STATUS.find(400)->second;
-    }
-    buff.Append("HTTP/1.1 " + to_string(code_) + " " + status + "\r\n");
+int HttpResponse::status() const {
+    return status_;
 }
 
-void HttpResponse::AddHeader_(Buffer& buff) {
-    buff.Append("Connection: ");
-    if(isKeepAlive_) {
-        buff.Append("keep-alive\r\n");
-        buff.Append("keep-alive: max=6, timeout=120\r\n");
-    } else{
-        buff.Append("close\r\n");
-    }
-    buff.Append("Content-type: " + GetFileType_() + "\r\n");
+const std::string& HttpResponse::head_and_body() const {
+    return head_and_body_;
 }
 
-void HttpResponse::AddContent_(Buffer& buff) {
-    int srcFd = open((srcDir_ + path_).data(), O_RDONLY);
-    if(srcFd < 0) { 
-        ErrorContent(buff, "File NotFound!");
-        return; 
-    }
-
-    /* 将文件映射到内存提高文件的访问速度 
-        MAP_PRIVATE 建立一个写入时拷贝的私有映射*/
-    LOG_DEBUG("file path %s", (srcDir_ + path_).data());
-    int* mmRet = (int*)mmap(0, mmFileStat_.st_size, PROT_READ, MAP_PRIVATE, srcFd, 0);
-    if(*mmRet == -1) {
-        ErrorContent(buff, "File NotFound!");
-        return; 
-    }
-    mmFile_ = (char*)mmRet;
-    close(srcFd);
-    buff.Append("Content-length: " + to_string(mmFileStat_.st_size) + "\r\n\r\n");
+FileRegion& HttpResponse::file_region() {
+    return file_region_;
 }
 
-void HttpResponse::UnmapFile() {
-    if(mmFile_) {
-        munmap(mmFile_, mmFileStat_.st_size);
-        mmFile_ = nullptr;
-    }
+const FileRegion& HttpResponse::file_region() const {
+    return file_region_;
 }
 
-string HttpResponse::GetFileType_() {
-    /* 判断文件类型 */
-    string::size_type idx = path_.find_last_of('.');
-    if(idx == string::npos) {
-        return "text/plain";
+void HttpResponse::CloseFileRegion() {
+    if (file_region_.fd >= 0) {
+        close(file_region_.fd);
+        file_region_.fd = -1;
     }
-    string suffix = path_.substr(idx);
-    if(SUFFIX_TYPE.count(suffix) == 1) {
-        return SUFFIX_TYPE.find(suffix)->second;
-    }
-    return "text/plain";
-}
-
-void HttpResponse::ErrorContent(Buffer& buff, string message) 
-{
-    string body;
-    string status;
-    body += "<html><title>Error</title>";
-    body += "<body bgcolor=\"ffffff\">";
-    if(CODE_STATUS.count(code_) == 1) {
-        status = CODE_STATUS.find(code_)->second;
-    } else {
-        status = "Bad Request";
-    }
-    body += to_string(code_) + " : " + status  + "\n";
-    body += "<p>" + message + "</p>";
-    body += "<hr><em>TinyWebServer</em></body></html>";
-
-    buff.Append("Content-length: " + to_string(body.size()) + "\r\n\r\n");
-    buff.Append(body);
 }

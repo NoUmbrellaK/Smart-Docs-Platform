@@ -2,83 +2,79 @@
  * @Author       : mark
  * @Date         : 2020-06-25
  * @copyleft Apache 2.0
- */ 
+ * Modified for Smart Docs Platform, 2026.
+ */
 #ifndef HTTP_REQUEST_H
 #define HTTP_REQUEST_H
 
-#include <unordered_map>
-#include <unordered_set>
-#include <string>
-#include <regex>
-#include <errno.h>     
-#include <mysql/mysql.h>  //mysql
-
 #include "../buffer/buffer.h"
-#include "../log/log.h"
-#include "../pool/sqlconnpool.h"
-#include "../pool/sqlconnRAII.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <string>
+#include <unordered_map>
+
+enum class HttpParseStatus {
+    NeedMore,
+    HeadersComplete,
+    Complete,
+    Error,
+};
+
+struct HttpParseResult {
+    HttpParseStatus status;
+    std::string code;
+    std::string message;
+};
+
+struct RequestHead {
+    std::string method;
+    std::string path;
+    std::string query;
+    std::string version;
+    std::unordered_map<std::string, std::string> headers;
+    uint64_t content_length = 0;
+    bool keep_alive = false;
+};
 
 class HttpRequest {
 public:
-    enum PARSE_STATE {
-        REQUEST_LINE,
-        HEADERS,
-        BODY,
-        FINISH,        
-    };
+    using BodyConsumer = std::function<void(const char*, size_t)>;
 
-    enum HTTP_CODE {
-        NO_REQUEST = 0,
-        GET_REQUEST,
-        BAD_REQUEST,
-        NO_RESOURSE,
-        FORBIDDENT_REQUEST,
-        FILE_REQUEST,
-        INTERNAL_ERROR,
-        CLOSED_CONNECTION,
-    };
-    
-    HttpRequest() { Init(); }
-    ~HttpRequest() = default;
+    HttpRequest();
 
-    void Init();
-    bool parse(Buffer& buff);
+    void Reset();
+    HttpParseResult ParseHead(Buffer& buffer);
+    HttpParseResult ConsumeBody(Buffer& buffer, const BodyConsumer& consumer);
 
-    std::string path() const;
-    std::string& path();
-    std::string method() const;
-    std::string version() const;
-    std::string GetPost(const std::string& key) const;
-    std::string GetPost(const char* key) const;
-
-    bool IsKeepAlive() const;
-
-    /* 
-    todo 
-    void HttpConn::ParseFormData() {}
-    void HttpConn::ParseJson() {}
-    */
+    const RequestHead& head() const;
+    uint64_t body_remaining() const;
+    bool BodyComplete() const;
 
 private:
-    bool ParseRequestLine_(const std::string& line);
-    void ParseHeader_(const std::string& line);
-    void ParseBody_(const std::string& line);
+    enum class State {
+        RequestLine,
+        Headers,
+        Body,
+        Complete,
+        Error,
+    };
 
-    void ParsePath_();
-    void ParsePost_();
-    void ParseFromUrlencoded_();
+    HttpParseResult Result(HttpParseStatus status) const;
+    HttpParseResult Fail(const std::string& code, const std::string& message);
+    HttpParseResult ParseRequestLine(const std::string& line);
+    HttpParseResult ParseHeader(const std::string& line);
+    HttpParseResult FinishHeaders(size_t unread_bytes);
 
-    static bool UserVerify(const std::string& name, const std::string& pwd, bool isLogin);
-
-    PARSE_STATE state_;
-    std::string method_, path_, version_, body_;
-    std::unordered_map<std::string, std::string> header_;
-    std::unordered_map<std::string, std::string> post_;
-
-    static const std::unordered_set<std::string> DEFAULT_HTML;
-    static const std::unordered_map<std::string, int> DEFAULT_HTML_TAG;
-    static int ConverHex(char ch);
+    State state_;
+    RequestHead head_;
+    uint64_t body_remaining_;
+    size_t header_bytes_;
+    bool saw_content_length_;
+    bool saw_transfer_encoding_;
+    std::string error_code_;
+    std::string error_message_;
 };
 
-
-#endif //HTTP_REQUEST_H
+#endif  // HTTP_REQUEST_H

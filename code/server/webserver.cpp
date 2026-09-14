@@ -2,280 +2,283 @@
  * @Author       : mark
  * @Date         : 2020-06-17
  * @copyleft Apache 2.0
+ * Modified for Smart Docs Platform, 2026.
  */
-
 #include "webserver.h"
 
-using namespace std;
+#include "../app/application.h"
+#include "../core/app_error.h"
+#include "../log/log.h"
 
-WebServer::WebServer(
-            int port, int trigMode, int timeoutMS, bool OptLinger,
-            int sqlPort, const char* sqlUser, const  char* sqlPwd,
-            const char* dbName, int connPoolNum, int threadNum,
-            bool openLog, int logLevel, int logQueSize):
-            port_(port), openLinger_(OptLinger), timeoutMS_(timeoutMS), isClose_(false),
-            timer_(new HeapTimer()), threadpool_(new ThreadPool(threadNum)), epoller_(new Epoller())
-    {
-    srcDir_ = getcwd(nullptr, 256);
-    assert(srcDir_);
-    strncat(srcDir_, "/resources/", 16);
-    HttpConn::userCount = 0;
-    HttpConn::srcDir = srcDir_;
-    SqlConnPool::Instance()->Init("localhost", sqlPort, sqlUser, sqlPwd, dbName, connPoolNum);
+#include <arpa/inet.h>
+#include <cerrno>
+#include <cstring>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <stdexcept>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <utility>
 
-    InitEventMode_(trigMode);
-    if(!InitSocket_()) { isClose_ = true;}
-
-    if(openLog) {
-        Log::Instance()->init(logLevel, "./log", ".log", logQueSize);
-        if(isClose_) { LOG_ERROR("========== Server init error!=========="); }
-        else {
-            LOG_INFO("========== Server init ==========");
-            LOG_INFO("Port:%d, OpenLinger: %s", port_, OptLinger? "true":"false");
-            LOG_INFO("Listen Mode: %s, OpenConn Mode: %s",
-                            (listenEvent_ & EPOLLET ? "ET": "LT"),
-                            (connEvent_ & EPOLLET ? "ET": "LT"));
-            LOG_INFO("LogSys level: %d", logLevel);
-            LOG_INFO("srcDir: %s", HttpConn::srcDir);
-            LOG_INFO("SqlConnPool num: %d, ThreadPool num: %d", connPoolNum, threadNum);
-        }
+WebServer::WebServer(const AppConfig& config,
+                     std::shared_ptr<Application> application)
+    : listen_address_(config.listen_address),
+      port_(config.port),
+      timeout_ms_(config.connection_timeout_ms),
+      closed_(false),
+      listen_fd_(-1),
+      listen_events_(0),
+      connection_events_(0),
+      application_(std::move(application)),
+      timer_(new HeapTimer()),
+      thread_pool_(new ThreadPool(static_cast<size_t>(config.thread_count))),
+      epoller_(new Epoller()) {
+    if (!application_) {
+        throw std::invalid_argument("WebServer requires an application");
+    }
+    InitEventMode();
+    if (!InitSocket()) {
+        throw AppError(500, "listen_failed", "failed to initialize the HTTP listener");
     }
 }
 
 WebServer::~WebServer() {
-    close(listenFd_);
-    isClose_ = true;
-    free(srcDir_);
-    SqlConnPool::Instance()->ClosePool();
-}
+    closed_ = true;
+    if (listen_fd_ >= 0) {
+        epoller_->DelFd(listen_fd_);
+        close(listen_fd_);
+        listen_fd_ = -1;
+    }
+    thread_pool_->Stop();
 
-void WebServer::InitEventMode_(int trigMode) {
-    listenEvent_ = EPOLLRDHUP;
-    connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
-    switch (trigMode)
+    std::unordered_map<int, std::shared_ptr<HttpConn>> clients;
     {
-    case 0:
-        break;
-    case 1:
-        connEvent_ |= EPOLLET;
-        break;
-    case 2:
-        listenEvent_ |= EPOLLET;
-        break;
-    case 3:
-        listenEvent_ |= EPOLLET;
-        connEvent_ |= EPOLLET;
-        break;
-    default:
-        listenEvent_ |= EPOLLET;
-        connEvent_ |= EPOLLET;
-        break;
+        std::lock_guard<std::mutex> lock(clients_mutex_);
+        clients.swap(clients_);
     }
-    HttpConn::isET = (connEvent_ & EPOLLET);
-}
-
-void WebServer::Start() {
-    int timeMS = -1;  /* epoll wait timeout == -1 无事件将阻塞 */
-    if(!isClose_) { LOG_INFO("========== Server start =========="); }
-    while(!isClose_) {
-        if(timeoutMS_ > 0) {
-            timeMS = timer_->GetNextTick();
-        }
-        int eventCnt = epoller_->Wait(timeMS);
-        for(int i = 0; i < eventCnt; i++) {
-            /* 处理事件 */
-            int fd = epoller_->GetEventFd(i);
-            uint32_t events = epoller_->GetEvents(i);
-            if(fd == listenFd_) {
-                DealListen_();
-            }
-            else if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
-                assert(users_.count(fd) > 0);
-                CloseConn_(&users_[fd]);
-            }
-            else if(events & EPOLLIN) {
-                assert(users_.count(fd) > 0);
-                DealRead_(&users_[fd]);
-            }
-            else if(events & EPOLLOUT) {
-                assert(users_.count(fd) > 0);
-                DealWrite_(&users_[fd]);
-            } else {
-                LOG_ERROR("Unexpected event");
-            }
-        }
+    for (const auto& entry : clients) {
+        entry.second->Close();
     }
 }
 
-void WebServer::SendError_(int fd, const char*info) {
-    assert(fd > 0);
-    int ret = send(fd, info, strlen(info), 0);
-    if(ret < 0) {
-        LOG_WARN("send error to client[%d] error!", fd);
-    }
-    close(fd);
-}
-
-void WebServer::CloseConn_(HttpConn* client) {
-    assert(client);
-    LOG_INFO("Client[%d] quit!", client->GetFd());
-    epoller_->DelFd(client->GetFd());
-    client->Close();
-}
-
-void WebServer::AddClient_(int fd, sockaddr_in addr) {
-    assert(fd > 0);
-    users_[fd].init(fd, addr);
-    if(timeoutMS_ > 0) {
-        timer_->add(fd, timeoutMS_, std::bind(&WebServer::CloseConn_, this, &users_[fd]));
-    }
-    epoller_->AddFd(fd, EPOLLIN | connEvent_);
-    SetFdNonblock(fd);
-    LOG_INFO("Client[%d] in!", users_[fd].GetFd());
-}
-
-void WebServer::DealListen_() {
-    struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
-    do {
-        int fd = accept(listenFd_, (struct sockaddr *)&addr, &len);
-        if(fd <= 0) { return;}
-        else if(HttpConn::userCount >= MAX_FD) {
-            SendError_(fd, "Server busy!");
-            LOG_WARN("Clients is full!");
-            return;
-        }
-        AddClient_(fd, addr);
-    } while(listenEvent_ & EPOLLET);
-}
-
-void WebServer::DealRead_(HttpConn* client) {
-    assert(client);
-    ExtentTime_(client);
-    threadpool_->AddTask(std::bind(&WebServer::OnRead_, this, client));
-}
-
-void WebServer::DealWrite_(HttpConn* client) {
-    assert(client);
-    ExtentTime_(client);
-    threadpool_->AddTask(std::bind(&WebServer::OnWrite_, this, client));
-}
-
-void WebServer::ExtentTime_(HttpConn* client) {
-    assert(client);
-    if(timeoutMS_ > 0) { timer_->adjust(client->GetFd(), timeoutMS_); }
-}
-
-void WebServer::OnRead_(HttpConn* client) {
-    assert(client);
-    int ret = -1;
-    int readErrno = 0;
-    ret = client->read(&readErrno);
-    if(ret <= 0 && readErrno != EAGAIN) {
-        CloseConn_(client);
-        return;
-    }
-    OnProcess(client);
-}
-
-void WebServer::OnProcess(HttpConn* client) {
-    if(client->process()) {
-        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
-    } else {
-        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLIN);
-    }
-}
-
-void WebServer::OnWrite_(HttpConn* client) {
-    assert(client);
-    int ret = -1;
-    int writeErrno = 0;
-    ret = client->write(&writeErrno);
-    if(client->ToWriteBytes() == 0) {
-        /* 传输完成 */
-        if(client->IsKeepAlive()) {
-            OnProcess(client);
-            return;
-        }
-    }
-    else if(ret < 0) {
-        if(writeErrno == EAGAIN) {
-            /* 继续传输 */
-            epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
-            return;
-        }
-    }
-    CloseConn_(client);
-}
-
-/* Create listenFd */
-bool WebServer::InitSocket_() {
-    int ret;
-    struct sockaddr_in addr;
-    if(port_ > 65535 || port_ < 1024) {
-        LOG_ERROR("Port:%d error!",  port_);
-        return false;
-    }
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(port_);
-    struct linger optLinger = { 0 };
-    if(openLinger_) {
-        /* 优雅关闭: 直到所剩数据发送完毕或超时 */
-        optLinger.l_onoff = 1;
-        optLinger.l_linger = 1;
-    }
-
-    listenFd_ = socket(AF_INET, SOCK_STREAM, 0);
-    if(listenFd_ < 0) {
-        LOG_ERROR("Create socket error!", port_);
-        return false;
-    }
-
-    ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
-    if(ret < 0) {
-        close(listenFd_);
-        LOG_ERROR("Init linger error!", port_);
-        return false;
-    }
-
-    int optval = 1;
-    /* 端口复用 */
-    /* 只有最后一个套接字会正常接收数据。 */
-    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
-    if(ret == -1) {
-        LOG_ERROR("set socket setsockopt error !");
-        close(listenFd_);
-        return false;
-    }
-
-    ret = bind(listenFd_, (struct sockaddr *)&addr, sizeof(addr));
-    if(ret < 0) {
-        LOG_ERROR("Bind Port:%d error!", port_);
-        close(listenFd_);
-        return false;
-    }
-
-    ret = listen(listenFd_, 6);
-    if(ret < 0) {
-        LOG_ERROR("Listen port:%d error!", port_);
-        close(listenFd_);
-        return false;
-    }
-    ret = epoller_->AddFd(listenFd_,  listenEvent_ | EPOLLIN);
-    if(ret == 0) {
-        LOG_ERROR("Add listen error!");
-        close(listenFd_);
-        return false;
-    }
-    SetFdNonblock(listenFd_);
-    LOG_INFO("Server port:%d", port_);
-    return true;
+void WebServer::InitEventMode() {
+    listen_events_ = EPOLLIN | EPOLLET;
+    connection_events_ = EPOLLONESHOT | EPOLLRDHUP | EPOLLET;
+    HttpConn::isET = true;
 }
 
 int WebServer::SetFdNonblock(int fd) {
-    assert(fd > 0);
-    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
+    if (fd < 0) {
+        errno = EBADF;
+        return -1;
+    }
+    const int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return -1;
+    }
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
+bool WebServer::InitSocket() {
+    sockaddr_in address{};
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port_);
+    if (inet_pton(AF_INET, listen_address_.c_str(), &address.sin_addr) != 1) {
+        throw AppError(500, "config_invalid", "SMARTDOCS_LISTEN_ADDRESS must be an IPv4 address");
+    }
 
+    listen_fd_ = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+    if (listen_fd_ < 0) {
+        return false;
+    }
+    const int enabled = 1;
+    if (setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &enabled,
+                   sizeof(enabled)) != 0 ||
+        SetFdNonblock(listen_fd_) != 0 ||
+        bind(listen_fd_, reinterpret_cast<sockaddr*>(&address),
+             sizeof(address)) != 0 ||
+        listen(listen_fd_, 128) != 0 ||
+        !epoller_->AddFd(listen_fd_, listen_events_)) {
+        close(listen_fd_);
+        listen_fd_ = -1;
+        return false;
+    }
+    return true;
+}
+
+void WebServer::Start() {
+    while (!closed_) {
+        const int wait_ms = timeout_ms_ > 0 ? timer_->GetNextTick() : -1;
+        const int event_count = epoller_->Wait(wait_ms);
+        if (event_count < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            throw AppError(500, "event_loop_failed", "HTTP event loop failed");
+        }
+
+        for (int i = 0; i < event_count; ++i) {
+            const int fd = epoller_->GetEventFd(static_cast<size_t>(i));
+            const uint32_t events = epoller_->GetEvents(static_cast<size_t>(i));
+            if (fd == listen_fd_) {
+                AcceptClients();
+                continue;
+            }
+            std::shared_ptr<HttpConn> client = FindClient(fd);
+            if (!client) {
+                continue;
+            }
+            if ((events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) != 0) {
+                CloseConnection(client);
+            } else if ((events & EPOLLIN) != 0) {
+                DispatchRead(client);
+            } else if ((events & EPOLLOUT) != 0) {
+                DispatchWrite(client);
+            } else {
+                CloseConnection(client);
+            }
+        }
+    }
+}
+
+void WebServer::AcceptClients() {
+    while (true) {
+        sockaddr_in address{};
+        socklen_t address_size = sizeof(address);
+        const int fd = accept4(listen_fd_, reinterpret_cast<sockaddr*>(&address),
+                               &address_size, SOCK_NONBLOCK | SOCK_CLOEXEC);
+        if (fd < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return;
+        }
+        if (HttpConn::userCount.load() >= kMaxConnections) {
+            SendBusyAndClose(fd);
+            continue;
+        }
+        AddClient(fd, address);
+    }
+}
+
+void WebServer::SendBusyAndClose(int fd) {
+    const char response[] =
+        "HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\n"
+        "Content-Length: 0\r\n\r\n";
+    (void)send(fd, response, sizeof(response) - 1, MSG_NOSIGNAL);
+    close(fd);
+}
+
+void WebServer::AddClient(int fd, const sockaddr_in& address) {
+    std::shared_ptr<HttpConn> client(new HttpConn(application_));
+    client->init(fd, address);
+    {
+        std::lock_guard<std::mutex> lock(clients_mutex_);
+        clients_[fd] = client;
+    }
+    if (!epoller_->AddFd(fd, EPOLLIN | connection_events_)) {
+        CloseConnection(client);
+        return;
+    }
+    if (timeout_ms_ > 0) {
+        std::weak_ptr<HttpConn> weak_client(client);
+        timer_->add(fd, timeout_ms_, [this, weak_client]() {
+            if (std::shared_ptr<HttpConn> locked = weak_client.lock()) {
+                CloseConnection(locked);
+            }
+        });
+    }
+}
+
+std::shared_ptr<HttpConn> WebServer::FindClient(int fd) {
+    std::lock_guard<std::mutex> lock(clients_mutex_);
+    const auto found = clients_.find(fd);
+    return found == clients_.end() ? std::shared_ptr<HttpConn>() : found->second;
+}
+
+void WebServer::ExtendTimeout(const std::shared_ptr<HttpConn>& client) {
+    if (timeout_ms_ > 0) {
+        const int fd = client->GetFd();
+        if (fd >= 0) {
+            timer_->adjust(fd, timeout_ms_);
+        }
+    }
+}
+
+void WebServer::CloseConnection(const std::shared_ptr<HttpConn>& client) {
+    const int fd = client->GetFd();
+    if (fd < 0) {
+        return;
+    }
+    epoller_->DelFd(fd);
+    if (timeout_ms_ > 0) {
+        timer_->remove(fd);
+    }
+    {
+        std::lock_guard<std::mutex> lock(clients_mutex_);
+        const auto found = clients_.find(fd);
+        if (found != clients_.end() && found->second == client) {
+            clients_.erase(found);
+        }
+    }
+    client->Close();
+}
+
+void WebServer::DispatchRead(const std::shared_ptr<HttpConn>& client) {
+    ExtendTimeout(client);
+    thread_pool_->AddTask([this, client]() { OnRead(client); });
+}
+
+void WebServer::DispatchWrite(const std::shared_ptr<HttpConn>& client) {
+    ExtendTimeout(client);
+    thread_pool_->AddTask([this, client]() { OnWrite(client); });
+}
+
+void WebServer::OnRead(const std::shared_ptr<HttpConn>& client) {
+    int saved_errno = 0;
+    const ssize_t size = client->read(&saved_errno);
+    if (size == 0 ||
+        (size < 0 && saved_errno != EAGAIN && saved_errno != EWOULDBLOCK)) {
+        CloseConnection(client);
+        return;
+    }
+    RearmAfterProcess(client);
+}
+
+void WebServer::RearmAfterProcess(const std::shared_ptr<HttpConn>& client) {
+    if (client->IsClosed()) {
+        return;
+    }
+    const int fd = client->GetFd();
+    if (client->process()) {
+        epoller_->ModFd(fd, EPOLLOUT | connection_events_);
+    } else {
+        epoller_->ModFd(fd, EPOLLIN | connection_events_);
+    }
+}
+
+void WebServer::OnWrite(const std::shared_ptr<HttpConn>& client) {
+    int saved_errno = 0;
+    const ssize_t size = client->write(&saved_errno);
+    if (client->ToWriteBytes() != 0) {
+        if (size < 0 && saved_errno != EAGAIN && saved_errno != EWOULDBLOCK) {
+            CloseConnection(client);
+            return;
+        }
+        const int fd = client->GetFd();
+        if (fd >= 0) {
+            epoller_->ModFd(fd, EPOLLOUT | connection_events_);
+        }
+        return;
+    }
+
+    if (client->IsKeepAlive() && client->BeginNextRequest()) {
+        const int fd = client->GetFd();
+        if (fd >= 0) {
+            epoller_->ModFd(fd, EPOLLIN | connection_events_);
+        }
+        return;
+    }
+    CloseConnection(client);
+}

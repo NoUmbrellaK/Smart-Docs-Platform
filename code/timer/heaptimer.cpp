@@ -5,28 +5,29 @@
  */ 
 #include "heaptimer.h"
 
+#include <climits>
+
 void HeapTimer::siftup_(size_t i) {
-    assert(i >= 0 && i < heap_.size());
-    size_t j = (i - 1) / 2;
-    while(j >= 0) {
+    assert(i < heap_.size());
+    while(i > 0) {
+        size_t j = (i - 1) / 2;
         if(heap_[j] < heap_[i]) { break; }
         SwapNode_(i, j);
         i = j;
-        j = (i - 1) / 2;
     }
 }
 
 void HeapTimer::SwapNode_(size_t i, size_t j) {
-    assert(i >= 0 && i < heap_.size());
-    assert(j >= 0 && j < heap_.size());
+    assert(i < heap_.size());
+    assert(j < heap_.size());
     std::swap(heap_[i], heap_[j]);
     ref_[heap_[i].id] = i;
     ref_[heap_[j].id] = j;
 } 
 
 bool HeapTimer::siftdown_(size_t index, size_t n) {
-    assert(index >= 0 && index < heap_.size());
-    assert(n >= 0 && n <= heap_.size());
+    assert(index < heap_.size());
+    assert(n <= heap_.size());
     size_t i = index;
     size_t j = i * 2 + 1;
     while(j < n) {
@@ -41,6 +42,7 @@ bool HeapTimer::siftdown_(size_t index, size_t n) {
 
 void HeapTimer::add(int id, int timeout, const TimeoutCallBack& cb) {
     assert(id >= 0);
+    std::lock_guard<std::mutex> lock(mutex_);
     size_t i;
     if(ref_.count(id) == 0) {
         /* 新节点：堆尾插入，调整堆 */
@@ -62,18 +64,30 @@ void HeapTimer::add(int id, int timeout, const TimeoutCallBack& cb) {
 
 void HeapTimer::doWork(int id) {
     /* 删除指定id结点，并触发回调函数 */
-    if(heap_.empty() || ref_.count(id) == 0) {
-        return;
+    TimeoutCallBack callback;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(heap_.empty() || ref_.count(id) == 0) {
+            return;
+        }
+        size_t i = ref_[id];
+        callback = heap_[i].cb;
+        del_(i);
     }
-    size_t i = ref_[id];
-    TimerNode node = heap_[i];
-    node.cb();
-    del_(i);
+    callback();
+}
+
+void HeapTimer::remove(int id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto found = ref_.find(id);
+    if (found != ref_.end()) {
+        del_(found->second);
+    }
 }
 
 void HeapTimer::del_(size_t index) {
     /* 删除指定位置的结点 */
-    assert(!heap_.empty() && index >= 0 && index < heap_.size());
+    assert(!heap_.empty() && index < heap_.size());
     /* 将要删除的结点换到队尾，然后调整堆 */
     size_t i = index;
     size_t n = heap_.size() - 1;
@@ -91,41 +105,58 @@ void HeapTimer::del_(size_t index) {
 
 void HeapTimer::adjust(int id, int timeout) {
     /* 调整指定id的结点 */
-    assert(!heap_.empty() && ref_.count(id) > 0);
-    heap_[ref_[id]].expires = Clock::now() + MS(timeout);;
-    siftdown_(ref_[id], heap_.size());
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto found = ref_.find(id);
+    if (found == ref_.end()) {
+        return;
+    }
+    heap_[found->second].expires = Clock::now() + MS(timeout);
+    if (!siftdown_(found->second, heap_.size())) {
+        siftup_(found->second);
+    }
 }
 
 void HeapTimer::tick() {
     /* 清除超时结点 */
-    if(heap_.empty()) {
-        return;
-    }
-    while(!heap_.empty()) {
-        TimerNode node = heap_.front();
-        if(std::chrono::duration_cast<MS>(node.expires - Clock::now()).count() > 0) { 
-            break; 
+    while(true) {
+        TimeoutCallBack callback;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if(heap_.empty()) {
+                return;
+            }
+            TimerNode node = heap_.front();
+            if(std::chrono::duration_cast<MS>(node.expires - Clock::now()).count() > 0) {
+                return;
+            }
+            callback = node.cb;
+            del_(0);
         }
-        node.cb();
-        pop();
+        callback();
     }
 }
 
 void HeapTimer::pop() {
+    std::lock_guard<std::mutex> lock(mutex_);
     assert(!heap_.empty());
     del_(0);
 }
 
 void HeapTimer::clear() {
+    std::lock_guard<std::mutex> lock(mutex_);
     ref_.clear();
     heap_.clear();
 }
 
 int HeapTimer::GetNextTick() {
     tick();
-    size_t res = -1;
+    std::lock_guard<std::mutex> lock(mutex_);
+    int res = -1;
     if(!heap_.empty()) {
-        res = std::chrono::duration_cast<MS>(heap_.front().expires - Clock::now()).count();
+        const auto remaining = std::chrono::duration_cast<MS>(
+            heap_.front().expires - Clock::now()).count();
+        res = remaining > INT_MAX
+            ? INT_MAX : static_cast<int>(remaining);
         if(res < 0) { res = 0; }
     }
     return res;

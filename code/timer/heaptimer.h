@@ -14,6 +14,7 @@
 #include <functional> 
 #include <assert.h> 
 #include <chrono>
+#include <mutex>
 #include "../log/log.h"
 
 typedef std::function<void()> TimeoutCallBack;
@@ -41,6 +42,8 @@ public:
 
     void doWork(int id);
 
+    void remove(int id);
+
     void clear();
 
     void tick();
@@ -61,6 +64,7 @@ private:
     std::vector<TimerNode> heap_;
 
     std::unordered_map<int, size_t> ref_;
+    std::mutex mutex_;
 };
 
 #endif //HEAP_TIMER_H

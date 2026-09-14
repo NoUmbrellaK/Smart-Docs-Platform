@@ -2,75 +2,65 @@
  * @Author       : mark
  * @Date         : 2020-06-15
  * @copyleft Apache 2.0
- */ 
+ * Modified for Smart Docs Platform, 2026.
+ */
+#pragma once
 
-#ifndef HTTP_CONN_H
-#define HTTP_CONN_H
-
-#include <sys/types.h>
-#include <sys/uio.h>     // readv/writev
-#include <arpa/inet.h>   // sockaddr_in
-#include <stdlib.h>      // atoi()
-#include <errno.h>      
-
-#include "../log/log.h"
-#include "../pool/sqlconnRAII.h"
-#include "../buffer/buffer.h"
 #include "httprequest.h"
 #include "httpresponse.h"
+#include "router.h"
+#include "../buffer/buffer.h"
+
+#include <arpa/inet.h>
+#include <atomic>
+#include <cstdint>
+#include <memory>
+#include <mutex>
+#include <sys/types.h>
+
+class Application;
 
 class HttpConn {
 public:
-    HttpConn();
-
+    explicit HttpConn(std::shared_ptr<const Application> application);
     ~HttpConn();
 
-    void init(int sockFd, const sockaddr_in& addr);
+    HttpConn(const HttpConn&) = delete;
+    HttpConn& operator=(const HttpConn&) = delete;
 
-    ssize_t read(int* saveErrno);
-
-    ssize_t write(int* saveErrno);
-
+    void init(int socket_fd, const sockaddr_in& address);
+    ssize_t read(int* saved_errno);
+    ssize_t write(int* saved_errno);
+    bool process();
+    bool BeginNextRequest();
     void Close();
 
     int GetFd() const;
-
     int GetPort() const;
-
     const char* GetIP() const;
-    
     sockaddr_in GetAddr() const;
-    
-    bool process();
-
-    int ToWriteBytes() { 
-        return iov_[0].iov_len + iov_[1].iov_len; 
-    }
-
-    bool IsKeepAlive() const {
-        return request_.IsKeepAlive();
-    }
+    uint64_t ToWriteBytes() const;
+    bool IsKeepAlive() const;
+    bool IsClosed() const;
 
     static bool isET;
-    static const char* srcDir;
     static std::atomic<int> userCount;
-    
+
 private:
-   
+    uint64_t ToWriteBytesUnlocked() const;
+    void SetResponse(HttpResponse response, bool keep_alive);
+    void SetParseError(const HttpParseResult& result);
+
+    std::shared_ptr<const Application> application_;
+    mutable std::mutex mutex_;
     int fd_;
-    struct  sockaddr_in addr_;
+    sockaddr_in address_;
+    bool closed_;
+    bool keep_alive_;
+    size_t response_offset_;
 
-    bool isClose_;
-    
-    int iovCnt_;
-    struct iovec iov_[2];
-    
-    Buffer readBuff_; // 读缓冲区
-    Buffer writeBuff_; // 写缓冲区
-
+    Buffer read_buffer_;
     HttpRequest request_;
-    HttpResponse response_;
+    std::unique_ptr<RequestBodyHandler> body_handler_;
+    std::unique_ptr<HttpResponse> response_;
 };
-
-
-#endif //HTTP_CONN_H

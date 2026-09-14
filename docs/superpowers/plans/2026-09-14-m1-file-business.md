@@ -372,7 +372,7 @@ Expected: all tests pass; the example contains no real credential.
 - Produces: `RequestHead`, `HttpRequestParser::Consume(Buffer&)`, `RequestBodyHandler::OnData/Finish`, `Router::Prepare(const RequestHead&)`, and `HttpResponse::Json/File`.
 - `WebServer` owns a shared `Application`; every `HttpConn` receives the same immutable route table and per-request dependencies.
 
-- [ ] **Step 1: Write failing request-framing tests**
+- [x] **Step 1: Write failing request-framing tests**
 
 Tests must cover:
 
@@ -389,7 +389,7 @@ TEST_CASE(pipelined_second_request_is_rejected);
 
 `request_body_can_arrive_across_reads` first feeds headers plus two body bytes and expects `NeedBody`, then feeds the remaining three bytes and expects `Complete` with exactly five bytes delivered.
 
-- [ ] **Step 2: Define the HTTP interfaces**
+- [x] **Step 2: Define the HTTP interfaces**
 
 ```cpp
 struct RequestHead {
@@ -420,7 +420,7 @@ public:
 
 Route patterns contain literal segments and `{name}` parameters only. Percent-decode path segments once, reject invalid escapes, encoded `/`, NUL, `.` and `..`, and keep query values separate from the path.
 
-- [ ] **Step 3: Replace request parsing and response representation**
+- [x] **Step 3: Replace request parsing and response representation**
 
 Parser states are `RequestLine`, `Headers`, `Body`, `Complete`, and `Error`; parser state persists until a response completes. Normalize header names to lowercase, trim optional whitespace, require one valid decimal `Content-Length`, and allow bodyless GET/DELETE requests without that header.
 
@@ -444,7 +444,7 @@ public:
 
 JSON responses include `Content-Type: application/json; charset=utf-8`, `Content-Length`, `X-Content-Type-Options: nosniff`, and `Connection`. File descriptors close exactly once in `HttpResponse` destruction/move assignment.
 
-- [ ] **Step 4: Wire the connection state machine and health routes**
+- [x] **Step 4: Wire the connection state machine and health routes**
 
 `HttpConn::process()` parses a head, calls `Router::Prepare` before consuming a body, streams available bytes to the returned handler, and builds the response only after exactly `Content-Length` bytes. `HttpConn::write()` sends headers/body with `writev`, then file bytes with nonblocking `sendfile`; `EAGAIN` keeps `EPOLLOUT` armed.
 
@@ -459,7 +459,7 @@ GET /api/v1/health/ready -> 503 {"status":"not_ready","request_id":"..."}
 
 Readiness becomes real in Task 4. The static app shell is served only from an explicit allowlist and cannot resolve arbitrary paths.
 
-- [ ] **Step 5: Run tests and a socket smoke check**
+- [x] **Step 5: Run tests and a socket smoke check**
 
 ```bash
 make test
@@ -474,7 +474,7 @@ wait "$server_pid" || true
 
 Expected: all unit tests pass and curl returns a JSON `live` response. Use a `mktemp -d` path in the actual run and remove only that exact path in the shell trap.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add code/http code/server code/app/application.* code/main.cpp test/unit/http_request_test.cpp test/unit/router_test.cpp test/unit/http_response_test.cpp test/unit/webserver_socket_test.cpp

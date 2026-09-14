@@ -1,19 +1,25 @@
-/*
- * @Author       : mark
- * @Date         : 2020-06-18
- * @copyleft Apache 2.0
- */ 
-#include <unistd.h>
+#include "app/application.h"
+#include "app/config.h"
+#include "core/app_error.h"
 #include "server/webserver.h"
 
-int main() {
-    /* 守护进程 后台运行 */
-    //daemon(1, 0); 
+#include <csignal>
+#include <exception>
+#include <iostream>
+#include <memory>
 
-    WebServer server(
-        1316, 3, 60000, false,             /* 端口 ET模式 timeoutMs 优雅退出  */
-        3306, "root", "root", "webserver", /* Mysql配置 */
-        12, 6, true, 1, 1024);             /* 连接池数量 线程池数量 日志开关 日志等级 日志异步队列容量 */
-    server.Start();
-} 
-  
+int main() {
+    std::signal(SIGPIPE, SIG_IGN);
+    try {
+        const AppConfig config = AppConfig::LoadFromEnvironment();
+        std::shared_ptr<Application> application(new Application());
+        WebServer server(config, application);
+        server.Start();
+        return 0;
+    } catch (const AppError& error) {
+        std::cerr << error.code << ": " << error.message << '\n';
+    } catch (const std::exception&) {
+        std::cerr << "internal_error: server startup failed\n";
+    }
+    return 1;
+}

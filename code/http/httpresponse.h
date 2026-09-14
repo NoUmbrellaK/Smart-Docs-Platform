@@ -2,53 +2,52 @@
  * @Author       : mark
  * @Date         : 2020-06-25
  * @copyleft Apache 2.0
- */ 
-#ifndef HTTP_RESPONSE_H
-#define HTTP_RESPONSE_H
+ * Modified for Smart Docs Platform, 2026.
+ */
+#pragma once
 
-#include <unordered_map>
-#include <fcntl.h>       // open
-#include <unistd.h>      // close
-#include <sys/stat.h>    // stat
-#include <sys/mman.h>    // mmap, munmap
+#include <cstdint>
+#include <nlohmann/json.hpp>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "../buffer/buffer.h"
-#include "../log/log.h"
+struct FileRegion {
+    int fd = -1;
+    uint64_t offset = 0;
+    uint64_t length = 0;
+};
 
 class HttpResponse {
 public:
+    using Headers = std::vector<std::pair<std::string, std::string>>;
+
     HttpResponse();
     ~HttpResponse();
+    HttpResponse(const HttpResponse&) = delete;
+    HttpResponse& operator=(const HttpResponse&) = delete;
+    HttpResponse(HttpResponse&& other) noexcept;
+    HttpResponse& operator=(HttpResponse&& other) noexcept;
 
-    void Init(const std::string& srcDir, std::string& path, bool isKeepAlive = false, int code = -1);
-    void MakeResponse(Buffer& buff);
-    void UnmapFile();
-    char* File();
-    size_t FileLen() const;
-    void ErrorContent(Buffer& buff, std::string message);
-    int Code() const { return code_; }
+    static HttpResponse Json(int status, const nlohmann::json& body,
+                             bool keep_alive = false,
+                             Headers headers = Headers());
+    static HttpResponse File(int status, FileRegion region, Headers headers,
+                             bool keep_alive = false);
+
+    int status() const;
+    const std::string& head_and_body() const;
+    FileRegion& file_region();
+    const FileRegion& file_region() const;
 
 private:
-    void AddStateLine_(Buffer &buff);
-    void AddHeader_(Buffer &buff);
-    void AddContent_(Buffer &buff);
+    static HttpResponse Build(int status, uint64_t content_length,
+                              bool keep_alive, Headers headers,
+                              std::string body, FileRegion region);
+    void CloseFileRegion();
 
-    void ErrorHtml_();
-    std::string GetFileType_();
+    int status_;
+    std::string head_and_body_;
+    FileRegion file_region_;
 
-    int code_;
-    bool isKeepAlive_;
-
-    std::string path_;
-    std::string srcDir_;
-    
-    char* mmFile_; 
-    struct stat mmFileStat_;
-
-    static const std::unordered_map<std::string, std::string> SUFFIX_TYPE;
-    static const std::unordered_map<int, std::string> CODE_STATUS;
-    static const std::unordered_map<int, std::string> CODE_PATH;
 };
-
-
-#endif //HTTP_RESPONSE_H

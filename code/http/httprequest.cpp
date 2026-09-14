@@ -2,266 +2,330 @@
  * @Author       : mark
  * @Date         : 2020-06-26
  * @copyleft Apache 2.0
- */ 
+ * Modified for Smart Docs Platform, 2026.
+ */
 #include "httprequest.h"
-using namespace std;
 
-const unordered_set<string> HttpRequest::DEFAULT_HTML{
-            "/index", "/register", "/login",
-             "/welcome", "/video", "/picture", };
+#include <algorithm>
+#include <cctype>
+#include <limits>
 
-const unordered_map<string, int> HttpRequest::DEFAULT_HTML_TAG {
-            {"/register.html", 0}, {"/login.html", 1},  };
+namespace {
 
-void HttpRequest::Init() {
-    method_ = path_ = version_ = body_ = "";
-    state_ = REQUEST_LINE;
-    header_.clear();
-    post_.clear();
+const size_t kMaxRequestLineBytes = 8192;
+const size_t kMaxHeaderBytes = 32768;
+
+std::string Lower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+        return static_cast<char>(std::tolower(ch));
+    });
+    return value;
 }
 
-bool HttpRequest::IsKeepAlive() const {
-    if(header_.count("Connection") == 1) {
-        return header_.find("Connection")->second == "keep-alive" && version_ == "1.1";
+std::string Trim(const std::string& value) {
+    size_t first = 0;
+    while (first < value.size() &&
+           (value[first] == ' ' || value[first] == '\t')) {
+        ++first;
     }
-    return false;
+    size_t last = value.size();
+    while (last > first &&
+           (value[last - 1] == ' ' || value[last - 1] == '\t')) {
+        --last;
+    }
+    return value.substr(first, last - first);
 }
 
-bool HttpRequest::parse(Buffer& buff) {
-    const char CRLF[] = "\r\n";
-    if(buff.ReadableBytes() <= 0) {
+bool IsTokenCharacter(unsigned char ch) {
+    if (std::isalnum(ch)) {
+        return true;
+    }
+    const std::string punctuation("!#$%&'*+-.^_`|~");
+    return punctuation.find(static_cast<char>(ch)) != std::string::npos;
+}
+
+bool IsUppercaseMethod(const std::string& method) {
+    if (method.empty()) {
         return false;
     }
-    while(buff.ReadableBytes() && state_ != FINISH) {
-        const char* lineEnd = search(buff.Peek(), buff.BeginWriteConst(), CRLF, CRLF + 2);
-        std::string line(buff.Peek(), lineEnd);
-        switch(state_)
-        {
-        case REQUEST_LINE:
-            if(!ParseRequestLine_(line)) {
-                return false;
-            }
-            ParsePath_();
-            break;    
-        case HEADERS:
-            ParseHeader_(line);
-            if(buff.ReadableBytes() <= 2) {
-                state_ = FINISH;
-            }
-            break;
-        case BODY:
-            ParseBody_(line);
-            break;
-        default:
-            break;
+    for (unsigned char ch : method) {
+        if (!IsTokenCharacter(ch) || (std::isalpha(ch) && !std::isupper(ch))) {
+            return false;
         }
-        if(lineEnd == buff.BeginWrite()) { break; }
-        buff.RetrieveUntil(lineEnd + 2);
     }
-    LOG_DEBUG("[%s], [%s], [%s]", method_.c_str(), path_.c_str(), version_.c_str());
     return true;
 }
 
-void HttpRequest::ParsePath_() {
-    if(path_ == "/") {
-        path_ = "/index.html"; 
+bool ParseUnsignedDecimal(const std::string& value, uint64_t* parsed) {
+    if (value.empty()) {
+        return false;
     }
-    else {
-        for(auto &item: DEFAULT_HTML) {
-            if(item == path_) {
-                path_ += ".html";
-                break;
-            }
+    uint64_t result = 0;
+    for (unsigned char ch : value) {
+        if (!std::isdigit(ch)) {
+            return false;
         }
+        const uint64_t digit = static_cast<uint64_t>(ch - '0');
+        if (result > (std::numeric_limits<uint64_t>::max() - digit) / 10) {
+            return false;
+        }
+        result = result * 10 + digit;
     }
+    *parsed = result;
+    return true;
 }
 
-bool HttpRequest::ParseRequestLine_(const string& line) {
-    regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");
-    smatch subMatch;
-    if(regex_match(line, subMatch, patten)) {   
-        method_ = subMatch[1];
-        path_ = subMatch[2];
-        version_ = subMatch[3];
-        state_ = HEADERS;
-        return true;
+bool MethodRequiresLength(const std::string& method) {
+    return method == "POST" || method == "PUT" || method == "PATCH";
+}
+
+bool MethodForbidsBody(const std::string& method) {
+    return method == "GET" || method == "DELETE" || method == "HEAD";
+}
+
+bool ContainsCommaToken(const std::string& value, const std::string& expected) {
+    size_t start = 0;
+    while (start <= value.size()) {
+        const size_t comma = value.find(',', start);
+        const size_t end = comma == std::string::npos ? value.size() : comma;
+        if (Lower(Trim(value.substr(start, end - start))) == expected) {
+            return true;
+        }
+        if (comma == std::string::npos) {
+            break;
+        }
+        start = comma + 1;
     }
-    LOG_ERROR("RequestLine Error");
     return false;
 }
 
-void HttpRequest::ParseHeader_(const string& line) {
-    regex patten("^([^:]*): ?(.*)$");
-    smatch subMatch;
-    if(regex_match(line, subMatch, patten)) {
-        header_[subMatch[1]] = subMatch[2];
+}  // namespace
+
+HttpRequest::HttpRequest() {
+    Reset();
+}
+
+void HttpRequest::Reset() {
+    state_ = State::RequestLine;
+    head_ = RequestHead();
+    body_remaining_ = 0;
+    header_bytes_ = 0;
+    saw_content_length_ = false;
+    saw_transfer_encoding_ = false;
+    error_code_.clear();
+    error_message_.clear();
+}
+
+HttpParseResult HttpRequest::Result(HttpParseStatus status) const {
+    return HttpParseResult{status, std::string(), std::string()};
+}
+
+HttpParseResult HttpRequest::Fail(const std::string& code,
+                                  const std::string& message) {
+    state_ = State::Error;
+    error_code_ = code;
+    error_message_ = message;
+    return HttpParseResult{HttpParseStatus::Error, code, message};
+}
+
+HttpParseResult HttpRequest::ParseRequestLine(const std::string& line) {
+    const size_t first_space = line.find(' ');
+    if (first_space == std::string::npos) {
+        return Fail("invalid_request_line", "request line must contain method, target, and version");
     }
-    else {
-        state_ = BODY;
+    const size_t second_space = line.find(' ', first_space + 1);
+    if (second_space == std::string::npos ||
+        line.find(' ', second_space + 1) != std::string::npos) {
+        return Fail("invalid_request_line", "request line must contain exactly three fields");
     }
+
+    head_.method = line.substr(0, first_space);
+    std::string target = line.substr(first_space + 1,
+                                     second_space - first_space - 1);
+    const std::string protocol = line.substr(second_space + 1);
+    if (!IsUppercaseMethod(head_.method) || target.empty() || target[0] != '/') {
+        return Fail("invalid_request_line", "invalid method or request target");
+    }
+    if (protocol != "HTTP/1.1") {
+        return Fail("http_version_not_supported", "only HTTP/1.1 is supported");
+    }
+    if (target.find('#') != std::string::npos) {
+        return Fail("invalid_request_target", "fragments are not allowed in request targets");
+    }
+
+    const size_t query = target.find('?');
+    head_.path = target.substr(0, query);
+    if (query != std::string::npos) {
+        head_.query = target.substr(query + 1);
+    }
+    head_.version = "1.1";
+    state_ = State::Headers;
+    return Result(HttpParseStatus::NeedMore);
 }
 
-void HttpRequest::ParseBody_(const string& line) {
-    body_ = line;
-    ParsePost_();
-    state_ = FINISH;
-    LOG_DEBUG("Body:%s, len:%d", line.c_str(), line.size());
+HttpParseResult HttpRequest::ParseHeader(const std::string& line) {
+    const size_t colon = line.find(':');
+    if (colon == std::string::npos || colon == 0) {
+        return Fail("invalid_header", "header must contain a non-empty field name");
+    }
+
+    const std::string raw_name = line.substr(0, colon);
+    for (unsigned char ch : raw_name) {
+        if (!IsTokenCharacter(ch)) {
+            return Fail("invalid_header", "header field name is invalid");
+        }
+    }
+    const std::string name = Lower(raw_name);
+    const std::string value = Trim(line.substr(colon + 1));
+    if (head_.headers.count(name) != 0) {
+        if (name == "content-length") {
+            return Fail("ambiguous_request", "duplicate Content-Length is not allowed");
+        }
+        return Fail("duplicate_header", "duplicate header fields are not supported");
+    }
+    head_.headers.emplace(name, value);
+
+    if (name == "content-length") {
+        saw_content_length_ = true;
+        if (!ParseUnsignedDecimal(value, &head_.content_length)) {
+            return Fail("invalid_content_length", "Content-Length must be an unsigned decimal integer");
+        }
+    } else if (name == "transfer-encoding") {
+        saw_transfer_encoding_ = true;
+    }
+    return Result(HttpParseStatus::NeedMore);
 }
 
-int HttpRequest::ConverHex(char ch) {
-    if(ch >= 'A' && ch <= 'F') return ch -'A' + 10;
-    if(ch >= 'a' && ch <= 'f') return ch -'a' + 10;
-    return ch;
+HttpParseResult HttpRequest::FinishHeaders(size_t unread_bytes) {
+    const auto host = head_.headers.find("host");
+    if (host == head_.headers.end() || host->second.empty()) {
+        return Fail("host_required", "HTTP/1.1 requests require a Host header");
+    }
+    if (saw_content_length_ && saw_transfer_encoding_) {
+        return Fail("ambiguous_request", "Content-Length cannot be combined with Transfer-Encoding");
+    }
+    if (saw_transfer_encoding_) {
+        return Fail("transfer_encoding_not_supported", "Transfer-Encoding is not supported");
+    }
+    if (MethodRequiresLength(head_.method) && !saw_content_length_) {
+        return Fail("length_required", "this method requires Content-Length");
+    }
+    if (MethodForbidsBody(head_.method) && head_.content_length != 0) {
+        return Fail("body_not_allowed", "this method does not accept a request body");
+    }
+
+    const auto connection = head_.headers.find("connection");
+    head_.keep_alive = connection == head_.headers.end() ||
+                       !ContainsCommaToken(connection->second, "close");
+    body_remaining_ = head_.content_length;
+    if (body_remaining_ == 0) {
+        if (unread_bytes != 0) {
+            return Fail("pipelining_not_supported", "pipelined requests are not supported");
+        }
+        state_ = State::Complete;
+        return Result(HttpParseStatus::Complete);
+    }
+    state_ = State::Body;
+    return Result(HttpParseStatus::HeadersComplete);
 }
 
-void HttpRequest::ParsePost_() {
-    if(method_ == "POST" && header_["Content-Type"] == "application/x-www-form-urlencoded") {
-        ParseFromUrlencoded_();
-        if(DEFAULT_HTML_TAG.count(path_)) {
-            int tag = DEFAULT_HTML_TAG.find(path_)->second;
-            LOG_DEBUG("Tag:%d", tag);
-            if(tag == 0 || tag == 1) {
-                bool isLogin = (tag == 1);
-                if(UserVerify(post_["username"], post_["password"], isLogin)) {
-                    path_ = "/welcome.html";
-                } 
-                else {
-                    path_ = "/error.html";
-                }
+HttpParseResult HttpRequest::ParseHead(Buffer& buffer) {
+    if (state_ == State::Error) {
+        return HttpParseResult{HttpParseStatus::Error, error_code_, error_message_};
+    }
+    if (state_ == State::Complete) {
+        return Result(HttpParseStatus::Complete);
+    }
+    if (state_ == State::Body) {
+        return Result(HttpParseStatus::HeadersComplete);
+    }
+
+    const char delimiter[] = "\r\n";
+    while (state_ == State::RequestLine || state_ == State::Headers) {
+        const char* const begin = buffer.Peek();
+        const char* const end = buffer.BeginWriteConst();
+        const char* const line_end = std::search(begin, end, delimiter, delimiter + 2);
+        if (line_end == end) {
+            if (state_ == State::RequestLine && buffer.ReadableBytes() > kMaxRequestLineBytes) {
+                return Fail("request_line_too_large", "request line exceeds 8192 bytes");
             }
-        }
-    }   
-}
-
-void HttpRequest::ParseFromUrlencoded_() {
-    if(body_.size() == 0) { return; }
-
-    string key, value;
-    int num = 0;
-    int n = body_.size();
-    int i = 0, j = 0;
-
-    for(; i < n; i++) {
-        char ch = body_[i];
-        switch (ch) {
-        case '=':
-            key = body_.substr(j, i - j);
-            j = i + 1;
-            break;
-        case '+':
-            body_[i] = ' ';
-            break;
-        case '%':
-            num = ConverHex(body_[i + 1]) * 16 + ConverHex(body_[i + 2]);
-            body_[i + 2] = num % 10 + '0';
-            body_[i + 1] = num / 10 + '0';
-            i += 2;
-            break;
-        case '&':
-            value = body_.substr(j, i - j);
-            j = i + 1;
-            post_[key] = value;
-            LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
-            break;
-        default:
-            break;
-        }
-    }
-    assert(j <= i);
-    if(post_.count(key) == 0 && j < i) {
-        value = body_.substr(j, i - j);
-        post_[key] = value;
-    }
-}
-
-bool HttpRequest::UserVerify(const string &name, const string &pwd, bool isLogin) {
-    if(name == "" || pwd == "") { return false; }
-    LOG_INFO("Verify name:%s pwd:%s", name.c_str(), pwd.c_str());
-    MYSQL* sql;
-    SqlConnRAII(&sql,  SqlConnPool::Instance());
-    assert(sql);
-    
-    bool flag = false;
-    unsigned int j = 0;
-    char order[256] = { 0 };
-    MYSQL_FIELD *fields = nullptr;
-    MYSQL_RES *res = nullptr;
-    
-    if(!isLogin) { flag = true; }
-    /* 查询用户及密码 */
-    snprintf(order, 256, "SELECT username, password FROM user WHERE username='%s' LIMIT 1", name.c_str());
-    LOG_DEBUG("%s", order);
-
-    if(mysql_query(sql, order)) { 
-        mysql_free_result(res);
-        return false; 
-    }
-    res = mysql_store_result(sql);
-    j = mysql_num_fields(res);
-    fields = mysql_fetch_fields(res);
-
-    while(MYSQL_ROW row = mysql_fetch_row(res)) {
-        LOG_DEBUG("MYSQL ROW: %s %s", row[0], row[1]);
-        string password(row[1]);
-        /* 注册行为 且 用户名未被使用*/
-        if(isLogin) {
-            if(pwd == password) { flag = true; }
-            else {
-                flag = false;
-                LOG_DEBUG("pwd error!");
+            if (state_ == State::Headers &&
+                header_bytes_ + buffer.ReadableBytes() > kMaxHeaderBytes) {
+                return Fail("headers_too_large", "request headers exceed 32768 bytes");
             }
-        } 
-        else { 
-            flag = false; 
-            LOG_DEBUG("user used!");
+            return Result(HttpParseStatus::NeedMore);
+        }
+
+        const size_t line_size = static_cast<size_t>(line_end - begin);
+        if (state_ == State::RequestLine && line_size > kMaxRequestLineBytes) {
+            return Fail("request_line_too_large", "request line exceeds 8192 bytes");
+        }
+        if (state_ == State::Headers && header_bytes_ + line_size + 2 > kMaxHeaderBytes) {
+            return Fail("headers_too_large", "request headers exceed 32768 bytes");
+        }
+
+        const std::string line(begin, line_end);
+        buffer.RetrieveUntil(line_end + 2);
+        if (state_ == State::RequestLine) {
+            const HttpParseResult result = ParseRequestLine(line);
+            if (result.status == HttpParseStatus::Error) {
+                return result;
+            }
+            continue;
+        }
+
+        header_bytes_ += line_size + 2;
+        if (line.empty()) {
+            return FinishHeaders(buffer.ReadableBytes());
+        }
+        const HttpParseResult result = ParseHeader(line);
+        if (result.status == HttpParseStatus::Error) {
+            return result;
         }
     }
-    mysql_free_result(res);
+    return Result(HttpParseStatus::NeedMore);
+}
 
-    /* 注册行为 且 用户名未被使用*/
-    if(!isLogin && flag == true) {
-        LOG_DEBUG("regirster!");
-        bzero(order, 256);
-        snprintf(order, 256,"INSERT INTO user(username, password) VALUES('%s','%s')", name.c_str(), pwd.c_str());
-        LOG_DEBUG( "%s", order);
-        if(mysql_query(sql, order)) { 
-            LOG_DEBUG( "Insert error!");
-            flag = false; 
+HttpParseResult HttpRequest::ConsumeBody(Buffer& buffer,
+                                         const BodyConsumer& consumer) {
+    if (state_ == State::Error) {
+        return HttpParseResult{HttpParseStatus::Error, error_code_, error_message_};
+    }
+    if (state_ == State::Complete) {
+        if (buffer.ReadableBytes() != 0) {
+            return Fail("pipelining_not_supported", "pipelined requests are not supported");
         }
-        flag = true;
+        return Result(HttpParseStatus::Complete);
     }
-    SqlConnPool::Instance()->FreeConn(sql);
-    LOG_DEBUG( "UserVerify success!!");
-    return flag;
-}
-
-std::string HttpRequest::path() const{
-    return path_;
-}
-
-std::string& HttpRequest::path(){
-    return path_;
-}
-std::string HttpRequest::method() const {
-    return method_;
-}
-
-std::string HttpRequest::version() const {
-    return version_;
-}
-
-std::string HttpRequest::GetPost(const std::string& key) const {
-    assert(key != "");
-    if(post_.count(key) == 1) {
-        return post_.find(key)->second;
+    if (state_ != State::Body) {
+        return Fail("invalid_parser_state", "request headers are not complete");
     }
-    return "";
+
+    const uint64_t available = static_cast<uint64_t>(buffer.ReadableBytes());
+    const size_t consume = static_cast<size_t>(std::min(body_remaining_, available));
+    if (consume != 0) {
+        consumer(buffer.Peek(), consume);
+        buffer.Retrieve(consume);
+        body_remaining_ -= consume;
+    }
+    if (body_remaining_ != 0) {
+        return Result(HttpParseStatus::NeedMore);
+    }
+    if (buffer.ReadableBytes() != 0) {
+        return Fail("pipelining_not_supported", "pipelined requests are not supported");
+    }
+    state_ = State::Complete;
+    return Result(HttpParseStatus::Complete);
 }
 
-std::string HttpRequest::GetPost(const char* key) const {
-    assert(key != nullptr);
-    if(post_.count(key) == 1) {
-        return post_.find(key)->second;
-    }
-    return "";
+const RequestHead& HttpRequest::head() const {
+    return head_;
+}
+
+uint64_t HttpRequest::body_remaining() const {
+    return body_remaining_;
+}
+
+bool HttpRequest::BodyComplete() const {
+    return state_ == State::Complete;
 }

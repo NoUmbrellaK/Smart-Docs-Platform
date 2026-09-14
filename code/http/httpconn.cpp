@@ -2,122 +2,314 @@
  * @Author       : mark
  * @Date         : 2020-06-15
  * @copyleft Apache 2.0
- */ 
+ * Modified for Smart Docs Platform, 2026.
+ */
 #include "httpconn.h"
-using namespace std;
 
-const char* HttpConn::srcDir;
-std::atomic<int> HttpConn::userCount;
-bool HttpConn::isET;
+#include "../app/application.h"
+#include "../core/app_error.h"
 
-HttpConn::HttpConn() { 
-    fd_ = -1;
-    addr_ = { 0 };
-    isClose_ = true;
-};
+#include <algorithm>
+#include <cerrno>
+#include <climits>
+#include <cstring>
+#include <limits>
+#include <stdexcept>
+#include <sys/sendfile.h>
+#include <sys/uio.h>
+#include <unistd.h>
+#include <utility>
 
-HttpConn::~HttpConn() { 
-    Close(); 
-};
+std::atomic<int> HttpConn::userCount{0};
+bool HttpConn::isET = false;
 
-void HttpConn::init(int fd, const sockaddr_in& addr) {
-    assert(fd > 0);
-    userCount++;
-    addr_ = addr;
-    fd_ = fd;
-    writeBuff_.RetrieveAll();
-    readBuff_.RetrieveAll();
-    isClose_ = false;
-    LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, GetIP(), GetPort(), (int)userCount);
+namespace {
+
+int ParseErrorStatus(const std::string& code) {
+    if (code == "request_line_too_large") {
+        return 414;
+    }
+    if (code == "headers_too_large") {
+        return 431;
+    }
+    if (code == "length_required") {
+        return 411;
+    }
+    return 400;
 }
 
-void HttpConn::Close() {
-    response_.UnmapFile();
-    if(isClose_ == false){
-        isClose_ = true; 
-        userCount--;
-        close(fd_);
-        LOG_INFO("Client[%d](%s:%d) quit, UserCount:%d", fd_, GetIP(), GetPort(), (int)userCount);
+}  // namespace
+
+HttpConn::HttpConn(std::shared_ptr<const Application> application)
+    : application_(std::move(application)),
+      fd_(-1),
+      address_{},
+      closed_(true),
+      keep_alive_(false),
+      response_offset_(0) {
+    if (!application_) {
+        throw std::invalid_argument("HttpConn requires an application");
     }
 }
 
-int HttpConn::GetFd() const {
-    return fd_;
-};
-
-struct sockaddr_in HttpConn::GetAddr() const {
-    return addr_;
+HttpConn::~HttpConn() {
+    Close();
 }
 
-const char* HttpConn::GetIP() const {
-    return inet_ntoa(addr_.sin_addr);
+void HttpConn::init(int socket_fd, const sockaddr_in& address) {
+    if (socket_fd < 0) {
+        throw std::invalid_argument("HttpConn requires a valid socket");
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!closed_) {
+        throw std::logic_error("HttpConn cannot be initialized twice");
+    }
+    fd_ = socket_fd;
+    address_ = address;
+    closed_ = false;
+    keep_alive_ = false;
+    response_offset_ = 0;
+    read_buffer_.RetrieveAll();
+    request_.Reset();
+    body_handler_.reset();
+    response_.reset();
+    ++userCount;
 }
 
-int HttpConn::GetPort() const {
-    return addr_.sin_port;
-}
-
-ssize_t HttpConn::read(int* saveErrno) {
-    ssize_t len = -1;
-    do {
-        len = readBuff_.ReadFd(fd_, saveErrno);
-        if (len <= 0) {
-            break;
+ssize_t HttpConn::read(int* saved_errno) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (saved_errno == nullptr || closed_) {
+        if (saved_errno != nullptr) {
+            *saved_errno = EBADF;
         }
-    } while (isET);
-    return len;
-}
-
-ssize_t HttpConn::write(int* saveErrno) {
-    ssize_t len = -1;
+        return -1;
+    }
+    *saved_errno = 0;
+    ssize_t total = 0;
     do {
-        len = writev(fd_, iov_, iovCnt_);
-        if(len <= 0) {
-            *saveErrno = errno;
-            break;
-        }
-        if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } /* 传输结束 */
-        else if(static_cast<size_t>(len) > iov_[0].iov_len) {
-            iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
-            iov_[1].iov_len -= (len - iov_[0].iov_len);
-            if(iov_[0].iov_len) {
-                writeBuff_.RetrieveAll();
-                iov_[0].iov_len = 0;
+        int read_errno = 0;
+        const ssize_t size = read_buffer_.ReadFd(fd_, &read_errno);
+        if (size > 0) {
+            total += size;
+            if (!isET) {
+                break;
             }
+            continue;
         }
-        else {
-            iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len; 
-            iov_[0].iov_len -= len; 
-            writeBuff_.Retrieve(len);
+        if (size == 0) {
+            return total == 0 ? 0 : total;
         }
-    } while(isET || ToWriteBytes() > 10240);
-    return len;
+        *saved_errno = read_errno;
+        if (read_errno == EINTR) {
+            continue;
+        }
+        if ((read_errno == EAGAIN || read_errno == EWOULDBLOCK) && total > 0) {
+            return total;
+        }
+        return total > 0 ? total : -1;
+    } while (isET);
+    return total;
+}
+
+void HttpConn::SetResponse(HttpResponse response, bool keep_alive) {
+    response_.reset(new HttpResponse(std::move(response)));
+    response_offset_ = 0;
+    keep_alive_ = keep_alive;
+    body_handler_.reset();
+}
+
+void HttpConn::SetParseError(const HttpParseResult& result) {
+    const AppError error(ParseErrorStatus(result.code), result.code,
+                         result.message, false);
+    SetResponse(application_->ErrorResponse(error), false);
 }
 
 bool HttpConn::process() {
-    request_.Init();
-    if(readBuff_.ReadableBytes() <= 0) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (closed_) {
         return false;
     }
-    else if(request_.parse(readBuff_)) {
-        LOG_DEBUG("%s", request_.path().c_str());
-        response_.Init(srcDir, request_.path(), request_.IsKeepAlive(), 200);
-    } else {
-        response_.Init(srcDir, request_.path(), false, 400);
+    if (response_) {
+        return true;
+    }
+    if (read_buffer_.ReadableBytes() == 0 && request_.body_remaining() == 0) {
+        return false;
     }
 
-    response_.MakeResponse(writeBuff_);
-    /* 响应头 */
-    iov_[0].iov_base = const_cast<char*>(writeBuff_.Peek());
-    iov_[0].iov_len = writeBuff_.ReadableBytes();
-    iovCnt_ = 1;
+    try {
+        HttpParseResult result = request_.ParseHead(read_buffer_);
+        if (result.status == HttpParseStatus::Error) {
+            SetParseError(result);
+            return true;
+        }
+        if (result.status == HttpParseStatus::NeedMore) {
+            return false;
+        }
 
-    /* 文件 */
-    if(response_.FileLen() > 0  && response_.File()) {
-        iov_[1].iov_base = response_.File();
-        iov_[1].iov_len = response_.FileLen();
-        iovCnt_ = 2;
+        if (!body_handler_) {
+            body_handler_ = application_->Prepare(request_.head());
+        }
+        if (result.status == HttpParseStatus::HeadersComplete) {
+            result = request_.ConsumeBody(
+                read_buffer_, [this](const char* data, size_t size) {
+                    body_handler_->OnData(data, size);
+                });
+            if (result.status == HttpParseStatus::Error) {
+                SetParseError(result);
+                return true;
+            }
+            if (result.status == HttpParseStatus::NeedMore) {
+                return false;
+            }
+        }
+
+        SetResponse(body_handler_->Finish(), request_.head().keep_alive);
+        return true;
+    } catch (const AppError& error) {
+        SetResponse(application_->ErrorResponse(error), false);
+        return true;
+    } catch (const std::exception&) {
+        SetResponse(application_->InternalErrorResponse(), false);
+        return true;
     }
-    LOG_DEBUG("filesize:%d, %d  to %d", response_.FileLen() , iovCnt_, ToWriteBytes());
+}
+
+ssize_t HttpConn::write(int* saved_errno) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (saved_errno == nullptr || closed_ || !response_) {
+        if (saved_errno != nullptr) {
+            *saved_errno = EBADF;
+        }
+        return -1;
+    }
+    *saved_errno = 0;
+    ssize_t total = 0;
+
+    do {
+        ssize_t written = 0;
+        const std::string& buffered = response_->head_and_body();
+        if (response_offset_ < buffered.size()) {
+            struct iovec output{};
+            output.iov_base = const_cast<char*>(buffered.data() + response_offset_);
+            output.iov_len = buffered.size() - response_offset_;
+            written = writev(fd_, &output, 1);
+            if (written > 0) {
+                response_offset_ += static_cast<size_t>(written);
+            }
+        } else if (response_->file_region().length != 0) {
+            FileRegion& region = response_->file_region();
+            off_t offset = static_cast<off_t>(region.offset);
+            const uint64_t max_write = static_cast<uint64_t>(
+                std::numeric_limits<ssize_t>::max());
+            const size_t count = static_cast<size_t>(
+                std::min(region.length, max_write));
+            written = sendfile(fd_, region.fd, &offset, count);
+            if (written > 0) {
+                region.offset = static_cast<uint64_t>(offset);
+                region.length -= static_cast<uint64_t>(written);
+            }
+        } else {
+            break;
+        }
+
+        if (written > 0) {
+            total += written;
+            if (!isET) {
+                break;
+            }
+            continue;
+        }
+        if (written == 0) {
+            if (ToWriteBytesUnlocked() != 0) {
+                *saved_errno = EIO;
+                return total > 0 ? total : -1;
+            }
+            break;
+        }
+        *saved_errno = errno;
+        if (errno == EINTR) {
+            continue;
+        }
+        return total > 0 ? total : -1;
+    } while (isET);
+
+    return total;
+}
+
+bool HttpConn::BeginNextRequest() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (closed_ || !response_ || ToWriteBytesUnlocked() != 0 || !keep_alive_) {
+        return false;
+    }
+    response_.reset();
+    response_offset_ = 0;
+    keep_alive_ = false;
+    request_.Reset();
+    body_handler_.reset();
     return true;
+}
+
+void HttpConn::Close() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (closed_) {
+        return;
+    }
+    closed_ = true;
+    response_.reset();
+    body_handler_.reset();
+    if (fd_ >= 0) {
+        close(fd_);
+        fd_ = -1;
+    }
+    --userCount;
+}
+
+int HttpConn::GetFd() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return fd_;
+}
+
+int HttpConn::GetPort() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return ntohs(address_.sin_port);
+}
+
+const char* HttpConn::GetIP() const {
+    thread_local char address[INET_ADDRSTRLEN];
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (inet_ntop(AF_INET, &address_.sin_addr, address, sizeof(address)) == nullptr) {
+        std::strncpy(address, "0.0.0.0", sizeof(address));
+        address[sizeof(address) - 1] = '\0';
+    }
+    return address;
+}
+
+sockaddr_in HttpConn::GetAddr() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return address_;
+}
+
+uint64_t HttpConn::ToWriteBytesUnlocked() const {
+    if (!response_) {
+        return 0;
+    }
+    const uint64_t buffered = response_offset_ < response_->head_and_body().size()
+        ? static_cast<uint64_t>(response_->head_and_body().size() - response_offset_)
+        : 0;
+    return buffered + response_->file_region().length;
+}
+
+uint64_t HttpConn::ToWriteBytes() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return ToWriteBytesUnlocked();
+}
+
+bool HttpConn::IsKeepAlive() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return keep_alive_;
+}
+
+bool HttpConn::IsClosed() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return closed_;
 }
