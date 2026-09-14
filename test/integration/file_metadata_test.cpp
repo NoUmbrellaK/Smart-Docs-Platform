@@ -328,7 +328,7 @@ TEST_CASE(file_metadata_constraints_and_name_validation_prevent_aliasing) {
         "constraint_conflict");
 }
 
-TEST_CASE(file_metadata_http_routes_expose_lists_and_reserve_content_paths) {
+TEST_CASE(file_metadata_http_routes_expose_lists_and_protected_content) {
     RequireMySqlTests();
     ResetTestDatabase();
     TemporaryStorage storage;
@@ -371,19 +371,17 @@ TEST_CASE(file_metadata_http_routes_expose_lists_and_reserve_content_paths) {
             "/api/v1/projects/" + alpha.id + "/files", tokens.raw_token,
             "page_size=101")),
         "invalid_request");
-    CHECK_THROWS_CODE(
-        application.Prepare(GetHead(
-            "/api/v1/projects/" + alpha.id + "/files/" + file_id +
-                "/content",
-            tokens.raw_token)),
-        "not_implemented");
-    CHECK_THROWS_CODE(
-        application.Prepare(GetHead(
-            "/api/v1/projects/" + alpha.id + "/files/" + file_id +
-                "/versions/" + version_id + "/content",
-            tokens.raw_token)),
-        "not_implemented");
-    CHECK(application.ErrorResponse(
-              AppError(501, "not_implemented", "not implemented"))
-              .status() == 501);
+    HttpResponse current = application.Prepare(GetHead(
+        "/api/v1/projects/" + alpha.id + "/files/" + file_id + "/content",
+        tokens.raw_token))->Finish();
+    CHECK(current.status() == 200);
+    CHECK(current.file_region().offset == 0);
+    CHECK(current.file_region().length == 11);
+    HttpResponse historical = application.Prepare(GetHead(
+        "/api/v1/projects/" + alpha.id + "/files/" + file_id +
+            "/versions/" + version_id + "/content",
+        tokens.raw_token))->Finish();
+    CHECK(historical.status() == 200);
+    CHECK(historical.file_region().offset == 0);
+    CHECK(historical.file_region().length == 11);
 }

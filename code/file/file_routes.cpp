@@ -5,11 +5,13 @@
 #include "core/app_error.h"
 #include "core/id.h"
 #include "file_service.h"
+#include "range.h"
 #include "http/jsonbody.h"
 
 #include <cctype>
 #include <limits>
 #include <nlohmann/json.hpp>
+#include <sys/stat.h>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -160,6 +162,128 @@ uint64_t PositiveDecimal(const std::string& value) {
     return result;
 }
 
+std::string StringField(const nlohmann::json& body, const char* field) {
+    if (!body[field].is_string()) {
+        throw AppError(400, "invalid_request",
+                       std::string(field) + " must be a string");
+    }
+    return body[field].get<std::string>();
+}
+
+UpdateFileCommand UpdateCommand(const nlohmann::json& body) {
+    RequireExactObject(body, {"name", "directory_id"});
+    return UpdateFileCommand{StringField(body, "name"),
+                             EntityId(StringField(body, "directory_id"))};
+}
+
+RemoteAiPolicyCommand PolicyCommand(const nlohmann::json& body) {
+    RequireExactObject(body, {"policy", "approved_version_ids"});
+    if (!body["approved_version_ids"].is_array()) {
+        throw AppError(400, "invalid_request",
+                       "approved_version_ids must be an array");
+    }
+    RemoteAiPolicyCommand command;
+    command.policy = StringField(body, "policy");
+    for (const nlohmann::json& value : body["approved_version_ids"]) {
+        if (!value.is_string()) {
+            throw AppError(400, "invalid_request",
+                           "approved version IDs must be strings");
+        }
+        command.approved_version_ids.push_back(
+            EntityId(value.get<std::string>()));
+    }
+    return command;
+}
+
+nlohmann::json RemoteAiJson(const RemoteAiState& state) {
+    return {{"policy", state.policy},
+            {"approved_version_ids", state.approved_version_ids}};
+}
+
+bool IsRfc5987Attr(unsigned char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+           (ch >= '0' && ch <= '9') || ch == '!' || ch == '#' || ch == '$' ||
+           ch == '&' || ch == '+' || ch == '-' || ch == '.' || ch == '^' ||
+           ch == '_' || ch == '`' || ch == '|' || ch == '~';
+}
+
+std::string Rfc5987Filename(const std::string& name) {
+    static const char hex[] = "0123456789ABCDEF";
+    std::string encoded;
+    encoded.reserve(name.size());
+    for (unsigned char ch : name) {
+        if (IsRfc5987Attr(ch)) {
+            encoded.push_back(static_cast<char>(ch));
+        } else {
+            encoded.push_back('%');
+            encoded.push_back(hex[ch >> 4]);
+            encoded.push_back(hex[ch & 0x0f]);
+        }
+    }
+    return "filename*=UTF-8''" + encoded;
+}
+
+HttpResponse RangeErrorResponse(const AppError& error, uint64_t file_size,
+                                const std::string& request_id,
+                                bool keep_alive) {
+    HttpResponse::Headers headers{{"Accept-Ranges", "bytes"}};
+    if (error.http_status == 416) {
+        headers.emplace_back("Content-Range",
+                             "bytes */" + std::to_string(file_size));
+    }
+    return HttpResponse::Json(
+        error.http_status,
+        {{"error", {{"code", error.code},
+                    {"message", error.message},
+                    {"retryable", error.retryable}}},
+         {"request_id", request_id}},
+        keep_alive, std::move(headers));
+}
+
+HttpResponse DownloadResponse(AuthorizedVersion opened,
+                              const RequestHead& head) {
+    struct stat object{};
+    if (fstat(opened.fd, &object) != 0 || object.st_size < 0 ||
+        static_cast<uint64_t>(object.st_size) != opened.version.size) {
+        throw AppError(503, "content_unavailable",
+                       "file content is unavailable", true);
+    }
+    const std::string request_id = GenerateId();
+    HttpResponse::Headers headers{
+        {"Accept-Ranges", "bytes"},
+        {"Content-Type", opened.version.media_type},
+        {"Content-Disposition",
+         std::string(opened.version.media_type == "application/pdf"
+                         ? "inline; "
+                         : "attachment; ") +
+             Rfc5987Filename(opened.file.name)},
+        {"X-Request-ID", request_id}};
+    uint64_t offset = 0;
+    uint64_t length = opened.version.size;
+    int status = 200;
+    const auto range = head.headers.find("range");
+    if (range != head.headers.end()) {
+        try {
+            const ByteRange parsed =
+                ParseSingleRange(range->second, opened.version.size);
+            offset = parsed.first;
+            length = parsed.length();
+            status = 206;
+            headers.emplace_back(
+                "Content-Range",
+                "bytes " + std::to_string(parsed.first) + "-" +
+                    std::to_string(parsed.last) + "/" +
+                    std::to_string(opened.version.size));
+        } catch (const AppError& error) {
+            return RangeErrorResponse(error, opened.version.size, request_id,
+                                      head.keep_alive);
+        }
+    }
+    return HttpResponse::File(status,
+                              FileRegion{opened.ReleaseFd(), offset, length},
+                              std::move(headers), head.keep_alive);
+}
+
 FileListQuery FileQuery(const std::string& raw_query) {
     const std::unordered_map<std::string, std::string> values =
         ParseQuery(raw_query);
@@ -197,19 +321,12 @@ FileListQuery FileQuery(const std::string& raw_query) {
     return query;
 }
 
-void RequireVersionPresent(const std::vector<FileVersionSummary>& versions,
-                           const std::string& version_id) {
-    for (const FileVersionSummary& version : versions) {
-        if (version.id == version_id) return;
-    }
-    throw AppError(404, "resource_not_found", "resource was not found");
-}
-
 }  // namespace
 
 void RegisterFileRoutes(Router& router,
                         const std::shared_ptr<AuthService>& auth,
-                        const std::shared_ptr<FileService>& files) {
+                        const std::shared_ptr<FileService>& files,
+                        uint64_t maximum_json_bytes, bool secure_cookie) {
     router.Add("GET", "/api/v1/projects/{project_id}/files",
         [auth, files](const RequestHead& head, const RouteParams& params) {
         const SessionContext session = Authenticate(*auth, head);
@@ -242,16 +359,91 @@ void RegisterFileRoutes(Router& router,
             {{"items", std::move(items)}}, GenerateId(), head.keep_alive));
     });
 
+    router.Add("PATCH", "/api/v1/projects/{project_id}/files/{file_id}",
+        [auth, files, maximum_json_bytes, secure_cookie](
+            const RequestHead& head, const RouteParams& params) {
+        RequireSameOrigin(head, secure_cookie);
+        const SessionContext session = Authenticate(*auth, head);
+        const std::string project_id = EntityId(Parameter(params, "project_id"));
+        const std::string file_id = EntityId(Parameter(params, "file_id"));
+        return PrepareJsonBody(
+            head, maximum_json_bytes,
+            [files, session, project_id, file_id,
+             keep_alive = head.keep_alive](const nlohmann::json& body) {
+            const std::string request_id = GenerateId();
+            return DataResponse(
+                FileJson(files->Update(session, project_id, file_id,
+                                       UpdateCommand(body), request_id)),
+                request_id, keep_alive);
+        });
+    });
+
+    router.Add("DELETE", "/api/v1/projects/{project_id}/files/{file_id}",
+        [auth, files, secure_cookie](const RequestHead& head,
+                                     const RouteParams& params) {
+        RequireSameOrigin(head, secure_cookie);
+        if (head.content_length != 0) {
+            throw AppError(400, "body_not_allowed",
+                           "this route does not accept a request body");
+        }
+        const SessionContext session = Authenticate(*auth, head);
+        const std::string project_id = EntityId(Parameter(params, "project_id"));
+        const std::string file_id = EntityId(Parameter(params, "file_id"));
+        const std::string request_id = GenerateId();
+        files->SoftDelete(session, project_id, file_id, request_id);
+        return ReadyResponse(HttpResponse::Empty(
+            204, head.keep_alive, {{"X-Request-ID", request_id}}));
+    });
+
+    router.Add("POST",
+        "/api/v1/projects/{project_id}/files/{file_id}/restore",
+        [auth, files, secure_cookie](const RequestHead& head,
+                                     const RouteParams& params) {
+        RequireSameOrigin(head, secure_cookie);
+        if (head.content_length != 0) {
+            throw AppError(400, "body_not_allowed",
+                           "this route does not accept a request body");
+        }
+        const SessionContext session = Authenticate(*auth, head);
+        const std::string project_id = EntityId(Parameter(params, "project_id"));
+        const std::string file_id = EntityId(Parameter(params, "file_id"));
+        const std::string request_id = GenerateId();
+        return ReadyResponse(DataResponse(
+            FileJson(files->Restore(session, project_id, file_id, request_id)),
+            request_id, head.keep_alive));
+    });
+
+    router.Add("PUT",
+        "/api/v1/projects/{project_id}/files/{file_id}/remote-ai-policy",
+        [auth, files, maximum_json_bytes, secure_cookie](
+            const RequestHead& head, const RouteParams& params) {
+        RequireSameOrigin(head, secure_cookie);
+        const SessionContext session = Authenticate(*auth, head);
+        const std::string project_id = EntityId(Parameter(params, "project_id"));
+        const std::string file_id = EntityId(Parameter(params, "file_id"));
+        return PrepareJsonBody(
+            head, maximum_json_bytes,
+            [files, session, project_id, file_id,
+             keep_alive = head.keep_alive](const nlohmann::json& body) {
+            const std::string request_id = GenerateId();
+            return DataResponse(
+                RemoteAiJson(files->SetRemoteAiPolicy(
+                    session, project_id, file_id, PolicyCommand(body),
+                    request_id)),
+                request_id, keep_alive);
+        });
+    });
+
     router.Add("GET",
         "/api/v1/projects/{project_id}/files/{file_id}/content",
         [auth, files](const RequestHead& head, const RouteParams& params)
             -> std::unique_ptr<RequestBodyHandler> {
         const SessionContext session = Authenticate(*auth, head);
-        files->ListVersions(session,
-                            EntityId(Parameter(params, "project_id")),
-                            EntityId(Parameter(params, "file_id")));
-        throw AppError(501, "not_implemented",
-                       "protected content delivery is not implemented yet");
+        return ReadyResponse(DownloadResponse(
+            files->OpenCurrentVersion(
+                session, EntityId(Parameter(params, "project_id")),
+                EntityId(Parameter(params, "file_id"))),
+            head));
     });
 
     router.Add("GET",
@@ -262,10 +454,8 @@ void RegisterFileRoutes(Router& router,
         const std::string project_id = EntityId(Parameter(params, "project_id"));
         const std::string file_id = EntityId(Parameter(params, "file_id"));
         const std::string version_id = EntityId(Parameter(params, "version_id"));
-        const std::vector<FileVersionSummary> versions =
-            files->ListVersions(session, project_id, file_id);
-        RequireVersionPresent(versions, version_id);
-        throw AppError(501, "not_implemented",
-                       "protected content delivery is not implemented yet");
+        return ReadyResponse(DownloadResponse(
+            files->OpenVersion(session, project_id, file_id, version_id),
+            head));
     });
 }

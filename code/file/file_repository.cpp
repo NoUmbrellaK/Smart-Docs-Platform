@@ -1,6 +1,7 @@
 #include "file_repository.h"
 
 #include "core/app_error.h"
+#include "core/id.h"
 
 #include <utility>
 
@@ -87,6 +88,99 @@ bool FileRepository::FindFile(MySqlConnection& connection,
     if (rows.empty()) return false;
     *file = FileFromRow(rows[0]);
     return true;
+}
+
+bool FileRepository::FindFileForUpdate(MySqlConnection& connection,
+                                       const std::string& project_id,
+                                       const std::string& file_id,
+                                       bool include_deleted,
+                                       FileSummary* file) const {
+    std::string sql =
+        "SELECT id, project_id, directory_id, name, current_version_id, "
+        "deleted_at, remote_ai_policy FROM files WHERE project_id=? AND id=?";
+    if (!include_deleted) sql += " AND deleted_at IS NULL";
+    sql += " LIMIT 1 FOR UPDATE";
+    const std::vector<MySqlRow> rows =
+        connection.Query(sql, {SqlValue(project_id), SqlValue(file_id)});
+    if (rows.empty()) return false;
+    *file = FileFromRow(rows[0]);
+    return true;
+}
+
+void FileRepository::UpdateFile(MySqlConnection& connection,
+                                const std::string& file_id,
+                                const std::string& name,
+                                const std::string& directory_id) const {
+    connection.Execute("UPDATE files SET name=?, directory_id=? WHERE id=?",
+                       {SqlValue(name), SqlValue(directory_id),
+                        SqlValue(file_id)});
+}
+
+void FileRepository::SoftDelete(MySqlConnection& connection,
+                                const std::string& file_id,
+                                const std::string& actor_id) const {
+    connection.Execute(
+        "UPDATE files SET deleted_at=UTC_TIMESTAMP(6), deleted_by=? "
+        "WHERE id=?",
+        {SqlValue(actor_id), SqlValue(file_id)});
+}
+
+void FileRepository::Restore(MySqlConnection& connection,
+                             const std::string& file_id) const {
+    connection.Execute(
+        "UPDATE files SET deleted_at=NULL, deleted_by=NULL WHERE id=?",
+        {SqlValue(file_id)});
+}
+
+void FileRepository::SetRemoteAiPolicy(MySqlConnection& connection,
+                                       const std::string& file_id,
+                                       const std::string& policy) const {
+    connection.Execute("UPDATE files SET remote_ai_policy=? WHERE id=?",
+                       {SqlValue(policy), SqlValue(file_id)});
+}
+
+std::vector<std::string> FileRepository::ListVersionIdsForUpdate(
+    MySqlConnection& connection, const std::string& file_id) const {
+    const std::vector<MySqlRow> rows = connection.Query(
+        "SELECT id FROM file_versions WHERE file_id=? "
+        "ORDER BY version_number FOR UPDATE",
+        {SqlValue(file_id)});
+    std::vector<std::string> ids;
+    ids.reserve(rows.size());
+    for (const MySqlRow& row : rows) ids.push_back(row.String(0));
+    return ids;
+}
+
+void FileRepository::SetVersionApprovals(
+    MySqlConnection& connection, const std::string& file_id,
+    const std::vector<std::string>& approved_version_ids,
+    const std::string& actor_id) const {
+    connection.Execute(
+        "UPDATE file_versions SET remote_ai_approved=FALSE, "
+        "remote_ai_approved_at=NULL, remote_ai_approved_by=NULL "
+        "WHERE file_id=?",
+        {SqlValue(file_id)});
+    for (const std::string& version_id : approved_version_ids) {
+        connection.Execute(
+            "UPDATE file_versions SET remote_ai_approved=TRUE, "
+            "remote_ai_approved_at=UTC_TIMESTAMP(6), remote_ai_approved_by=? "
+            "WHERE file_id=? AND id=?",
+            {SqlValue(actor_id), SqlValue(file_id), SqlValue(version_id)});
+    }
+}
+
+void FileRepository::InsertAudit(MySqlConnection& connection,
+                                 const std::string& actor_id,
+                                 const std::string& project_id,
+                                 const std::string& action,
+                                 const std::string& file_id,
+                                 const std::string& request_id) const {
+    connection.Execute(
+        "INSERT INTO audit_records(id, actor_user_id, project_id, action, "
+        "object_type, object_id, request_id, result) "
+        "VALUES (?, ?, ?, ?, 'file', ?, ?, 'success')",
+        {SqlValue(GenerateId()), SqlValue(actor_id), SqlValue(project_id),
+         SqlValue(action), SqlValue(file_id), SqlValue(request_id)});
 }
 
 std::vector<FileVersionSummary> FileRepository::ListVersions(

@@ -49,6 +49,21 @@ struct FileListQuery {
     uint64_t page_size = 50;
 };
 
+struct UpdateFileCommand {
+    std::string name;
+    std::string directory_id;
+};
+
+struct RemoteAiPolicyCommand {
+    std::string policy;
+    std::vector<std::string> approved_version_ids;
+};
+
+struct RemoteAiState {
+    std::string policy;
+    std::vector<std::string> approved_version_ids;
+};
+
 class AuthorizedVersion {
 public:
     AuthorizedVersion(FileSummary file, FileVersionSummary version, int fd);
@@ -78,6 +93,26 @@ public:
     std::vector<FileVersionSummary> ListVersions(
         const SessionContext& session, const std::string& project_id,
         const std::string& file_id);
+    FileSummary Update(const SessionContext& session,
+                       const std::string& project_id,
+                       const std::string& file_id,
+                       const UpdateFileCommand& command,
+                       const std::string& request_id = std::string());
+    void SoftDelete(const SessionContext& session,
+                    const std::string& project_id,
+                    const std::string& file_id,
+                    const std::string& request_id = std::string());
+    FileSummary Restore(const SessionContext& session,
+                        const std::string& project_id,
+                        const std::string& file_id,
+                        const std::string& request_id = std::string());
+    RemoteAiState SetRemoteAiPolicy(
+        const SessionContext& session, const std::string& project_id,
+        const std::string& file_id, const RemoteAiPolicyCommand& command,
+        const std::string& request_id = std::string());
+    AuthorizedVersion OpenCurrentVersion(const SessionContext& session,
+                                         const std::string& project_id,
+                                         const std::string& file_id);
     AuthorizedVersion OpenVersion(const SessionContext& session,
                                   const std::string& project_id,
                                   const std::string& file_id,
