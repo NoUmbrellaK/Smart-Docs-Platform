@@ -12,7 +12,7 @@ int main() {
     std::signal(SIGPIPE, SIG_IGN);
     try {
         const AppConfig config = AppConfig::LoadFromEnvironment();
-        std::shared_ptr<Application> application(new Application());
+        std::shared_ptr<Application> application(new Application(config));
         WebServer server(config, application);
         server.Start();
         return 0;

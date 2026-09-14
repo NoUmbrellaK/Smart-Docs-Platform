@@ -1,7 +1,10 @@
 #include "application.h"
 
+#include "config.h"
 #include "core/app_error.h"
 #include "core/id.h"
+#include "db/mysql.h"
+#include "db/schema.h"
 
 #include <cerrno>
 #include <fcntl.h>
@@ -67,6 +70,35 @@ nlohmann::json ErrorBody(const std::string& request_id, const std::string& code,
                        {"retryable", retryable}}}};
 }
 
+bool SecureDirectory(int fd) {
+    struct stat directory_stat{};
+    return fstat(fd, &directory_stat) == 0 &&
+           S_ISDIR(directory_stat.st_mode) &&
+           (directory_stat.st_mode & (S_IWGRP | S_IWOTH)) == 0;
+}
+
+bool StorageReady(const std::string& root) {
+    const int root_fd = open(root.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC |
+                                               O_NOFOLLOW);
+    if (root_fd < 0) {
+        return false;
+    }
+    bool ready = SecureDirectory(root_fd);
+    const char* required[] = {"objects", "staging"};
+    for (const char* name : required) {
+        const int fd = openat(root_fd, name,
+                              O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW);
+        if (fd < 0) {
+            ready = false;
+            continue;
+        }
+        ready = SecureDirectory(fd) && ready;
+        close(fd);
+    }
+    close(root_fd);
+    return ready;
+}
+
 }  // namespace
 
 Application::Application(std::string static_root) {
@@ -98,6 +130,23 @@ Application::Application(std::string static_root) {
     });
 }
 
+Application::Application(const AppConfig& config, std::string static_root)
+    : Application(std::move(static_root)) {
+    std::shared_ptr<MySqlPool> database(new MySqlPool());
+    database->Initialize(MySqlConfig::FromAppConfig(config));
+    {
+        MySqlConnection connection = database->Acquire();
+        connection.Ping();
+        Schema::RequireVersion(connection, 1);
+    }
+    if (!StorageReady(config.storage_root)) {
+        throw AppError(503, "storage_unavailable",
+                       "controlled storage is not safely available", true);
+    }
+    storage_root_ = config.storage_root;
+    database_ = std::move(database);
+}
+
 std::unique_ptr<RequestBodyHandler> Application::Prepare(
     const RequestHead& head) const {
     return router_.Prepare(head);
@@ -117,5 +166,15 @@ HttpResponse Application::InternalErrorResponse() const {
 }
 
 bool Application::Ready() const {
-    return false;
+    if (!database_) {
+        return false;
+    }
+    try {
+        MySqlConnection connection = database_->Acquire();
+        connection.Ping();
+        Schema::RequireVersion(connection, 1);
+        return StorageReady(storage_root_);
+    } catch (...) {
+        return false;
+    }
 }

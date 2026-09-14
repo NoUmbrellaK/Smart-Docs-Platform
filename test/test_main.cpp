@@ -66,6 +66,7 @@ int main(int argc, char** argv) {
     const std::string filter = FilterFromArguments(argc, argv);
     int failures = 0;
     int selected = 0;
+    int skipped = 0;
 
     for (const auto& entry : TestRegistry()) {
         if (!filter.empty() && entry.first.find(filter) == std::string::npos) {
@@ -75,6 +76,10 @@ int main(int argc, char** argv) {
         try {
             entry.second();
             std::cout << "PASS " << entry.first << '\n';
+        } catch (const TestSkipped& skipped_test) {
+            ++skipped;
+            std::cout << "SKIP " << entry.first << ": " << skipped_test.what()
+                      << '\n';
         } catch (const std::exception& error) {
             ++failures;
             std::cerr << "FAIL " << entry.first << ": " << error.what() << '\n';
@@ -88,7 +93,7 @@ int main(int argc, char** argv) {
         std::cerr << "FAIL no tests matched filter: " << filter << '\n';
         return 2;
     }
-    std::cout << "RESULT " << selected - failures << " passed, " << failures
-              << " failed\n";
+    std::cout << "RESULT " << selected - failures - skipped << " passed, "
+              << failures << " failed, " << skipped << " skipped\n";
     return failures == 0 ? 0 : 1;
 }

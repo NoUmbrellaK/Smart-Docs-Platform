@@ -7,10 +7,14 @@
 #include <string>
 
 class AppError;
+class MySqlPool;
+struct AppConfig;
 
 class Application {
 public:
     explicit Application(std::string static_root = "resources");
+    Application(const AppConfig& config,
+                std::string static_root = "resources");
     Application(const Application&) = delete;
     Application& operator=(const Application&) = delete;
 
@@ -21,4 +25,6 @@ public:
 
 private:
     Router router_;
+    std::shared_ptr<MySqlPool> database_;
+    std::string storage_root_;
 };

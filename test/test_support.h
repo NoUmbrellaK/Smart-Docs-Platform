@@ -9,6 +9,11 @@
 
 using TestFunction = std::function<void()>;
 
+class TestSkipped : public std::runtime_error {
+public:
+    explicit TestSkipped(const std::string& reason) : std::runtime_error(reason) {}
+};
+
 std::vector<std::pair<std::string, TestFunction>>& TestRegistry();
 
 struct TestRegistration {
@@ -40,6 +45,8 @@ struct TestRegistration {
         }                                                                      \
         CHECK(caught_app_error);                                               \
     } while (false)
+
+#define SKIP_TEST(reason) throw TestSkipped(reason)
 
 class ScopedEnvironment {
 public:

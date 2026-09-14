@@ -5,7 +5,8 @@ LDLIBS := -pthread -lmysqlclient -lcrypto
 
 APP_SOURCES := $(filter-out code/main.cpp code/admin/main.cpp,$(shell find code -name '*.cpp' -print))
 SERVER_SOURCES := $(APP_SOURCES) code/main.cpp
-TEST_SOURCES := test/test_main.cpp $(shell find test/unit test/integration -name '*_test.cpp' -print 2>/dev/null)
+TEST_SOURCES := test/test_main.cpp test/mysql_test_support.cpp \
+                $(shell find test/unit test/integration -name '*_test.cpp' -print 2>/dev/null)
 
 SERVER_OBJECTS := $(patsubst %.cpp,build/obj/server/%.o,$(SERVER_SOURCES))
 TEST_APP_OBJECTS := $(patsubst %.cpp,build/obj/tests/%.o,$(APP_SOURCES))

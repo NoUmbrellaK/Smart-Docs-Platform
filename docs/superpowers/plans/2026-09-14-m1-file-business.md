@@ -507,7 +507,7 @@ git commit -m "feat: add incremental HTTP API transport"
 
 `SqlValue` is a tagged value with constructors for `std::string`, `uint64_t`, `int64_t`, Boolean, UTC timestamp text, and SQL NULL. `MySqlRow` exposes checked `String`, `UInt64`, `Int64`, `Bool`, and `IsNull` accessors by zero-based result column. `MySqlConnection::Execute(sql, values)` returns affected rows; `Query` returns `std::vector<MySqlRow>`; `ScalarInt` requires exactly one numeric cell.
 
-- [ ] **Step 1: Write failing pool, migration, and transaction tests**
+- [x] **Step 1: Write failing pool, migration, and transaction tests**
 
 Cover connection failure without inserting null handles, one-and-only-one connection return, rollback on destructor, commit persistence, schema version `1`, duplicate active file-name rejection, duplicate upload-part rejection, and one-root-directory-per-project rejection.
 
@@ -522,7 +522,7 @@ TEST_CASE(transaction_rolls_back_without_commit) {
 }
 ```
 
-- [ ] **Step 2: Create the complete M1 schema**
+- [x] **Step 2: Create the complete M1 schema**
 
 `001_m1_core.sql` creates `schema_migrations`, `users`, `auth_sessions`, `projects`, `project_members`, `directories`, `files`, `file_versions`, `upload_tasks`, `upload_parts`, `processing_jobs`, and `audit_records`. Use `CHAR(32) CHARACTER SET ascii COLLATE ascii_bin` IDs, `DATETIME(6)` UTC timestamps, `BIGINT UNSIGNED` byte counts, InnoDB, and foreign keys with `ON DELETE RESTRICT` except sessions (`ON DELETE CASCADE`).
 
@@ -555,13 +555,13 @@ ALTER TABLE upload_parts
 
 Add checks for valid roles, policies, states, nonnegative file sizes, positive configured chunk/part sizes, 64-character lowercase SHA-256 strings, part-number bounds, and positive version numbers. Insert migration version `1` only after all DDL succeeds.
 
-- [ ] **Step 3: Replace the unsafe pool and add database RAII**
+- [x] **Step 3: Replace the unsafe pool and add database RAII**
 
 `MySqlPool::Initialize` attempts every configured connection before publishing the pool; one failed connection closes all opened handles and throws `database_unavailable`. `Acquire` waits on the semaphore before inspecting the queue. `MySqlConnection` is move-only and returns the handle exactly once.
 
 `MySqlStatement` wraps `mysql_stmt_prepare`, typed input binds, `mysql_stmt_execute`, result metadata, and fetch. Map duplicate-key error `1062` to `AppError(409, "constraint_conflict", ...)`, deadlock/lock timeout to retryable `503`, and all other database errors to a sanitized `503 database_unavailable`.
 
-- [ ] **Step 4: Add explicit migration and isolated-test scripts**
+- [x] **Step 4: Add explicit migration and isolated-test scripts**
 
 `scripts/migrate.sh` requires host, database, user, and password plus either a TCP port or `SMARTDOCS_MYSQL_SOCKET`, refuses an empty database name, applies numbered SQL files in lexical order, and confirms:
 
@@ -573,11 +573,11 @@ Because MySQL DDL auto-commits, migration 001 requires an empty application sche
 
 `scripts/test-with-mysql.sh` creates a `mktemp -d` data directory, initializes MySQL with `mysqld --no-defaults --initialize-insecure`, starts it on a private Unix socket with networking disabled, creates `smart_docs_test`, applies migrations, runs the command passed after `--`, and stops the exact PID in a trap. When running as root, pass `--user=root`; otherwise pass the current user. Never reuse the system data directory. `test/mysql_test_support.{h,cpp}` reads those exported connection variables, provides `TestDatabase()`, and truncates M1 tables in foreign-key-safe order between cases.
 
-- [ ] **Step 5: Make readiness authoritative**
+- [x] **Step 5: Make readiness authoritative**
 
 `Application::Ready()` returns true only when a pool connection succeeds, schema version equals `1`, the storage root can be opened as a directory without following a symlink, and required `objects/` and `staging/` directories exist with no group/other write permission. `/health/ready` returns 200 only in that state.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 ```bash
 make test
