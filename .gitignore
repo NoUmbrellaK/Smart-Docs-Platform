@@ -13,6 +13,9 @@
 *.exe
 /.vscode
 /.worktrees/
+/bin/
+/build/obj/
+/test/test
 
 # Smart Docs Platform: do not import operating-system metadata.
 .DS_Store

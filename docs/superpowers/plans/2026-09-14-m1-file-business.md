@@ -132,17 +132,17 @@ Login returns user ID/name, expiry, and accessible project summaries while setti
 - Consumes: existing `code/**/*.cpp` and MySQL/OpenSSL system libraries.
 - Produces: `make server`, `make admin`, `make test`, `make test-server`, and the `TEST_CASE(name)`/`CHECK(expr)` test API.
 
-- [ ] **Step 1: Record the current test-runner failure**
+- [x] **Step 1: Record the current test-runner failure**
 
 Run:
 
 ```bash
-make test
+make test && test -x bin/smartdocs_tests
 ```
 
-Expected: fail because the root Makefile has no `test` target.
+Expected: the existing Make invocation is a no-op because `test/` is a directory, then the executable check fails with exit status `1`.
 
-- [ ] **Step 2: Vendor nlohmann/json 3.11.3 and its license**
+- [x] **Step 2: Vendor nlohmann/json 3.11.3 and its license**
 
 Fetch only the official tagged single header and license:
 
@@ -155,7 +155,7 @@ rg -n 'NLOHMANN_JSON_VERSION_MAJOR 3|NLOHMANN_JSON_VERSION_MINOR 11|NLOHMANN_JSO
 
 Expected: all three version macros match. Do not continue with an HTML error page or an untagged branch response.
 
-- [ ] **Step 3: Add the minimal test registry**
+- [x] **Step 3: Add the minimal test registry**
 
 `test/test_support.h` exposes:
 
@@ -185,7 +185,7 @@ struct TestRegistration {
 
 `test/test_main.cpp` runs every registered test, prints one `PASS` or `FAIL` line, and exits nonzero if any test fails. It accepts `--filter=<substring>` and falls back to the `TEST_FILTER` environment variable. `baseline_test.cpp` parses `{"ok":true}` with nlohmann/json and checks the Boolean value.
 
-- [ ] **Step 4: Replace the Make rules**
+- [x] **Step 4: Replace the Make rules**
 
 Use explicit targets and place intermediate files under `build/obj/`:
 
@@ -208,7 +208,7 @@ test: bin/smartdocs_tests
 
 Add object rules with dependency files (`-MMD -MP`), a `bin/server` link using `code/main.cpp`, and an admin target only after `code/admin/main.cpp` exists. Until Task 5, `make admin` must print `admin target not available before Task 5` and exit nonzero. `make test-server` adds `-DSMARTDOCS_ENABLE_FAULT_INJECTION=1` and links `bin/smartdocs_test_server`.
 
-- [ ] **Step 5: Verify the new harness**
+- [x] **Step 5: Verify the new harness**
 
 Run:
 
@@ -220,7 +220,7 @@ make test
 
 Expected: `bin/server` builds; the test runner prints `PASS baseline_json_version` and exits `0`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .gitignore Makefile build/Makefile test/test.cpp test/test_support.h test/test_main.cpp test/unit/baseline_test.cpp third_party/nlohmann
