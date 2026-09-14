@@ -247,6 +247,39 @@ TEST_CASE(upload_recovery_rejects_completed_graph_that_mismatches_upload_intent)
                       "database_result_invalid");
 }
 
+TEST_CASE(upload_recovery_rejects_completed_create_file_location_or_name_mismatch) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    TemporaryStorage storage;
+    AuthService auth(TestDatabase(), 60, 1000);
+    ProjectService projects(TestDatabase());
+    FileStore store(storage.path());
+    UploadService uploads(TestDatabase(), projects, store, 1024, 4);
+    const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
+    const SessionContext session =
+        auth.Login("admin", kPassword, kRequest).session;
+    const Project project = projects.CreateProject(admin.id, "Alpha", kRequest);
+    const Directory other = projects.CreateDirectory(
+        session, project.id, project.root_directory_id, "Other", kRequest);
+    const UploadTask task = uploads.Create(
+        session, project.id, NewFile(project, "intent.txt", "data"), kRequest);
+    PutPart(uploads, session, project, task, "data");
+    const CompleteUploadResult completed =
+        uploads.Complete(session, project.id, task.id, kRequest);
+    MySqlConnection connection = TestDatabase().Acquire();
+
+    connection.Execute("UPDATE files SET name='wrong.txt' WHERE id=?",
+                       {SqlValue(completed.file_id)});
+    CHECK_THROWS_CODE(UploadReconciler(TestDatabase(), store).RunAtStartup(),
+                      "database_result_invalid");
+
+    connection.Execute(
+        "UPDATE files SET name='intent.txt', directory_id=? WHERE id=?",
+        {SqlValue(other.id), SqlValue(completed.file_id)});
+    CHECK_THROWS_CODE(UploadReconciler(TestDatabase(), store).RunAtStartup(),
+                      "database_result_invalid");
+}
+
 TEST_CASE(upload_recovery_locks_upload_rows_before_destructive_cleanup) {
     RequireMySqlTests();
     ResetTestDatabase();
