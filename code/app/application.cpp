@@ -134,6 +134,28 @@ Application::Application(std::string static_root) {
         return StaticFileHandler(index_path, "text/html; charset=utf-8",
                                  head.keep_alive);
     });
+    struct StaticAsset {
+        const char* route;
+        const char* relative_path;
+        const char* content_type;
+    };
+    const StaticAsset assets[] = {
+        {"/app.html", "/app.html", "text/html; charset=utf-8"},
+        {"/css/app.css", "/css/app.css", "text/css; charset=utf-8"},
+        {"/js/api.js", "/js/api.js", "text/javascript; charset=utf-8"},
+        {"/js/app.js", "/js/app.js", "text/javascript; charset=utf-8"},
+        {"/js/uploads.js", "/js/uploads.js", "text/javascript; charset=utf-8"},
+        {"/js/sha256.js", "/js/sha256.js", "text/javascript; charset=utf-8"},
+    };
+    for (const StaticAsset& asset : assets) {
+        const std::string file_path = static_root + asset.relative_path;
+        const std::string content_type = asset.content_type;
+        router_.Add("GET", asset.route,
+                    [file_path, content_type](const RequestHead& head,
+                                              const RouteParams&) {
+            return StaticFileHandler(file_path, content_type, head.keep_alive);
+        });
+    }
     const std::string favicon_path = static_root + "/images/favicon.ico";
     router_.Add("GET", "/favicon.ico",
                 [favicon_path](const RequestHead& head, const RouteParams&) {

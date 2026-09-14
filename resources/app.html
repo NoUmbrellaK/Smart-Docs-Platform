@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Docs workbench</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/app.html">Smart Docs</a>
+    <p id="global-status" role="status" aria-live="polite">idle</p>
+  </header>
+
+  <main>
+    <section id="session" aria-labelledby="session-title">
+      <h1 id="session-title">Sign in and choose a project</h1>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password"
+               autocomplete="current-password" required>
+        <button type="submit">Sign in</button>
+      </form>
+      <div id="signed-in" hidden>
+        <p>Signed in as <strong id="current-user"></strong>.</p>
+        <label for="project-select">Project</label>
+        <select id="project-select"></select>
+        <p>Project role: <strong id="project-role">reader</strong></p>
+        <button id="logout-button" type="button">Sign out</button>
+      </div>
+      <p id="session-error" role="alert" aria-live="assertive"></p>
+    </section>
+
+    <section id="workbench" aria-labelledby="workbench-title" hidden>
+      <div class="section-heading">
+        <h2 id="workbench-title">File workbench</h2>
+        <button id="refresh-files" type="button">Refresh</button>
+      </div>
+      <form id="file-search" class="compact-form">
+        <label for="directory-filter">Directory</label>
+        <select id="directory-filter"></select>
+        <label for="name-filter">File name</label>
+        <input id="name-filter" type="search" name="name">
+        <label class="checkbox-label" for="deleted-filter">
+          <input id="deleted-filter" type="checkbox"> List deleted files only
+        </label>
+        <button type="submit">Search</button>
+      </form>
+      <div class="table-scroll">
+        <table>
+          <caption>Files in the selected project</caption>
+          <thead><tr><th scope="col">Name</th><th scope="col">Directory</th>
+            <th scope="col">AI policy</th><th scope="col">State</th>
+            <th scope="col">Action</th></tr></thead>
+          <tbody id="file-rows"></tbody>
+        </table>
+      </div>
+      <p id="files-status" role="status" aria-live="polite">idle</p>
+    </section>
+
+    <section id="upload-tasks" aria-labelledby="uploads-title"
+             data-supported-states="idle loading awaiting reselect uploading assembling interrupted failed cancelled completed"
+             hidden>
+      <h2 id="uploads-title">Upload tasks</h2>
+      <form id="upload-form">
+        <label for="upload-mode">Upload as</label>
+        <select id="upload-mode">
+          <option value="create_file">New file</option>
+          <option value="create_version">New version</option>
+        </select>
+        <label for="upload-directory">Target directory</label>
+        <select id="upload-directory"></select>
+        <label for="upload-file-target">Existing file for new version</label>
+        <select id="upload-file-target"></select>
+        <label for="upload-file">Local file</label>
+        <input id="upload-file" type="file" required>
+        <button type="submit">Start upload</button>
+      </form>
+      <p>Hashing, assembling, and processing are shown as named phases without estimated percentages.</p>
+      <div id="upload-list" class="task-list"></div>
+      <p id="upload-status" role="status" aria-live="polite">idle</p>
+    </section>
+
+    <section id="file-detail" aria-labelledby="detail-title" hidden>
+      <h2 id="detail-title">File detail</h2>
+      <p id="selected-file-summary">Choose a file from the workbench.</p>
+      <form id="file-update-form">
+        <label for="file-name">File name</label>
+        <input id="file-name" required>
+        <label for="file-directory">Move to directory</label>
+        <select id="file-directory"></select>
+        <button type="submit">Save name and location</button>
+      </form>
+      <div class="action-row">
+        <button id="delete-file" type="button">Soft delete</button>
+        <button id="restore-file" type="button">Restore</button>
+      </div>
+      <h3>Versions</h3>
+      <div id="version-list"></div>
+      <form id="preview-form" class="compact-form">
+        <label for="preview-version">PDF version</label>
+        <select id="preview-version"></select>
+        <label for="preview-page">Page</label>
+        <input id="preview-page" type="number" min="1" value="1">
+        <button type="submit">Open PDF preview</button>
+      </form>
+      <a id="preview-link" href="#" target="document-preview">Open exact version</a>
+      <iframe id="pdf-preview" name="document-preview" title="Protected PDF preview"></iframe>
+      <form id="remote-ai-form" hidden>
+        <fieldset>
+          <legend>Remote AI policy (administrators only)</legend>
+          <label for="remote-ai-policy">Policy</label>
+          <select id="remote-ai-policy">
+            <option value="internal_only">Internal only</option>
+            <option value="remote_ai_allowed">Remote AI allowed</option>
+          </select>
+          <div id="approved-versions"></div>
+          <button type="submit">Save full approved version set</button>
+        </fieldset>
+      </form>
+      <p id="detail-status" role="status" aria-live="polite">idle</p>
+    </section>
+
+    <section id="project-settings" aria-labelledby="settings-title" hidden>
+      <h2 id="settings-title">Project settings</h2>
+      <p>Only project administrators can view and edit member roles.</p>
+      <div id="member-list"></div>
+      <p id="members-status" role="status" aria-live="polite">idle</p>
+    </section>
+  </main>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

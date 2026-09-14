@@ -44,6 +44,14 @@ struct UploadTask {
     std::string version_id;
     std::string processing_job_id;
     std::string failure;
+    std::string mode;
+    std::string directory_id;
+    std::string name;
+    uint64_t size;
+    std::string sha256;
+    std::string media_type;
+    std::string target_file_id;
+    std::string observed_current_version_id;
 };
 
 struct UploadTaskDetail {

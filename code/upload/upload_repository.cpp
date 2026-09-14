@@ -26,12 +26,16 @@ UploadMode Mode(const std::string& value) {
 }
 
 UploadTaskRecord RecordFromRow(const MySqlRow& row) {
+    const std::string target_file_id = row.String(17);
     return UploadTaskRecord{
         UploadTask{row.String(0), row.String(1), row.String(2), row.String(3),
-                   row.UInt64(4), row.UInt64(5), row.UInt64(6), row.String(7),
-                   row.String(8), row.String(9), row.String(10)},
+                   row.UInt64(4), row.UInt64(5), row.UInt64(6),
+                   row.String(7), row.String(8), row.String(9), row.String(10),
+                   row.String(11),
+                   row.String(12), row.String(13), row.UInt64(14), row.String(15),
+                   row.String(16), target_file_id, row.String(18)},
         Mode(row.String(11)), row.String(12), row.String(13), row.UInt64(14),
-        row.String(15), row.String(16), row.String(17), row.String(18)};
+        row.String(15), row.String(16), target_file_id, row.String(18)};
 }
 
 UploadTask TaskFromRow(const MySqlRow& row) {

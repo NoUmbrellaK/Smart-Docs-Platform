@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <vector>
 
 namespace {
 
@@ -58,24 +59,40 @@ public:
         char* created = mkdtemp(pattern);
         CHECK(created != nullptr);
         path_ = created;
-        const std::string index_path = path_ + "/index.html";
-        const int fd = open(index_path.c_str(), O_WRONLY | O_CREAT | O_EXCL,
-                            S_IRUSR | S_IWUSR);
-        CHECK(fd >= 0);
-        const std::string content = "<!doctype html><title>Smart Docs</title>";
-        CHECK(::write(fd, content.data(), content.size()) ==
-              static_cast<ssize_t>(content.size()));
-        close(fd);
+        CHECK(mkdir((path_ + "/css").c_str(), S_IRUSR | S_IWUSR | S_IXUSR) == 0);
+        CHECK(mkdir((path_ + "/js").c_str(), S_IRUSR | S_IWUSR | S_IXUSR) == 0);
+        Write("index.html", "index-shell");
+        Write("app.html", "workbench-shell");
+        Write("css/app.css", "workbench-style");
+        Write("js/api.js", "api-module");
+        Write("js/app.js", "app-module");
+        Write("js/uploads.js", "uploads-module");
+        Write("js/sha256.js", "sha256-module");
     }
 
     ~TemporaryStaticRoot() {
-        unlink((path_ + "/index.html").c_str());
+        for (const char* relative : {"index.html", "app.html", "css/app.css",
+                                     "js/api.js", "js/app.js", "js/uploads.js",
+                                     "js/sha256.js"}) {
+            unlink((path_ + "/" + relative).c_str());
+        }
+        rmdir((path_ + "/css").c_str());
+        rmdir((path_ + "/js").c_str());
         rmdir(path_.c_str());
     }
 
     const std::string& path() const { return path_; }
 
 private:
+    void Write(const std::string& relative, const std::string& content) {
+        const std::string file_path = path_ + "/" + relative;
+        const int fd = open(file_path.c_str(), O_WRONLY | O_CREAT | O_EXCL,
+                            S_IRUSR | S_IWUSR);
+        CHECK(fd >= 0);
+        CHECK(::write(fd, content.data(), content.size()) ==
+              static_cast<ssize_t>(content.size()));
+        close(fd);
+    }
     std::string path_;
 };
 
@@ -116,12 +133,35 @@ TEST_CASE(http_connection_reports_not_ready_before_database_bootstrap) {
 
 TEST_CASE(http_connection_streams_only_the_allowlisted_static_shell) {
     TemporaryStaticRoot static_root;
-    const std::string response = Exchange(
-        std::make_shared<Application>(static_root.path()),
-        "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
-    CHECK(response.find("HTTP/1.1 200 OK\r\n") == 0);
-    CHECK(response.find("Content-Type: text/html; charset=utf-8\r\n") !=
-          std::string::npos);
-    CHECK(response.find("<!doctype html><title>Smart Docs</title>") !=
-          std::string::npos);
+    const std::shared_ptr<Application> application =
+        std::make_shared<Application>(static_root.path());
+    struct AssetCase {
+        const char* route;
+        const char* content_type;
+        const char* body;
+    };
+    const std::vector<AssetCase> assets = {
+        {"/", "text/html; charset=utf-8", "index-shell"},
+        {"/app.html", "text/html; charset=utf-8", "workbench-shell"},
+        {"/css/app.css", "text/css; charset=utf-8", "workbench-style"},
+        {"/js/api.js", "text/javascript; charset=utf-8", "api-module"},
+        {"/js/app.js", "text/javascript; charset=utf-8", "app-module"},
+        {"/js/uploads.js", "text/javascript; charset=utf-8", "uploads-module"},
+        {"/js/sha256.js", "text/javascript; charset=utf-8", "sha256-module"},
+    };
+    for (const AssetCase& asset : assets) {
+        const std::string response = Exchange(
+            application, std::string("GET ") + asset.route +
+                " HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+        CHECK(response.find("HTTP/1.1 200 OK\r\n") == 0);
+        CHECK(response.find(std::string("Content-Type: ") + asset.content_type +
+                            "\r\n") != std::string::npos);
+        CHECK(response.find(asset.body) != std::string::npos);
+    }
+
+    const std::string unknown = Exchange(
+        application,
+        "GET /js/unknown.js HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
+    CHECK(unknown.find("HTTP/1.1 404 Not Found\r\n") == 0);
+    CHECK(unknown.find("\"code\":\"route_not_found\"") != std::string::npos);
 }

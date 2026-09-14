@@ -331,9 +331,21 @@ TEST_CASE(upload_part_http_streams_and_replays_identical_content) {
         application.Prepare(Head("GET", "/api/v1/projects/" + project.id +
             "/uploads/" + task_id, tokens.raw_token))->Finish())["data"];
     CHECK(detail["task_id"] == task_id);
+    CHECK(detail["mode"] == "create_file");
+    CHECK(detail["directory_id"] == project.root_directory_id);
+    CHECK(detail["name"] == "payload.bin");
     CHECK(detail["received_bytes"] == 4);
+    CHECK(detail["size"] == 4);
+    CHECK(detail["sha256"] == digest);
+    CHECK(detail["media_type"] == "application/octet-stream");
+    CHECK(detail["file_id"].is_null());
+    CHECK(detail["observed_current_version_id"].is_null());
     CHECK(detail["confirmed_parts"].size() == 1);
     CHECK(detail["confirmed_parts"][0]["part_number"] == 0);
+    CHECK_THROWS_CODE(
+        application.Prepare(Head("GET", "/api/v1/projects/" + project.id +
+            "/uploads/" + task_id, editor_tokens.raw_token)),
+        "resource_not_found");
 
     RequestHead list_head = Head(
         "GET", "/api/v1/projects/" + project.id + "/uploads",
@@ -343,6 +355,45 @@ TEST_CASE(upload_part_http_streams_and_replays_identical_content) {
         ResponseJson(application.Prepare(list_head)->Finish())["data"];
     CHECK(list["total"] == 1);
     CHECK(list["items"][0]["task_id"] == task_id);
+    CHECK(list["items"][0]["mode"] == "create_file");
+    CHECK(list["items"][0]["name"] == "payload.bin");
+    CHECK(list["items"][0]["size"] == 4);
+    CHECK(list["items"][0]["sha256"] == digest);
+
+    const std::string existing_file = "11111111111111111111111111111111";
+    const std::string existing_version = "22222222222222222222222222222222";
+    {
+        MySqlConnection connection = TestDatabase().Acquire();
+        connection.Execute(
+            "INSERT INTO files(id, project_id, directory_id, name, created_by) "
+            "VALUES (?, ?, ?, 'existing.txt', ?)",
+            {SqlValue(existing_file), SqlValue(project.id),
+             SqlValue(project.root_directory_id), SqlValue(admin.id)});
+        connection.Execute(
+            "INSERT INTO file_versions(id, file_id, version_number, content_id, "
+            "size_bytes, sha256, media_type, created_by) VALUES (?, ?, 1, ?, "
+            "1, ?, 'text/plain', ?)",
+            {SqlValue(existing_version), SqlValue(existing_file),
+             SqlValue("33333333333333333333333333333333"),
+             SqlValue(Sha256Hex("x", 1)), SqlValue(admin.id)});
+        connection.Execute("UPDATE files SET current_version_id=? WHERE id=?",
+                           {SqlValue(existing_version), SqlValue(existing_file)});
+    }
+    const std::string version_digest = Sha256Hex("next", 4);
+    const nlohmann::json version_upload = ResponseJson(SendJson(
+        application, "POST", "/api/v1/projects/" + project.id + "/uploads",
+        tokens.raw_token,
+        {{"mode", "create_version"}, {"file_id", existing_file},
+         {"observed_current_version_id", existing_version}, {"size", 4},
+         {"sha256", version_digest}, {"media_type", "text/plain"}}))["data"];
+    CHECK(version_upload["mode"] == "create_version");
+    CHECK(version_upload["directory_id"].is_null());
+    CHECK(version_upload["name"].is_null());
+    CHECK(version_upload["file_id"] == existing_file);
+    CHECK(version_upload["observed_current_version_id"] == existing_version);
+    CHECK(version_upload["size"] == 4);
+    CHECK(version_upload["sha256"] == version_digest);
+    CHECK(version_upload["media_type"] == "text/plain");
 
     const nlohmann::json digest_body = {
         {"mode", "create_file"},

@@ -179,7 +179,12 @@ UploadTask UploadService::Create(const SessionContext& session,
     UploadTaskRecord record{
         UploadTask{GenerateId(), project_id, session.user_id, "uploading",
                    chunk_size_, UploadPartCount(command.size, chunk_size_), 0,
-                   std::string(), std::string(), std::string(), std::string()},
+                   std::string(), std::string(), std::string(), std::string(),
+                   command.mode == UploadMode::CreateFile
+                       ? "create_file" : "create_version",
+                   command.directory_id, command.name, command.size,
+                   command.sha256, command.media_type, command.file_id,
+                   command.observed_current_version_id},
         command.mode, command.directory_id, command.name, command.size,
         command.sha256, command.media_type, command.file_id,
         command.observed_current_version_id};
