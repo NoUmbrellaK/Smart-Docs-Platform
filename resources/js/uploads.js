@@ -166,6 +166,7 @@ export class UploadController {
       generation: 0,
       selection: this.selection,
       transferPromise: null,
+      cancelPromise: null,
       completePromise: null,
       completeGeneration: null
     };
@@ -188,6 +189,7 @@ export class UploadController {
     runtime.stop = stop;
     runtime.file = null;
     runtime.transferPromise = null;
+    runtime.cancelPromise = null;
     runtime.completePromise = null;
     runtime.completeGeneration = null;
     this.putScheduler.prune();
@@ -285,35 +287,52 @@ export class UploadController {
 
   pause(taskId) {
     const runtime = this.requireRuntime(taskId);
+    if (runtime.cancelPromise) return runtime.cancelPromise;
     this.invalidate(runtime);
     runtime.view.uiState = "interrupted";
     runtime.view.failure = null;
     this.emit(runtime);
+    return runtime.view;
   }
 
-  async cancel(taskId) {
+  cancel(taskId) {
     const runtime = this.requireRuntime(taskId);
+    if (runtime.cancelPromise) return runtime.cancelPromise;
     this.invalidate(runtime, { paused: true, stop: true });
     const generation = runtime.generation;
+    runtime.view.uiState = "cancelling";
+    runtime.view.failure = null;
+    this.emit(runtime);
+    let request;
     try {
-      await this.dependencies.cancelUpload(runtime.view.projectId, taskId);
+      request = this.dependencies.cancelUpload(runtime.view.projectId, taskId);
+    } catch (error) {
+      request = Promise.reject(error);
+    }
+    let cancellation;
+    cancellation = Promise.resolve(request).then(() => {
       if (!this.sameGeneration(runtime, generation)) return runtime.view;
       runtime.view.uiState = "cancelled";
       runtime.view.failure = null;
       this.emit(runtime);
       return runtime.view;
-    } catch (error) {
+    }).catch((error) => {
+      if (runtime.cancelPromise === cancellation) runtime.cancelPromise = null;
       if (this.sameGeneration(runtime, generation)) {
+        runtime.stop = false;
         runtime.view.uiState = error.retryability ? "interrupted" : "failed";
         runtime.view.failure = error.message;
         this.emit(runtime);
       }
       throw error;
-    }
+    });
+    runtime.cancelPromise = cancellation;
+    return cancellation;
   }
 
   resume(taskId, file) {
     const runtime = this.requireRuntime(taskId);
+    if (runtime.cancelPromise) return runtime.cancelPromise;
     if (runtime.transferPromise) return runtime.transferPromise;
     if (runtime.view.uiState === "completed") return Promise.resolve(runtime.view);
     runtime.generation += 1;

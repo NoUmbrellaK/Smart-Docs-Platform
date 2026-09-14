@@ -120,8 +120,8 @@ class UiContractTest(unittest.TestCase):
                          "approved_version_ids", "admin", "reader", "editor"):
             self.assertIn(behavior, self.app)
         for state in ("idle", "loading", "awaiting reselect", "uploading",
-                      "assembling", "interrupted", "failed", "cancelled",
-                      "completed"):
+                      "assembling", "interrupted", "failed", "cancelling",
+                      "cancelled", "completed"):
             self.assertIn(state, self.app + self.uploads + self.html)
         self.assertIn("CANCELLABLE_UPLOAD_STATES", self.app)
 

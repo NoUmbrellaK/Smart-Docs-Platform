@@ -48,6 +48,35 @@ export function writeVisibility(role, ready, selectedFile) {
   };
 }
 
+export function synchronizeSelfRole(identity, project, memberUserId,
+                                    response, ready, selectedFile) {
+  const confirmedRole = response && response.role;
+  const isSelf = identity && identity.user &&
+    memberUserId === identity.user.id;
+  if (!isSelf || !confirmedRole) {
+    return {
+      changed: false,
+      identity,
+      project,
+      visibility: writeVisibility(project && project.role, ready, selectedFile)
+    };
+  }
+  const synchronizedProject = { ...project, role: confirmedRole };
+  const synchronizedIdentity = {
+    ...identity,
+    projects: identity.projects.map((membership) =>
+      membership.id === project.id
+        ? { ...membership, role: confirmedRole }
+        : membership)
+  };
+  return {
+    changed: true,
+    identity: synchronizedIdentity,
+    project: synchronizedProject,
+    visibility: writeVisibility(confirmedRole, ready, selectedFile)
+  };
+}
+
 export async function performLogout(logout, onSignedOut, onError) {
   try {
     await logout();
@@ -317,6 +346,7 @@ function renderRemoteAiApprovals(projectToken, fileToken) {
     return label;
   });
   container.replaceChildren(...controls);
+  applyWriteVisibility();
 }
 
 async function selectFile(file, token = state.projectToken) {
@@ -372,21 +402,37 @@ function renderMembers(members, token) {
     select.value = member.role;
     const save = element("button", "Save role");
     save.type = "button";
-    const saveRole = projectLoads.action(token, api.setMemberRole);
     save.addEventListener("click", async () => {
       if (!projectLoads.current(token)) return;
       save.disabled = true;
       setStatus("members-status", "loading");
       try {
-        if (await saveRole(member.user_id, select.value)) {
-          setStatus("members-status", "Member role saved");
+        const response = await api.setMemberRole(
+          token.projectId, member.user_id, select.value
+        );
+        if (!projectLoads.current(token)) return;
+        const synchronized = synchronizeSelfRole(
+          state.identity, state.project, member.user_id, response,
+          state.projectReady,
+          state.selectedFileReady ? state.selectedFile : null
+        );
+        if (synchronized.changed) {
+          state.identity = synchronized.identity;
+          state.project = synchronized.project;
+          byId("project-role").textContent = synchronized.project.role;
+          applyWriteVisibility();
+          renderUploads(uploads.snapshot());
         }
+        setStatus("members-status", "Member role saved");
       } catch (error) {
         if (projectLoads.current(token)) {
           setStatus("members-status", errorText(error));
         }
       } finally {
-        if (projectLoads.current(token)) save.disabled = false;
+        if (projectLoads.current(token) &&
+            writeVisibility(state.project.role, state.projectReady, null).members) {
+          save.disabled = false;
+        }
       }
     });
     card.append(select, save);

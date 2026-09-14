@@ -290,6 +290,71 @@ test("cancel remains final when in-flight PUTs finish or fail late", async () =>
   assert.equal(states.at(-1)[0], "cancelled");
 });
 
+test("pending cancel is single-flight and blocks pause and resume", async () => {
+  const detail = uploadDetail("task-cancelling");
+  const cancelGate = deferred();
+  const pendingPuts = [];
+  let cancelCalls = 0;
+  let putCalls = 0;
+  const controller = await restoredController([detail], {
+    hashBlob: async (blob) => blob.size === 4 ? "whole" : "part",
+    putPart: async (_projectId, _taskId, partNumber, blob) => {
+      putCalls += 1;
+      const gate = deferred();
+      pendingPuts.push({ gate, partNumber, size: blob.size });
+      return gate.promise;
+    },
+    cancelUpload: async () => {
+      cancelCalls += 1;
+      return cancelGate.promise;
+    }
+  });
+  const transfer = controller.resume("task-cancelling", fileOf(4));
+  while (pendingPuts.length === 0) await delay();
+  const firstCancel = controller.cancel("task-cancelling");
+  assert.equal(controller.snapshot()[0].uiState, "cancelling");
+  const pauseDuringCancel = controller.pause("task-cancelling");
+  const resumeDuringCancel = controller.resume("task-cancelling", fileOf(4));
+  const duplicateCancel = controller.cancel("task-cancelling");
+  assert.equal(pauseDuringCancel, firstCancel);
+  assert.equal(resumeDuringCancel, firstCancel);
+  assert.equal(duplicateCancel, firstCancel);
+  assert.equal(cancelCalls, 1);
+  const callsAtCancel = putCalls;
+  cancelGate.resolve(null);
+  await Promise.all([
+    firstCancel, pauseDuringCancel, resumeDuringCancel, duplicateCancel
+  ]);
+  assert.equal(controller.snapshot()[0].uiState, "cancelled");
+  for (const pending of pendingPuts) {
+    pending.gate.reject(new Error("late PUT failure"));
+  }
+  await transfer;
+  assert.equal(putCalls, callsAtCancel);
+  assert.equal(controller.snapshot()[0].uiState, "cancelled");
+});
+
+test("failed cancel clears pending state and can be retried", async () => {
+  const { ApiError } = await import(moduleUrl("api.js"));
+  const detail = uploadDetail("task-cancel-retry");
+  let cancelCalls = 0;
+  const controller = await restoredController([detail], {
+    cancelUpload: async () => {
+      cancelCalls += 1;
+      if (cancelCalls === 1) {
+        throw new ApiError(503, "busy", "Try cancellation again", true, "r9");
+      }
+      return null;
+    }
+  });
+  await assert.rejects(controller.cancel("task-cancel-retry"),
+                       /Try cancellation again/);
+  assert.equal(controller.snapshot()[0].uiState, "interrupted");
+  await controller.cancel("task-cancel-retry");
+  assert.equal(cancelCalls, 2);
+  assert.equal(controller.snapshot()[0].uiState, "cancelled");
+});
+
 test("confirmed parts are keyed and confirmed bytes never exceed size", async () => {
   const duplicate = uploadDetail("task-dedupe", {
     size: 2,
@@ -393,4 +458,44 @@ test("permission state hides writes synchronously on admin to reader switch", as
     upload: true, update: false, delete: false, restore: true,
     remoteAi: false, members: false
   });
+});
+
+test("confirmed self-demotion synchronizes identity, project, and visibility", async () => {
+  const { synchronizeSelfRole } = await import(moduleUrl("app.js"));
+  const identity = {
+    user: { id: "self", username: "owner" },
+    projects: [
+      { id: "project-a", name: "A", role: "admin" },
+      { id: "project-b", name: "B", role: "reader" }
+    ]
+  };
+  const project = identity.projects[0];
+  const selectedFile = { id: "file-a", deleted: false };
+  const editor = synchronizeSelfRole(
+    identity, project, "self", { role: "editor" }, true, selectedFile
+  );
+  assert.equal(editor.changed, true);
+  assert.equal(editor.identity.projects[0].role, "editor");
+  assert.equal(editor.project.role, "editor");
+  assert.deepEqual(editor.visibility, {
+    upload: true, update: true, delete: true, restore: false,
+    remoteAi: false, members: false
+  });
+  assert.equal(identity.projects[0].role, "admin");
+
+  const reader = synchronizeSelfRole(
+    identity, project, "self", { role: "reader" }, true, selectedFile
+  );
+  assert.equal(reader.identity.projects[0].role, "reader");
+  assert.equal(reader.project.role, "reader");
+  assert.deepEqual(reader.visibility, {
+    upload: false, update: false, delete: false, restore: false,
+    remoteAi: false, members: false
+  });
+
+  const other = synchronizeSelfRole(
+    identity, project, "another-user", { role: "reader" }, true, selectedFile
+  );
+  assert.equal(other.changed, false);
+  assert.equal(other.project.role, "admin");
 });
