@@ -58,6 +58,13 @@ struct PartResult {
     bool reused;
 };
 
+struct CompleteUploadResult {
+    std::string file_id;
+    std::string version_id;
+    std::string processing_job_id;
+    bool reused;
+};
+
 uint64_t UploadPartCount(uint64_t file_size, uint64_t chunk_size);
 uint64_t ExpectedUploadPartSize(uint64_t file_size, uint64_t chunk_size,
                                 uint32_t part_number);
@@ -93,6 +100,10 @@ public:
                            const std::string& task_id,
                            const PartInfo& part,
                            const std::string& request_id);
+    CompleteUploadResult Complete(
+        const SessionContext& session, const std::string& project_id,
+        const std::string& task_id,
+        const std::string& request_id = std::string());
 
 private:
     MySqlPool& pool_;

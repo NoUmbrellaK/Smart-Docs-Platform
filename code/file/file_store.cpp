@@ -1,6 +1,7 @@
 #include "file_store.h"
 
 #include "core/app_error.h"
+#include "core/fault_injector.h"
 #include "core/id.h"
 
 #include <cerrno>
@@ -209,7 +210,7 @@ void PublishNoReplace(int source_fd, const std::string& source,
                       int target_fd, const std::string& target,
                       uint64_t size, const std::string& sha256) {
     if (linkat(source_fd, source.c_str(), target_fd, target.c_str(), 0) != 0) {
-        if (errno != EEXIST) StorageUnavailable();
+        if (errno != EEXIST && errno != ENOENT) StorageUnavailable();
         if (!ExistingMatches(target_fd, target, size, sha256)) {
             StorageConflict();
         }
@@ -229,28 +230,49 @@ bool EndsWith(const std::string& value, const char* suffix) {
            value.compare(value.size() - suffix_size, suffix_size, suffix) == 0;
 }
 
-void RemoveTemporaryEntries(int directory_fd) {
-    const int scan_fd = dup(directory_fd);
-    if (scan_fd < 0) StorageUnavailable();
+bool IsServerTemporary(const std::string& name) {
+    if (name == "assembled.tmp") return true;
+    if (name.size() == 36 && EndsWith(name, ".tmp")) {
+        return IsLowerHex(name.substr(0, 32), 32);
+    }
+    const std::string prefix = "assembled.";
+    return name.size() == prefix.size() + 32 + 4 &&
+           name.compare(0, prefix.size(), prefix) == 0 &&
+           IsLowerHex(name.substr(prefix.size(), 32), 32) &&
+           EndsWith(name, ".tmp");
+}
+
+std::vector<std::string> DirectoryNames(int directory_fd) {
+    const int scan_fd = openat(directory_fd, ".",
+                               O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW);
+    if (scan_fd < 0 || !IsSecureDirectory(scan_fd)) {
+        if (scan_fd >= 0) close(scan_fd);
+        StorageUnavailable();
+    }
     DIR* directory = fdopendir(scan_fd);
     if (directory == nullptr) {
         close(scan_fd);
         StorageUnavailable();
     }
+    std::vector<std::string> names;
     errno = 0;
     while (dirent* entry = readdir(directory)) {
         const std::string name(entry->d_name);
-        if (name != "assembled.tmp" && !EndsWith(name, ".tmp")) {
-            continue;
-        }
-        if (unlinkat(directory_fd, name.c_str(), 0) != 0 && errno != ENOENT) {
-            closedir(directory);
-            StorageUnavailable();
-        }
+        if (name != "." && name != "..") names.push_back(name);
         errno = 0;
     }
     const int saved_errno = errno;
     if (closedir(directory) != 0 || saved_errno != 0) StorageUnavailable();
+    return names;
+}
+
+void RemoveTemporaryEntries(int directory_fd) {
+    for (const std::string& name : DirectoryNames(directory_fd)) {
+        if (!IsServerTemporary(name)) continue;
+        if (unlinkat(directory_fd, name.c_str(), 0) != 0 && errno != ENOENT) {
+            StorageUnavailable();
+        }
+    }
     if (fsync(directory_fd) != 0) StorageUnavailable();
 }
 
@@ -348,6 +370,7 @@ PartInfo PartWriter::Finish() {
         throw AppError(400, "invalid_request", "part writer is already finished");
     }
     if (fsync(file_fd_) != 0) StorageUnavailable();
+    FaultInjector::Hit(FaultPoint::AfterPartTempFsync);
     unsigned char bytes[EVP_MAX_MD_SIZE];
     unsigned int digest_size = 0;
     if (EVP_DigestFinal_ex(digest_, bytes, &digest_size) != 1 ||
@@ -416,16 +439,16 @@ PartWriter FileStore::CreatePartWriter(const std::string& task_id,
 StoredTemp FileStore::Assemble(const std::string& task_id,
                                const std::vector<PartInfo>& parts) {
     RequireId(task_id);
-    if (parts.empty()) IntegrityFailed();
-    const int task_fd = OpenDirectoryAt(staging_fd_, task_id);
-    const int parts_fd = OpenDirectoryAt(task_fd, "parts");
+    const int task_fd = EnsureDirectoryAt(staging_fd_, task_id);
+    int parts_fd = -1;
+    if (!parts.empty()) parts_fd = OpenDirectoryAt(task_fd, "parts");
     const std::string temporary = "assembled." + GenerateId() + ".tmp";
     int output_fd = openat(task_fd, temporary.c_str(),
                            O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC |
                                O_NOFOLLOW,
                            0600);
     if (output_fd < 0) {
-        close(parts_fd);
+        CloseNoThrow(&parts_fd);
         close(task_fd);
         StorageUnavailable();
     }
@@ -478,17 +501,18 @@ StoredTemp FileStore::Assemble(const std::string& task_id,
             }
         }
         if (fsync(output_fd) != 0) StorageUnavailable();
+        FaultInjector::Hit(FaultPoint::AfterAssembledFsync);
         CloseNoThrow(&output_fd);
         const std::string sha256 = combined.Finish();
         PublishNoReplace(task_fd, temporary, task_fd, "assembled.tmp", total,
                          sha256);
-        close(parts_fd);
+        CloseNoThrow(&parts_fd);
         close(task_fd);
         return StoredTemp{task_id, total, sha256};
     } catch (...) {
         CloseNoThrow(&output_fd);
         unlinkat(task_fd, temporary.c_str(), 0);
-        close(parts_fd);
+        CloseNoThrow(&parts_fd);
         close(task_fd);
         throw;
     }
@@ -504,7 +528,27 @@ PublishedObject FileStore::PublishObject(StoredTemp assembled,
     int first_fd = -1;
     int second_fd = -1;
     try {
-        assembled_fd = OpenRegularAt(task_fd, "assembled.tmp");
+        first_fd = EnsureDirectoryAt(objects_fd_, content_id.substr(0, 2));
+        second_fd = EnsureDirectoryAt(first_fd, content_id.substr(2, 2));
+        assembled_fd = openat(task_fd, "assembled.tmp",
+                              O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
+        if (assembled_fd < 0 && errno == ENOENT) {
+            if (!ExistingMatches(second_fd, content_id, assembled.size,
+                                 assembled.sha256)) {
+                StorageConflict();
+            }
+            close(second_fd);
+            close(first_fd);
+            close(task_fd);
+            return PublishedObject{content_id, assembled.size,
+                                   assembled.sha256};
+        }
+        if (assembled_fd < 0) StorageUnavailable();
+        struct stat assembled_stat{};
+        if (fstat(assembled_fd, &assembled_stat) != 0 ||
+            !S_ISREG(assembled_stat.st_mode) || assembled_stat.st_size < 0) {
+            StorageUnavailable();
+        }
         const FileDigest actual = ReadAndDigest(assembled_fd);
         if (actual.size != assembled.size ||
             actual.sha256 != assembled.sha256) {
@@ -515,10 +559,9 @@ PublishedObject FileStore::PublishObject(StoredTemp assembled,
         }
         close(assembled_fd);
         assembled_fd = -1;
-        first_fd = EnsureDirectoryAt(objects_fd_, content_id.substr(0, 2));
-        second_fd = EnsureDirectoryAt(first_fd, content_id.substr(2, 2));
         PublishNoReplace(task_fd, "assembled.tmp", second_fd, content_id,
                          assembled.size, assembled.sha256);
+        FaultInjector::Hit(FaultPoint::AfterObjectRename);
         close(second_fd);
         close(first_fd);
         close(task_fd);
@@ -588,6 +631,65 @@ bool FileStore::ObjectExists(const std::string& content_id) const {
     close(object_fd);
     if (!regular) StorageUnavailable();
     return true;
+}
+
+std::vector<std::string> FileStore::ListObjectsOlderThan(
+    std::time_t cutoff) const {
+    std::vector<std::string> objects;
+    for (const std::string& first : DirectoryNames(objects_fd_)) {
+        if (!IsLowerHex(first, 2)) continue;
+        int first_fd = OpenDirectoryAt(objects_fd_, first);
+        try {
+            for (const std::string& second : DirectoryNames(first_fd)) {
+                if (!IsLowerHex(second, 2)) continue;
+                int second_fd = OpenDirectoryAt(first_fd, second);
+                try {
+                    for (const std::string& name : DirectoryNames(second_fd)) {
+                        if (!IsLowerHex(name, 32) ||
+                            name.compare(0, 2, first) != 0 ||
+                            name.compare(2, 2, second) != 0) {
+                            continue;
+                        }
+                        struct stat entry{};
+                        if (fstatat(second_fd, name.c_str(), &entry,
+                                    AT_SYMLINK_NOFOLLOW) != 0 ||
+                            !S_ISREG(entry.st_mode)) {
+                            StorageUnavailable();
+                        }
+                        if (entry.st_mtime < cutoff) objects.push_back(name);
+                    }
+                    close(second_fd);
+                } catch (...) {
+                    close(second_fd);
+                    throw;
+                }
+            }
+            close(first_fd);
+        } catch (...) {
+            close(first_fd);
+            throw;
+        }
+    }
+    return objects;
+}
+
+void FileStore::RemoveObject(const std::string& content_id) {
+    RequireId(content_id);
+    int first_fd = OpenDirectoryAt(objects_fd_, content_id.substr(0, 2));
+    int second_fd = -1;
+    try {
+        second_fd = OpenDirectoryAt(first_fd, content_id.substr(2, 2));
+        if (unlinkat(second_fd, content_id.c_str(), 0) != 0 && errno != ENOENT) {
+            StorageUnavailable();
+        }
+        if (fsync(second_fd) != 0) StorageUnavailable();
+        close(second_fd);
+        close(first_fd);
+    } catch (...) {
+        CloseNoThrow(&second_fd);
+        close(first_fd);
+        throw;
+    }
 }
 
 void FileStore::RemoveTaskTemporaryFiles(const std::string& task_id) {

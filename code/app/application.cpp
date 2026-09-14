@@ -4,6 +4,7 @@
 #include "auth/auth_routes.h"
 #include "auth/auth_service.h"
 #include "core/app_error.h"
+#include "core/fault_injector.h"
 #include "core/id.h"
 #include "db/mysql.h"
 #include "db/schema.h"
@@ -13,6 +14,7 @@
 #include "project/project_routes.h"
 #include "project/project_service.h"
 #include "upload/upload_routes.h"
+#include "upload/upload_reconciler.h"
 #include "upload/upload_service.h"
 
 #include <cerrno>
@@ -141,6 +143,7 @@ Application::Application(std::string static_root) {
 
 Application::Application(const AppConfig& config, std::string static_root)
     : Application(std::move(static_root)) {
+    FaultInjector::RejectEnvironmentInNormalBuild();
     std::shared_ptr<MySqlPool> database(new MySqlPool());
     database->Initialize(MySqlConfig::FromAppConfig(config));
     {
@@ -163,6 +166,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     upload_service_.reset(new UploadService(
         *database_, *project_service_, *file_store_, config.max_file_bytes,
         config.chunk_bytes));
+    UploadReconciler(*database_, *file_store_).RunAtStartup();
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);

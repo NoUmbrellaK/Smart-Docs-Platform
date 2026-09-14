@@ -1,6 +1,7 @@
 #include "upload_service.h"
 
 #include "core/app_error.h"
+#include "core/fault_injector.h"
 #include "core/id.h"
 #include "project/project_service.h"
 #include "upload_repository.h"
@@ -46,6 +47,17 @@ void RequireUploading(const UploadTaskRecord& record) {
         throw AppError(409, "upload_state_conflict",
                        "upload task is not accepting parts");
     }
+}
+
+CompleteUploadResult StoredResult(const UploadTaskRecord& record,
+                                  bool reused) {
+    return CompleteUploadResult{record.task.file_id, record.task.version_id,
+                                record.task.processing_job_id, reused};
+}
+
+bool CompletableState(const std::string& state) {
+    return state == "uploading" || state == "interrupted" ||
+           state == "assembling" || state == "publishing";
 }
 
 void ValidateListQuery(const UploadListQuery& query) {
@@ -289,7 +301,11 @@ std::unique_ptr<PartWriter> UploadService::BeginPart(
                               true, &record)) {
         ResourceNotFound();
     }
-    RequireUploading(record);
+    if (record.task.state != "uploading" &&
+        record.task.state != "interrupted") {
+        throw AppError(409, "upload_state_conflict",
+                       "upload task is not accepting parts");
+    }
     if (ExpectedUploadPartSize(record.expected_size, record.task.chunk_size,
                                part_number) != content_length) {
         throw AppError(400, "invalid_request",
@@ -300,6 +316,9 @@ std::unique_ptr<PartWriter> UploadService::BeginPart(
         (existing.size != content_length || existing.sha256 != sha256)) {
         throw AppError(409, "chunk_conflict",
                        "this part number already has different content");
+    }
+    if (record.task.state == "interrupted") {
+        repository_->SetState(connection, task_id, "uploading");
     }
     transaction.Commit();
     return std::unique_ptr<PartWriter>(
@@ -349,4 +368,179 @@ PartResult UploadService::ConfirmPart(const SessionContext& session,
                              CheckedRequestId(request_id));
     transaction.Commit();
     return PartResult{part.part_number, part.size, part.sha256, false};
+}
+
+CompleteUploadResult UploadService::Complete(
+    const SessionContext& session, const std::string& project_id,
+    const std::string& task_id, const std::string& request_id) {
+    RequireId(project_id);
+    RequireId(task_id);
+    UploadTaskRecord task;
+    std::vector<PartInfo> parts;
+    {
+        MySqlConnection connection = pool_.Acquire();
+        MySqlTransaction transaction(connection);
+        projects_.RequireRole(connection, session.user_id, project_id,
+                              Role::Editor);
+        if (!repository_->FindOwn(connection, project_id, session.user_id,
+                                  task_id, true, &task)) {
+            ResourceNotFound();
+        }
+        if (task.task.state == "completed") {
+            if (!repository_->CompletedGraphValid(connection, task)) {
+                throw AppError(500, "database_result_invalid",
+                               "completed upload result graph is invalid");
+            }
+            transaction.Commit();
+            return StoredResult(task, true);
+        }
+        if (!CompletableState(task.task.state)) {
+            throw AppError(409, "upload_state_conflict",
+                           "upload task cannot be completed in its current state");
+        }
+        parts = repository_->ListParts(connection, task_id);
+        if (parts.size() != task.task.part_count) {
+            throw AppError(409, "upload_parts_incomplete",
+                           "not all upload parts have been confirmed");
+        }
+        uint64_t total = 0;
+        for (size_t index = 0; index < parts.size(); ++index) {
+            if (parts[index].part_number != index ||
+                parts[index].size != ExpectedUploadPartSize(
+                    task.expected_size, task.task.chunk_size,
+                    static_cast<uint32_t>(index)) ||
+                total > std::numeric_limits<uint64_t>::max() -
+                            parts[index].size) {
+                throw AppError(409, "upload_parts_invalid",
+                               "confirmed upload parts do not match the task");
+            }
+            total += parts[index].size;
+        }
+        if (total != task.expected_size) {
+            throw AppError(409, "upload_parts_invalid",
+                           "confirmed upload size does not match the task");
+        }
+        repository_->SetState(connection, task_id, "assembling");
+        transaction.Commit();
+    }
+
+    const StoredTemp assembled = store_.Assemble(task_id, parts);
+    if (assembled.size != task.expected_size ||
+        assembled.sha256 != task.expected_sha256) {
+        store_.RemoveTaskTemporaryFiles(task_id);
+        MySqlConnection connection = pool_.Acquire();
+        MySqlTransaction transaction(connection);
+        repository_->SetFailed(connection, task_id, "whole_file_mismatch",
+                               "assembled upload size or SHA-256 did not match");
+        transaction.Commit();
+        throw AppError(422, "whole_file_mismatch",
+                       "assembled upload size or SHA-256 did not match");
+    }
+
+    {
+        MySqlConnection connection = pool_.Acquire();
+        MySqlTransaction transaction(connection);
+        projects_.RequireRole(connection, session.user_id, project_id,
+                              Role::Editor);
+        UploadTaskRecord current;
+        if (!repository_->FindOwn(connection, project_id, session.user_id,
+                                  task_id, true, &current)) {
+            ResourceNotFound();
+        }
+        if (current.task.state == "completed") {
+            if (!repository_->CompletedGraphValid(connection, current)) {
+                throw AppError(500, "database_result_invalid",
+                               "completed upload result graph is invalid");
+            }
+            transaction.Commit();
+            return StoredResult(current, true);
+        }
+        if (!CompletableState(current.task.state)) {
+            throw AppError(409, "upload_state_conflict",
+                           "upload task cannot be published in its current state");
+        }
+        repository_->SetState(connection, task_id, "publishing");
+        transaction.Commit();
+    }
+
+    store_.PublishObject(assembled, task_id);
+
+    try {
+        MySqlConnection connection = pool_.Acquire();
+        MySqlTransaction transaction(connection);
+        projects_.RequireRole(connection, session.user_id, project_id,
+                              Role::Editor);
+        UploadTaskRecord current;
+        if (!repository_->FindOwn(connection, project_id, session.user_id,
+                                  task_id, true, &current)) {
+            ResourceNotFound();
+        }
+        if (current.task.state == "completed") {
+            if (!repository_->CompletedGraphValid(connection, current)) {
+                throw AppError(500, "database_result_invalid",
+                               "completed upload result graph is invalid");
+            }
+            transaction.Commit();
+            return StoredResult(current, true);
+        }
+        if (!CompletableState(current.task.state)) {
+            throw AppError(409, "upload_state_conflict",
+                           "upload task cannot be published in its current state");
+        }
+
+        std::string file_id;
+        uint64_t version_number = 1;
+        if (current.mode == UploadMode::CreateFile) {
+            if (!repository_->DirectoryExists(connection, project_id,
+                                              current.directory_id)) {
+                ResourceNotFound();
+            }
+            if (repository_->ActiveNameExists(connection, project_id,
+                                              current.directory_id,
+                                              current.expected_name)) {
+                throw AppError(409, "name_conflict",
+                               "an active file with this name already exists");
+            }
+            file_id = GenerateId();
+            repository_->InsertFile(connection, file_id, current,
+                                    session.user_id);
+        } else {
+            file_id = current.target_file_id;
+            std::string current_version;
+            if (!repository_->FindActiveFileCurrentVersion(
+                    connection, project_id, file_id, &current_version, true)) {
+                ResourceNotFound();
+            }
+            if (current_version != current.observed_current_version_id) {
+                throw AppError(409, "version_conflict",
+                               "the file current version has changed");
+            }
+            version_number =
+                repository_->NextVersionNumber(connection, file_id);
+        }
+
+        const std::string version_id = GenerateId();
+        const std::string job_id = GenerateId();
+        repository_->InsertVersion(connection, version_id, file_id,
+                                   version_number, task_id, current,
+                                   session.user_id);
+        repository_->SetCurrentVersion(connection, file_id, version_id);
+        repository_->InsertProcessingJob(connection, job_id, version_id);
+        repository_->InsertAudit(connection, session.user_id, project_id,
+                                 "upload.complete", task_id,
+                                 CheckedRequestId(request_id));
+        repository_->SetCompleted(connection, task_id, file_id, version_id,
+                                  job_id);
+        FaultInjector::Hit(FaultPoint::BeforeDatabaseCommit);
+        transaction.Commit();
+        FaultInjector::Hit(FaultPoint::AfterDatabaseCommit);
+        return CompleteUploadResult{file_id, version_id, job_id, false};
+    } catch (const AppError& error) {
+        if (error.code == "constraint_conflict" &&
+            task.mode == UploadMode::CreateFile) {
+            throw AppError(409, "name_conflict",
+                           "an active file with this name already exists");
+        }
+        throw;
+    }
 }

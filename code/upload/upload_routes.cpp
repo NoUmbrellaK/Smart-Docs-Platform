@@ -4,6 +4,7 @@
 #include "auth/auth_service.h"
 #include "chunk_body_handler.h"
 #include "core/app_error.h"
+#include "core/fault_injector.h"
 #include "core/id.h"
 #include "http/jsonbody.h"
 #include "upload_service.h"
@@ -287,6 +288,31 @@ void RegisterUploadRoutes(Router& router,
         uploads->Cancel(session, project_id, task_id, request_id);
         return ReadyResponse(HttpResponse::Empty(
             204, head.keep_alive, {{"X-Request-ID", request_id}}));
+    });
+
+    router.Add("POST",
+        "/api/v1/projects/{project_id}/uploads/{task_id}/complete",
+        [auth, uploads, secure_cookie](const RequestHead& head,
+                                      const RouteParams& params) {
+        RequireSameOrigin(head, secure_cookie);
+        if (head.content_length != 0) {
+            throw AppError(400, "body_not_allowed",
+                           "this route does not accept a request body");
+        }
+        const SessionContext session = Authenticate(*auth, head);
+        const std::string project_id = EntityId(Parameter(params, "project_id"));
+        const std::string task_id = EntityId(Parameter(params, "task_id"));
+        const std::string request_id = GenerateId();
+        const CompleteUploadResult result =
+            uploads->Complete(session, project_id, task_id, request_id);
+        FaultInjector::Hit(FaultPoint::BeforeHttpResponse);
+        return ReadyResponse(DataResponse(
+            200,
+            {{"file_id", result.file_id},
+             {"version_id", result.version_id},
+             {"processing_job_id", result.processing_job_id},
+             {"reused", result.reused}},
+            request_id, head.keep_alive));
     });
 
     router.Add("PUT",

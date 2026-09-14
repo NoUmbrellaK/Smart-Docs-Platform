@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -68,6 +69,8 @@ public:
                                   const std::string& content_id);
     int OpenObject(const std::string& content_id) const;
     bool ObjectExists(const std::string& content_id) const;
+    std::vector<std::string> ListObjectsOlderThan(std::time_t cutoff) const;
+    void RemoveObject(const std::string& content_id);
     void RemoveTaskTemporaryFiles(const std::string& task_id);
 
 private:
