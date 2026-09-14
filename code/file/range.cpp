@@ -26,6 +26,17 @@ uint64_t Decimal(const std::string& value) {
     return result;
 }
 
+bool HasByteUnit(const std::string& header) {
+    static const char unit[] = "bytes";
+    if (header.size() < 6 || header[5] != '=') return false;
+    for (size_t index = 0; index < 5; ++index) {
+        unsigned char ch = static_cast<unsigned char>(header[index]);
+        if (ch >= 'A' && ch <= 'Z') ch = static_cast<unsigned char>(ch + 32);
+        if (ch != static_cast<unsigned char>(unit[index])) return false;
+    }
+    return true;
+}
+
 }  // namespace
 
 ByteRange ParseSingleRange(const std::string& header, uint64_t file_size) {
@@ -33,14 +44,13 @@ ByteRange ParseSingleRange(const std::string& header, uint64_t file_size) {
         throw AppError(501, "range_not_supported",
                        "multiple byte ranges are not supported");
     }
-    const std::string prefix = "bytes=";
-    if (header.compare(0, prefix.size(), prefix) != 0 ||
-        header.size() == prefix.size() ||
+    const size_t prefix_size = 6;
+    if (!HasByteUnit(header) || header.size() == prefix_size ||
         header.find_first_of(" \t\r\n") != std::string::npos ||
         file_size == 0) {
         InvalidRange();
     }
-    const std::string value = header.substr(prefix.size());
+    const std::string value = header.substr(prefix_size);
     const size_t dash = value.find('-');
     if (dash == std::string::npos ||
         value.find('-', dash + 1) != std::string::npos) {

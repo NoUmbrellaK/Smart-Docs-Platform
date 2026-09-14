@@ -33,6 +33,8 @@ void CheckRangeError(const std::string& header, uint64_t size, int status,
 
 TEST_CASE(range_parses_closed_open_and_suffix_forms_with_clamping) {
     CheckRange("bytes=0-9", 100, 0, 9);
+    CheckRange("Bytes=0-9", 100, 0, 9);
+    CheckRange("bYtEs=10-", 100, 10, 99);
     CheckRange("bytes=10-", 100, 10, 99);
     CheckRange("bytes=-10", 100, 90, 99);
     CheckRange("bytes=0-999", 100, 0, 99);
@@ -44,7 +46,7 @@ TEST_CASE(range_parses_closed_open_and_suffix_forms_with_clamping) {
 
 TEST_CASE(range_rejects_empty_unsatisfiable_overflow_and_malformed_values) {
     const char* invalid[] = {
-        "", "items=0-9", "Bytes=0-9", "bytes=", "bytes=-", "bytes=9-0",
+        "", "items=0-9", "bytes=", "bytes=-", "bytes=9-0",
         "bytes=100-", "bytes=100-200", "bytes=-0",
         "bytes=18446744073709551616-", "bytes=0-18446744073709551616",
         "bytes=-18446744073709551616", " bytes=0-9", "bytes =0-9",
