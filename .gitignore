@@ -12,6 +12,7 @@
 *.log
 *.exe
 /.vscode
+/.worktrees/
 
 # Smart Docs Platform: do not import operating-system metadata.
 .DS_Store
