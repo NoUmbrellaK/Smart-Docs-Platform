@@ -28,6 +28,7 @@ FAULT_ROUNDS = (
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--server-bin", required=True)
+    parser.add_argument("--normal-server-bin", required=True)
     parser.add_argument("--admin-bin", required=True)
     parser.add_argument("--log-dir", required=True)
     parser.add_argument("--context-file", required=True)
@@ -80,17 +81,23 @@ def graph_counts(project_id, directory_id, name, observed_version_id,
     expected_type = sql_string(media_type)
     expected_name = sql_string(name)
     query = (
-        "WITH scoped_files AS ("
+        "WITH named_files AS ("
         f"SELECT id FROM files WHERE project_id={project} "
         f"AND directory_id={directory} AND name={expected_name}),"
         "scoped_tasks AS ("
-        "SELECT t.* FROM upload_tasks t JOIN scoped_files f "
+        "SELECT t.* FROM upload_tasks t JOIN named_files f "
         "ON f.id=t.target_file_id "
         f"WHERE t.project_id={project} AND t.mode='create_version' "
         f"AND t.observed_current_version_id={observed} "
         f"AND t.expected_size_bytes={expected_size} "
         f"AND t.expected_sha256={expected_digest} "
         f"AND t.media_type={expected_type}),"
+        "related_file_ids AS ("
+        "SELECT target_file_id AS id FROM scoped_tasks UNION "
+        "SELECT v.file_id FROM file_versions v JOIN scoped_tasks t "
+        "ON v.content_id=t.id),"
+        "scoped_files AS ("
+        "SELECT f.id FROM files f JOIN related_file_ids r ON r.id=f.id),"
         "scoped_versions AS ("
         "SELECT v.* FROM file_versions v JOIN scoped_files f ON f.id=v.file_id) "
         "SELECT "
@@ -367,6 +374,7 @@ def main():
         "build": {
             "checkout": build_checkout,
             "executables": {
+                "server": digest(pathlib.Path(arguments.normal_server_bin).read_bytes()),
                 "smartdocs-admin": digest(pathlib.Path(arguments.admin_bin).read_bytes()),
                 "smartdocs_test_server": digest(
                     pathlib.Path(arguments.server_bin).read_bytes()),

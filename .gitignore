@@ -17,6 +17,8 @@
 /build/obj/
 /test/test
 /docs/evidence/m1/latest/
+__pycache__/
+*.py[cod]
 
 # Smart Docs Platform: do not import operating-system metadata.
 .DS_Store

@@ -28,9 +28,12 @@ class HarnessEvidenceTest(unittest.TestCase):
         other_file = "9" * 32
         other_version = "a" * 32
         other_job = "b" * 32
-        duplicate_task = "c" * 32
-        duplicate_version = "d" * 32
-        duplicate_job = "e" * 32
+        leaked_file = "c" * 32
+        leaked_version = "d" * 32
+        leaked_job = "e" * 32
+        duplicate_task = "f" * 32
+        duplicate_version = "0" * 32
+        duplicate_job = "1" * 32
         target_sha256 = "f" * 64
 
         database = sqlite3.connect(":memory:")
@@ -87,6 +90,24 @@ class HarnessEvidenceTest(unittest.TestCase):
             33, target_sha256, "text/plain", scalar)
         self.assertTrue(harness.round_graph_is_singleton(counts, 1, 1))
 
+        # A retry must not be able to attach this round's new content to a
+        # different file ID.  It is deliberately outside the round's name and
+        # directory so name-scoped counting would falsely stay green.
+        database.execute("INSERT INTO files VALUES (?, ?, ?, ?)",
+                         (leaked_file, project, "x" * 32, "escaped.txt"))
+        database.execute("INSERT INTO file_versions VALUES (?, ?, ?)",
+                         (leaked_version, leaked_file, task_id))
+        database.execute("INSERT INTO processing_jobs VALUES (?, ?)",
+                         (leaked_job, leaked_version))
+
+        counts = harness.graph_counts(
+            project, directory, "interrupt-01.txt", seed_version,
+            33, target_sha256, "text/plain", scalar)
+        self.assertEqual(counts["files"], 2)
+        self.assertEqual(counts["target_versions"], 2)
+        self.assertEqual(counts["processing_jobs"], 3)
+        self.assertFalse(harness.round_graph_is_singleton(counts, 1, 1))
+
         database.execute("INSERT INTO upload_tasks VALUES (?, ?, ?, ?, ?, ?, "
                          "?, ?, ?, ?, ?, ?)",
                          (duplicate_task, project, file_id, "create_version",
@@ -101,8 +122,8 @@ class HarnessEvidenceTest(unittest.TestCase):
             33, target_sha256, "text/plain", scalar)
         self.assertEqual(
             counts,
-            {"files": 1, "upload_tasks": 2, "versions": 3,
-             "target_versions": 2, "processing_jobs": 3,
+            {"files": 2, "upload_tasks": 2, "versions": 4,
+             "target_versions": 3, "processing_jobs": 4,
              "completed_bindings": 2})
         self.assertFalse(harness.round_graph_is_singleton(counts, 1, 1))
 
@@ -113,6 +134,96 @@ class HarnessEvidenceTest(unittest.TestCase):
             "constant false cannot expose uncommitted new bytes from the real file URL")
         seed = "1" * 64
         target = "2" * 64
+
+        # Run the real round logic against a response double that exposes
+        # uncommitted bytes at the actual file URL. The round must request that
+        # URL and reject the database/HTTP mismatch before retrying.
+        point = "AfterObjectRename"
+        number = 1
+        file_id = "3" * 32
+        version_id = "4" * 32
+        job_id = "5" * 32
+        task_id = "6" * 32
+        seed_content = f"M1 interruption seed {number:02d} at {point}\n".encode("ascii")
+        content = f"M1 interruption round {number:02d} at {point}\n".encode("ascii")
+
+        class Response:
+            def __init__(self, status, payload=None, body=b""):
+                self.status = status
+                self._payload = payload or {}
+                self.body = body
+
+            def json(self):
+                return {"data": self._payload}
+
+        class LeakyClient:
+            def __init__(self):
+                self.port = 0
+                self.leaked_url_requested_before_retry = False
+                self.complete_calls = 0
+
+            def request(self, method, path, body=None, headers=None):
+                if method == "POST" and path.endswith("/complete"):
+                    self.complete_calls += 1
+                    return Response(0)
+                if path.endswith(f"/uploads/{task_id}"):
+                    return Response(200, {
+                        "state": "interrupted",
+                        "confirmed_parts": [{"part_number": 0}],
+                        "file_id": None,
+                        "version_id": None,
+                        "processing_job_id": None})
+                if "?name=" in path:
+                    return Response(200, {"total": 1,
+                                          "items": [{"id": file_id}]})
+                if path.endswith(f"/files/{task_id}/content"):
+                    return Response(404)
+                if path.endswith(
+                        f"/files/{file_id}/versions/{version_id}/content"):
+                    return Response(200, body=seed_content)
+                if path.endswith(f"/files/{file_id}/content"):
+                    self.leaked_url_requested_before_retry = True
+                    return Response(200, body=content)
+                raise AssertionError(f"unexpected driver request: {method} {path}")
+
+        class FaultedServer:
+            def __init__(self):
+                self.port = 1
+
+            def start(self, fault_point=None):
+                self.port += 1
+
+            def stop(self):
+                pass
+
+            def wait_for_fault_exit(self):
+                return 86
+
+        task = {"task_id": task_id, "chunk_size": len(content), "part_count": 1}
+        baseline_counts = {
+            "files": 1, "upload_tasks": 1, "versions": 1,
+            "target_versions": 0, "processing_jobs": 1,
+            "completed_bindings": 0}
+        replacements = {
+            "upload_file": lambda *unused: (
+                task, {"file_id": file_id, "version_id": version_id,
+                       "processing_job_id": job_id}),
+            "create_upload": lambda *unused: task,
+            "upload_parts": lambda *unused: None,
+            "graph_counts": lambda *unused, **unused_keywords: baseline_counts,
+        }
+        for name, replacement in replacements.items():
+            original = getattr(harness, name)
+            setattr(harness, name, replacement)
+            self.addCleanup(setattr, harness, name, original)
+
+        client = LeakyClient()
+        with self.assertRaisesRegex(AssertionError,
+                                    "database/HTTP publication mismatch"):
+            harness.run_round(
+                FaultedServer(), client, "7" * 32, "8" * 32, point, number)
+        self.assertTrue(client.leaked_url_requested_before_retry)
+
         leaked = derive("interrupted", 0, 0, 200, target, seed, target)
         self.assertTrue(leaked["half_published_download"])
         hidden = derive("interrupted", 0, 0, 200, seed, seed, target)
@@ -130,7 +241,6 @@ class HarnessEvidenceTest(unittest.TestCase):
                     "docs/evidence/m1/latest", "fake-bin"):
                 (repo / directory).mkdir(parents=True, exist_ok=True)
             runner = repo / "test/e2e/run_m1.sh"
-            shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
             (repo / "test/fixtures/m1/plain.txt").write_text(
                 "plain\n", encoding="utf-8")
             (repo / "test/fixtures/m1/sample.pdf").write_bytes(b"%PDF-1.4\n")
@@ -153,9 +263,11 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "set -eu\n"
                 "repo=''\n"
                 "clean=false\n"
+                "jobs=''\n"
                 "while [ \"$#\" -gt 0 ]; do\n"
                 "  case \"$1\" in\n"
                 "    -C) repo=$2; shift 2 ;;\n"
+                "    -j*) jobs=$1; shift ;;\n"
                 "    clean) clean=true; shift ;;\n"
                 "    *) shift ;;\n"
                 "  esac\n"
@@ -164,9 +276,15 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "  rm -f \"$repo/bin/server\" \"$repo/bin/smartdocs-admin\" "
                 "\"$repo/bin/smartdocs_test_server\"\n"
                 "else\n"
+                "  printf '%s\\n' \"$jobs\" >\"$repo/build-jobs\"\n"
                 "  mkdir -p \"$repo/bin\"\n"
                 "  for artifact in server smartdocs-admin smartdocs_test_server; do\n"
-                "    printf 'FRESH\\n' >\"$repo/bin/$artifact\"\n"
+                "    if [ \"$artifact\" = server ]; then\n"
+                "      printf '#!/bin/sh\\n# FRESH\\nwhile :; do sleep 1; done\\n' "
+                ">\"$repo/bin/$artifact\"\n"
+                "    else\n"
+                "      printf 'FRESH\\n' >\"$repo/bin/$artifact\"\n"
+                "    fi\n"
                 "    chmod +x \"$repo/bin/$artifact\"\n"
                 "  done\n"
                 "fi\n")
@@ -187,8 +305,13 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "if args and args[0] == '-':\n"
                 "    os.execv('/usr/bin/python3', ['/usr/bin/python3', '-B'] + args)\n"
                 "script = args.pop(0) if args else ''\n"
+                "if script.endswith('m1_http_test.py') and "
+                "'--normal-server-bin' in args:\n"
+                "    print('unexpected normal-server binding', file=sys.stderr)\n"
+                "    sys.exit(64)\n"
                 "if script.endswith('m1_interrupt_test.py'):\n"
-                "    required = {'--admin-bin', '--build-head', '--build-dirty'}\n"
+                "    required = {'--normal-server-bin', '--admin-bin', "
+                "'--build-head', '--build-dirty'}\n"
                 "    bound = required.issubset(args)\n"
                 "    if bound:\n"
                 "        bound = (args[args.index('--build-head') + 1] == '0' * 64 "
@@ -204,23 +327,39 @@ class HarnessEvidenceTest(unittest.TestCase):
 
             environment = os.environ.copy()
             environment["PATH"] = str(fake_bin) + os.pathsep + environment["PATH"]
-            environment["SMARTDOCS_BUILD_JOBS"] = "1"
+            shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
             completed = subprocess.run(
                 [str(runner)], cwd=repo, env=environment, text=True,
                 capture_output=True, check=False)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
             problems = []
-            if completed.returncode != 0:
-                problems.append(
-                    f"runner exit {completed.returncode}: {completed.stderr}")
             for artifact in ("server", "smartdocs-admin", "smartdocs_test_server"):
-                if (repo / "bin" / artifact).read_text(
-                        encoding="utf-8") != "FRESH\n":
+                if "FRESH" not in (repo / "bin" / artifact).read_text(
+                        encoding="utf-8"):
                     problems.append(f"stale executable accepted: {artifact}")
+            if (repo / "build-jobs").read_text(encoding="utf-8") != "-j1\n":
+                problems.append("runner did not default to one build job")
             evidence = json.loads((repo / "docs/evidence/m1/latest/results.json")
                                   .read_text(encoding="utf-8"))
             if not evidence["received_build_binding"]:
                 problems.append("evidence driver did not receive build checkout metadata")
             self.assertEqual(problems, [])
+
+    def test_runner_rejects_unsafe_build_parallelism_before_work(self):
+        with tempfile.TemporaryDirectory(prefix="m1-runner-resource-test.") as root:
+            repo = pathlib.Path(root)
+            (repo / "test/e2e").mkdir(parents=True)
+            runner = repo / "test/e2e/run_m1.sh"
+            shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
+            environment = os.environ.copy()
+            environment["SMARTDOCS_BUILD_JOBS"] = "16"
+
+            completed = subprocess.run(
+                [str(runner)], cwd=repo, env=environment, text=True,
+                capture_output=True, check=False)
+
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertIn("unsafe_build_parallelism", completed.stderr)
 
     @staticmethod
     def _write_executable(path, content):

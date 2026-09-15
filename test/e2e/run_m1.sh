@@ -2,6 +2,24 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+build_jobs=${SMARTDOCS_BUILD_JOBS:-1}
+if [[ ! $build_jobs =~ ^[1-9][0-9]*$ ]]; then
+    printf 'invalid_build_parallelism: %s\n' "$build_jobs" >&2
+    exit 1
+fi
+online_cpus=$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf '1\n')
+if [[ ! $online_cpus =~ ^[1-9][0-9]*$ ]]; then
+    online_cpus=1
+fi
+safe_build_jobs=$online_cpus
+if (( safe_build_jobs > 2 )); then
+    safe_build_jobs=2
+fi
+if (( build_jobs > safe_build_jobs )); then
+    printf 'unsafe_build_parallelism: requested %s; safe maximum is %s\n' \
+        "$build_jobs" "$safe_build_jobs" >&2
+    exit 1
+fi
 test_root=$(mktemp -d /tmp/smartdocs-m1.XXXXXX)
 mysql_root="$test_root/mysql"
 data_dir="$mysql_root/data"
@@ -11,6 +29,7 @@ mysql_log="$test_root/logs/mysql.log"
 driver_log_dir="$test_root/logs/servers"
 scratch_evidence="$test_root/evidence"
 mysql_pid=''
+normal_server_pid=''
 
 cleanup() {
     local status=$?
@@ -18,6 +37,10 @@ cleanup() {
     if [[ -n $mysql_pid ]] && kill -0 "$mysql_pid" 2>/dev/null; then
         kill "$mysql_pid" 2>/dev/null || true
         wait "$mysql_pid" 2>/dev/null || true
+    fi
+    if [[ -n $normal_server_pid ]] && kill -0 "$normal_server_pid" 2>/dev/null; then
+        kill "$normal_server_pid" 2>/dev/null || true
+        wait "$normal_server_pid" 2>/dev/null || true
     fi
     case "$test_root" in
         /tmp/smartdocs-m1.*) rm -rf -- "$test_root" ;;
@@ -44,15 +67,15 @@ for artifact in test/fixtures/m1/plain.txt test/fixtures/m1/sample.pdf; do
     }
 done
 
+python3 -B "$repo_root/test/e2e/m1_harness_self_test.py"
 build_head=$(git -C "$repo_root" rev-parse HEAD)
 if [[ -n $(git -C "$repo_root" status --porcelain --untracked-files=normal) ]]; then
     build_dirty=true
 else
     build_dirty=false
 fi
-python3 -B "$repo_root/test/e2e/m1_harness_self_test.py"
 make -C "$repo_root" clean
-make -C "$repo_root" -j"${SMARTDOCS_BUILD_JOBS:-4}" \
+make -C "$repo_root" -j"$build_jobs" \
     server admin test-server
 for artifact in bin/server bin/smartdocs-admin bin/smartdocs_test_server; do
     [[ -x "$repo_root/$artifact" ]] || {
@@ -60,6 +83,16 @@ for artifact in bin/server bin/smartdocs-admin bin/smartdocs_test_server; do
         exit 1
     }
 done
+if [[ -n $(git -C "$repo_root" status --porcelain --untracked-files=normal) ]]; then
+    current_dirty=true
+else
+    current_dirty=false
+fi
+if [[ $(git -C "$repo_root" rev-parse HEAD) != "$build_head" ]] ||
+    [[ $current_dirty != "$build_dirty" ]]; then
+    printf 'checkout_changed_during_build\n' >&2
+    exit 1
+fi
 
 user_args=()
 if [[ $(id -u) == 0 ]]; then
@@ -117,6 +150,17 @@ export SMARTDOCS_E2E_PASSWORD=m1-account-test-only
 unset SMARTDOCS_FAULT_POINT
 
 "$repo_root/scripts/migrate.sh" >/dev/null
+SMARTDOCS_LISTEN_ADDRESS=127.0.0.1 SMARTDOCS_PORT=13161 \
+    "$repo_root/bin/server" >>"$test_root/logs/server.log" 2>&1 &
+normal_server_pid=$!
+sleep 0.1
+if ! kill -0 "$normal_server_pid" 2>/dev/null; then
+    printf 'normal_server_start_failed\n' >&2
+    exit 1
+fi
+kill "$normal_server_pid"
+wait "$normal_server_pid" 2>/dev/null || true
+normal_server_pid=''
 python3 -B "$repo_root/test/e2e/m1_http_test.py" \
     --server-bin "$repo_root/bin/smartdocs_test_server" \
     --admin-bin "$repo_root/bin/smartdocs-admin" \
@@ -127,6 +171,7 @@ python3 -B "$repo_root/test/e2e/m1_http_test.py" \
     --pdf "$repo_root/test/fixtures/m1/sample.pdf"
 python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --server-bin "$repo_root/bin/smartdocs_test_server" \
+    --normal-server-bin "$repo_root/bin/server" \
     --admin-bin "$repo_root/bin/smartdocs-admin" \
     --log-dir "$driver_log_dir/interrupt" \
     --context-file "$scratch_evidence/context.json" \
