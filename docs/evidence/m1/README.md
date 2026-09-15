@@ -1,5 +1,9 @@
 # M1 acceptance evidence
 
+See the [M1 gate coverage matrix](gate-matrix.md) for the requirement-to-test
+mapping, M2+ deferrals, current evidence state, and closure blockers. The matrix
+currently reports M1 as open.
+
 Run the reproducible M1 acceptance command from the repository root:
 
 ```bash
