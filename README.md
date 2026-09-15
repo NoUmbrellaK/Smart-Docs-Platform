@@ -127,6 +127,8 @@ test/e2e/run_m1.sh
 
 该命令资源消耗较高，默认单 job 并拒绝超过 `min(在线 CPU 数, 2)` 的构建并行度。同一时间只运行一个实例；受限服务器先阅读[事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)。
 
+M1 仍保持开放。阶段运行器现将 C++ 单元/集成测试、Python UI contract 和 Node UI behavior 套件纳入门禁，并要求零跳过、零失败；这只是门禁条件，不代表本次已通过。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；当前受限 ECS 仍不安全。阶段关闭与缺口以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
+
 ## 开发路线
 
 1. **M1 文件业务**：候选实现已完成，等待安全环境中的最终证据审阅和阶段门关闭；

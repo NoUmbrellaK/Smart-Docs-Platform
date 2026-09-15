@@ -307,6 +307,12 @@ def main():
                                headers={"Range": "bytes=0-3"}), 404),
                 (admin.request("GET", f"/api/v1/projects/{a_id}/files/{b_initial['file_id']}/content"), 404),
                 (anonymous.request("GET", f"/api/v1/projects/{a_id}/files/{a_initial['file_id']}/content"), 401),
+                (admin.request("GET", f"/api/v1/projects/{b_id}/files/{b_initial['file_id']}"
+                               f"/versions/{b_initial['version_id']}/content"), 404),
+                (admin.request("GET", f"/api/v1/projects/{a_id}/files/{b_initial['file_id']}"
+                               f"/versions/{b_initial['version_id']}/content"), 404),
+                (anonymous.request("GET", f"/api/v1/projects/{a_id}/files/{a_initial['file_id']}"
+                                   f"/versions/{a_initial['version_id']}/content"), 401),
             ]
             for response, expected in checks:
                 recorder.check(response.status == expected,
