@@ -16,6 +16,75 @@ import m1_interrupt_test as harness
 
 
 class HarnessEvidenceTest(unittest.TestCase):
+    def test_environment_facts_record_required_tool_versions(self):
+        facts = harness.environment_facts()
+
+        self.assertTrue(facts["compiler"].startswith("g++ "))
+        self.assertTrue(facts["mysql_client"].startswith("mysql "))
+        self.assertTrue(facts["mysql_server"].startswith("mysqld "))
+        self.assertTrue(facts["openssl"].startswith("OpenSSL "))
+
+    def test_write_evidence_emits_reviewable_task12_artifacts(self):
+        result = {
+            "schema_version": 1,
+            "generated_at": "2026-09-15T01:02:03Z",
+            "commit": {"head": "1" * 40, "dirty": False},
+            "environment": {
+                "compiler": "g++ fixture 1.0",
+                "mysql_client": "mysql fixture 2.0",
+                "mysql_server": "mysqld fixture 2.0",
+                "openssl": "OpenSSL fixture 3.0",
+                "cpu_count": 2,
+            },
+            "summary": {
+                "http_scenarios_total": 9,
+                "http_scenarios_passed": 8,
+                "http_scenarios_failed": 1,
+                "http_assertions": 40,
+                "interruption_rounds_total": 20,
+                "interruption_rounds_passed": 19,
+                "interruption_rounds_failed": 1,
+                "interruption_assertions": 280,
+            },
+            "fault_distribution": {
+                "AfterPartTempFsync": 4,
+                "AfterAssembledFsync": 4,
+                "AfterObjectRename": 4,
+                "BeforeDatabaseCommit": 3,
+                "AfterDatabaseCommit": 3,
+                "BeforeHttpResponse": 2,
+            },
+            "failures": [
+                {"kind": "http_scenario", "id": "T-09",
+                 "error": "fixture failure"},
+                {"kind": "interruption_round", "round": 20,
+                 "fault_point": "BeforeHttpResponse",
+                 "error": "fixture interruption failure"},
+            ],
+        }
+
+        with tempfile.TemporaryDirectory(prefix="m1-evidence-writer.") as root:
+            output = pathlib.Path(root) / "results.json"
+            harness.write_evidence(result, output)
+
+            self.assertEqual(
+                json.loads(output.read_text(encoding="utf-8")), result)
+            environment = (output.parent / "environment.txt").read_text(
+                encoding="utf-8")
+            summary = (output.parent / "summary.md").read_text(encoding="utf-8")
+            self.assertIn("commit_head=" + "1" * 40, environment)
+            self.assertIn("compiler=g++ fixture 1.0", environment)
+            self.assertIn("mysql_client=mysql fixture 2.0", environment)
+            self.assertIn("mysql_server=mysqld fixture 2.0", environment)
+            self.assertIn("openssl=OpenSSL fixture 3.0", environment)
+            self.assertIn("Result: **FAIL**", summary)
+            self.assertIn("HTTP scenarios: 8/9 passed (40 assertions)", summary)
+            self.assertIn("Interruption rounds: 19/20 passed (280 assertions)", summary)
+            self.assertIn("AfterPartTempFsync: 4", summary)
+            self.assertIn("fixture interruption failure", summary)
+            self.assertIn("Known gaps", summary)
+            self.assertNotIn(root, environment + summary)
+
     def test_round_scope_counts_extra_ids_without_mixing_other_rounds(self):
         project = "1" * 32
         directory = "2" * 32

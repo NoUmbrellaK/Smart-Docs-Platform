@@ -8,6 +8,7 @@ import http.client
 import json
 import os
 import pathlib
+import platform
 import subprocess
 import sys
 
@@ -159,6 +160,93 @@ def git_metadata(repo_root):
         ["git", "status", "--porcelain", "--untracked-files=normal"],
         cwd=repo_root, text=True, capture_output=True, check=True).stdout.strip())
     return {"head": head, "dirty": dirty}
+
+
+def environment_facts():
+    facts = {
+        "http_transport": "loopback_tcp",
+        "mysql_transport": "private_unix_socket",
+        "server": "smartdocs_test_server",
+        "python_dependencies": "standard_library_only",
+        "operating_system": platform.platform(),
+        "cpu_count": os.cpu_count() or 1,
+        "python": platform.python_version(),
+    }
+    for name, command in (
+            ("compiler", ["g++", "--version"]),
+            ("mysql_client", ["mysql", "--version"]),
+            ("mysql_server", ["mysqld", "--version"]),
+            ("openssl", ["openssl", "version"])):
+        completed = subprocess.run(command, text=True, capture_output=True,
+                                   check=False)
+        lines = [line.strip() for line in
+                 (completed.stdout + completed.stderr).splitlines()
+                 if line.strip()]
+        if completed.returncode != 0 or not lines:
+            raise RuntimeError(f"version query failed: {command[0]}")
+        executable, separator, rest = lines[0].partition(" ")
+        facts[name] = pathlib.Path(executable).name + separator + rest
+    return facts
+
+
+def write_evidence(result, output):
+    output = pathlib.Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    def write(path, content):
+        temporary = path.with_name(path.name + ".tmp")
+        temporary.write_text(content, encoding="utf-8")
+        temporary.replace(path)
+
+    commit = result["commit"]
+    environment = {
+        "generated_at": result["generated_at"],
+        "commit_head": commit["head"],
+        "commit_dirty": str(commit["dirty"]).lower(),
+        **result["environment"],
+    }
+    environment_text = "".join(
+        f"{name}={environment[name]}\n" for name in sorted(environment))
+
+    summary = result["summary"]
+    passed = (summary["http_scenarios_passed"] ==
+              summary["http_scenarios_total"] and
+              summary["interruption_rounds_passed"] ==
+              summary["interruption_rounds_total"] and
+              summary["http_scenarios_failed"] == 0 and
+              summary["interruption_rounds_failed"] == 0)
+    distribution = "\n".join(
+        f"- {point}: {result['fault_distribution'].get(point, 0)}"
+        for point, _ in FAULT_ROUNDS)
+    failures = result.get("failures", [])
+    failure_text = ("- None." if not failures else "\n".join(
+        f"- `{failure.get('kind', 'unknown')}`: "
+        f"{failure.get('error', 'no error detail')}"
+        for failure in failures))
+    summary_text = (
+        "# M1 acceptance summary\n\n"
+        f"- Generated: {result['generated_at']}\n"
+        f"- Commit: `{commit['head']}` "
+        f"({'dirty' if commit['dirty'] else 'clean'})\n"
+        f"- Result: **{'PASS' if passed else 'FAIL'}**\n"
+        f"- HTTP scenarios: {summary['http_scenarios_passed']}/"
+        f"{summary['http_scenarios_total']} passed "
+        f"({summary['http_assertions']} assertions)\n"
+        f"- Interruption rounds: {summary['interruption_rounds_passed']}/"
+        f"{summary['interruption_rounds_total']} passed "
+        f"({summary['interruption_assertions']} assertions)\n\n"
+        "## Fault distribution\n\n"
+        f"{distribution}\n\n"
+        "## Failures\n\n"
+        f"{failure_text}\n\n"
+        "## Known gaps\n\n"
+        "- M2 parsing, metadata extraction, and index publication are outside M1.\n"
+        "- M4 load, soak, and concurrency measurements are outside this run.\n"
+        "- An operator must review `latest/` before promoting it to `verified/`.\n")
+
+    write(output, json.dumps(result, indent=2, sort_keys=True) + "\n")
+    write(output.parent / "environment.txt", environment_text)
+    write(output.parent / "summary.md", summary_text)
 
 
 def trigger_and_wait(client, server, method, path, body=None, headers=None):
@@ -380,10 +468,7 @@ def main():
                     pathlib.Path(arguments.server_bin).read_bytes()),
             },
         },
-        "environment": {"http_transport": "loopback_tcp",
-                        "mysql_transport": "private_unix_socket",
-                        "server": "smartdocs_test_server",
-                        "python_dependencies": "standard_library_only"},
+        "environment": environment_facts(),
         "summary": {
             "http_scenarios_total": len(http_evidence["scenarios"]),
             "http_scenarios_passed": http_evidence["passed"],
@@ -398,13 +483,9 @@ def main():
         "fixture_sha256": http_evidence["fixture_sha256"],
         "fault_distribution": distribution,
         "interruption_rounds": rounds,
+        "failures": [],
     }
-    output = pathlib.Path(arguments.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = output.with_name(output.name + ".tmp")
-    temporary.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
-                         encoding="utf-8")
-    temporary.replace(output)
+    write_evidence(result, arguments.output)
     passed = result["summary"]["interruption_rounds_passed"]
     print(f"M1 interruptions: {passed}/{len(rounds)} rounds; "
           f"distribution {'/'.join(str(distribution[point]) for point, _ in FAULT_ROUNDS)}")
