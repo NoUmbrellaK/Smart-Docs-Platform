@@ -9,6 +9,7 @@ import json
 import os
 import pathlib
 import platform
+import re
 import subprocess
 import sys
 
@@ -37,12 +38,92 @@ def parse_arguments():
     parser.add_argument("--output", required=True)
     parser.add_argument("--build-head", required=True)
     parser.add_argument("--build-dirty", choices=("true", "false"), required=True)
+    parser.add_argument("--supporting-suites", required=True)
     return parser.parse_args()
 
 
 def check(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def parse_suite_counts(kind, output):
+    if kind == "cpp":
+        match = re.search(
+            r"^RESULT (\d+) passed, (\d+) failed, (\d+) skipped$",
+            output, re.MULTILINE)
+        if match:
+            passed, failed, skipped = map(int, match.groups())
+            total = passed + failed + skipped
+            if total > 0:
+                return {"passed": passed, "failed": failed, "skipped": skipped,
+                        "total": total}
+    elif kind == "unittest":
+        ran = re.search(r"^Ran (\d+) tests? in ", output, re.MULTILINE)
+        status = re.search(r"^(OK|FAILED)(?: \(([^)]*)\))?$", output,
+                           re.MULTILINE)
+        if ran and status:
+            details = {name.strip(): int(value) for name, value in re.findall(
+                r"([a-z ]+)=([0-9]+)", status.group(2) or "")}
+            failed = (details.get("failures", 0) + details.get("errors", 0) +
+                      details.get("unexpected successes", 0))
+            skipped = (details.get("skipped", 0) +
+                       details.get("expected failures", 0))
+            total = int(ran.group(1))
+            status_matches = ((status.group(1) == "OK" and failed == 0) or
+                              (status.group(1) == "FAILED" and failed > 0))
+            if total > 0 and status_matches and failed + skipped <= total:
+                return {"passed": total - failed - skipped,
+                        "failed": failed, "skipped": skipped, "total": total}
+    elif kind == "node":
+        fields = {name: int(value) for name, value in re.findall(
+            r"^(?:#|ℹ) (tests|pass|fail|cancelled|skipped|todo) (\d+)$",
+            output, re.MULTILINE)}
+        if set(fields) == {"tests", "pass", "fail", "cancelled", "skipped",
+                           "todo"}:
+            counts = {"passed": fields["pass"],
+                      "failed": fields["fail"] + fields["cancelled"],
+                      "skipped": fields["skipped"] + fields["todo"],
+                      "total": fields["tests"]}
+            if counts["total"] > 0 and \
+                    sum(counts[name] for name in
+                        ("passed", "failed", "skipped")) == \
+                    counts["total"]:
+                return counts
+    else:
+        raise ValueError(f"unknown suite output kind: {kind}")
+    raise ValueError(f"malformed {kind} suite output")
+
+
+def supporting_suites_pass(suites):
+    expected = {"cpp_unit_integration", "ui_contract", "ui_behavior"}
+    return set(suites) == expected and all(
+        suite["total"] > 0 and suite["failed"] == 0 and
+        suite["skipped"] == 0 and suite["passed"] == suite["total"]
+        for suite in suites.values())
+
+
+def validate_supporting_suites(arguments):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cpp-suite-output", required=True)
+    parser.add_argument("--ui-contract-output", required=True)
+    parser.add_argument("--ui-behavior-output", required=True)
+    paths = parser.parse_args(arguments)
+    suites = {
+        "cpp_unit_integration": parse_suite_counts(
+            "cpp", pathlib.Path(paths.cpp_suite_output).read_text(
+                encoding="utf-8")),
+        "ui_contract": parse_suite_counts(
+            "unittest", pathlib.Path(paths.ui_contract_output).read_text(
+                encoding="utf-8")),
+        "ui_behavior": parse_suite_counts(
+            "node", pathlib.Path(paths.ui_behavior_output).read_text(
+                encoding="utf-8")),
+    }
+    check(supporting_suites_pass(suites),
+          f"supporting suite failure: {suites}")
+    print(json.dumps(suites, sort_keys=True))
+    return 0
 
 
 def mysql_scalar(query):
@@ -176,6 +257,7 @@ def environment_facts():
             ("compiler", ["g++", "--version"]),
             ("mysql_client", ["mysql", "--version"]),
             ("mysql_server", ["mysqld", "--version"]),
+            ("node", ["node", "--version"]),
             ("openssl", ["openssl", "version"])):
         completed = subprocess.run(command, text=True, capture_output=True,
                                    check=False)
@@ -214,7 +296,8 @@ def write_evidence(result, output):
               summary["interruption_rounds_passed"] ==
               summary["interruption_rounds_total"] and
               summary["http_scenarios_failed"] == 0 and
-              summary["interruption_rounds_failed"] == 0)
+              summary["interruption_rounds_failed"] == 0 and
+              supporting_suites_pass(result["supporting_suites"]))
     distribution = "\n".join(
         f"- {point}: {result['fault_distribution'].get(point, 0)}"
         for point, _ in FAULT_ROUNDS)
@@ -234,7 +317,20 @@ def write_evidence(result, output):
         f"({summary['http_assertions']} assertions)\n"
         f"- Interruption rounds: {summary['interruption_rounds_passed']}/"
         f"{summary['interruption_rounds_total']} passed "
-        f"({summary['interruption_assertions']} assertions)\n\n"
+        f"({summary['interruption_assertions']} assertions)\n"
+        f"- C++ unit/integration: "
+        f"{result['supporting_suites']['cpp_unit_integration']['passed']}/"
+        f"{result['supporting_suites']['cpp_unit_integration']['total']} passed, "
+        f"{result['supporting_suites']['cpp_unit_integration']['failed']} failed, "
+        f"{result['supporting_suites']['cpp_unit_integration']['skipped']} skipped\n"
+        f"- UI contract: {result['supporting_suites']['ui_contract']['passed']}/"
+        f"{result['supporting_suites']['ui_contract']['total']} passed, "
+        f"{result['supporting_suites']['ui_contract']['failed']} failed, "
+        f"{result['supporting_suites']['ui_contract']['skipped']} skipped\n"
+        f"- UI behavior: {result['supporting_suites']['ui_behavior']['passed']}/"
+        f"{result['supporting_suites']['ui_behavior']['total']} passed, "
+        f"{result['supporting_suites']['ui_behavior']['failed']} failed, "
+        f"{result['supporting_suites']['ui_behavior']['skipped']} skipped\n\n"
         "## Fault distribution\n\n"
         f"{distribution}\n\n"
         "## Failures\n\n"
@@ -421,6 +517,10 @@ def main():
     context = json.loads(pathlib.Path(arguments.context_file).read_text(encoding="utf-8"))
     http_evidence = json.loads(
         pathlib.Path(arguments.http_evidence).read_text(encoding="utf-8"))
+    supporting_suites = json.loads(pathlib.Path(
+        arguments.supporting_suites).read_text(encoding="utf-8"))
+    check(supporting_suites_pass(supporting_suites),
+          f"supporting suite failure: {supporting_suites}")
     server = ServerProcess(arguments.server_bin, arguments.log_dir)
     client = HttpClient(0)
     rounds = []
@@ -464,6 +564,8 @@ def main():
             "executables": {
                 "server": digest(pathlib.Path(arguments.normal_server_bin).read_bytes()),
                 "smartdocs-admin": digest(pathlib.Path(arguments.admin_bin).read_bytes()),
+                "smartdocs_tests": digest(
+                    (pathlib.Path(repo_root) / "bin/smartdocs_tests").read_bytes()),
                 "smartdocs_test_server": digest(
                     pathlib.Path(arguments.server_bin).read_bytes()),
             },
@@ -479,6 +581,7 @@ def main():
             "interruption_rounds_failed": sum(item["status"] != "pass" for item in rounds),
             "interruption_assertions": sum(item["assertions"] for item in rounds),
         },
+        "supporting_suites": supporting_suites,
         "http_scenarios": http_evidence["scenarios"],
         "fixture_sha256": http_evidence["fixture_sha256"],
         "fault_distribution": distribution,
@@ -494,6 +597,8 @@ def main():
 
 if __name__ == "__main__":
     try:
+        if sys.argv[1:2] == ["--validate-supporting-suites"]:
+            sys.exit(validate_supporting_suites(sys.argv[2:]))
         sys.exit(main())
     except Exception as error:
         print(f"m1_interrupt_failed: {error}", file=sys.stderr)

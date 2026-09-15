@@ -18,9 +18,15 @@ before running it on a small single-host deployment.
 
 The runner records the checkout HEAD and dirty state, runs the focused harness
 self-test, then performs a clean build of `server`, `admin`, and `test-server`
-from that exact checkout before it starts any acceptance service. It creates
-one private temporary root containing its isolated MySQL
-data and Unix socket, controlled file storage, server logs, and scratch
+plus `bin/smartdocs_tests` from that exact checkout before it starts any
+acceptance service. After migrating the isolated database, it runs the C++
+unit/integration binary with `SMARTDOCS_TEST_MYSQL=1`, the Python UI contract
+suite, and the Node UI behavior suite. It runs all three before evaluating
+their captured status and count output. A failure, skip, zero-test suite, or
+malformed/inconsistent terminal counts make the M1 run fail; on failure the
+runner prints each suite's status and captured output before cleanup. It
+creates one private temporary root containing its isolated
+MySQL data and Unix socket, controlled file storage, server logs, and scratch
 evidence. It exercises `bin/smartdocs_test_server` through real loopback TCP
 sockets and removes only that temporary root after stopping the MySQL PID it
 captured. Before the fault scenarios, it briefly starts `bin/server` as a
@@ -31,21 +37,25 @@ child it starts, stops, crashes, or restarts.
 On success, `latest/` contains three review inputs:
 
 - `environment.txt`: sorted `key=value` facts for the commit, dirty state,
-  operating system, CPU count, Python, compiler, MySQL client/server, OpenSSL,
-  and isolated transports.
+  operating system, CPU count, Python, Node, compiler, MySQL client/server,
+  OpenSSL, and isolated transports.
 - `results.json`: the machine-readable evidence described below.
-- `summary.md`: computed pass denominators, assertion counts, fault distribution,
-  failure details, and known gaps. It is not a stage-gate approval by itself.
+- `summary.md`: computed pass/fail/skip/total suite counts, HTTP and interruption
+  pass denominators, assertion counts, fault distribution, failure details, and
+  known gaps. It is not a stage-gate approval by itself.
 
 `latest/results.json` has this schema:
 
 - `commit`: Git `head` and `dirty` state remeasured after all scenarios.
 - `build`: the checkout metadata used for the clean build plus SHA-256 hashes
-  of the executed server, admin, and test-server binaries. The run fails if
-  checkout metadata changes between build and final evidence.
+  of the executed server, admin, test, and test-server binaries. The run fails
+  if checkout metadata changes between build and final evidence.
 - `environment`: transport and dependency facts plus the measured compiler,
-  MySQL client/server, OpenSSL, Python, operating-system, and CPU versions/facts.
+  MySQL client/server, OpenSSL, Node, Python, operating-system, and CPU
+  versions/facts.
 - `summary`: assertion, scenario, and interruption counts computed by the run.
+- `supporting_suites`: runtime `passed`, `failed`, `skipped`, and `total` counts
+  for `cpp_unit_integration`, `ui_contract`, and `ui_behavior`.
 - `http_scenarios`: T-01 through T-09 M1 results and explicit M2/M4 deferrals.
 - `fault_distribution`: the measured `4/4/4/3/3/2` fault-point distribution.
 - `interruption_rounds`: twenty records containing fault point, process exit,

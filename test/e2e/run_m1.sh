@@ -54,7 +54,7 @@ mkdir -m 0700 "$mysql_root" "$data_dir" "$test_root/storage" \
     "$test_root/storage/objects" "$test_root/storage/staging" \
     "$test_root/logs" "$driver_log_dir" "$scratch_evidence"
 
-for program in mysqld mysql mysqladmin python3 git make; do
+for program in mysqld mysql mysqladmin python3 node git make cat; do
     command -v "$program" >/dev/null || {
         printf 'missing_dependency: %s\n' "$program" >&2
         exit 1
@@ -76,8 +76,9 @@ else
 fi
 make -C "$repo_root" clean
 make -C "$repo_root" -j"$build_jobs" \
-    server admin test-server
-for artifact in bin/server bin/smartdocs-admin bin/smartdocs_test_server; do
+    server admin test-server bin/smartdocs_tests
+for artifact in bin/server bin/smartdocs-admin bin/smartdocs_test_server \
+    bin/smartdocs_tests; do
     [[ -x "$repo_root/$artifact" ]] || {
         printf 'build_artifact_missing: %s\n' "$artifact" >&2
         exit 1
@@ -147,9 +148,41 @@ export SMARTDOCS_THREAD_COUNT=4
 export SMARTDOCS_PASSWORD_ITERATIONS=1000
 export SMARTDOCS_LOG_LEVEL=0
 export SMARTDOCS_E2E_PASSWORD=m1-account-test-only
+export SMARTDOCS_TEST_MYSQL=1
 unset SMARTDOCS_FAULT_POINT
 
 "$repo_root/scripts/migrate.sh" >/dev/null
+set +e
+"$repo_root/bin/smartdocs_tests" \
+    >"$scratch_evidence/cpp-suite.txt" 2>&1
+cpp_suite_status=$?
+python3 -B "$repo_root/test/e2e/ui_contract_test.py" \
+    >"$scratch_evidence/ui-contract.txt" 2>&1
+ui_contract_status=$?
+node "$repo_root/test/e2e/ui_behavior_test.mjs" \
+    >"$scratch_evidence/ui-behavior.txt" 2>&1
+ui_behavior_status=$?
+python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
+    --validate-supporting-suites \
+    --cpp-suite-output "$scratch_evidence/cpp-suite.txt" \
+    --ui-contract-output "$scratch_evidence/ui-contract.txt" \
+    --ui-behavior-output "$scratch_evidence/ui-behavior.txt" \
+    >"$scratch_evidence/supporting-suites.json"
+suite_validation_status=$?
+set -e
+if (( cpp_suite_status != 0 || ui_contract_status != 0 ||
+      ui_behavior_status != 0 || suite_validation_status != 0 )); then
+    printf 'supporting_suite_status: cpp=%s ui_contract=%s ui_behavior=%s validation=%s\n' \
+        "$cpp_suite_status" "$ui_contract_status" "$ui_behavior_status" \
+        "$suite_validation_status" >&2
+    for suite_output in "$scratch_evidence/cpp-suite.txt" \
+        "$scratch_evidence/ui-contract.txt" \
+        "$scratch_evidence/ui-behavior.txt"; do
+        printf '%s:\n' "${suite_output##*/}" >&2
+        cat "$suite_output" >&2
+    done
+    exit 1
+fi
 SMARTDOCS_LISTEN_ADDRESS=127.0.0.1 SMARTDOCS_PORT=13161 \
     "$repo_root/bin/server" >>"$test_root/logs/server.log" 2>&1 &
 normal_server_pid=$!
@@ -178,7 +211,8 @@ python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --http-evidence "$scratch_evidence/http.json" \
     --output "$repo_root/docs/evidence/m1/latest/results.json" \
     --build-head "$build_head" \
-    --build-dirty "$build_dirty"
+    --build-dirty "$build_dirty" \
+    --supporting-suites "$scratch_evidence/supporting-suites.json"
 
 python3 -B - "$repo_root/docs/evidence/m1/latest/results.json" <<'PY'
 import json

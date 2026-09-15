@@ -16,6 +16,72 @@ import m1_interrupt_test as harness
 
 
 class HarnessEvidenceTest(unittest.TestCase):
+    def test_supporting_suite_counts_are_parsed_and_gate_evidence(self):
+        suites = {
+            "cpp_unit_integration": harness.parse_suite_counts(
+                "cpp", "RESULT 40 passed, 0 failed, 0 skipped\n"),
+            "ui_contract": harness.parse_suite_counts(
+                "unittest",
+                ".......\nRan 7 tests in 0.021s\n\nOK\n"),
+            "ui_behavior": harness.parse_suite_counts(
+                "node",
+                "✔ test/e2e/ui_behavior_test.mjs (130ms)\n"
+                "ℹ tests 18\nℹ suites 0\nℹ pass 17\nℹ fail 0\n"
+                "ℹ cancelled 0\nℹ skipped 1\nℹ todo 0\n"),
+        }
+        self.assertEqual(suites, {
+            "cpp_unit_integration": {
+                "passed": 40, "failed": 0, "skipped": 0, "total": 40},
+            "ui_contract": {
+                "passed": 7, "failed": 0, "skipped": 0, "total": 7},
+            "ui_behavior": {
+                "passed": 17, "failed": 0, "skipped": 1, "total": 18},
+        })
+        with self.assertRaisesRegex(ValueError, "malformed cpp suite output"):
+            harness.parse_suite_counts("cpp", "all good\n")
+        with self.assertRaisesRegex(ValueError, "malformed unittest suite output"):
+            harness.parse_suite_counts("unittest", "Ran 0 tests in 0.001s\n\nOK\n")
+        self.assertEqual(
+            harness.parse_suite_counts(
+                "unittest", "Fs.\nRan 3 tests in 0.001s\n\n"
+                "FAILED (skipped=1, unexpected successes=1)\n"),
+            {"passed": 1, "failed": 1, "skipped": 1, "total": 3})
+        for terminal in ("FAILED", "FAILED (skipped=1)",
+                         "FAILED (failures=4)"):
+            with self.subTest(terminal=terminal):
+                with self.assertRaisesRegex(
+                        ValueError, "malformed unittest suite output"):
+                    harness.parse_suite_counts(
+                        "unittest", f"Ran 3 tests in 0.001s\n\n{terminal}\n")
+
+        result = {
+            "schema_version": 1,
+            "generated_at": "2026-09-15T01:02:03Z",
+            "commit": {"head": "1" * 40, "dirty": False},
+            "environment": {},
+            "summary": {
+                "http_scenarios_total": 9,
+                "http_scenarios_passed": 9,
+                "http_scenarios_failed": 0,
+                "http_assertions": 40,
+                "interruption_rounds_total": 20,
+                "interruption_rounds_passed": 20,
+                "interruption_rounds_failed": 0,
+                "interruption_assertions": 280,
+            },
+            "supporting_suites": suites,
+            "fault_distribution": dict(harness.FAULT_ROUNDS),
+            "failures": [],
+        }
+        with tempfile.TemporaryDirectory(prefix="m1-suite-evidence.") as root:
+            output = pathlib.Path(root) / "results.json"
+            harness.write_evidence(result, output)
+            summary = (output.parent / "summary.md").read_text(encoding="utf-8")
+        self.assertIn("Result: **FAIL**", summary)
+        self.assertIn("C++ unit/integration: 40/40 passed, 0 failed, 0 skipped", summary)
+        self.assertIn("UI contract: 7/7 passed, 0 failed, 0 skipped", summary)
+        self.assertIn("UI behavior: 17/18 passed, 0 failed, 1 skipped", summary)
+
     def test_environment_facts_record_required_tool_versions(self):
         facts = harness.environment_facts()
 
@@ -23,6 +89,7 @@ class HarnessEvidenceTest(unittest.TestCase):
         self.assertTrue(facts["mysql_client"].startswith("mysql "))
         self.assertTrue(facts["mysql_server"].startswith("mysqld "))
         self.assertTrue(facts["openssl"].startswith("OpenSSL "))
+        self.assertTrue(facts["node"].startswith("v"))
 
     def test_write_evidence_emits_reviewable_task12_artifacts(self):
         result = {
@@ -33,6 +100,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "compiler": "g++ fixture 1.0",
                 "mysql_client": "mysql fixture 2.0",
                 "mysql_server": "mysqld fixture 2.0",
+                "node": "v24.18.0",
                 "openssl": "OpenSSL fixture 3.0",
                 "cpu_count": 2,
             },
@@ -45,6 +113,14 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "interruption_rounds_passed": 19,
                 "interruption_rounds_failed": 1,
                 "interruption_assertions": 280,
+            },
+            "supporting_suites": {
+                "cpp_unit_integration": {
+                    "passed": 42, "failed": 0, "skipped": 1, "total": 43},
+                "ui_contract": {
+                    "passed": 8, "failed": 0, "skipped": 0, "total": 8},
+                "ui_behavior": {
+                    "passed": 18, "failed": 0, "skipped": 0, "total": 18},
             },
             "fault_distribution": {
                 "AfterPartTempFsync": 4,
@@ -76,10 +152,13 @@ class HarnessEvidenceTest(unittest.TestCase):
             self.assertIn("compiler=g++ fixture 1.0", environment)
             self.assertIn("mysql_client=mysql fixture 2.0", environment)
             self.assertIn("mysql_server=mysqld fixture 2.0", environment)
+            self.assertIn("node=v24.18.0", environment)
             self.assertIn("openssl=OpenSSL fixture 3.0", environment)
             self.assertIn("Result: **FAIL**", summary)
             self.assertIn("HTTP scenarios: 8/9 passed (40 assertions)", summary)
             self.assertIn("Interruption rounds: 19/20 passed (280 assertions)", summary)
+            self.assertIn("C++ unit/integration: 42/43 passed, 0 failed, 1 skipped",
+                          summary)
             self.assertIn("AfterPartTempFsync: 4", summary)
             self.assertIn("fixture interruption failure", summary)
             self.assertIn("Known gaps", summary)
@@ -314,7 +393,8 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "plain\n", encoding="utf-8")
             (repo / "test/fixtures/m1/sample.pdf").write_bytes(b"%PDF-1.4\n")
             self._write_executable(repo / "scripts/migrate.sh", "#!/bin/sh\nexit 0\n")
-            for artifact in ("server", "smartdocs-admin", "smartdocs_test_server"):
+            for artifact in ("server", "smartdocs-admin", "smartdocs_test_server",
+                             "smartdocs_tests"):
                 self._write_executable(repo / "bin" / artifact, "STALE\n")
 
             fake_bin = repo / "fake-bin"
@@ -330,6 +410,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 fake_bin / "make",
                 "#!/bin/sh\n"
                 "set -eu\n"
+                "arguments=$*\n"
                 "repo=''\n"
                 "clean=false\n"
                 "jobs=''\n"
@@ -343,13 +424,24 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "done\n"
                 "if $clean; then\n"
                 "  rm -f \"$repo/bin/server\" \"$repo/bin/smartdocs-admin\" "
-                "\"$repo/bin/smartdocs_test_server\"\n"
+                "\"$repo/bin/smartdocs_test_server\" \"$repo/bin/smartdocs_tests\"\n"
                 "else\n"
                 "  printf '%s\\n' \"$jobs\" >\"$repo/build-jobs\"\n"
+                "  printf '%s\\n' \"$arguments\" >\"$repo/build-arguments\"\n"
                 "  mkdir -p \"$repo/bin\"\n"
-                "  for artifact in server smartdocs-admin smartdocs_test_server; do\n"
+                "  for artifact in server smartdocs-admin smartdocs_test_server "
+                "smartdocs_tests; do\n"
                 "    if [ \"$artifact\" = server ]; then\n"
                 "      printf '#!/bin/sh\\n# FRESH\\nwhile :; do sleep 1; done\\n' "
+                ">\"$repo/bin/$artifact\"\n"
+                "    elif [ \"$artifact\" = smartdocs_tests ]; then\n"
+                "      printf '#!/bin/sh\\n# FRESH\\n"
+                "if [ \"${SMARTDOCS_TEST_MYSQL:-}\" != 1 ]; then "
+                "printf \"SMARTDOCS_TEST_MYSQL missing\\\\n\" >&2; exit 65; fi\\n"
+                "printf marker >\"${FAKE_MARKER_ROOT}/cpp-suite-ran\"\\n"
+                "if [ \"${FAKE_CPP_FAILURE:-}\" = 1 ]; then "
+                "printf \"RESULT 42 passed, 1 failed, 0 skipped\\\\n\"; exit 1; fi\\n"
+                "printf \"RESULT 43 passed, 0 failed, 0 skipped\\\\n\"\\n' "
                 ">\"$repo/bin/$artifact\"\n"
                 "    else\n"
                 "      printf 'FRESH\\n' >\"$repo/bin/$artifact\"\n"
@@ -366,6 +458,15 @@ class HarnessEvidenceTest(unittest.TestCase):
             self._write_executable(fake_bin / "mysql", "#!/bin/sh\nexit 0\n")
             self._write_executable(fake_bin / "mysqladmin", "#!/bin/sh\nexit 0\n")
             self._write_executable(
+                fake_bin / "node",
+               "#!/bin/sh\n"
+                "if [ \"${1:-}\" = --version ]; then printf 'v24.18.0\\n'; exit 0; fi\n"
+                "printf marker >\"${FAKE_MARKER_ROOT}/ui-behavior-ran\"\n"
+               "tests=18\n"
+                "if [ \"${1:-}\" = --test ]; then tests=1; fi\n"
+                "printf 'ℹ tests %s\\nℹ suites 0\\nℹ pass %s\\nℹ fail 0\\n"
+                "ℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\n' \"$tests\" \"$tests\"\n")
+            self._write_executable(
                 fake_bin / "python3",
                 "#!/usr/bin/python3\n"
                 "import json, os, pathlib, sys\n"
@@ -378,16 +479,30 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "'--normal-server-bin' in args:\n"
                 "    print('unexpected normal-server binding', file=sys.stderr)\n"
                 "    sys.exit(64)\n"
+                "if script.endswith('ui_contract_test.py'):\n"
+                "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
+                "'ui-contract-ran').write_text('marker')\n"
+                "    print('........\\nRan 8 tests in 0.01s\\n\\nOK')\n"
                 "if script.endswith('m1_interrupt_test.py'):\n"
+                "    if '--validate-supporting-suites' in args:\n"
+                "        print(json.dumps({'cpp_unit_integration': "
+                "{'passed': 43, 'failed': 0, 'skipped': 0, 'total': 43}, "
+                "'ui_contract': {'passed': 8, 'failed': 0, 'skipped': 0, "
+                "'total': 8}, 'ui_behavior': {'passed': 18, 'failed': 0, "
+                "'skipped': 0, 'total': 18}}))\n"
+                "        sys.exit(0)\n"
                 "    required = {'--normal-server-bin', '--admin-bin', "
-                "'--build-head', '--build-dirty'}\n"
+                "'--build-head', '--build-dirty', '--supporting-suites'}\n"
                 "    bound = required.issubset(args)\n"
                 "    if bound:\n"
                 "        bound = (args[args.index('--build-head') + 1] == '0' * 64 "
                 "and args[args.index('--build-dirty') + 1] == 'false')\n"
+                "    suites = (bound and pathlib.Path("
+                "args[args.index('--supporting-suites') + 1]).is_file())\n"
                 "    output = pathlib.Path(args[args.index('--output') + 1])\n"
                 "    output.parent.mkdir(parents=True, exist_ok=True)\n"
                 "    output.write_text(json.dumps({'received_build_binding': bound, "
+                "'received_supporting_suites': suites, "
                 "'summary': {"
                 "'http_scenarios_passed': 9, 'http_scenarios_total': 9, "
                 "'interruption_rounds_passed': 20, "
@@ -396,22 +511,40 @@ class HarnessEvidenceTest(unittest.TestCase):
 
             environment = os.environ.copy()
             environment["PATH"] = str(fake_bin) + os.pathsep + environment["PATH"]
+            environment["FAKE_MARKER_ROOT"] = str(repo)
             shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
+            failing_environment = environment.copy()
+            failing_environment["FAKE_CPP_FAILURE"] = "1"
+            failed = subprocess.run(
+                [str(runner)], cwd=repo, env=failing_environment, text=True,
+                capture_output=True, check=False)
+            self.assertNotEqual(failed.returncode, 0)
+            for marker in ("cpp-suite-ran", "ui-contract-ran", "ui-behavior-ran"):
+                self.assertTrue((repo / marker).is_file(),
+                                f"supporting suite did not run: {marker}")
+            self.assertIn("RESULT 42 passed, 1 failed, 0 skipped", failed.stderr)
+            self.assertIn("supporting_suite_status", failed.stderr)
             completed = subprocess.run(
                 [str(runner)], cwd=repo, env=environment, text=True,
                 capture_output=True, check=False)
             self.assertEqual(completed.returncode, 0, completed.stderr)
             problems = []
-            for artifact in ("server", "smartdocs-admin", "smartdocs_test_server"):
+            for artifact in ("server", "smartdocs-admin", "smartdocs_test_server",
+                             "smartdocs_tests"):
                 if "FRESH" not in (repo / "bin" / artifact).read_text(
                         encoding="utf-8"):
                     problems.append(f"stale executable accepted: {artifact}")
             if (repo / "build-jobs").read_text(encoding="utf-8") != "-j1\n":
                 problems.append("runner did not default to one build job")
+            if "bin/smartdocs_tests" not in (repo / "build-arguments").read_text(
+                    encoding="utf-8"):
+                problems.append("runner did not build the C++ suite binary")
             evidence = json.loads((repo / "docs/evidence/m1/latest/results.json")
                                   .read_text(encoding="utf-8"))
             if not evidence["received_build_binding"]:
                 problems.append("evidence driver did not receive build checkout metadata")
+            if not evidence["received_supporting_suites"]:
+                problems.append("evidence driver did not receive supporting suite outputs")
             self.assertEqual(problems, [])
 
     def test_runner_rejects_unsafe_build_parallelism_before_work(self):
