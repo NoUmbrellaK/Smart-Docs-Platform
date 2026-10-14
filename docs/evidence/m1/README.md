@@ -62,8 +62,15 @@ The PDF scenario uploads the same deterministic two-page fixture used by HTTP
 T-05, checks authentication and exact bytes, then opens it through the workbench
 and submits the visible preview form for pages 1 and 2. Each iframe screenshot
 must stabilize across three samples, be a complete CRC/zlib-valid PNG with
-nontrivial size/dimensions, contain the fixture's red/blue rendered page region
-(at least 5 percent and 1000 opaque pixels), and have a different SHA-256.
+nontrivial size/dimensions, and contain the requested page in the central third
+of the document viewport (both axes). This region excludes the top toolbar and
+left thumbnails in the fixed CI layout. It must contain at least 20 percent
+(and 1000 opaque pixels) of the requested page's red/blue color and at most
+1 percent of the other page's color; mixed-page viewports fail. Both full-image
+SHA-256 and decoded document-region SHA-256 must differ between pages, so a
+toolbar/page-indicator change cannot substitute for navigation. The document
+hash covers big-endian uint32 region width/height followed by row-major RGB
+pixels, after PNG filter decoding; it excludes viewer chrome and PNG encoding.
 The exact `#page=1` and `#page=2` sources must bind the same protected version.
 A URL-fragment or Range-only result is insufficient. Review both retained PNGs
 before accepting the run. Browser/WebDriver processes and the profile are owned
@@ -90,14 +97,16 @@ On success, `latest/` contains these review inputs:
 - `streaming.json`: the standalone validated F-02.9 measurement, including
   dimensions, phase names, hashes, baseline RSS/high-water values, final peak,
   growth limit, status, and assertion count.
-- `browser.json`: exact schema version 1, overall `status`, positive integer
+- `browser.json`: exact schema version 2, overall `status`, positive integer
   `assertions`, `browser`/`webdriver` executable basenames and numeric product
   version strings, `headless`, `sandbox`, and exactly two named `scenarios`:
   `refresh_resume_reselect` and `protected_pdf_page_navigation`. The former
   records confirmed/missing/observed PUT part sets, byte counts, reload count,
   source/download SHA-256 and stable file/version/job IDs; the latter records
   fixture SHA-256 and two page numbers, exact protected relative API sources,
-  screenshot filenames, byte sizes and SHA-256 values. All numeric schema
+  screenshot filenames, byte sizes, whole-image `sha256` and document-region
+  `document_sha256` values. Both hashes are recomputed from the retained PNGs;
+  schema-1 browser results are rejected. All numeric schema
   fields require exact JSON integers; floats and booleans are rejected.
 - `browser-artifacts/pdf-page-1.png` and `pdf-page-2.png`: actual iframe images,
   validated against `browser.json` both before interruption and after copying
@@ -127,7 +136,8 @@ On success, `latest/` contains these review inputs:
   malformed/failing evidence, unexpected fields, secrets/absolute filesystem
   paths, integer impostors, missing/duplicate/replayed part PUTs, wrong hashes,
   fragments, trivial/invalid/missing/identical screenshots or absent rendered
-  page color markers fail before interruption starts. The browser PDF hash must
+  page-specific document color markers or unchanged document fingerprints fail
+  before interruption starts. The browser PDF hash must
   match the HTTP fixture hash. Driver nonzero exits stop before streaming or
   aggregation. Existing supporting-suite, HTTP, streaming and interruption
   gates and checkout HEAD/dirty binding remain in force.

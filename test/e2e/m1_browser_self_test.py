@@ -13,24 +13,30 @@ from unittest import mock
 import zlib
 
 
-def png_fixture(seed):
+def png_fixture(seed, mixed=False, toolbar_pixel=0):
     def chunk(kind, body):
         return (struct.pack('!I', len(body)) + kind + body +
                 struct.pack('!I', zlib.crc32(kind + body)))
     # Deterministic color marker plus RGB noise. Synthetic, NOT render proof.
     color = bytes((217, 31, 31) if seed == 1 else (26, 51, 217))
-    rows = b''.join(b'\0' + color * 128 + b''.join(hashlib.sha256(
-        f'{seed}:{row}:{col}'.encode()).digest() for col in range(12))
-                    for row in range(256))
+    rows = []
+    for y in range(256):
+        row = bytearray(hashlib.sha256(f'{seed}:{y}'.encode()).digest() * 24)
+        if 32 <= y < 224:
+            shade = bytes((26, 51, 217)) if mixed and y >= 128 else color
+            row[32 * 3:224 * 3] = shade * 192
+        if y == 0:
+            row[:3] = bytes((toolbar_pixel, 0, 0))
+        rows.append(b'\0' + row)
     return (b'\x89PNG\r\n\x1a\n' +
             chunk(b'IHDR', struct.pack('!IIBBBBB', 256, 256, 8, 2, 0, 0, 0)) +
-            chunk(b'IDAT', zlib.compress(rows)) + chunk(b'IEND', b''))
+            chunk(b'IDAT', zlib.compress(b''.join(rows))) + chunk(b'IEND', b''))
 
 
 def browser_fixture():
     images = {f'pdf-page-{page}.png': png_fixture(page) for page in (1, 2)}
     return {
-        'schema_version': 1, 'status': 'pass', 'assertions': 20,
+        'schema_version': 2, 'status': 'pass', 'assertions': 20,
         'browser': {'executable': 'chromium', 'version': '131.0.1.2'},
         'webdriver': {'executable': 'chromedriver', 'version': '131.0.1.2'},
         'headless': 'new', 'sandbox': 'enabled',
@@ -54,6 +60,8 @@ def browser_fixture():
                     'screenshot': f'pdf-page-{page}.png',
                     'sha256': hashlib.sha256(images[f'pdf-page-{page}.png']).hexdigest(),
                     'size_bytes': len(images[f'pdf-page-{page}.png']),
+                    'document_sha256': hashlib.sha256(struct.pack('!II', 85, 85) +
+                        bytes((217, 31, 31) if page == 1 else (26, 51, 217)) * 85 * 85).hexdigest(),
                 } for page in (1, 2)],
             },
         },
@@ -65,6 +73,33 @@ class BrowserEvidenceTest(unittest.TestCase):
         self.assertTrue(pathlib.Path(__file__).with_name('m1_browser_test.py').exists(),
                         'real-browser evidence driver is missing')
         return importlib.import_module('m1_browser_test')
+
+    def test_aggregate_rejects_mixed_pages_with_only_toolbar_changes(self):
+        import m1_interrupt_test as harness
+        evidence, _ = browser_fixture()
+        with tempfile.TemporaryDirectory() as root:
+            artifacts = pathlib.Path(root)
+            for page in evidence['scenarios']['protected_pdf_page_navigation']['pages']:
+                # Both viewports contain the same red/blue document. Only one
+                # toolbar pixel changes; both whole-image hashes are truthful.
+                content = png_fixture(1, mixed=True, toolbar_pixel=page['page'])
+                (artifacts / page['screenshot']).write_bytes(content)
+                page.update(sha256=hashlib.sha256(content).hexdigest(), size_bytes=len(content))
+                page['document_sha256'] = hashlib.sha256(
+                    struct.pack('!II', 85, 85) + bytes((217, 31, 31)) * 85 * 43 +
+                    bytes((26, 51, 217)) * 85 * 42).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'browser evidence'):
+                harness.validate_browser_evidence(evidence, artifacts)
+
+    def test_document_fingerprint_ignores_toolbar_pixels(self):
+        browser = self.driver()
+        first = browser.require_pdf_render(png_fixture(1, toolbar_pixel=1), 1)
+        second = browser.require_pdf_render(png_fixture(1, toolbar_pixel=2), 1)
+        self.assertNotEqual(first['sha256'], second['sha256'])
+        # Center third is 85 x 85 opaque RGB red, independent of PNG encoding.
+        expected = hashlib.sha256(struct.pack('!II', 85, 85) + bytes((217, 31, 31)) * 85 * 85).hexdigest()
+        self.assertEqual(first.get('document_sha256'), expected)
+        self.assertEqual(second.get('document_sha256'), expected)
 
     def test_browser_schema_rejects_incomplete_or_fabricated_results(self):
         import m1_interrupt_test as harness
@@ -78,7 +113,8 @@ class BrowserEvidenceTest(unittest.TestCase):
                 (artifacts / name).write_bytes(content)
             self.assertEqual(validator(evidence, artifacts), evidence)
             changes = [
-                ((), 'schema_version', True), ((), 'schema_version', 1.0),
+                ((), 'schema_version', True), ((), 'schema_version', 2.0),
+                ((), 'schema_version', 1),
                 ((), 'status', 'fail'), ((), 'password', 'sensitive'),
                 ((), 'assertions', 20.0), ((), 'headless', '/tmp/browser'),
                 (('browser',), 'version', 'cookie=secret'),
@@ -98,7 +134,8 @@ class BrowserEvidenceTest(unittest.TestCase):
             changes += [(pdf + ('pages', 0), key, value) for key, value in (
                 ('page', True), ('src', evidence['scenarios'][pdf[1]]['pages'][1]['src']),
                 ('screenshot', '../pdf-page-1.png'), ('size_bytes', 0),
-                ('size_bytes', 100.0), ('sha256', 'x' * 64))]
+                ('size_bytes', 100.0), ('sha256', 'x' * 64),
+                ('document_sha256', 'f' * 64), ('document_sha256', 'x' * 64))]
             for path, key, value in changes:
                 invalid = copy.deepcopy(evidence)
                 node = invalid

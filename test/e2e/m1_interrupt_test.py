@@ -75,7 +75,7 @@ def validate_browser_evidence(evidence, artifacts):
     try:
         keys(evidence, 'schema_version status assertions browser webdriver headless sandbox scenarios')
         integer(evidence['schema_version'])
-        need(evidence['schema_version'] == 1 and evidence['status'] == 'pass')
+        need(evidence['schema_version'] == 2 and evidence['status'] == 'pass')
         integer(evidence['assertions'], 1)
         need(evidence['headless'] == 'new' and evidence['sandbox'] in
              ('enabled', 'disabled_explicit_root_disposable_host'))
@@ -118,10 +118,11 @@ def validate_browser_evidence(evidence, artifacts):
         need(type(pdf['pages']) is list and len(pdf['pages']) == 2)
         bases = []
         for number, page in enumerate(pdf['pages'], 1):
-            keys(page, 'page src screenshot sha256 size_bytes')
+            keys(page, 'page src screenshot sha256 size_bytes document_sha256')
             integer(page['page'], 1)
             integer(page['size_bytes'], 1024)
             sha(page['sha256'])
+            sha(page['document_sha256'])
             need(page['page'] == number and page['screenshot'] == f'pdf-page-{number}.png')
             need(type(page['src']) is str and re.fullmatch(
                 r'/api/v1/projects/[0-9a-f]{32}/files/[0-9a-f]{32}/versions/[0-9a-f]{32}/content#page=' + str(number),
@@ -131,8 +132,9 @@ def validate_browser_evidence(evidence, artifacts):
             need(not image_path.is_symlink() and image_path.stat().st_size == page['size_bytes'] and
                  page['size_bytes'] <= 16 * 1024 * 1024)
             details = require_pdf_render(image_path.read_bytes(), number)
-            need(details == {key: page[key] for key in ('sha256', 'size_bytes')})
-        need(bases[0] == bases[1] and pdf['pages'][0]['sha256'] != pdf['pages'][1]['sha256'])
+            need(details == {key: page[key] for key in ('sha256', 'size_bytes', 'document_sha256')})
+        need(bases[0] == bases[1] and pdf['pages'][0]['sha256'] != pdf['pages'][1]['sha256'] and
+             pdf['pages'][0]['document_sha256'] != pdf['pages'][1]['document_sha256'])
         need(evidence['assertions'] == resume['assertions'] + pdf['assertions'])
     except (KeyError, TypeError, ValueError, OSError, struct.error, zlib.error) as error:
         raise AssertionError('browser evidence is malformed or its screenshot is invalid') from error

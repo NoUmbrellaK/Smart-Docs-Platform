@@ -121,10 +121,16 @@ def png_details(content, page=None):
         raise ValueError('invalid PNG image data')
     if any(raw[row * (1 + width * channels)] > 4 for row in range(height)):
         raise ValueError('invalid PNG row filter')
+    details = {'sha256': digest(content), 'size_bytes': len(content)}
     if page is not None:
-        # Decode standard PNG row filters to check the fixture's large red/blue
-        # page backgrounds. A blank viewer or changed toolbar cannot pass.
-        stride, matched = width * channels, 0
+        # The center third is inside the document viewport at our fixed CI
+        # window size, away from the top toolbar and left thumbnail sidebar.
+        # Keep its RGB fingerprint independent of PNG encoding and viewer UI.
+        left_edge, right_edge = width // 3, width * 2 // 3
+        top_edge, bottom_edge = height // 3, height * 2 // 3
+        region_pixels = (right_edge - left_edge) * (bottom_edge - top_edge)
+        document = bytearray(struct.pack('!II', right_edge - left_edge, bottom_edge - top_edge))
+        stride, matched, opposite = width * channels, 0, 0
         previous = bytearray(stride)
         for row_number in range(height):
             start = row_number * (stride + 1)
@@ -147,15 +153,21 @@ def png_details(content, page=None):
                 else:
                     predictor = 0
                 row[index] = (row[index] + predictor) & 255
-            for index in range(0, stride, channels):
-                red, green, blue = row[index:index + 3]
-                opaque = channels == 3 or row[index + 3] >= 240
-                matched += opaque and ((red >= 180 and green <= 80 and blue <= 80)
-                                       if page == 1 else (blue >= 180 and red <= 80 and green <= 100))
+            if top_edge <= row_number < bottom_edge:
+                for index in range(left_edge * channels, right_edge * channels, channels):
+                    pixel = row[index:index + 3]
+                    document.extend(pixel)
+                    red, green, blue = pixel
+                    opaque = channels == 3 or row[index + 3] >= 240
+                    is_red = opaque and red >= 180 and green <= 80 and blue <= 80
+                    is_blue = opaque and blue >= 180 and red <= 80 and green <= 100
+                    matched += is_red if page == 1 else is_blue
+                    opposite += is_blue if page == 1 else is_red
             previous = row
-        if matched < max(1000, width * height // 20):
-            raise ValueError('PDF page content marker was not rendered')
-    return {'sha256': digest(content), 'size_bytes': len(content)}
+        if matched < max(1000, region_pixels // 5) or opposite > region_pixels // 100:
+            raise ValueError('PDF page content is missing, mixed or belongs to another page')
+        details['document_sha256'] = digest(document)
+    return details
 
 
 def require_pdf_render(content, page):
@@ -453,7 +465,9 @@ def run_scenarios(browser, client, context, password, scratch, pdf_path, artifac
         filename = f'pdf-page-{page}.png'
         (artifacts / filename).write_bytes(screenshot)
         pages.append({'page': page, 'src': src, 'screenshot': filename, **info})
-    check.check(pages[0]['sha256'] != pages[1]['sha256'], 'PDF pages rendered identically')
+    check.check(pages[0]['sha256'] != pages[1]['sha256'] and
+                pages[0]['document_sha256'] != pages[1]['document_sha256'],
+                'PDF document viewport did not change pages')
     return {'refresh_resume_reselect': resume,
             'protected_pdf_page_navigation': {'status': 'pass', 'assertions': check.count,
                                               'fixture_sha256': digest(pdf), 'pages': pages}}
@@ -497,7 +511,7 @@ def main():
             browser.stop()
             server.stop()
     evidence = {
-        'schema_version': 1, 'status': 'pass',
+        'schema_version': 2, 'status': 'pass',
         **{key: value[1] for key, value in binaries.items()},
         'headless': 'new', 'sandbox': sandbox, 'scenarios': scenarios,
         'assertions': sum(value['assertions'] for value in scenarios.values()),
