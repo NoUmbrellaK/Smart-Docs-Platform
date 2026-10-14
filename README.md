@@ -127,7 +127,7 @@ test/e2e/run_m1.sh
 
 该命令资源消耗较高，默认单 job 并拒绝超过 `min(在线 CPU 数, 2)` 的构建并行度。同一时间只运行一个实例；受限服务器先阅读[事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)。
 
-M1 仍保持开放。文件列表、更新和还原响应现统一返回创建者与数据库权威的 UTC 更新时间，并有服务层、HTTP 层和状态变更测试直接断言；这关闭了 F-01.1 的测试设计缺口，但本机未运行 MySQL 集成测试。阶段运行器现将 C++ 单元/集成测试、Python UI contract 和 Node UI behavior 套件纳入门禁，并要求零跳过、零失败；这只是门禁条件，不代表本次已通过。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；当前受限 ECS 仍不安全。剩余五项关闭阻塞及阶段状态以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
+M1 仍保持开放。F-01.1 的元数据测试设计已直接覆盖；F-02.9 也新增了标准库 real-socket 测量驱动，固定使用 4 路并发、每文件 32 MiB、8 MiB 分片，并要求服务端峰值 RSS 增长严格小于 64 MiB。阶段运行器会在 T-01..T-09 后、故障轮次前运行并聚合该测量，同时继续门禁 C++ 单元/集成、Python UI contract 和 Node UI behavior 套件。这里只完成了实现和低负载 self-test，未在当前受限 ECS 上运行 MySQL、真实服务、构建或 32 MiB 负载，因此没有新增实测成绩。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；剩余四项关闭阻塞及阶段状态以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
 
 ## 开发路线
 

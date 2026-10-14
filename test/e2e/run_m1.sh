@@ -202,6 +202,11 @@ python3 -B "$repo_root/test/e2e/m1_http_test.py" \
     --evidence-file "$scratch_evidence/http.json" \
     --plain "$repo_root/test/fixtures/m1/plain.txt" \
     --pdf "$repo_root/test/fixtures/m1/sample.pdf"
+python3 -B "$repo_root/test/e2e/m1_streaming_test.py" \
+    --server-bin "$repo_root/bin/smartdocs_test_server" \
+    --log-dir "$driver_log_dir/streaming" \
+    --context-file "$scratch_evidence/context.json" \
+    --output "$scratch_evidence/streaming.json"
 python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --server-bin "$repo_root/bin/smartdocs_test_server" \
     --normal-server-bin "$repo_root/bin/server" \
@@ -212,7 +217,8 @@ python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --output "$repo_root/docs/evidence/m1/latest/results.json" \
     --build-head "$build_head" \
     --build-dirty "$build_dirty" \
-    --supporting-suites "$scratch_evidence/supporting-suites.json"
+    --supporting-suites "$scratch_evidence/supporting-suites.json" \
+    --streaming-evidence "$scratch_evidence/streaming.json"
 
 python3 -B - "$repo_root/docs/evidence/m1/latest/results.json" <<'PY'
 import json
@@ -223,7 +229,10 @@ result = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
 summary = result["summary"]
 print("M1 evidence: "
       f"HTTP {summary['http_scenarios_passed']}/{summary['http_scenarios_total']}; "
+      f"streaming {result['streaming_measurement']['status']} "
+      f"{result['streaming_measurement']['rss']['peak_growth_bytes']}/"
+      f"{result['streaming_measurement']['rss']['growth_limit_bytes']} bytes; "
       f"interruptions {summary['interruption_rounds_passed']}/"
       f"{summary['interruption_rounds_total']}; "
-      f"assertions {summary['http_assertions'] + summary['interruption_assertions']}")
+      f"assertions {summary['http_assertions'] + summary['interruption_assertions'] + result['streaming_measurement']['assertions']}")
 PY

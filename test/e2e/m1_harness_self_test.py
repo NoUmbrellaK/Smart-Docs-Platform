@@ -13,9 +13,95 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import m1_interrupt_test as harness
+import m1_streaming_test as streaming
+
+
+VALID_STREAMING_EVIDENCE = {
+    "schema_version": 1,
+    "status": "pass",
+    "file_size_bytes": 33554432,
+    "upload_chunk_size_bytes": 8388608,
+    "concurrency": 4,
+    "phases": [
+        "concurrent_streamed_part_upload",
+        "concurrent_upload_completion_integrity_verification",
+        "concurrent_streamed_download",
+    ],
+    "hashes": [
+        {"file": "streaming-0.bin", "source_sha256": "0" * 64,
+         "download_sha256": "0" * 64},
+        {"file": "streaming-1.bin", "source_sha256": "1" * 64,
+         "download_sha256": "1" * 64},
+        {"file": "streaming-2.bin", "source_sha256": "2" * 64,
+         "download_sha256": "2" * 64},
+        {"file": "streaming-3.bin", "source_sha256": "3" * 64,
+         "download_sha256": "3" * 64},
+    ],
+    "rss": {
+        "baseline_vm_rss_bytes": 9437184,
+        "baseline_vm_hwm_bytes": 10485760,
+        "final_peak_vm_hwm_bytes": 76546047,
+        "peak_growth_bytes": 67108863,
+        "growth_limit_bytes": 67108864,
+    },
+    "assertions": 25,
+}
 
 
 class HarnessEvidenceTest(unittest.TestCase):
+    def test_proc_status_parser_requires_exact_linux_rss_fields(self):
+        status = streaming.parse_proc_status(
+            "Name:\tsmartdocs\n"
+            "VmRSS:\t   12345 kB\n"
+            "VmHWM:\t   23456 kB\n")
+        self.assertEqual(status, {
+            "vm_rss_bytes": 12641280,
+            "vm_hwm_bytes": 24018944,
+        })
+        for malformed in (
+                "Name:\tsmartdocs\nVmRSS:\t12345 kB\n",
+                "Name:\tsmartdocs\nVmHWM:\t23456 kB\n",
+                "VmRSS:\t12345 MB\nVmHWM:\t23456 kB\n",
+                "VmRSS:\tnot-a-number kB\nVmHWM:\t23456 kB\n",
+                "VmRSS:\t12345 kB trailing\nVmHWM:\t23456 kB\n"):
+            with self.subTest(malformed=malformed):
+                with self.assertRaisesRegex(ValueError, "malformed /proc status"):
+                    streaming.parse_proc_status(malformed)
+
+    def test_peak_growth_limit_is_strict_at_sixty_four_mibibytes(self):
+        limit = 67108864
+        self.assertEqual(
+            streaming.peak_growth(10485760, 77594623, limit),
+            {"peak_growth_bytes": 67108863, "within_limit": True})
+        self.assertEqual(
+            streaming.peak_growth(10485760, 77594624, limit),
+            {"peak_growth_bytes": 67108864, "within_limit": False})
+        self.assertEqual(
+            streaming.peak_growth(10485760, 77594625, limit),
+            {"peak_growth_bytes": 67108865, "within_limit": False})
+
+    def test_streaming_evidence_is_schema_validated_and_gates_aggregate(self):
+        evidence = VALID_STREAMING_EVIDENCE
+        self.assertEqual(harness.validate_streaming_evidence(evidence), evidence)
+        for mutation in (
+                {"status": "fail"},
+                {"concurrency": 3},
+                {"phases": evidence["phases"][:2]},
+                {"rss": {**evidence["rss"],
+                         "final_peak_vm_hwm_bytes": 76546048,
+                         "peak_growth_bytes": 67108864}},
+                {"rss": {**evidence["rss"],
+                         "final_peak_vm_hwm_bytes": 76546049,
+                         "peak_growth_bytes": 67108865}},
+                {"hashes": [{**evidence["hashes"][0],
+                             "download_sha256": "f" * 64},
+                            *evidence["hashes"][1:]]}):
+            invalid = {**evidence, **mutation}
+            with self.subTest(mutation=mutation):
+                with self.assertRaisesRegex(AssertionError,
+                                            "streaming measurement"):
+                    harness.validate_streaming_evidence(invalid)
+
     def test_supporting_suite_counts_are_parsed_and_gate_evidence(self):
         suites = {
             "cpp_unit_integration": harness.parse_suite_counts(
@@ -55,7 +141,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                         "unittest", f"Ran 3 tests in 0.001s\n\n{terminal}\n")
 
         result = {
-            "schema_version": 1,
+            "schema_version": 2,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {},
@@ -70,6 +156,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "interruption_assertions": 280,
             },
             "supporting_suites": suites,
+            "streaming_measurement": VALID_STREAMING_EVIDENCE,
             "fault_distribution": dict(harness.FAULT_ROUNDS),
             "failures": [],
         }
@@ -93,7 +180,7 @@ class HarnessEvidenceTest(unittest.TestCase):
 
     def test_write_evidence_emits_reviewable_task12_artifacts(self):
         result = {
-            "schema_version": 1,
+            "schema_version": 2,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {
@@ -122,6 +209,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "ui_behavior": {
                     "passed": 18, "failed": 0, "skipped": 0, "total": 18},
             },
+            "streaming_measurement": VALID_STREAMING_EVIDENCE,
             "fault_distribution": {
                 "AfterPartTempFsync": 4,
                 "AfterAssembledFsync": 4,
@@ -145,6 +233,9 @@ class HarnessEvidenceTest(unittest.TestCase):
 
             self.assertEqual(
                 json.loads(output.read_text(encoding="utf-8")), result)
+            self.assertEqual(
+                json.loads((output.parent / "streaming.json").read_text(
+                    encoding="utf-8")), VALID_STREAMING_EVIDENCE)
             environment = (output.parent / "environment.txt").read_text(
                 encoding="utf-8")
             summary = (output.parent / "summary.md").read_text(encoding="utf-8")
@@ -483,6 +574,14 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
                 "'ui-contract-ran').write_text('marker')\n"
                 "    print('........\\nRan 8 tests in 0.01s\\n\\nOK')\n"
+                "if script.endswith('m1_streaming_test.py'):\n"
+                "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
+                "'streaming-ran').write_text('marker')\n"
+                "    required = {'--server-bin', '--log-dir', '--context-file', "
+                "'--output'}\n"
+                "    if not required.issubset(args): sys.exit(66)\n"
+                "    output = pathlib.Path(args[args.index('--output') + 1])\n"
+                "    output.write_text(json.dumps({'status': 'pass'}))\n"
                 "if script.endswith('m1_interrupt_test.py'):\n"
                 "    if '--validate-supporting-suites' in args:\n"
                 "        print(json.dumps({'cpp_unit_integration': "
@@ -492,17 +591,24 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "'skipped': 0, 'total': 18}}))\n"
                 "        sys.exit(0)\n"
                 "    required = {'--normal-server-bin', '--admin-bin', "
-                "'--build-head', '--build-dirty', '--supporting-suites'}\n"
+                "'--build-head', '--build-dirty', '--supporting-suites', "
+                "'--streaming-evidence'}\n"
                 "    bound = required.issubset(args)\n"
                 "    if bound:\n"
                 "        bound = (args[args.index('--build-head') + 1] == '0' * 64 "
                 "and args[args.index('--build-dirty') + 1] == 'false')\n"
                 "    suites = (bound and pathlib.Path("
                 "args[args.index('--supporting-suites') + 1]).is_file())\n"
+                "    streaming = (bound and pathlib.Path("
+                "args[args.index('--streaming-evidence') + 1]).is_file())\n"
                 "    output = pathlib.Path(args[args.index('--output') + 1])\n"
                 "    output.parent.mkdir(parents=True, exist_ok=True)\n"
                 "    output.write_text(json.dumps({'received_build_binding': bound, "
                 "'received_supporting_suites': suites, "
+                "'received_streaming_evidence': streaming, "
+                "'streaming_measurement': {'status': 'pass', 'assertions': 25, 'rss': {"
+                "'peak_growth_bytes': 67108863, "
+                "'growth_limit_bytes': 67108864}}, "
                 "'summary': {"
                 "'http_scenarios_passed': 9, 'http_scenarios_total': 9, "
                 "'interruption_rounds_passed': 20, "
@@ -545,6 +651,12 @@ class HarnessEvidenceTest(unittest.TestCase):
                 problems.append("evidence driver did not receive build checkout metadata")
             if not evidence["received_supporting_suites"]:
                 problems.append("evidence driver did not receive supporting suite outputs")
+            if not (repo / "streaming-ran").is_file():
+                problems.append("streaming measurement driver did not run")
+            if not evidence["received_streaming_evidence"]:
+                problems.append("evidence driver did not receive streaming evidence")
+            if "assertions 345" not in completed.stdout:
+                problems.append("terminal summary omitted streaming assertions")
             self.assertEqual(problems, [])
 
     def test_runner_rejects_unsafe_build_parallelism_before_work(self):

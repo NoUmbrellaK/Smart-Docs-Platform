@@ -39,6 +39,7 @@ def parse_arguments():
     parser.add_argument("--build-head", required=True)
     parser.add_argument("--build-dirty", choices=("true", "false"), required=True)
     parser.add_argument("--supporting-suites", required=True)
+    parser.add_argument("--streaming-evidence", required=True)
     return parser.parse_args()
 
 
@@ -101,6 +102,57 @@ def supporting_suites_pass(suites):
         suite["total"] > 0 and suite["failed"] == 0 and
         suite["skipped"] == 0 and suite["passed"] == suite["total"]
         for suite in suites.values())
+
+
+def validate_streaming_evidence(evidence):
+    expected_keys = {
+        "schema_version", "status", "file_size_bytes",
+        "upload_chunk_size_bytes", "concurrency", "phases", "hashes",
+        "rss", "assertions",
+    }
+    expected_phases = [
+        "concurrent_streamed_part_upload",
+        "concurrent_upload_completion_integrity_verification",
+        "concurrent_streamed_download",
+    ]
+    try:
+        check(isinstance(evidence, dict) and set(evidence) == expected_keys,
+              "streaming measurement schema is malformed")
+        check(evidence["schema_version"] == 1 and evidence["status"] == "pass",
+              "streaming measurement did not pass")
+        check(evidence["file_size_bytes"] == 33554432 and
+              evidence["upload_chunk_size_bytes"] == 8388608 and
+              evidence["concurrency"] == 4,
+              "streaming measurement dimensions are wrong")
+        check(evidence["phases"] == expected_phases,
+              "streaming measurement phases are incomplete")
+        hashes = evidence["hashes"]
+        check(isinstance(hashes, list) and len(hashes) == 4,
+              "streaming measurement hashes are malformed")
+        for index, item in enumerate(hashes):
+            check(set(item) == {"file", "source_sha256", "download_sha256"} and
+                  item["file"] == f"streaming-{index}.bin" and
+                  re.fullmatch(r"[0-9a-f]{64}", item["source_sha256"]) is not None and
+                  item["download_sha256"] == item["source_sha256"],
+                  "streaming measurement transfer hash mismatch")
+        rss = evidence["rss"]
+        check(set(rss) == {"baseline_vm_rss_bytes", "baseline_vm_hwm_bytes",
+                          "final_peak_vm_hwm_bytes", "peak_growth_bytes",
+                          "growth_limit_bytes"} and
+              all(type(rss[name]) is int and rss[name] >= 0 for name in rss),
+              "streaming measurement RSS fields are malformed")
+        check(rss["baseline_vm_hwm_bytes"] >= rss["baseline_vm_rss_bytes"] and
+              rss["final_peak_vm_hwm_bytes"] >= rss["baseline_vm_hwm_bytes"] and
+              rss["peak_growth_bytes"] ==
+              rss["final_peak_vm_hwm_bytes"] - rss["baseline_vm_rss_bytes"] and
+              rss["growth_limit_bytes"] == 67108864 and
+              rss["peak_growth_bytes"] < rss["growth_limit_bytes"],
+              "streaming measurement RSS growth limit was not met")
+        check(type(evidence["assertions"]) is int and evidence["assertions"] > 0,
+              "streaming measurement assertion count is malformed")
+    except (KeyError, TypeError, AttributeError) as error:
+        raise AssertionError("streaming measurement schema is malformed") from error
+    return evidence
 
 
 def validate_supporting_suites(arguments):
@@ -297,7 +349,8 @@ def write_evidence(result, output):
               summary["interruption_rounds_total"] and
               summary["http_scenarios_failed"] == 0 and
               summary["interruption_rounds_failed"] == 0 and
-              supporting_suites_pass(result["supporting_suites"]))
+              supporting_suites_pass(result["supporting_suites"]) and
+              result["streaming_measurement"]["status"] == "pass")
     distribution = "\n".join(
         f"- {point}: {result['fault_distribution'].get(point, 0)}"
         for point, _ in FAULT_ROUNDS)
@@ -318,6 +371,11 @@ def write_evidence(result, output):
         f"- Interruption rounds: {summary['interruption_rounds_passed']}/"
         f"{summary['interruption_rounds_total']} passed "
         f"({summary['interruption_assertions']} assertions)\n"
+        f"- Streaming measurement: "
+        f"{result['streaming_measurement']['status'].upper()}, peak growth "
+        f"{result['streaming_measurement']['rss']['peak_growth_bytes']}/"
+        f"{result['streaming_measurement']['rss']['growth_limit_bytes']} bytes "
+        f"({result['streaming_measurement']['assertions']} assertions)\n"
         f"- C++ unit/integration: "
         f"{result['supporting_suites']['cpp_unit_integration']['passed']}/"
         f"{result['supporting_suites']['cpp_unit_integration']['total']} passed, "
@@ -341,6 +399,8 @@ def write_evidence(result, output):
         "- An operator must review `latest/` before promoting it to `verified/`.\n")
 
     write(output, json.dumps(result, indent=2, sort_keys=True) + "\n")
+    write(output.parent / "streaming.json", json.dumps(
+        result["streaming_measurement"], indent=2, sort_keys=True) + "\n")
     write(output.parent / "environment.txt", environment_text)
     write(output.parent / "summary.md", summary_text)
 
@@ -521,6 +581,8 @@ def main():
         arguments.supporting_suites).read_text(encoding="utf-8"))
     check(supporting_suites_pass(supporting_suites),
           f"supporting suite failure: {supporting_suites}")
+    streaming_measurement = validate_streaming_evidence(json.loads(pathlib.Path(
+        arguments.streaming_evidence).read_text(encoding="utf-8")))
     server = ServerProcess(arguments.server_bin, arguments.log_dir)
     client = HttpClient(0)
     rounds = []
@@ -556,7 +618,7 @@ def main():
           f"checkout changed after executable build: {build_checkout} -> {final_checkout}")
     now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "commit": final_checkout,
         "build": {
@@ -582,6 +644,7 @@ def main():
             "interruption_assertions": sum(item["assertions"] for item in rounds),
         },
         "supporting_suites": supporting_suites,
+        "streaming_measurement": streaming_measurement,
         "http_scenarios": http_evidence["scenarios"],
         "fixture_sha256": http_evidence["fixture_sha256"],
         "fault_distribution": distribution,

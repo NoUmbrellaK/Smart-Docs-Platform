@@ -87,7 +87,7 @@ class ServerProcess:
             listener.bind(("127.0.0.1", 0))
             return listener.getsockname()[1]
 
-    def start(self, fault_point=None):
+    def start(self, fault_point=None, environment_overrides=None):
         if self.process is not None:
             raise RuntimeError("server process is already running")
         self.port = self._free_port()
@@ -102,6 +102,8 @@ class ServerProcess:
             environment.pop("SMARTDOCS_FAULT_POINT", None)
         else:
             environment["SMARTDOCS_FAULT_POINT"] = fault_point
+        if environment_overrides:
+            environment.update(environment_overrides)
         self.process = subprocess.Popen(
             [self.binary], cwd=str(pathlib.Path(self.binary).parents[1]),
             env=environment, stdout=self.log_handle, stderr=subprocess.STDOUT)
