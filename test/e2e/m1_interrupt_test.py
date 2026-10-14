@@ -107,7 +107,7 @@ def supporting_suites_pass(suites):
 def validate_streaming_evidence(evidence):
     expected_keys = {
         "schema_version", "status", "file_size_bytes",
-        "upload_chunk_size_bytes", "concurrency", "phases", "hashes",
+        "upload_chunk_size_bytes", "phases", "hashes",
         "rss", "assertions",
     }
     expected_phases = [
@@ -118,14 +118,23 @@ def validate_streaming_evidence(evidence):
     try:
         check(isinstance(evidence, dict) and set(evidence) == expected_keys,
               "streaming measurement schema is malformed")
-        check(evidence["schema_version"] == 1 and evidence["status"] == "pass",
+        check(evidence["schema_version"] == 2 and evidence["status"] == "pass",
               "streaming measurement did not pass")
         check(evidence["file_size_bytes"] == 33554432 and
-              evidence["upload_chunk_size_bytes"] == 8388608 and
-              evidence["concurrency"] == 4,
+              evidence["upload_chunk_size_bytes"] == 8388608,
               "streaming measurement dimensions are wrong")
-        check(evidence["phases"] == expected_phases,
+        phases = evidence["phases"]
+        check(isinstance(phases, list) and len(phases) == 3,
               "streaming measurement phases are incomplete")
+        for phase, name, request_count in zip(
+                phases, expected_phases, (16, 4, 4)):
+            check(set(phase) == {"name", "configured_concurrency",
+                                 "observed_max_concurrency", "request_count"} and
+                  phase["name"] == name and
+                  phase["configured_concurrency"] == 4 and
+                  phase["observed_max_concurrency"] == 4 and
+                  phase["request_count"] == request_count,
+                  "streaming measurement phase concurrency is malformed")
         hashes = evidence["hashes"]
         check(isinstance(hashes, list) and len(hashes) == 4,
               "streaming measurement hashes are malformed")
@@ -618,7 +627,7 @@ def main():
           f"checkout changed after executable build: {build_checkout} -> {final_checkout}")
     now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
     result = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "commit": final_checkout,
         "build": {

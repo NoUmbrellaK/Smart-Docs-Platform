@@ -58,7 +58,7 @@ On success, `latest/` contains four review inputs:
   pass denominators, assertion counts, fault distribution, failure details, and
   known gaps. It is not a stage-gate approval by itself.
 
-`latest/results.json` uses aggregate schema version 2 and has this shape:
+`latest/results.json` uses aggregate schema version 3 and has this shape:
 
 - `commit`: Git `head` and `dirty` state remeasured after all scenarios.
 - `build`: the checkout metadata used for the clean build plus SHA-256 hashes
@@ -72,7 +72,9 @@ On success, `latest/` contains four review inputs:
   for `cpp_unit_integration`, `ui_contract`, and `ui_behavior`.
 - `streaming_measurement`: the validated contents of `streaming.json`; a
   missing, malformed, failing, or at/over-limit result cannot be aggregated as
-  a passing run.
+  a passing run. Each phase records configured concurrency, measured maximum
+  overlapping request calls, and request count; observed concurrency below
+  four fails the measurement.
 - `http_scenarios`: T-01 through T-09 M1 results and explicit M2/M4 deferrals.
 - `fault_distribution`: the measured `4/4/4/3/3/2` fault-point distribution.
 - `interruption_rounds`: twenty records containing fault point, process exit,

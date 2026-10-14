@@ -3,6 +3,7 @@
 
 import argparse
 import concurrent.futures
+import contextlib
 import hashlib
 import http.client
 import json
@@ -12,6 +13,7 @@ import re
 import sys
 import tempfile
 import threading
+import time
 
 from m1_http_test import HttpClient, Response, ServerProcess, data, login
 
@@ -63,6 +65,51 @@ class Checker:
             self.assertions += 1
         if not condition:
             raise AssertionError(message)
+
+
+class PhaseConcurrency:
+    def __init__(self, name, configured_concurrency):
+        self.name = name
+        self.configured_concurrency = configured_concurrency
+        self.start_barrier = threading.Barrier(configured_concurrency)
+        self.lock = threading.Lock()
+        self.intervals = []
+
+    @contextlib.contextmanager
+    def request(self, synchronize=False):
+        if synchronize:
+            self.start_barrier.wait(timeout=120)
+        started = time.monotonic_ns()
+        try:
+            yield
+        finally:
+            ended = time.monotonic_ns()
+            with self.lock:
+                self.intervals.append((started, ended))
+
+    def result(self, expected_requests):
+        events = []
+        for started, ended in self.intervals:
+            events.extend(((started, 1), (ended, -1)))
+        active = 0
+        observed = 0
+        for _, change in sorted(events, key=lambda event: (event[0], event[1])):
+            active += change
+            observed = max(observed, active)
+        if len(self.intervals) != expected_requests:
+            raise AssertionError(
+                f"{self.name} recorded {len(self.intervals)} requests, "
+                f"expected {expected_requests}")
+        if observed != self.configured_concurrency:
+            raise AssertionError(
+                f"{self.name} did not reach configured concurrency "
+                f"{self.configured_concurrency}; observed {observed}")
+        return {
+            "name": self.name,
+            "configured_concurrency": self.configured_concurrency,
+            "observed_max_concurrency": observed,
+            "request_count": len(self.intervals),
+        }
 
 
 class BoundedReader:
@@ -142,18 +189,20 @@ def create_task(client, context, name, source_sha256):
          "media_type": "application/octet-stream"}), 201)
 
 
-def upload_one(client, project_id, task, fixture, part_hashes, checker):
+def upload_one(client, project_id, task, fixture, part_hashes, checker,
+               phase):
     with fixture.open("rb") as source:
         for number, expected_hash in enumerate(part_hashes):
             source.seek(number * UPLOAD_CHUNK_SIZE)
-            response = request(
-                client, "PUT",
-                f"/api/v1/projects/{project_id}/uploads/{task['task_id']}"
-                f"/parts/{number}",
-                BoundedReader(source, UPLOAD_CHUNK_SIZE),
-                {"Content-Type": "application/octet-stream",
-                 "Content-Length": str(UPLOAD_CHUNK_SIZE),
-                 "X-Chunk-SHA256": expected_hash})
+            with phase.request(synchronize=number == 0):
+                response = request(
+                    client, "PUT",
+                    f"/api/v1/projects/{project_id}/uploads/{task['task_id']}"
+                    f"/parts/{number}",
+                    BoundedReader(source, UPLOAD_CHUNK_SIZE),
+                    {"Content-Type": "application/octet-stream",
+                     "Content-Length": str(UPLOAD_CHUNK_SIZE),
+                     "X-Chunk-SHA256": expected_hash})
             checker.require(response.status == 200,
                             f"streamed part upload returned HTTP {response.status}")
             part = data(response)
@@ -164,10 +213,11 @@ def upload_one(client, project_id, task, fixture, part_hashes, checker):
                             f"streamed part {number} response was inconsistent")
 
 
-def complete_one(client, project_id, task, checker):
-    response = request(
-        client, "POST",
-        f"/api/v1/projects/{project_id}/uploads/{task['task_id']}/complete")
+def complete_one(client, project_id, task, checker, phase):
+    with phase.request(synchronize=True):
+        response = request(
+            client, "POST",
+            f"/api/v1/projects/{project_id}/uploads/{task['task_id']}/complete")
     checker.require(response.status == 200,
                     f"upload completion returned HTTP {response.status}")
     result = data(response)
@@ -185,30 +235,31 @@ def complete_one(client, project_id, task, checker):
     return result
 
 
-def download_one(client, project_id, result, expected_hash, checker):
-    connection, response = request(
-        client, "GET",
-        f"/api/v1/projects/{project_id}/files/{result['file_id']}/content",
-        stream_response=True)
-    try:
-        checker.require(response.status == 200,
-                        f"streamed download returned HTTP {response.status}")
-        checker.require(response.getheader("Content-Length") == str(FILE_SIZE),
-                        "streamed download Content-Length was wrong")
-        digest = hashlib.sha256()
-        received = 0
-        while True:
-            chunk = response.read(IO_BLOCK_SIZE)
-            if not chunk:
-                break
-            received += len(chunk)
-            digest.update(chunk)
-        actual_hash = digest.hexdigest()
-        checker.require(received == FILE_SIZE and actual_hash == expected_hash,
-                        "streamed download size or SHA-256 was wrong")
-        return actual_hash
-    finally:
-        connection.close()
+def download_one(client, project_id, result, expected_hash, checker, phase):
+    with phase.request(synchronize=True):
+        connection, response = request(
+            client, "GET",
+            f"/api/v1/projects/{project_id}/files/{result['file_id']}/content",
+            stream_response=True)
+        try:
+            checker.require(response.status == 200,
+                            f"streamed download returned HTTP {response.status}")
+            checker.require(response.getheader("Content-Length") == str(FILE_SIZE),
+                            "streamed download Content-Length was wrong")
+            digest = hashlib.sha256()
+            received = 0
+            while True:
+                chunk = response.read(IO_BLOCK_SIZE)
+                if not chunk:
+                    break
+                received += len(chunk)
+                digest.update(chunk)
+            actual_hash = digest.hexdigest()
+            checker.require(received == FILE_SIZE and actual_hash == expected_hash,
+                            "streamed download size or SHA-256 was wrong")
+            return actual_hash
+        finally:
+            connection.close()
 
 
 def ensure_server_alive(server, checker):
@@ -267,21 +318,29 @@ def main():
             ensure_server_alive(server, checker)
             baseline = read_proc_status(server.process.pid)
 
+            upload_phase = PhaseConcurrency(PHASES[0], CONCURRENCY)
             run_concurrently(upload_one, [
-                (client, context["project_id"], task, fixture, hashes, checker)
+                (client, context["project_id"], task, fixture, hashes, checker,
+                 upload_phase)
                 for client, task, fixture, hashes in
                 zip(clients, tasks, fixtures, part_hashes)])
+            upload_observation = upload_phase.result(expected_requests=16)
             ensure_server_alive(server, checker)
 
+            completion_phase = PhaseConcurrency(PHASES[1], CONCURRENCY)
             results = run_concurrently(complete_one, [
-                (client, context["project_id"], task, checker)
+                (client, context["project_id"], task, checker, completion_phase)
                 for client, task in zip(clients, tasks)])
+            completion_observation = completion_phase.result(expected_requests=4)
             ensure_server_alive(server, checker)
 
+            download_phase = PhaseConcurrency(PHASES[2], CONCURRENCY)
             download_hashes = run_concurrently(download_one, [
-                (client, context["project_id"], result, expected, checker)
+                (client, context["project_id"], result, expected, checker,
+                 download_phase)
                 for client, result, expected in
                 zip(clients, results, source_hashes)])
+            download_observation = download_phase.result(expected_requests=4)
             ensure_server_alive(server, checker)
             final = read_proc_status(server.process.pid)
         finally:
@@ -292,12 +351,12 @@ def main():
     checker.require(growth["within_limit"],
                     "streaming peak RSS growth was not strictly below 64 MiB")
     evidence = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "pass",
         "file_size_bytes": FILE_SIZE,
         "upload_chunk_size_bytes": UPLOAD_CHUNK_SIZE,
-        "concurrency": CONCURRENCY,
-        "phases": PHASES,
+        "phases": [upload_observation, completion_observation,
+                   download_observation],
         "hashes": [
             {"file": f"streaming-{index}.bin",
              "source_sha256": source_hashes[index],

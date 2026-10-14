@@ -9,6 +9,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -17,15 +18,20 @@ import m1_streaming_test as streaming
 
 
 VALID_STREAMING_EVIDENCE = {
-    "schema_version": 1,
+    "schema_version": 2,
     "status": "pass",
     "file_size_bytes": 33554432,
     "upload_chunk_size_bytes": 8388608,
-    "concurrency": 4,
     "phases": [
-        "concurrent_streamed_part_upload",
-        "concurrent_upload_completion_integrity_verification",
-        "concurrent_streamed_download",
+        {"name": "concurrent_streamed_part_upload",
+         "configured_concurrency": 4, "observed_max_concurrency": 4,
+         "request_count": 16},
+        {"name": "concurrent_upload_completion_integrity_verification",
+         "configured_concurrency": 4, "observed_max_concurrency": 4,
+         "request_count": 4},
+        {"name": "concurrent_streamed_download",
+         "configured_concurrency": 4, "observed_max_concurrency": 4,
+         "request_count": 4},
     ],
     "hashes": [
         {"file": "streaming-0.bin", "source_sha256": "0" * 64,
@@ -49,6 +55,33 @@ VALID_STREAMING_EVIDENCE = {
 
 
 class HarnessEvidenceTest(unittest.TestCase):
+    def test_phase_concurrency_observation_rejects_serial_and_records_overlap(self):
+        observation = getattr(streaming, "PhaseConcurrency", None)
+        self.assertIsNotNone(observation,
+                             "streaming phases do not measure request overlap")
+        serial = observation("serial", 4)
+        for _ in range(4):
+            with serial.request():
+                pass
+        with self.assertRaisesRegex(AssertionError,
+                                    "did not reach configured concurrency"):
+            serial.result(expected_requests=4)
+
+        overlapping = observation("overlapping", 4)
+        all_entered = threading.Barrier(4)
+
+        def request():
+            with overlapping.request(synchronize=True):
+                all_entered.wait(timeout=1)
+
+        streaming.run_concurrently(request, [() for _ in range(4)])
+        self.assertEqual(overlapping.result(expected_requests=4), {
+            "name": "overlapping",
+            "configured_concurrency": 4,
+            "observed_max_concurrency": 4,
+            "request_count": 4,
+        })
+
     def test_proc_status_parser_requires_exact_linux_rss_fields(self):
         status = streaming.parse_proc_status(
             "Name:\tsmartdocs\n"
@@ -85,7 +118,9 @@ class HarnessEvidenceTest(unittest.TestCase):
         self.assertEqual(harness.validate_streaming_evidence(evidence), evidence)
         for mutation in (
                 {"status": "fail"},
-                {"concurrency": 3},
+                {"phases": [
+                    {**evidence["phases"][0], "observed_max_concurrency": 3},
+                    *evidence["phases"][1:]]},
                 {"phases": evidence["phases"][:2]},
                 {"rss": {**evidence["rss"],
                          "final_peak_vm_hwm_bytes": 76546048,
@@ -141,7 +176,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                         "unittest", f"Ran 3 tests in 0.001s\n\n{terminal}\n")
 
         result = {
-            "schema_version": 2,
+            "schema_version": 3,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {},
@@ -180,7 +215,7 @@ class HarnessEvidenceTest(unittest.TestCase):
 
     def test_write_evidence_emits_reviewable_task12_artifacts(self):
         result = {
-            "schema_version": 2,
+            "schema_version": 3,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {
@@ -534,6 +569,10 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "printf \"RESULT 42 passed, 1 failed, 0 skipped\\\\n\"; exit 1; fi\\n"
                 "printf \"RESULT 43 passed, 0 failed, 0 skipped\\\\n\"\\n' "
                 ">\"$repo/bin/$artifact\"\n"
+                "    elif [ \"$artifact\" = smartdocs_test_server ]; then\n"
+                "      printf '#!/bin/sh\\n# FRESH\\n"
+                "printf marker >\"${FAKE_MARKER_ROOT}/interrupt-server-started\"\\n"
+                "exit 70\\n' >\"$repo/bin/$artifact\"\n"
                 "    else\n"
                 "      printf 'FRESH\\n' >\"$repo/bin/$artifact\"\n"
                 "    fi\n"
@@ -561,6 +600,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 fake_bin / "python3",
                 "#!/usr/bin/python3\n"
                 "import json, os, pathlib, sys\n"
+                f"streaming_fixture = {VALID_STREAMING_EVIDENCE!r}\n"
                 "args = sys.argv[1:]\n"
                 "if args and args[0] == '-B': args.pop(0)\n"
                 "if args and args[0] == '-':\n"
@@ -570,6 +610,14 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "'--normal-server-bin' in args:\n"
                 "    print('unexpected normal-server binding', file=sys.stderr)\n"
                 "    sys.exit(64)\n"
+                "if script.endswith('m1_http_test.py'):\n"
+                "    pathlib.Path(args[args.index('--context-file') + 1]).write_text("
+                "json.dumps({'project_id': '1' * 32, "
+                "'root_directory_id': '2' * 32, 'username': 'm1-admin'}))\n"
+                "    pathlib.Path(args[args.index('--evidence-file') + 1]).write_text("
+                "json.dumps({'scenarios': [], 'passed': 0, 'failed': 0, "
+                "'assertions': 0, 'fixture_sha256': {}}))\n"
+                "    sys.exit(0)\n"
                 "if script.endswith('ui_contract_test.py'):\n"
                 "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
                 "'ui-contract-ran').write_text('marker')\n"
@@ -580,8 +628,19 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "    required = {'--server-bin', '--log-dir', '--context-file', "
                 "'--output'}\n"
                 "    if not required.issubset(args): sys.exit(66)\n"
+                "    mode = os.environ.get('FAKE_STREAMING_MODE', 'pass')\n"
+                "    if mode == 'driver_exit': sys.exit(67)\n"
+                "    if mode == 'missing': sys.exit(0)\n"
                 "    output = pathlib.Path(args[args.index('--output') + 1])\n"
-                "    output.write_text(json.dumps({'status': 'pass'}))\n"
+                "    if mode == 'bad_json': output.write_text('{'); sys.exit(0)\n"
+                "    evidence = json.loads(json.dumps(streaming_fixture))\n"
+                "    if mode == 'fail_status': evidence['status'] = 'fail'\n"
+                "    if mode in {'at_limit', 'over_limit'}:\n"
+                "        growth = 67108864 + (mode == 'over_limit')\n"
+                "        evidence['rss']['peak_growth_bytes'] = growth\n"
+                "        evidence['rss']['final_peak_vm_hwm_bytes'] = "
+                "evidence['rss']['baseline_vm_rss_bytes'] + growth\n"
+                "    output.write_text(json.dumps(evidence))\n"
                 "if script.endswith('m1_interrupt_test.py'):\n"
                 "    if '--validate-supporting-suites' in args:\n"
                 "        print(json.dumps({'cpp_unit_integration': "
@@ -590,6 +649,11 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "'total': 8}, 'ui_behavior': {'passed': 18, 'failed': 0, "
                 "'skipped': 0, 'total': 18}}))\n"
                 "        sys.exit(0)\n"
+                "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
+                "'aggregate-entry-invoked').write_text('marker')\n"
+                "    if os.environ.get('FAKE_REAL_AGGREGATOR') == '1':\n"
+                "        os.execv('/usr/bin/python3', "
+                "['/usr/bin/python3', '-B', script] + args)\n"
                 "    required = {'--normal-server-bin', '--admin-bin', "
                 "'--build-head', '--build-dirty', '--supporting-suites', "
                 "'--streaming-evidence'}\n"
@@ -619,6 +683,10 @@ class HarnessEvidenceTest(unittest.TestCase):
             environment["PATH"] = str(fake_bin) + os.pathsep + environment["PATH"]
             environment["FAKE_MARKER_ROOT"] = str(repo)
             shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
+            shutil.copy2(pathlib.Path(__file__).with_name("m1_interrupt_test.py"),
+                         repo / "test/e2e/m1_interrupt_test.py")
+            shutil.copy2(pathlib.Path(__file__).with_name("m1_http_test.py"),
+                         repo / "test/e2e/m1_http_test.py")
             failing_environment = environment.copy()
             failing_environment["FAKE_CPP_FAILURE"] = "1"
             failed = subprocess.run(
@@ -630,6 +698,38 @@ class HarnessEvidenceTest(unittest.TestCase):
                                 f"supporting suite did not run: {marker}")
             self.assertIn("RESULT 42 passed, 1 failed, 0 skipped", failed.stderr)
             self.assertIn("supporting_suite_status", failed.stderr)
+
+            for mode, expected_error in (
+                    ("missing", "No such file or directory"),
+                    ("bad_json", "Expecting property name"),
+                    ("fail_status", "streaming measurement did not pass"),
+                    ("at_limit", "RSS growth limit was not met"),
+                    ("over_limit", "RSS growth limit was not met")):
+                for marker in ("aggregate-entry-invoked",
+                               "interrupt-server-started"):
+                    (repo / marker).unlink(missing_ok=True)
+                invalid_environment = environment.copy()
+                invalid_environment["FAKE_STREAMING_MODE"] = mode
+                invalid_environment["FAKE_REAL_AGGREGATOR"] = "1"
+                invalid = subprocess.run(
+                    [str(runner)], cwd=repo, env=invalid_environment, text=True,
+                    capture_output=True, check=False)
+                self.assertNotEqual(invalid.returncode, 0, mode)
+                self.assertIn(expected_error, invalid.stderr, mode)
+                self.assertTrue((repo / "aggregate-entry-invoked").is_file(), mode)
+                self.assertFalse((repo / "interrupt-server-started").exists(), mode)
+
+            for marker in ("aggregate-entry-invoked", "interrupt-server-started"):
+                (repo / marker).unlink(missing_ok=True)
+            exit_environment = environment.copy()
+            exit_environment["FAKE_STREAMING_MODE"] = "driver_exit"
+            driver_exit = subprocess.run(
+                [str(runner)], cwd=repo, env=exit_environment, text=True,
+                capture_output=True, check=False)
+            self.assertNotEqual(driver_exit.returncode, 0)
+            self.assertFalse((repo / "aggregate-entry-invoked").exists())
+            self.assertFalse((repo / "interrupt-server-started").exists())
+
             completed = subprocess.run(
                 [str(runner)], cwd=repo, env=environment, text=True,
                 capture_output=True, check=False)
