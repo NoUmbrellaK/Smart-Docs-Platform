@@ -119,7 +119,7 @@ make -j1 server admin
 make -j1 test
 ```
 
-完整 M1 验收会执行清理构建、隔离 MySQL、真实 TCP 场景和二十轮进程故障恢复：
+完整 M1 验收会执行清理构建、隔离 MySQL、真实 TCP/浏览器场景和二十轮进程故障恢复；验收主机还需提供匹配版本的 Chrome/Chromium 与 ChromeDriver，可用 `SMARTDOCS_BROWSER_BIN`、`SMARTDOCS_WEBDRIVER_BIN` 指定：
 
 ```bash
 test/e2e/run_m1.sh
@@ -127,7 +127,9 @@ test/e2e/run_m1.sh
 
 该命令资源消耗较高，默认单 job 并拒绝超过 `min(在线 CPU 数, 2)` 的构建并行度。同一时间只运行一个实例；受限服务器先阅读[事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)。
 
-M1 仍保持开放。F-01.1 的元数据测试设计已直接覆盖；F-02.9 也新增了标准库 real-socket 测量驱动，固定使用 4 路并发、每文件 32 MiB、8 MiB 分片，并要求服务端峰值 RSS 增长严格小于 64 MiB。阶段运行器会在 T-01..T-09 后、故障轮次前运行并聚合该测量，同时继续门禁 C++ 单元/集成、Python UI contract 和 Node UI behavior 套件。这里只完成了实现和低负载 self-test，未在当前受限 ECS 上运行 MySQL、真实服务、构建或 32 MiB 负载，因此没有新增实测成绩。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；剩余四项关闭阻塞及阶段状态以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
+M1 仍保持开放。F-01.1 元数据、F-02.9 流式测量，以及 F-02.2/F-02.3/T-03 浏览器刷新续传、F-03.5/T-05 真实 PDF 双页渲染均已有直接测试设计。新增的标准库 WebDriver 驱动通过真实工作台验证重新选择文件、错文件零 PUT、仅补缺失分片及最终哈希，并保留两页不同渲染内容的 PNG 证据。阶段运行器在 HTTP 场景之后依次执行浏览器、流式测量和故障轮次，严格聚合 browser.json、截图及现有所有门禁；流式门槛仍为 4 路并发、每文件 32 MiB、8 MiB 分片和服务端峰值 RSS 增长严格小于 64 MiB。
+
+这里只完成了实现和低负载 self-test，未在当前受限 ECS 上运行 MySQL、真实服务、浏览器、构建或负载验收，没有新增真实浏览器成绩或截图。完整验收需在独立/临时 runner（或等效安全配置的环境）执行，优先以非 root 用户保留浏览器沙箱；root 临时验收主机的显式降级条件见[验收说明](./docs/evidence/m1/README.md)。浏览器与流式实测缺失均纳入当前 HEAD 完整证据阻塞，剩余两项显式关闭阻塞及阶段状态以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
 
 ## 开发路线
 

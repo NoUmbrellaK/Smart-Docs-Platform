@@ -2,7 +2,8 @@
 
 See the [M1 gate coverage matrix](gate-matrix.md) for the requirement-to-test
 mapping, M2+ deferrals, current evidence state, and closure blockers. The matrix
-currently reports M1 as open.
+currently reports M1 as open with two explicit closure blockers: the accepted
+current-HEAD full artifact set, and runtime gate proof/final review.
 
 Run the reproducible M1 acceptance command from the repository root:
 
@@ -15,6 +16,18 @@ and rejects `SMARTDOCS_BUILD_JOBS` values above the smaller of the online CPU
 count and two. Run only one full acceptance instance at a time. See the
 [2026-09-15 resource-exhaustion incident](../../operations/2026-09-15-m1-acceptance-resource-exhaustion.md)
 before running it on a small single-host deployment.
+
+The browser scenarios require a Chrome/Chromium executable with its native PDF
+viewer and a compatible ChromeDriver executable (matching major version).
+Set `SMARTDOCS_BROWSER_BIN` and `SMARTDOCS_WEBDRIVER_BIN` to explicit executables,
+or let the driver discover `chromium`, `chromium-browser`, `google-chrome`, and
+`chromedriver` on PATH. These are test-host dependencies only; no pip/npm browser
+package is needed. The runner resolves and queries them before build/MySQL work.
+Run as a non-root user with the browser sandbox enabled. A disposable root
+acceptance host may explicitly set
+`SMARTDOCS_BROWSER_ALLOW_ROOT_NO_SANDBOX=1`; only that root opt-in adds
+`--no-sandbox`, and evidence records the reduced browser-process isolation.
+Same-origin, certificate, and web security checks are never disabled.
 
 The runner records the checkout HEAD and dirty state, runs the focused harness
 self-test, then performs a clean build of `server`, `admin`, and `test-server`
@@ -34,7 +47,29 @@ production-binary smoke check; the production binary never receives a
 fault-injection setting. Each Python scenario driver owns every test-server
 child it starts, stops, crashes, or restarts.
 
-Between HTTP T-01 through T-09 and the interruption rounds, the runner starts
+After HTTP T-01 through T-09, the standard-library browser driver starts its own
+test server and ChromeDriver children and drives the real workbench using the
+W3C WebDriver HTTP protocol in `--headless=new` mode. It logs in through visible
+controls, explicitly reloads a task with part 0 already confirmed, rejects a
+same-size wrong file before any part PUT, then reselects the original file and
+requires PUTs for exactly the missing parts, stable completion IDs and the final
+download SHA-256. File selection uses WebDriver's real file-input operation.
+JavaScript is used only to inspect visible DOM state. Performance events are
+processed in memory; only observed part numbers enter evidence. The mismatch
+phase must observe the task GET as well as zero part PUTs.
+
+The PDF scenario uploads the same deterministic two-page fixture used by HTTP
+T-05, checks authentication and exact bytes, then opens it through the workbench
+and submits the visible preview form for pages 1 and 2. Each iframe screenshot
+must stabilize across three samples, be a complete CRC/zlib-valid PNG with
+nontrivial size/dimensions, contain the fixture's red/blue rendered page region
+(at least 5 percent and 1000 opaque pixels), and have a different SHA-256.
+The exact `#page=1` and `#page=2` sources must bind the same protected version.
+A URL-fragment or Range-only result is insufficient. Review both retained PNGs
+before accepting the run. Browser/WebDriver processes and the profile are owned
+by this driver; no process-name kill or broad cleanup is used.
+
+After the browser driver and before interruption rounds, the runner starts
 a fresh `smartdocs_test_server` and runs the standard-library-only F-02.9
 measurement. Four 32 MiB deterministic disk fixtures are uploaded in 8 MiB
 parts, completed, and downloaded concurrently through real loopback sockets.
@@ -45,20 +80,33 @@ Missing or malformed RSS fields,
 incorrect statuses or hashes, an exited server, malformed evidence, and values
 at or above the limit fail the full runner.
 
-On success, `latest/` contains four review inputs:
+On success, `latest/` contains these review inputs:
 
 - `environment.txt`: sorted `key=value` facts for the commit, dirty state,
   operating system, CPU count, Python, Node, compiler, MySQL client/server,
-  OpenSSL, and isolated transports.
+  OpenSSL, browser/WebDriver executable basenames and product versions,
+  headless/sandbox modes, and isolated transports.
 - `results.json`: the machine-readable evidence described below.
 - `streaming.json`: the standalone validated F-02.9 measurement, including
   dimensions, phase names, hashes, baseline RSS/high-water values, final peak,
   growth limit, status, and assertion count.
+- `browser.json`: exact schema version 1, overall `status`, positive integer
+  `assertions`, `browser`/`webdriver` executable basenames and numeric product
+  version strings, `headless`, `sandbox`, and exactly two named `scenarios`:
+  `refresh_resume_reselect` and `protected_pdf_page_navigation`. The former
+  records confirmed/missing/observed PUT part sets, byte counts, reload count,
+  source/download SHA-256 and stable file/version/job IDs; the latter records
+  fixture SHA-256 and two page numbers, exact protected relative API sources,
+  screenshot filenames, byte sizes and SHA-256 values. All numeric schema
+  fields require exact JSON integers; floats and booleans are rejected.
+- `browser-artifacts/pdf-page-1.png` and `pdf-page-2.png`: actual iframe images,
+  validated against `browser.json` both before interruption and after copying
+  from the private scratch evidence directory.
 - `summary.md`: computed pass/fail/skip/total suite counts, HTTP and interruption
   pass denominators, assertion counts, fault distribution, failure details, and
   known gaps. It is not a stage-gate approval by itself.
 
-`latest/results.json` uses aggregate schema version 3 and has this shape:
+`latest/results.json` uses aggregate schema version 4 and has this shape:
 
 - `commit`: Git `head` and `dirty` state remeasured after all scenarios.
 - `build`: the checkout metadata used for the clean build plus SHA-256 hashes
@@ -75,6 +123,14 @@ On success, `latest/` contains four review inputs:
   a passing run. Each phase records configured concurrency, measured maximum
   overlapping request calls, and request count; observed concurrency below
   four fails the measurement.
+- `browser`: the strictly validated contents of `browser.json`. Missing or
+  malformed/failing evidence, unexpected fields, secrets/absolute filesystem
+  paths, integer impostors, missing/duplicate/replayed part PUTs, wrong hashes,
+  fragments, trivial/invalid/missing/identical screenshots or absent rendered
+  page color markers fail before interruption starts. The browser PDF hash must
+  match the HTTP fixture hash. Driver nonzero exits stop before streaming or
+  aggregation. Existing supporting-suite, HTTP, streaming and interruption
+  gates and checkout HEAD/dirty binding remain in force.
 - `http_scenarios`: T-01 through T-09 M1 results and explicit M2/M4 deferrals.
 - `fault_distribution`: the measured `4/4/4/3/3/2` fault-point distribution.
 - `interruption_rounds`: twenty records containing fault point, process exit,
@@ -92,3 +148,11 @@ temporary absolute paths.
 The F-02.9 measurement is wired and self-tested, but it was not executed on the
 resource-constrained ECS while this change was prepared. Current-run evidence
 therefore remains pending until the complete runner succeeds on a safe host.
+
+Likewise, no real browser result or screenshot was produced on this ECS.
+Only fake-executable/controlled-protocol self-tests, Python AST parsing, shell
+syntax, source/document checks and diff whitespace checks were run here.
+Do not start this full runner, a build/link, MySQL, a real application server,
+Chrome/Chromium or a real browser workload on the affected host. The browser
+test design now has direct coverage; its missing runtime proof is included in
+the current-HEAD full-artifact blocker, following F-02.9's convention.

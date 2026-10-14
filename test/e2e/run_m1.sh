@@ -67,6 +67,7 @@ for artifact in test/fixtures/m1/plain.txt test/fixtures/m1/sample.pdf; do
     }
 done
 
+python3 -B "$repo_root/test/e2e/m1_browser_test.py" --check-dependencies
 python3 -B "$repo_root/test/e2e/m1_harness_self_test.py"
 build_head=$(git -C "$repo_root" rev-parse HEAD)
 if [[ -n $(git -C "$repo_root" status --porcelain --untracked-files=normal) ]]; then
@@ -202,6 +203,12 @@ python3 -B "$repo_root/test/e2e/m1_http_test.py" \
     --evidence-file "$scratch_evidence/http.json" \
     --plain "$repo_root/test/fixtures/m1/plain.txt" \
     --pdf "$repo_root/test/fixtures/m1/sample.pdf"
+python3 -B "$repo_root/test/e2e/m1_browser_test.py" \
+    --server-bin "$repo_root/bin/smartdocs_test_server" \
+    --log-dir "$driver_log_dir/browser" \
+    --context-file "$scratch_evidence/context.json" \
+    --pdf "$repo_root/test/fixtures/m1/sample.pdf" \
+    --output "$scratch_evidence/browser.json"
 python3 -B "$repo_root/test/e2e/m1_streaming_test.py" \
     --server-bin "$repo_root/bin/smartdocs_test_server" \
     --log-dir "$driver_log_dir/streaming" \
@@ -218,7 +225,8 @@ python3 -B "$repo_root/test/e2e/m1_interrupt_test.py" \
     --build-head "$build_head" \
     --build-dirty "$build_dirty" \
     --supporting-suites "$scratch_evidence/supporting-suites.json" \
-    --streaming-evidence "$scratch_evidence/streaming.json"
+    --streaming-evidence "$scratch_evidence/streaming.json" \
+    --browser-evidence "$scratch_evidence/browser.json"
 
 python3 -B - "$repo_root/docs/evidence/m1/latest/results.json" <<'PY'
 import json
@@ -229,10 +237,11 @@ result = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
 summary = result["summary"]
 print("M1 evidence: "
       f"HTTP {summary['http_scenarios_passed']}/{summary['http_scenarios_total']}; "
+      f"browser {result['browser']['status']}; "
       f"streaming {result['streaming_measurement']['status']} "
       f"{result['streaming_measurement']['rss']['peak_growth_bytes']}/"
       f"{result['streaming_measurement']['rss']['growth_limit_bytes']} bytes; "
       f"interruptions {summary['interruption_rounds_passed']}/"
       f"{summary['interruption_rounds_total']}; "
-      f"assertions {summary['http_assertions'] + summary['interruption_assertions'] + result['streaming_measurement']['assertions']}")
+      f"assertions {summary['http_assertions'] + summary['interruption_assertions'] + result['streaming_measurement']['assertions'] + result['browser']['assertions']}")
 PY

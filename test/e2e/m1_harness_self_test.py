@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from m1_browser_self_test import BrowserEvidenceTest, browser_fixture
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import m1_interrupt_test as harness
@@ -176,7 +177,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                         "unittest", f"Ran 3 tests in 0.001s\n\n{terminal}\n")
 
         result = {
-            "schema_version": 3,
+            "schema_version": 4,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {},
@@ -192,6 +193,7 @@ class HarnessEvidenceTest(unittest.TestCase):
             },
             "supporting_suites": suites,
             "streaming_measurement": VALID_STREAMING_EVIDENCE,
+            "browser": browser_fixture()[0],
             "fault_distribution": dict(harness.FAULT_ROUNDS),
             "failures": [],
         }
@@ -215,7 +217,7 @@ class HarnessEvidenceTest(unittest.TestCase):
 
     def test_write_evidence_emits_reviewable_task12_artifacts(self):
         result = {
-            "schema_version": 3,
+            "schema_version": 4,
             "generated_at": "2026-09-15T01:02:03Z",
             "commit": {"head": "1" * 40, "dirty": False},
             "environment": {
@@ -245,6 +247,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                     "passed": 18, "failed": 0, "skipped": 0, "total": 18},
             },
             "streaming_measurement": VALID_STREAMING_EVIDENCE,
+            "browser": browser_fixture()[0],
             "fault_distribution": {
                 "AfterPartTempFsync": 4,
                 "AfterAssembledFsync": 4,
@@ -601,6 +604,8 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "#!/usr/bin/python3\n"
                 "import json, os, pathlib, sys\n"
                 f"streaming_fixture = {VALID_STREAMING_EVIDENCE!r}\n"
+                f"browser_fixture = {browser_fixture()[0]!r}\n"
+                f"browser_images = {browser_fixture()[1]!r}\n"
                 "args = sys.argv[1:]\n"
                 "if args and args[0] == '-B': args.pop(0)\n"
                 "if args and args[0] == '-':\n"
@@ -611,6 +616,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "    print('unexpected normal-server binding', file=sys.stderr)\n"
                 "    sys.exit(64)\n"
                 "if script.endswith('m1_http_test.py'):\n"
+                "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], 'http-ran').touch()\n"
                 "    pathlib.Path(args[args.index('--context-file') + 1]).write_text("
                 "json.dumps({'project_id': '1' * 32, "
                 "'root_directory_id': '2' * 32, 'username': 'm1-admin'}))\n"
@@ -622,7 +628,26 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
                 "'ui-contract-ran').write_text('marker')\n"
                 "    print('........\\nRan 8 tests in 0.01s\\n\\nOK')\n"
+                "if script.endswith('m1_browser_test.py'):\n"
+                "    root = pathlib.Path(os.environ['FAKE_MARKER_ROOT'])\n"
+                "    if '--check-dependencies' in args:\n"
+                "        if os.environ.get('FAKE_BROWSER_MODE') == 'dependency': sys.exit(68)\n"
+                "        sys.exit(0)\n"
+                "    required = {'--server-bin', '--log-dir', '--context-file', '--pdf', '--output'}\n"
+                "    if not required.issubset(args) or not (root / 'http-ran').exists(): sys.exit(66)\n"
+                "    (root / 'browser-ran').touch()\n"
+                "    mode = os.environ.get('FAKE_BROWSER_MODE', 'pass')\n"
+                "    if mode == 'driver_exit': sys.exit(67)\n"
+                "    if mode == 'missing': sys.exit(0)\n"
+                "    output = pathlib.Path(args[args.index('--output') + 1])\n"
+                "    if mode == 'bad_json': output.write_text('{'); sys.exit(0)\n"
+                "    if mode == 'fail_status': browser_fixture['status'] = 'fail'\n"
+                "    output.write_text(json.dumps(browser_fixture))\n"
+                "    images = output.parent / 'browser-artifacts'\n"
+                "    images.mkdir(exist_ok=True)\n"
+                "    for name, content in browser_images.items(): (images / name).write_bytes(content)\n"
                 "if script.endswith('m1_streaming_test.py'):\n"
+                "    if not pathlib.Path(os.environ['FAKE_MARKER_ROOT'], 'browser-ran').exists(): sys.exit(66)\n"
                 "    pathlib.Path(os.environ['FAKE_MARKER_ROOT'], "
                 "'streaming-ran').write_text('marker')\n"
                 "    required = {'--server-bin', '--log-dir', '--context-file', "
@@ -656,7 +681,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "['/usr/bin/python3', '-B', script] + args)\n"
                 "    required = {'--normal-server-bin', '--admin-bin', "
                 "'--build-head', '--build-dirty', '--supporting-suites', "
-                "'--streaming-evidence'}\n"
+                "'--streaming-evidence', '--browser-evidence'}\n"
                 "    bound = required.issubset(args)\n"
                 "    if bound:\n"
                 "        bound = (args[args.index('--build-head') + 1] == '0' * 64 "
@@ -670,6 +695,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 "    output.write_text(json.dumps({'received_build_binding': bound, "
                 "'received_supporting_suites': suites, "
                 "'received_streaming_evidence': streaming, "
+                "'browser': browser_fixture, "
                 "'streaming_measurement': {'status': 'pass', 'assertions': 25, 'rss': {"
                 "'peak_growth_bytes': 67108863, "
                 "'growth_limit_bytes': 67108864}}, "
@@ -687,6 +713,16 @@ class HarnessEvidenceTest(unittest.TestCase):
                          repo / "test/e2e/m1_interrupt_test.py")
             shutil.copy2(pathlib.Path(__file__).with_name("m1_http_test.py"),
                          repo / "test/e2e/m1_http_test.py")
+            browser_source = pathlib.Path(__file__).with_name("m1_browser_test.py")
+            if browser_source.exists():
+                shutil.copy2(browser_source, repo / "test/e2e/m1_browser_test.py")
+            dependency_environment = {**environment, "FAKE_BROWSER_MODE": "dependency"}
+            dependency = subprocess.run([str(runner)], cwd=repo,
+                                        env=dependency_environment, text=True,
+                                        capture_output=True, check=False)
+            self.assertNotEqual(dependency.returncode, 0)
+            self.assertFalse((repo / "build-arguments").exists(),
+                             "missing browser dependency must stop before building")
             failing_environment = environment.copy()
             failing_environment["FAKE_CPP_FAILURE"] = "1"
             failed = subprocess.run(
@@ -698,6 +734,31 @@ class HarnessEvidenceTest(unittest.TestCase):
                                 f"supporting suite did not run: {marker}")
             self.assertIn("RESULT 42 passed, 1 failed, 0 skipped", failed.stderr)
             self.assertIn("supporting_suite_status", failed.stderr)
+
+            for mode, expected_error in (("missing", "No such file or directory"),
+                                         ("bad_json", "Expecting property name"),
+                                         ("fail_status", "browser evidence")):
+                for marker in ("aggregate-entry-invoked", "interrupt-server-started"):
+                    (repo / marker).unlink(missing_ok=True)
+                invalid = subprocess.run(
+                    [str(runner)], cwd=repo,
+                    env={**environment, "FAKE_BROWSER_MODE": mode,
+                         "FAKE_REAL_AGGREGATOR": "1"},
+                    text=True, capture_output=True, check=False)
+                self.assertNotEqual(invalid.returncode, 0, mode)
+                self.assertIn(expected_error, invalid.stderr, mode)
+                self.assertTrue((repo / "aggregate-entry-invoked").exists(), mode)
+                self.assertFalse((repo / "interrupt-server-started").exists(), mode)
+
+            for marker in ("aggregate-entry-invoked", "interrupt-server-started", "streaming-ran"):
+                (repo / marker).unlink(missing_ok=True)
+            browser_exit = subprocess.run(
+                [str(runner)], cwd=repo,
+                env={**environment, "FAKE_BROWSER_MODE": "driver_exit"},
+                text=True, capture_output=True, check=False)
+            self.assertNotEqual(browser_exit.returncode, 0)
+            for marker in ("aggregate-entry-invoked", "interrupt-server-started", "streaming-ran"):
+                self.assertFalse((repo / marker).exists())
 
             for mode, expected_error in (
                     ("missing", "No such file or directory"),
@@ -755,8 +816,8 @@ class HarnessEvidenceTest(unittest.TestCase):
                 problems.append("streaming measurement driver did not run")
             if not evidence["received_streaming_evidence"]:
                 problems.append("evidence driver did not receive streaming evidence")
-            if "assertions 345" not in completed.stdout:
-                problems.append("terminal summary omitted streaming assertions")
+            if "assertions 365" not in completed.stdout:
+                problems.append("terminal summary omitted browser/streaming assertions")
             self.assertEqual(problems, [])
 
     def test_runner_rejects_unsafe_build_parallelism_before_work(self):

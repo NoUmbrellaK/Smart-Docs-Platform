@@ -10,11 +10,15 @@ import os
 import pathlib
 import platform
 import re
+import shutil
+import struct
 import subprocess
 import sys
+import zlib
 
 from m1_http_test import (HttpClient, ServerProcess, complete, create_upload,
                           data, digest, login, upload_file, upload_parts)
+from m1_browser_test import require_pdf_render
 
 
 FAULT_ROUNDS = (
@@ -40,12 +44,99 @@ def parse_arguments():
     parser.add_argument("--build-dirty", choices=("true", "false"), required=True)
     parser.add_argument("--supporting-suites", required=True)
     parser.add_argument("--streaming-evidence", required=True)
+    parser.add_argument("--browser-evidence", required=True)
     return parser.parse_args()
 
 
 def check(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def validate_browser_evidence(evidence, artifacts):
+    """Exact schema and artifact validation, before any interruption process."""
+    def need(condition):
+        check(condition, 'browser evidence is malformed, incomplete or failing')
+
+    def keys(value, expected):
+        need(type(value) is dict and set(value) == set(expected.split()))
+
+    def integer(value, minimum=0):
+        need(type(value) is int and value >= minimum)
+
+    def numbers(value):
+        need(type(value) is list)
+        for number in value:
+            integer(number)
+
+    def sha(value):
+        need(type(value) is str and re.fullmatch(r'[0-9a-f]{64}', value) is not None)
+
+    try:
+        keys(evidence, 'schema_version status assertions browser webdriver headless sandbox scenarios')
+        integer(evidence['schema_version'])
+        need(evidence['schema_version'] == 1 and evidence['status'] == 'pass')
+        integer(evidence['assertions'], 1)
+        need(evidence['headless'] == 'new' and evidence['sandbox'] in
+             ('enabled', 'disabled_explicit_root_disposable_host'))
+        for product in ('browser', 'webdriver'):
+            item = evidence[product]
+            keys(item, 'executable version')
+            need(type(item['executable']) is str and re.fullmatch(r'[A-Za-z0-9_.-]{1,80}', item['executable']) is not None)
+            need(type(item['version']) is str and re.fullmatch(r'\d+\.\d+\.\d+\.\d+', item['version']) is not None)
+        need(evidence['browser']['version'].split('.')[0] == evidence['webdriver']['version'].split('.')[0])
+        keys(evidence['scenarios'], 'refresh_resume_reselect protected_pdf_page_navigation')
+        resume = evidence['scenarios']['refresh_resume_reselect']
+        keys(resume, 'status assertions part_count chunk_size_bytes file_size_bytes '
+                     'confirmed_parts_before confirmed_bytes_before confirmed_parts_after_mismatch '
+                     'mismatch_put_parts resume_put_parts confirmed_parts_after '
+                     'source_sha256 download_sha256 reloads file_id version_id processing_job_id')
+        need(resume['status'] == 'pass')
+        for name in ('assertions', 'part_count', 'chunk_size_bytes', 'file_size_bytes',
+                     'confirmed_bytes_before', 'reloads'):
+            integer(resume[name], 1)
+        count, chunk, size = resume['part_count'], resume['chunk_size_bytes'], resume['file_size_bytes']
+        need(3 <= count <= 1024 and count == (size + chunk - 1) // chunk)
+        need(resume['confirmed_bytes_before'] == chunk and resume['reloads'] == 1)
+        for name in ('confirmed_parts_before', 'confirmed_parts_after_mismatch',
+                     'mismatch_put_parts', 'resume_put_parts', 'confirmed_parts_after'):
+            numbers(resume[name])
+        need(resume['confirmed_parts_before'] == resume['confirmed_parts_after_mismatch'] == [0])
+        need(resume['mismatch_put_parts'] == [])
+        need(sorted(resume['resume_put_parts']) == list(range(1, count)))
+        need(resume['confirmed_parts_after'] == list(range(count)))
+        sha(resume['source_sha256'])
+        sha(resume['download_sha256'])
+        need(resume['source_sha256'] == resume['download_sha256'])
+        for name in ('file_id', 'version_id', 'processing_job_id'):
+            need(type(resume[name]) is str and re.fullmatch(r'[0-9a-f]{32}', resume[name]) is not None)
+        pdf = evidence['scenarios']['protected_pdf_page_navigation']
+        keys(pdf, 'status assertions fixture_sha256 pages')
+        need(pdf['status'] == 'pass')
+        integer(pdf['assertions'], 1)
+        sha(pdf['fixture_sha256'])
+        need(type(pdf['pages']) is list and len(pdf['pages']) == 2)
+        bases = []
+        for number, page in enumerate(pdf['pages'], 1):
+            keys(page, 'page src screenshot sha256 size_bytes')
+            integer(page['page'], 1)
+            integer(page['size_bytes'], 1024)
+            sha(page['sha256'])
+            need(page['page'] == number and page['screenshot'] == f'pdf-page-{number}.png')
+            need(type(page['src']) is str and re.fullmatch(
+                r'/api/v1/projects/[0-9a-f]{32}/files/[0-9a-f]{32}/versions/[0-9a-f]{32}/content#page=' + str(number),
+                page['src']) is not None)
+            bases.append(page['src'].split('#')[0])
+            image_path = pathlib.Path(artifacts) / page['screenshot']
+            need(not image_path.is_symlink() and image_path.stat().st_size == page['size_bytes'] and
+                 page['size_bytes'] <= 16 * 1024 * 1024)
+            details = require_pdf_render(image_path.read_bytes(), number)
+            need(details == {key: page[key] for key in ('sha256', 'size_bytes')})
+        need(bases[0] == bases[1] and pdf['pages'][0]['sha256'] != pdf['pages'][1]['sha256'])
+        need(evidence['assertions'] == resume['assertions'] + pdf['assertions'])
+    except (KeyError, TypeError, ValueError, OSError, struct.error, zlib.error) as error:
+        raise AssertionError('browser evidence is malformed or its screenshot is invalid') from error
+    return evidence
 
 
 def parse_suite_counts(kind, output):
@@ -347,6 +438,12 @@ def write_evidence(result, output):
         "commit_head": commit["head"],
         "commit_dirty": str(commit["dirty"]).lower(),
         **result["environment"],
+        'browser': result['browser']['browser']['executable'],
+        'browser_version': result['browser']['browser']['version'],
+        'webdriver': result['browser']['webdriver']['executable'],
+        'webdriver_version': result['browser']['webdriver']['version'],
+        'browser_headless': result['browser']['headless'],
+        'browser_sandbox': result['browser']['sandbox'],
     }
     environment_text = "".join(
         f"{name}={environment[name]}\n" for name in sorted(environment))
@@ -359,7 +456,8 @@ def write_evidence(result, output):
               summary["http_scenarios_failed"] == 0 and
               summary["interruption_rounds_failed"] == 0 and
               supporting_suites_pass(result["supporting_suites"]) and
-              result["streaming_measurement"]["status"] == "pass")
+              result["streaming_measurement"]["status"] == "pass" and
+              result['browser']['status'] == 'pass')
     distribution = "\n".join(
         f"- {point}: {result['fault_distribution'].get(point, 0)}"
         for point, _ in FAULT_ROUNDS)
@@ -377,6 +475,10 @@ def write_evidence(result, output):
         f"- HTTP scenarios: {summary['http_scenarios_passed']}/"
         f"{summary['http_scenarios_total']} passed "
         f"({summary['http_assertions']} assertions)\n"
+        f"- Browser scenarios: 2/2 passed ({result['browser']['assertions']} assertions); "
+        f"{result['browser']['browser']['executable']} {result['browser']['browser']['version']}; "
+        f"WebDriver {result['browser']['webdriver']['version']}; "
+        f"headless={result['browser']['headless']}, sandbox={result['browser']['sandbox']}\n"
         f"- Interruption rounds: {summary['interruption_rounds_passed']}/"
         f"{summary['interruption_rounds_total']} passed "
         f"({summary['interruption_assertions']} assertions)\n"
@@ -410,6 +512,8 @@ def write_evidence(result, output):
     write(output, json.dumps(result, indent=2, sort_keys=True) + "\n")
     write(output.parent / "streaming.json", json.dumps(
         result["streaming_measurement"], indent=2, sort_keys=True) + "\n")
+    write(output.parent / 'browser.json', json.dumps(
+        result['browser'], indent=2, sort_keys=True) + '\n')
     write(output.parent / "environment.txt", environment_text)
     write(output.parent / "summary.md", summary_text)
 
@@ -592,6 +696,13 @@ def main():
           f"supporting suite failure: {supporting_suites}")
     streaming_measurement = validate_streaming_evidence(json.loads(pathlib.Path(
         arguments.streaming_evidence).read_text(encoding="utf-8")))
+    browser_path = pathlib.Path(arguments.browser_evidence)
+    browser_artifacts = browser_path.parent / 'browser-artifacts'
+    browser_evidence = validate_browser_evidence(
+        json.loads(browser_path.read_text(encoding='utf-8')), browser_artifacts)
+    check(browser_evidence['scenarios']['protected_pdf_page_navigation']['fixture_sha256'] ==
+          http_evidence['fixture_sha256'].get('sample.pdf'),
+          'browser evidence PDF fixture differs from HTTP fixture')
     server = ServerProcess(arguments.server_bin, arguments.log_dir)
     client = HttpClient(0)
     rounds = []
@@ -627,7 +738,7 @@ def main():
           f"checkout changed after executable build: {build_checkout} -> {final_checkout}")
     now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
     result = {
-        "schema_version": 3,
+        "schema_version": 4,
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "commit": final_checkout,
         "build": {
@@ -641,12 +752,21 @@ def main():
                     pathlib.Path(arguments.server_bin).read_bytes()),
             },
         },
-        "environment": environment_facts(),
+        "environment": {
+            **environment_facts(),
+            'browser': browser_evidence['browser']['executable'],
+            'browser_version': browser_evidence['browser']['version'],
+            'webdriver': browser_evidence['webdriver']['executable'],
+            'webdriver_version': browser_evidence['webdriver']['version'],
+            'browser_headless': browser_evidence['headless'],
+            'browser_sandbox': browser_evidence['sandbox'],
+        },
         "summary": {
             "http_scenarios_total": len(http_evidence["scenarios"]),
             "http_scenarios_passed": http_evidence["passed"],
             "http_scenarios_failed": http_evidence["failed"],
             "http_assertions": http_evidence["assertions"],
+            'browser_assertions': browser_evidence['assertions'],
             "interruption_rounds_total": len(rounds),
             "interruption_rounds_passed": sum(item["status"] == "pass" for item in rounds),
             "interruption_rounds_failed": sum(item["status"] != "pass" for item in rounds),
@@ -654,12 +774,19 @@ def main():
         },
         "supporting_suites": supporting_suites,
         "streaming_measurement": streaming_measurement,
+        'browser': browser_evidence,
         "http_scenarios": http_evidence["scenarios"],
         "fixture_sha256": http_evidence["fixture_sha256"],
         "fault_distribution": distribution,
         "interruption_rounds": rounds,
         "failures": [],
     }
+    destination = pathlib.Path(arguments.output).parent / 'browser-artifacts'
+    destination.mkdir(parents=True, exist_ok=True)
+    for page in browser_evidence['scenarios']['protected_pdf_page_navigation']['pages']:
+        if (browser_artifacts / page['screenshot']).resolve() != (destination / page['screenshot']).resolve():
+            shutil.copyfile(browser_artifacts / page['screenshot'], destination / page['screenshot'])
+    validate_browser_evidence(browser_evidence, destination)
     write_evidence(result, arguments.output)
     passed = result["summary"]["interruption_rounds_passed"]
     print(f"M1 interruptions: {passed}/{len(rounds)} rounds; "
