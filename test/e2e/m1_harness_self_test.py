@@ -138,6 +138,55 @@ class HarnessEvidenceTest(unittest.TestCase):
                                             "streaming measurement"):
                     harness.validate_streaming_evidence(invalid)
 
+    def test_streaming_evidence_rejects_integer_type_impostors(self):
+        evidence = VALID_STREAMING_EVIDENCE
+        for mutation in (
+                {"schema_version": 2.0},
+                {"file_size_bytes": 33554432.0},
+                {"upload_chunk_size_bytes": 8388608.0},
+                {"phases": [
+                    {**evidence["phases"][0], "configured_concurrency": 4.0},
+                    *evidence["phases"][1:]]},
+                {"phases": [
+                    {**evidence["phases"][0], "observed_max_concurrency": 4.0},
+                    *evidence["phases"][1:]]},
+                {"phases": [
+                    {**evidence["phases"][0], "request_count": 16.0},
+                    *evidence["phases"][1:]]},
+                {"phases": [
+                    evidence["phases"][0],
+                    {**evidence["phases"][1], "configured_concurrency": 4.0},
+                    evidence["phases"][2]]},
+                {"phases": [
+                    evidence["phases"][0],
+                    {**evidence["phases"][1], "observed_max_concurrency": 4.0},
+                    evidence["phases"][2]]},
+                {"phases": [
+                    evidence["phases"][0],
+                    {**evidence["phases"][1], "request_count": 4.0},
+                    evidence["phases"][2]]},
+                {"phases": [
+                    evidence["phases"][0],
+                    evidence["phases"][1],
+                    {**evidence["phases"][2], "configured_concurrency": 4.0}]},
+                {"phases": [
+                    evidence["phases"][0],
+                    evidence["phases"][1],
+                    {**evidence["phases"][2], "observed_max_concurrency": 4.0}]},
+                {"phases": [
+                    evidence["phases"][0],
+                    evidence["phases"][1],
+                    {**evidence["phases"][2], "request_count": 4.0}]},
+                {"schema_version": True},
+                {"phases": [
+                    {**evidence["phases"][0], "configured_concurrency": True},
+                    *evidence["phases"][1:]]}):
+            invalid = {**evidence, **mutation}
+            with self.subTest(mutation=mutation):
+                with self.assertRaisesRegex(AssertionError,
+                                            "streaming measurement"):
+                    harness.validate_streaming_evidence(invalid)
+
     def test_supporting_suite_counts_are_parsed_and_gate_evidence(self):
         suites = {
             "cpp_unit_integration": harness.parse_suite_counts(

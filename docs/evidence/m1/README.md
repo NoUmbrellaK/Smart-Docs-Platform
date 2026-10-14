@@ -98,7 +98,9 @@ On success, `latest/` contains these review inputs:
 - `results.json`: the machine-readable evidence described below.
 - `streaming.json`: the standalone validated F-02.9 measurement, including
   dimensions, phase names, hashes, baseline RSS/high-water values, final peak,
-  growth limit, status, and assertion count.
+  growth limit, status, and assertion count. All schema, dimension, phase,
+  RSS, and assertion numeric fields require exact JSON integers; floats and
+  booleans are rejected.
 - `browser.json`: exact schema version 2, overall `status`, positive integer
   `assertions`, `browser`/`webdriver` executable basenames and numeric product
   version strings, `headless`, `sandbox`, and exactly two named `scenarios`:

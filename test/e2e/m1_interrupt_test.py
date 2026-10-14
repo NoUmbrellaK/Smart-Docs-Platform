@@ -211,9 +211,12 @@ def validate_streaming_evidence(evidence):
     try:
         check(isinstance(evidence, dict) and set(evidence) == expected_keys,
               "streaming measurement schema is malformed")
-        check(evidence["schema_version"] == 2 and evidence["status"] == "pass",
+        check(type(evidence["schema_version"]) is int and
+              evidence["schema_version"] == 2 and evidence["status"] == "pass",
               "streaming measurement did not pass")
-        check(evidence["file_size_bytes"] == 33554432 and
+        check(type(evidence["file_size_bytes"]) is int and
+              evidence["file_size_bytes"] == 33554432 and
+              type(evidence["upload_chunk_size_bytes"]) is int and
               evidence["upload_chunk_size_bytes"] == 8388608,
               "streaming measurement dimensions are wrong")
         phases = evidence["phases"]
@@ -224,8 +227,11 @@ def validate_streaming_evidence(evidence):
             check(set(phase) == {"name", "configured_concurrency",
                                  "observed_max_concurrency", "request_count"} and
                   phase["name"] == name and
+                  type(phase["configured_concurrency"]) is int and
                   phase["configured_concurrency"] == 4 and
+                  type(phase["observed_max_concurrency"]) is int and
                   phase["observed_max_concurrency"] == 4 and
+                  type(phase["request_count"]) is int and
                   phase["request_count"] == request_count,
                   "streaming measurement phase concurrency is malformed")
         hashes = evidence["hashes"]
