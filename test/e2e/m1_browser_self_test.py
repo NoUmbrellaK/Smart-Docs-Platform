@@ -231,6 +231,26 @@ class BrowserEvidenceTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'PDF page content'):
             checker(png_fixture(1), 2)
 
+    def test_stable_screenshot_waits_for_requested_page_before_counting_frames(self):
+        browser = self.driver()
+        viewer = browser.Browser.__new__(browser.Browser)
+        non_target, expected = png_fixture(1), png_fixture(2)
+        viewer.screenshot = mock.Mock(side_effect=[non_target] * 3 + [expected] * 3)
+        with mock.patch.object(browser.time, 'sleep'), \
+                mock.patch.object(browser.time, 'monotonic', return_value=0):
+            screenshot = viewer.stable_screenshot(2)
+        self.assertEqual(screenshot, expected)
+        self.assertEqual(viewer.screenshot.call_count, 6)
+
+    def test_stable_screenshot_fails_closed_when_requested_page_never_renders(self):
+        browser = self.driver()
+        viewer = browser.Browser.__new__(browser.Browser)
+        viewer.screenshot = mock.Mock(return_value=png_fixture(1))
+        with mock.patch.object(browser.time, 'sleep'), \
+                mock.patch.object(browser.time, 'monotonic', side_effect=[0, 0, 10, 20, 25]):
+            with self.assertRaisesRegex(AssertionError, 'page 2 did not render and stabilize'):
+                viewer.stable_screenshot(2)
+
     def test_pdf_has_two_distinct_valid_page_streams_and_xref(self):
         import re
         pdf = pathlib.Path(__file__).resolve().parents[1] / 'fixtures/m1/sample.pdf'
@@ -248,3 +268,7 @@ class BrowserEvidenceTest(unittest.TestCase):
         self.assertTrue(content[start:].startswith(b'xref\n'))
         for index, offset in enumerate(re.findall(rb'(\d{10}) 00000 n', content), 1):
             self.assertTrue(content[int(offset):].startswith(f'{index} 0 obj'.encode()))
+
+
+if __name__ == '__main__':
+    unittest.main()

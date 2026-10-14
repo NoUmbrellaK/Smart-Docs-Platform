@@ -61,9 +61,11 @@ phase must observe the task GET as well as zero part PUTs.
 The PDF scenario uploads the same deterministic two-page fixture used by HTTP
 T-05, checks authentication and exact bytes, then opens it through the workbench
 and submits the visible preview form for pages 1 and 2. Each iframe screenshot
-must stabilize across three samples, be a complete CRC/zlib-valid PNG with
-nontrivial size/dimensions, and contain the requested page in the central third
-of the document viewport (both axes). This region excludes the top toolbar and
+must first contain the requested page in the central third of the document
+viewport (both axes) before it starts or advances the three-sample stabilization
+count, so identical blank or non-target frames cannot satisfy stabilization. It
+must be a complete CRC/zlib-valid PNG with nontrivial size/dimensions. This
+region excludes the top toolbar and
 left thumbnails in the fixed CI layout. It must contain at least 20 percent
 (and 1000 opaque pixels) of the requested page's red/blue color and at most
 1 percent of the other page's color; mixed-page viewports fail. Both full-image

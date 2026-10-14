@@ -308,19 +308,23 @@ class Browser:
         element = self.find('#pdf-preview')
         return base64.b64decode(self.command('GET', '/element/' + element + '/screenshot'), validate=True)
 
-    def stable_screenshot(self):
+    def stable_screenshot(self, expected_page):
         # Give the native PDF compositor time to draw, then require 3 equal samples.
         time.sleep(2)
         deadline, previous, matches = time.monotonic() + 25, None, 0
         while time.monotonic() < deadline:
             content = self.screenshot()
-            png_details(content)
-            matches = matches + 1 if content == previous else 1
-            if matches >= 3:
-                return content
-            previous = content
+            try:
+                require_pdf_render(content, expected_page)
+            except ValueError:
+                previous, matches = None, 0
+            else:
+                matches = matches + 1 if content == previous else 1
+                if matches >= 3:
+                    return content
+                previous = content
             time.sleep(0.5)
-        raise AssertionError('PDF element screenshot did not stabilize')
+        raise AssertionError(f'PDF page {expected_page} did not render and stabilize')
 
 
 class Checks:
@@ -459,7 +463,7 @@ def run_scenarios(browser, client, context, password, scratch, pdf_path, artifac
         browser.wait('return document.querySelector("#pdf-preview").getAttribute("src") === arguments[0]', expected)
         src = browser.inspect('return document.querySelector("#pdf-preview").getAttribute("src")')
         check.check(src == expected, 'wrong PDF page fragment or version')
-        screenshot = browser.stable_screenshot()
+        screenshot = browser.stable_screenshot(page)
         info = require_pdf_render(screenshot, page)
         check.check(info['size_bytes'] >= 1024, 'PDF screenshot is trivial')
         filename = f'pdf-page-{page}.png'
