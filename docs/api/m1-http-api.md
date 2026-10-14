@@ -105,9 +105,14 @@
   "name": "spec.pdf",
   "current_version_id": "<version_id>",
   "deleted": false,
-  "remote_ai_policy": "internal_only"
+  "remote_ai_policy": "internal_only",
+  "created_by": "<user_id>",
+  "updated_at": "2026-09-14T12:34:56.123456Z"
 }
 ```
+
+`created_by` 是创建文件的用户 ID；`updated_at` 是数据库记录的最后更新时间，
+按 UTC ISO-8601 输出并保留六位微秒。文件列表、更新和还原响应使用同一文件对象。
 
 版本对象：
 

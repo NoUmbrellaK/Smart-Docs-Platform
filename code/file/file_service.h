@@ -28,6 +28,8 @@ struct FileSummary {
     std::string current_version_id;
     bool deleted;
     std::string remote_ai_policy;
+    std::string created_by;
+    std::string updated_at;
 };
 
 struct FileVersionSummary {

@@ -72,8 +72,11 @@ void InsertFile(const std::string& file_id, const std::string& project_id,
         "?, 'text/plain', ?)",
         {SqlValue(version_id), SqlValue(file_id), SqlValue(version_id),
          SqlValue(std::string(64, '0')), SqlValue(creator_id)});
-    connection.Execute("UPDATE files SET current_version_id=? WHERE id=?",
-                       {SqlValue(version_id), SqlValue(file_id)});
+    connection.Execute(
+        "UPDATE files SET current_version_id=?, "
+        "updated_at=CAST('2000-01-01 00:00:00.000000' AS DATETIME(6)) "
+        "WHERE id=?",
+        {SqlValue(version_id), SqlValue(file_id)});
     transaction.Commit();
 }
 
@@ -186,6 +189,8 @@ TEST_CASE(file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids) {
     CHECK(moved.current_version_id == version_id);
     CHECK(moved.directory_id == destination.id);
     CHECK(moved.name == "moved.txt");
+    CHECK(moved.created_by == admin.id);
+    CHECK(moved.updated_at != "2000-01-01T00:00:00.000000Z");
 
     const std::string other_file = "12121212121212121212121212121212";
     InsertFile(other_file, alpha.id, destination.id, "occupied.txt", admin.id,
@@ -210,6 +215,11 @@ TEST_CASE(file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids) {
         MySqlConnection connection = TestDatabase().Acquire();
         connection.Execute("UPDATE files SET name='released.txt' WHERE id=?",
                            {SqlValue("14141414141414141414141414141414")});
+        connection.Execute(
+            "UPDATE files SET "
+            "updated_at=CAST('2000-01-01 00:00:00.000000' AS DATETIME(6)) "
+            "WHERE id=?",
+            {SqlValue(file_id)});
     }
     const std::string restore_request = "dddddddddddddddddddddddddddddddd";
     const FileSummary restored =
@@ -217,6 +227,8 @@ TEST_CASE(file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids) {
     CHECK(!restored.deleted);
     CHECK(restored.id == file_id);
     CHECK(restored.current_version_id == version_id);
+    CHECK(restored.created_by == admin.id);
+    CHECK(restored.updated_at != "2000-01-01T00:00:00.000000Z");
 
     {
         MySqlConnection revoked = TestDatabase().Acquire();

@@ -14,7 +14,8 @@ FileSummary FileFromRow(const MySqlRow& row) {
                        "stored file policy is invalid");
     }
     return FileSummary{row.String(0), row.String(1), row.String(2),
-                       row.String(3), row.String(4), !row.IsNull(5), policy};
+                       row.String(3), row.String(4), !row.IsNull(5), policy,
+                       row.String(7), row.String(8)};
 }
 
 FileVersionSummary VersionFromRow(const MySqlRow& row) {
@@ -63,7 +64,9 @@ Page<FileSummary> FileRepository::List(MySqlConnection& connection,
     page_values.emplace_back((query.page - 1) * query.page_size);
     const std::vector<MySqlRow> rows = connection.Query(
         "SELECT id, project_id, directory_id, name, current_version_id, "
-        "deleted_at, remote_ai_policy FROM files" + where +
+        "deleted_at, remote_ai_policy, created_by, "
+        "DATE_FORMAT(updated_at, '%Y-%m-%dT%H:%i:%s.%fZ') FROM files" +
+            where +
             " ORDER BY updated_at DESC, id LIMIT ? OFFSET ?",
         page_values);
     std::vector<FileSummary> items;
@@ -80,7 +83,9 @@ bool FileRepository::FindFile(MySqlConnection& connection,
                               FileSummary* file) const {
     std::string sql =
         "SELECT id, project_id, directory_id, name, current_version_id, "
-        "deleted_at, remote_ai_policy FROM files WHERE project_id=? AND id=?";
+        "deleted_at, remote_ai_policy, created_by, "
+        "DATE_FORMAT(updated_at, '%Y-%m-%dT%H:%i:%s.%fZ') "
+        "FROM files WHERE project_id=? AND id=?";
     if (!include_deleted) sql += " AND deleted_at IS NULL";
     sql += " LIMIT 1";
     const std::vector<MySqlRow> rows =
@@ -97,7 +102,9 @@ bool FileRepository::FindFileForUpdate(MySqlConnection& connection,
                                        FileSummary* file) const {
     std::string sql =
         "SELECT id, project_id, directory_id, name, current_version_id, "
-        "deleted_at, remote_ai_policy FROM files WHERE project_id=? AND id=?";
+        "deleted_at, remote_ai_policy, created_by, "
+        "DATE_FORMAT(updated_at, '%Y-%m-%dT%H:%i:%s.%fZ') "
+        "FROM files WHERE project_id=? AND id=?";
     if (!include_deleted) sql += " AND deleted_at IS NULL";
     sql += " LIMIT 1 FOR UPDATE";
     const std::vector<MySqlRow> rows =

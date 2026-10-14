@@ -195,12 +195,15 @@ FileSummary FileService::Update(const SessionContext& session,
         }
         repository_->UpdateFile(connection, file_id, name,
                                 raw_command.directory_id);
+        if (!repository_->FindFileForUpdate(connection, project_id, file_id,
+                                            false, &file)) {
+            throw AppError(500, "database_result_invalid",
+                           "updated file is unavailable");
+        }
         repository_->InsertAudit(connection, session.user_id, project_id,
                                  "file.update", file_id,
                                  CheckedRequestId(request_id));
         transaction.Commit();
-        file.name = name;
-        file.directory_id = raw_command.directory_id;
         return file;
     } catch (const AppError& error) {
         if (error.code == "constraint_conflict") {
@@ -253,11 +256,15 @@ FileSummary FileService::Restore(const SessionContext& session,
             ResourceNotFound();
         }
         repository_->Restore(connection, file_id);
+        if (!repository_->FindFileForUpdate(connection, project_id, file_id,
+                                            false, &file)) {
+            throw AppError(500, "database_result_invalid",
+                           "restored file is unavailable");
+        }
         repository_->InsertAudit(connection, session.user_id, project_id,
                                  "file.restore", file_id,
                                  CheckedRequestId(request_id));
         transaction.Commit();
-        file.deleted = false;
         return file;
     } catch (const AppError& error) {
         if (error.code == "constraint_conflict") {

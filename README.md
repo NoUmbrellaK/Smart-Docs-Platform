@@ -14,7 +14,7 @@
 - 项目级 `admin/editor/reader` 权限、成员和逻辑目录；
 - MySQL 版本化迁移、RAII 连接池、事务与审计记录；
 - 分片上传、断点恢复、幂等完成和启动核对；
-- 不可变文件版本、重命名/移动、软删除/还原和远程 AI 授权标记；
+- 不可变文件版本、带创建者/UTC 更新时间的文件元数据、重命名/移动、软删除/还原和远程 AI 授权标记；
 - 鉴权下载、单段 Range、PDF 内联预览和同源 M1 Web 工作台。
 
 网络服务器基线来自 [`markparticle/WebServer`](https://github.com/markparticle/WebServer) 的源码快照，固定于提交 `3b375204a80cc0de1caf5c076e95d6b5567a8159`；上述 M1 业务是在本仓库中实现的。许可证和来源信息见“开源来源与许可证”。
@@ -127,7 +127,7 @@ test/e2e/run_m1.sh
 
 该命令资源消耗较高，默认单 job 并拒绝超过 `min(在线 CPU 数, 2)` 的构建并行度。同一时间只运行一个实例；受限服务器先阅读[事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)。
 
-M1 仍保持开放。阶段运行器现将 C++ 单元/集成测试、Python UI contract 和 Node UI behavior 套件纳入门禁，并要求零跳过、零失败；这只是门禁条件，不代表本次已通过。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；当前受限 ECS 仍不安全。阶段关闭与缺口以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
+M1 仍保持开放。文件列表、更新和还原响应现统一返回创建者与数据库权威的 UTC 更新时间，并有服务层、HTTP 层和状态变更测试直接断言；这关闭了 F-01.1 的测试设计缺口，但本机未运行 MySQL 集成测试。阶段运行器现将 C++ 单元/集成测试、Python UI contract 和 Node UI behavior 套件纳入门禁，并要求零跳过、零失败；这只是门禁条件，不代表本次已通过。完整验收需迁移到独立/临时 runner（或等效安全配置的环境）执行；当前受限 ECS 仍不安全。剩余五项关闭阻塞及阶段状态以[M1 gate matrix](./docs/evidence/m1/gate-matrix.md)为准。
 
 ## 开发路线
 

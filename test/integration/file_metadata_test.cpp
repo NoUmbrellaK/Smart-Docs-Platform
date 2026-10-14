@@ -90,7 +90,9 @@ void InsertFileVersion(const std::string& file_id,
         {SqlValue(version_id), SqlValue(file_id), SqlValue(content_id),
          SqlValue(sha256), SqlValue(media_type), SqlValue(creator_id)});
     connection.Execute(
-        "UPDATE files SET current_version_id=? WHERE id=?",
+        "UPDATE files SET current_version_id=?, "
+        "updated_at=CAST('2026-09-14 12:34:56.123456' AS DATETIME(6)) "
+        "WHERE id=?",
         {SqlValue(version_id), SqlValue(file_id)});
     transaction.Commit();
 }
@@ -175,6 +177,8 @@ TEST_CASE(file_metadata_listing_is_scoped_paginated_and_deletion_explicit) {
     CHECK(page.items.size() == 1);
     CHECK(page.items[0].id == file_id);
     CHECK(page.items[0].current_version_id == version_id);
+    CHECK(page.items[0].created_by == admin.id);
+    CHECK(page.items[0].updated_at == "2026-09-14T12:34:56.123456Z");
     CHECK(!page.items[0].deleted);
     CHECK(page.items[0].remote_ai_policy == "internal_only");
 
@@ -358,6 +362,9 @@ TEST_CASE(file_metadata_http_routes_expose_lists_and_protected_content) {
     const nlohmann::json page = ResponseJson(list)["data"];
     CHECK(page["total"] == 1);
     CHECK(page["items"][0]["id"] == file_id);
+    CHECK(page["items"][0]["created_by"] == admin.id);
+    CHECK(page["items"][0]["updated_at"] ==
+          "2026-09-14T12:34:56.123456Z");
 
     HttpResponse versions = application.Prepare(GetHead(
         "/api/v1/projects/" + alpha.id + "/files/" + file_id +

@@ -26,7 +26,9 @@ nlohmann::json FileJson(const FileSummary& file) {
             {"name", file.name},
             {"current_version_id", file.current_version_id},
             {"deleted", file.deleted},
-            {"remote_ai_policy", file.remote_ai_policy}};
+            {"remote_ai_policy", file.remote_ai_policy},
+            {"created_by", file.created_by},
+            {"updated_at", file.updated_at}};
 }
 
 nlohmann::json VersionJson(const FileVersionSummary& version) {
