@@ -180,6 +180,45 @@ TEST_CASE(upload_recovery_interrupts_inflight_tasks_and_only_removes_server_temp
     CHECK(!uploads.Complete(session, project.id, uploading.id, kRequest).reused);
 }
 
+TEST_CASE(upload_recovery_keeps_old_content_referenced_by_soft_deleted_file) {
+    RequireMySqlTests();
+    ResetTestDatabase();
+    TemporaryStorage storage;
+    AuthService auth(TestDatabase(), 60, 1000);
+    ProjectService projects(TestDatabase());
+    FileStore store(storage.path());
+    FileService files(TestDatabase(), projects, store);
+    UploadService uploads(TestDatabase(), projects, store, 1024, 4);
+    const UserIdentity admin = auth.CreateUser("admin", kPassword, kRequest);
+    const SessionContext session =
+        auth.Login("admin", kPassword, kRequest).session;
+    const Project project = projects.CreateProject(admin.id, "Alpha", kRequest);
+    const UploadTask task = uploads.Create(
+        session, project.id, NewFile(project, "retained.txt", "data"), kRequest);
+    PutPart(uploads, session, project, task, "data");
+    const CompleteUploadResult completed =
+        uploads.Complete(session, project.id, task.id, kRequest);
+    files.SoftDelete(session, project.id, completed.file_id, kRequest);
+
+    const std::string object_path = storage.path() + "/objects/" +
+        task.id.substr(0, 2) + "/" + task.id.substr(2, 2) + "/" + task.id;
+    MakeOld(object_path);
+    UploadReconciler(TestDatabase(), store).RunAtStartup();
+
+    CHECK(store.ObjectExists(task.id));
+    FileListQuery query;
+    query.deleted = true;
+    const Page<FileSummary> deleted = files.List(session, project.id, query);
+    CHECK(deleted.total == 1);
+    CHECK(deleted.items[0].id == completed.file_id);
+    CHECK(deleted.items[0].current_version_id == completed.version_id);
+    const FileSummary restored =
+        files.Restore(session, project.id, completed.file_id, kRequest);
+    CHECK(!restored.deleted);
+    CHECK(files.OpenCurrentVersion(session, project.id, completed.file_id)
+              .version.id == completed.version_id);
+}
+
 TEST_CASE(upload_recovery_keeps_committed_graph_and_marks_missing_object) {
     RequireMySqlTests();
     ResetTestDatabase();

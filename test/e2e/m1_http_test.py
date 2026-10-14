@@ -496,11 +496,28 @@ def main():
             recorder.check(deleted.status == 204 and hidden["total"] == 0 and
                            denied.status == 404 and deleted_list["total"] == 1,
                            "delete did not immediately affect list/download")
+            server.stop()
+            server.start()
+            for client in (admin, editor, reader, anonymous):
+                client.port = server.port
+            retained = data(admin.request(
+                "GET", f"/api/v1/projects/{a_id}/files?name=moved.txt&deleted=true"))
+            denied_after_restart = admin.request(
+                "GET", f"/api/v1/projects/{a_id}/files/{file_id}/content")
+            recorder.check(retained["total"] == 1 and
+                           retained["items"][0]["id"] == file_id and
+                           retained["items"][0]["current_version_id"] == state["new_version"] and
+                           denied_after_restart.status == 404,
+                           "restart purged or exposed a soft-deleted file")
             restored = data(admin.request(
                 "POST", f"/api/v1/projects/{a_id}/files/{file_id}/restore"))
+            restored_content = admin.request(
+                "GET", f"/api/v1/projects/{a_id}/files/{file_id}/content")
             recorder.check(restored["id"] == file_id and
-                           admin.request("GET", f"/api/v1/projects/{a_id}/files/{file_id}/content").status == 200,
-                           "restore did not immediately restore download")
+                           restored["current_version_id"] == state["new_version"] and
+                           restored_content.status == 200 and
+                           restored_content.body == state["new_content"],
+                           "restart-safe restore did not recover the exact content")
             before = reader.request("GET", f"/api/v1/projects/{a_id}/files")
             data(admin.request("PUT", f"/api/v1/projects/{a_id}/members/{users['reader']}",
                                {"role": "reader"}))
@@ -510,14 +527,10 @@ def main():
             recorder.check(before.status == 404 and after_list.status == 200 and
                            after_download.status == 200,
                            "permission addition was not immediately reflected")
-            server.stop()
-            server.start()
-            for client in (admin, editor, reader, anonymous):
-                client.port = server.port
             recorder.check(admin.request("GET", "/api/v1/health/ready").status == 200,
                            "server could not reconcile a legitimately moved file")
 
-        recorder.run("T-08", "Move/delete/restore/permission changes are immediate", t08,
+        recorder.run("T-08", "Move/delete retention/restore/permission changes", t08,
                      ["index/report effects are M2/M4"])
 
         def t09():
