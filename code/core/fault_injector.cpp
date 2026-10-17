@@ -19,6 +19,7 @@ const char* Name(FaultPoint point) {
     case FaultPoint::AfterDatabaseCommit: return "AfterDatabaseCommit";
     case FaultPoint::BeforeHttpResponse: return "BeforeHttpResponse";
     case FaultPoint::AfterSearchCandidates: return "AfterSearchCandidates";
+    case FaultPoint::BeforeVectorSearch: return "BeforeVectorSearch";
     }
     return "";
 }

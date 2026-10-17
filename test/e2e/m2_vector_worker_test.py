@@ -47,6 +47,31 @@ class VectorE2E(support.WorkerE2E):
         self.assertNotIn(self.token, result.stdout+result.stderr)
         return result
 
+    def test_vector_hybrid_real_query_and_encoding_failure(self):
+        from smartdocs.search import search_documents
+        from smartdocs.embeddings import EmbeddingError
+        recovery = self.upload("recovery.txt", b"Database disaster recovery: restore the latest backup to recover lost data.", "text/plain")
+        other = self.upload("cooking.txt", b"Recipe: mix flour and eggs, bake a cake in the oven.", "text/plain")
+        for job in (recovery, other):
+            self.assertEqual(worker.run_once(self.client), "completed")
+        for job in (recovery, other):
+            self.policy(job, True); self.jobs.append(self.vector_job(job))
+            self.assertEqual(vector_worker.run_once(self.vector, self.encoder), "completed")
+        path = f'/api/v1/projects/{self.project["id"]}/search'
+        backend = lambda request: data(self.user.request("POST", path, request))
+        result = search_documents(backend, self.encoder, {"query": "如何恢复备份？"})
+        self.assertEqual(result["retrieval"], "hybrid")
+        self.assertEqual(result["items"][0]["file_id"], recovery["file_id"])
+        self.assertEqual(result["items"][0]["match_sources"], ["vector"])
+        self.assertEqual(result["items"][0]["chunk"]["version_id"], recovery["version_id"])
+        def unavailable(chunks): raise EmbeddingError("embedding_timeout")
+        degraded = search_documents(backend, unavailable, {"query": "backup"})
+        self.assertEqual(degraded["retrieval"], "keyword_only")
+        self.assertIn("query_embedding_unavailable", degraded["warnings"])
+        self.assertIn(recovery["file_id"], [item["file_id"] for item in degraded["items"]])
+        self.policy(recovery, False)
+        self.assertEqual(backend({"mode": "hybrid", "query": "backup"})["items"], [])
+
     def test_vector_real_model_two_batches_gate_and_cli(self):
         job = self.upload("vectors.txt", ("部署文档🙂。"*1601).encode(), "text/plain")
         self.assertEqual(worker.run_once(self.client), "completed")

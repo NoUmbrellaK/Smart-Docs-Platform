@@ -11,7 +11,8 @@ enum class FaultPoint {
     BeforeDatabaseCommit,
     AfterDatabaseCommit,
     BeforeHttpResponse,
-    AfterSearchCandidates
+    AfterSearchCandidates,
+    BeforeVectorSearch
 };
 
 class FaultInjector {

@@ -1,0 +1,11 @@
+/tmp/smartdocs-safe.h4SzvX/hybrid-green.log:RESULT 3 passed, 0 failed, 0 skipped
+/tmp/smartdocs-safe.h4SzvX/hybrid-green.log:RESULT 6 passed, 0 failed, 0 skipped
+/tmp/smartdocs-safe.h4SzvX/hybrid-red.log:FAIL processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files: JSON request body exceeds the configured limit
+/tmp/smartdocs-safe.h4SzvX/hybrid-red.log:FAIL processing_hybrid_degrades_and_validates_query_vectors: search parameters are invalid
+/tmp/smartdocs-safe.h4SzvX/hybrid-red.log:FAIL processing_hybrid_rechecks_revocation_and_vector_attempt_before_returning: JSON request body exceeds the configured limit
+/tmp/smartdocs-safe.h4SzvX/hybrid-red.log:RESULT 0 passed, 3 failed, 0 skipped
+/tmp/smartdocs-safe.h4SzvX/hybrid-timeout-red.log:FAIL processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not: database operation failed
+/tmp/smartdocs-safe.h4SzvX/hybrid-timeout-red.log:RESULT 0 passed, 1 failed, 0 skipped
+/tmp/smartdocs-safe.h4SzvX/hybrid-boundary-red.log:FAIL processing_hybrid_reports_partial_vector_coverage: test/integration/processing_jobs_test.cpp:852: CHECK failed: HasWarning(result,"vector_index_partial")
+/tmp/smartdocs-safe.h4SzvX/hybrid-boundary-red.log:FAIL processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not: test/integration/processing_jobs_test.cpp:872: CHECK failed: result.at("retrieval")=="keyword_only"
+/tmp/smartdocs-safe.h4SzvX/hybrid-boundary-red.log:RESULT 4 passed, 2 failed, 0 skipped

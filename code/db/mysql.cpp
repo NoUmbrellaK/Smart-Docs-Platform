@@ -18,6 +18,9 @@
 namespace {
 
 [[noreturn]] void ThrowDatabaseError(unsigned int error) {
+    if (error == 3024) {
+        throw AppError(503, "database_query_timeout", "database query exceeded its time budget", true);
+    }
     if (error == 1062) {
         throw AppError(409, "constraint_conflict",
                        "database constraint conflict", false);

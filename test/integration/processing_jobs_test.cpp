@@ -16,6 +16,7 @@
 #include <exception>
 #include <algorithm>
 #include <string>
+#include <set>
 #include <thread>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -761,10 +762,10 @@ TEST_CASE(processing_search_enforces_roles_input_limits_and_same_origin) {
     head.headers["origin"] = "http://evil.test";
     CHECK_THROWS_CODE(app.Prepare(head), "origin_mismatch");
     head.headers["origin"] = "http://smartdocs.test";
-    head.headers["content-type"] = "application/json"; head.content_length = 4097;
+    head.headers["content-type"] = "application/json"; head.content_length = 131073;
     CHECK_THROWS_CODE(app.Prepare(head), "body_too_large");
     for (const auto& invalid : std::vector<nlohmann::json>{
-        {{"mode","hybrid"},{"query","x"}}, {{"mode","keyword"},{"query"," "}},
+        {{"mode","unknown"},{"query","x"}}, {{"mode","keyword"},{"query"," "}},
         {{"mode","keyword"},{"query",std::string(257,'a')}}, {{"mode","metadata"},{"query",""},{"page",0}},
         {{"mode","metadata"},{"query",""},{"page",true}}, {{"mode","metadata"},{"query",""},{"page_size",21}},
         {{"mode","metadata"},{"query",""},{"page",-1}}, {{"mode","metadata"},{"query",""},{"page",1001}},
@@ -773,6 +774,159 @@ TEST_CASE(processing_search_enforces_roles_input_limits_and_same_origin) {
         {{"mode","metadata"},{"query",""},{"media_type","bad"}},
         {{"mode","metadata"},{"query",""},{"user_id",f.admin.user.id}}})
         CHECK_THROWS_CODE(Search(app, f, invalid), "invalid_request");
+}
+
+namespace {
+nlohmann::json QueryEmbedding(const std::string& query) {
+    return VectorResult({{"batch_start",0},{"chunks",nlohmann::json::array({
+        {{"chunk_id",Sha256Hex(query.data(),query.size())},{"text",query}}})}}).at("result");
+}
+void ApproveAndEmbed(Fixture& f, Application& app, const JobFixture& job, unsigned axis = 0) {
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto claim = VectorCall(app,"POST","/claim");
+    const auto id=claim.at("id").get<std::string>(), token=claim.at("attempt_token").get<std::string>();
+    auto result=VectorResult(VectorCall(app,"GET","/"+id+"/chunks",token));
+    for (auto& chunk : result["result"]["chunks"]) {
+        auto& vector=chunk["windows"][0]["vector"]; vector[0]=0.0; vector[axis]=1.0;
+    }
+    VectorCall(app,"POST","/"+id+"/result",token,result);
+}
+bool HasWarning(const nlohmann::json& result, const std::string& code) {
+    const auto& warnings=result.at("warnings");
+    return std::find(warnings.begin(),warnings.end(),code)!=warnings.end();
+}
+}
+
+TEST_CASE(processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; config.worker_token=std::string(64,'a'); Application app(config);
+    const auto both=f.AddJob(); PublishText(f,"部署说明"); ApproveAndEmbed(f,app,both);
+    const auto semantic=f.AddJob(); PublishText(f,"无关材料"); ApproveAndEmbed(f,app,semantic);
+    const auto lexical=f.AddJob(); PublishText(f,"部署资料"); ApproveAndEmbed(f,app,lexical,1);
+    f.AddJob(); PublishText(f,"部署秘密");
+    const auto result=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}});
+    CHECK(result.at("retrieval")=="hybrid"); CHECK(result.at("items").size()==3);
+    CHECK(result.at("items")[0].at("file_id")==both.file_id);
+    std::set<std::string> seen;
+    for (const auto& item : result.at("items")) seen.insert(item.at("file_id"));
+    CHECK(seen==std::set<std::string>({both.file_id,semantic.file_id,lexical.file_id}));
+    CHECK(!HasWarning(result,"vector_search_unavailable"));
+    auto request=nlohmann::json{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")},{"page_size",1}};
+    const auto first=Search(app,f,request); request["page"]=2; const auto second=Search(app,f,request);
+    CHECK(first.at("has_more")==true); CHECK(first.at("items")[0].at("chunk")!=second.at("items")[0].at("chunk"));
+}
+
+TEST_CASE(processing_hybrid_degrades_and_validates_query_vectors) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; config.worker_token=std::string(64,'a'); Application app(config);
+    const auto job=f.AddJob(); PublishText(f); ApproveAndEmbed(f,app,job);
+    auto request=nlohmann::json{{"mode","hybrid"},{"query","部署"}};
+    auto result=Search(app,f,request);
+    CHECK(result.at("retrieval")=="keyword_only"); CHECK(result.at("items").size()==1);
+    CHECK(HasWarning(result,"query_embedding_unavailable"));
+    request["query_embedding"]=QueryEmbedding("other");
+    CHECK_THROWS_CODE(Search(app,f,request),"invalid_request");
+    request["query_embedding"]=QueryEmbedding("部署");
+    auto bad=request; bad["query_embedding"]["chunks"][0]["windows"][0]["vector"][0]=0;
+    CHECK_THROWS_CODE(Search(app,f,bad),"invalid_request");
+    bad=request; bad["mode"]="keyword"; CHECK_THROWS_CODE(Search(app,f,bad),"invalid_request");
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE document_embeddings SET vector=JSON_SET(vector,'$[0]',2)"); }
+    result=Search(app,f,request); CHECK(result.at("retrieval")=="keyword_only");
+    CHECK(HasWarning(result,"vector_index_invalid")); CHECK(result.at("items").size()==1);
+}
+
+TEST_CASE(processing_hybrid_reports_partial_vector_coverage) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; config.worker_token=std::string(64,'a'); Application app(config);
+    const auto first=f.AddJob(); PublishText(f);
+    const auto empty=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}});
+    CHECK(empty.at("retrieval")=="keyword_only"); CHECK(empty.at("items").empty());
+    CHECK(empty.at("coverage").at("current_files")==0); CHECK(HasWarning(empty,"vector_index_unavailable"));
+    ApproveAndEmbed(f,app,first);
+    const auto pending=f.AddJob(); PublishText(f);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,pending.file_id,{"remote_ai_allowed",{pending.version_id}});
+    const auto result=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}});
+    CHECK(result.at("retrieval")=="hybrid"); CHECK(result.at("items").size()==2);
+    CHECK(HasWarning(result,"vector_index_partial"));
+    CHECK(result.at("coverage").at("vector_completed_files")==1);
+    CHECK(result.at("coverage").at("current_files")==2);
+}
+
+TEST_CASE(processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; config.worker_token=std::string(64,'a'); Application app(config);
+    const auto job=f.AddJob(); PublishText(f); ApproveAndEmbed(f,app,job);
+    for (bool timeout : {true,false}) {
+        FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+            if (point!=FaultPoint::BeforeVectorSearch) return;
+            if (!timeout) throw AppError(503,"database_unavailable","fixture disconnected");
+            auto db=TestDatabase().Acquire();
+            db.Query("WITH RECURSIVE n AS (SELECT 1 AS v UNION ALL SELECT v+1 FROM n WHERE v<100) "
+                "SELECT /*+ MAX_EXECUTION_TIME(1) */ SUM(a.v+b.v+c.v) FROM n a JOIN n b JOIN n c");
+        });
+        try {
+            const auto request=nlohmann::json{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}};
+            if (timeout) {
+                const auto result=Search(app,f,request);
+                CHECK(result.at("retrieval")=="keyword_only"); CHECK(result.at("items").size()==1);
+                CHECK(HasWarning(result,"vector_scan_timeout"));
+            } else { CHECK_THROWS_CODE(Search(app,f,request),"database_unavailable"); }
+        } catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+        FaultInjector::ClearObserverForTesting();
+    }
+}
+
+TEST_CASE(processing_hybrid_scan_limit_discards_vector_lane_without_silent_partial_scan) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; Application app(config);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    for (int file=0; file<2; ++file) {
+        const auto job=f.AddJob(); PublishChunks(f,job,513);
+        files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+        // Valid persisted fixture: 4 one-character windows per chunk, 2052 per version.
+        auto db=TestDatabase().Acquire();
+        const auto vector_job=db.Query("SELECT id FROM processing_jobs WHERE file_version_id=? AND task_type='vectorize'",{SqlValue(job.version_id)})[0].String(0);
+        db.Execute("UPDATE processing_jobs SET state='completed',attempt_token=?,started_at=UTC_TIMESTAMP(6),completed_at=UTC_TIMESTAMP(6),vector_next_chunk=513,vector_window_count=2052 WHERE id=?",
+            {SqlValue(GenerateId()),SqlValue(vector_job)});
+        db.Execute("UPDATE file_versions SET vector_state='completed' WHERE id=?",{SqlValue(job.version_id)});
+        const auto vector=QueryEmbedding("部署").at("chunks")[0].at("windows")[0].at("vector").dump();
+        for (uint64_t window=0; window<4; ++window)
+            db.Execute("INSERT INTO document_embeddings(chunk_id,window_ordinal,job_id,embedding_revision,char_start,char_end,vector) "
+                "SELECT id,?,?,?, ?,?,? FROM document_chunks WHERE version_id=?",
+                {SqlValue(window),SqlValue(vector_job),SqlValue("minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1"),
+                 SqlValue(window),SqlValue(window+1),SqlValue(vector),SqlValue(job.version_id)});
+    }
+    const auto result=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}});
+    CHECK(result.at("retrieval")=="keyword_only"); CHECK(!result.at("items").empty());
+    CHECK(HasWarning(result,"vector_scan_limit")); CHECK(HasWarning(result,"candidate_limit_reached"));
+    CHECK(result.at("truncated")==true);
+    for (const auto& item : result.at("items")) CHECK(item.at("match_sources")==nlohmann::json::array({"keyword"}));
+    const auto last=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"page",10},{"page_size",20}});
+    CHECK(last.at("items").size()==20); CHECK(last.at("has_more")==false);
+    CHECK(last.at("next_page").is_null()); CHECK(last.at("truncated")==true);
+    CHECK_THROWS_CODE(Search(app,f,{{"mode","hybrid"},{"query","部署"},{"page",11},{"page_size",20}}),"invalid_request");
+}
+
+TEST_CASE(processing_hybrid_rechecks_revocation_and_vector_attempt_before_returning) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config=TestAppConfig(f.storage); config.max_json_bytes=131072; config.worker_token=std::string(64,'a'); Application app(config);
+    const auto job=f.AddJob(); PublishText(f);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    for (bool reapprove : {false,true}) {
+        ApproveAndEmbed(f,app,job);
+        FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+            if (point!=FaultPoint::AfterSearchCandidates) return;
+            files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"internal_only",{}});
+            if (reapprove) files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+        });
+        nlohmann::json result;
+        try { result=Search(app,f,{{"mode","hybrid"},{"query","部署"},{"query_embedding",QueryEmbedding("部署")}}); }
+        catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+        FaultInjector::ClearObserverForTesting();
+        CHECK(result.at("items").empty()); CHECK(HasWarning(result,"scope_changed"));
+    }
 }
 
 TEST_CASE(processing_search_filters_current_deleted_unavailable_and_restored_versions) {

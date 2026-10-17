@@ -1,0 +1,14 @@
+Oct 17 21:07:29 aliyun-lou systemd[1]: Started /bin/bash -c make -j1 bin/smartdocs_tests bin/server bin/smartdocs-admin && /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -v && scripts/test-with-mysql.sh -- /bin/bash -c "/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_vector_worker_test.py && stdbuf -oL bin/smartdocs_tests --filter=processing_".
+Oct 17 21:19:16 aliyun-lou systemd[1]: smartdocs-hybrid-verified.service: Deactivated successfully.
+Oct 17 21:19:16 aliyun-lou systemd[1]: smartdocs-hybrid-verified.service: Consumed 30.036s CPU time.
+Oct 17 21:12:41 aliyun-lou systemd[1]: smartdocs-hybrid-encoder.service: Deactivated successfully.
+Oct 17 21:12:41 aliyun-lou systemd[1]: Stopped /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/hybrid.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 17 21:12:41 aliyun-lou systemd[1]: smartdocs-hybrid-encoder.service: Consumed 24.616s CPU time.
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+low 0
+high 6157
+max 0
+oom 0
+oom_kill 0
