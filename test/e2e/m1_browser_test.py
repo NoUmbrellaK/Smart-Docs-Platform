@@ -213,7 +213,9 @@ class Browser:
         self.session = None
 
     def request(self, method, path, body=None):
-        connection = http.client.HTTPConnection('127.0.0.1', self.port, timeout=30)
+        # Cold browser loading can exceed 30s under a host's disk I/O cap.
+        timeout = 120 if method == 'POST' and path == '/session' else 30
+        connection = http.client.HTTPConnection('127.0.0.1', self.port, timeout=timeout)
         try:
             connection.request(method, path, None if body is None else json.dumps(body),
                                {'Content-Type': 'application/json'})

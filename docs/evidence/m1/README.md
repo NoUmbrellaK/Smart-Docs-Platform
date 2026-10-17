@@ -28,6 +28,9 @@ acceptance host may explicitly set
 `SMARTDOCS_BROWSER_ALLOW_ROOT_NO_SANDBOX=1`; only that root opt-in adds
 `--no-sandbox`, and evidence records the reduced browser-process isolation.
 Same-origin, certificate, and web security checks are never disabled.
+Creating the WebDriver session allows up to 120 seconds for cold browser loading
+under disk I/O limits. Other WebDriver requests retain their 30-second timeout;
+timeouts propagate without automatically replaying browser actions.
 
 The runner records the checkout HEAD and dirty state, runs the focused harness
 self-test, then performs a clean build of `server`, `admin`, and `test-server`

@@ -74,6 +74,26 @@ class BrowserEvidenceTest(unittest.TestCase):
                         'real-browser evidence driver is missing')
         return importlib.import_module('m1_browser_test')
 
+    def test_cold_browser_start_gets_extra_time_but_commands_do_not_retry(self):
+        browser = self.driver()
+        viewer = browser.Browser.__new__(browser.Browser)
+        viewer.port = 1234
+        with mock.patch.object(browser.http.client, 'HTTPConnection') as connection:
+            response = connection.return_value.getresponse.return_value
+            response.status = 200
+            response.read.return_value = b'{"value": {}}'
+            viewer.request('POST', '/session', {})
+            self.assertEqual(connection.call_args.kwargs['timeout'], 120)
+            viewer.request('GET', '/session/fixture/title')
+            self.assertEqual(connection.call_args.kwargs['timeout'], 30)
+            connection.return_value.getresponse.side_effect = TimeoutError('slow')
+            connection.reset_mock()
+            with self.assertRaises(TimeoutError):
+                viewer.request('POST', '/session/fixture/click', {})
+            connection.assert_called_once_with('127.0.0.1', 1234, timeout=30)
+            connection.return_value.request.assert_called_once()
+            connection.return_value.close.assert_called_once()
+
     def test_aggregate_rejects_mixed_pages_with_only_toolbar_changes(self):
         import m1_interrupt_test as harness
         evidence, _ = browser_fixture()
