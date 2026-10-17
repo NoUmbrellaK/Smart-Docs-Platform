@@ -1,0 +1,52 @@
+test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ok
+test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ok
+test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ok
+test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ok
+test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ok
+test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ok
+test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ok
+test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ok
+test_child_receives_no_secret_environment_and_ignores_python_injection (test_pdf_parser.PdfParserTest) ... ok
+test_empty_pages_preserve_physical_page_numbers_and_coverage (test_pdf_parser.PdfParserTest) ... ok
+test_encrypted_unreadable_pdf_fails_but_empty_password_is_readable (test_pdf_parser.PdfParserTest) ... ok
+test_file_page_text_chunk_and_stream_limits_are_enforced (test_pdf_parser.PdfParserTest) ... ok
+test_invalid_extracted_unicode_has_a_safe_error_not_raw_text (test_pdf_parser.PdfParserTest) ... ok
+test_kernel_memory_limit_blocks_allocation_in_real_child (test_pdf_parser.PdfParserTest) ... ok
+test_library_warning_about_missing_or_cyclic_form_cannot_publish_partial_text (test_pdf_parser.PdfParserTest) ... ok
+test_malformed_pdf_never_returns_success_or_content_in_error (test_pdf_parser.PdfParserTest) ... ok
+test_missing_pdf_dependency_is_explicit_without_skipping_test (test_pdf_parser.PdfParserTest) ... ok
+test_nested_compressed_form_streams_are_included_in_page_limit (test_pdf_parser.PdfParserTest) ... ok
+test_real_child_crash_and_bad_response_are_safe_failures (test_pdf_parser.PdfParserTest) ... ok
+test_real_timeout_kills_and_reaps_child (test_pdf_parser.PdfParserTest) ... ok
+test_real_two_page_pdf_uses_physical_pages_and_page_local_offsets (test_pdf_parser.PdfParserTest) ... ok
+test_resource_and_processing_limits_cannot_be_disabled_or_increased (test_pdf_parser.PdfParserTest) ... ok
+test_stable_citations_bind_pdf_file_version_content_and_page (test_pdf_parser.PdfParserTest) ... ok
+test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest) ... ok
+test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest) ... ok
+test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest) ... ok
+test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest) ... ok
+test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest) ... ok
+test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest) ... ok
+test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest) ... ok
+test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest) ... ok
+test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest) ... ok
+test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest) ... ok
+test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest) ... ok
+test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest) ... ok
+test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest) ... ok
+test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ok
+test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ok
+test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ok
+test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ok
+test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ok
+test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ok
+test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ok
+test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ok
+test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ok
+test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+
+----------------------------------------------------------------------
+Ran 47 tests in 4.490s
+
+OK

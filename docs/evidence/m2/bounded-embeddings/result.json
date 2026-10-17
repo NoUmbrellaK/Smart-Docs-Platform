@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "cases": [
+    "exact_unicode_coverage",
+    "real_token_budget",
+    "suffix_affects_vector",
+    "fresh_process_repeatability",
+    "unit_vectors",
+    "flock_busy",
+    "timeout_then_reuse",
+    "model_tamper_refusal",
+    "inherited_limits_not_relaxed"
+  ],
+  "embedding_revision": "minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1",
+  "window_token_counts": [
+    [
+      87,
+      89,
+      88,
+      89,
+      87,
+      89,
+      88,
+      88
+    ],
+    [
+      87,
+      89,
+      88,
+      89,
+      87,
+      89,
+      88,
+      91
+    ],
+    [
+      82,
+      82,
+      82,
+      82
+    ]
+  ],
+  "first_seconds": 3.392,
+  "second_seconds": 3.238,
+  "child_peak_rss_kib": 755144,
+  "encoder_sha256": "842f6303ab95555e47b3ab233c29123bfa0eb1962e077d3726099e922ddc3ed6",
+  "test_sha256": "543c60c37ce409bbb3a8c6e57fdc0ea2db60f12c494965e2264e8d82ce8f67c5",
+  "network_interfaces": [
+    "lo"
+  ],
+  "uid": 65534
+}
