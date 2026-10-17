@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest import mock
 from m1_browser_self_test import BrowserEvidenceTest, browser_fixture
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -56,6 +57,34 @@ VALID_STREAMING_EVIDENCE = {
 
 
 class HarnessEvidenceTest(unittest.TestCase):
+    def test_streaming_login_allows_slow_io_without_replaying_credentials(self):
+        connections = []
+        def connect(_host, _port, timeout):
+            connection = mock.Mock()
+            connections.append(connection)
+            response = connection.getresponse.return_value
+            response.status = 200
+            response.getheaders.return_value = [('Set-Cookie', 'smartdocs_session=fixture; Path=/')]
+            response.read.return_value = b'{"data":{"authenticated":true}}'
+            # A six-second fsync wait is inside the streaming operation budget.
+            if timeout < 6:
+                connection.getresponse.side_effect = TimeoutError('slow fsync')
+            return connection
+        client = streaming.HttpClient(1234)
+        with mock.patch.object(streaming.http.client, 'HTTPConnection', side_effect=connect):
+            self.assertEqual(streaming.login(client, 'fixture-user', 'fixture-password'),
+                             {'authenticated': True})
+        self.assertEqual(len(connections), 1)
+        connections[0].request.assert_called_once()
+        connections[0].close.assert_called_once()
+        self.assertEqual(client._cookie_header(), 'smartdocs_session=fixture')
+        with mock.patch.object(streaming.http.client, 'HTTPConnection') as connect:
+            connect.return_value.getresponse.side_effect = TimeoutError('beyond budget')
+            with self.assertRaises(TimeoutError):
+                streaming.login(client, 'fixture-user', 'fixture-password')
+            connect.return_value.request.assert_called_once()
+            connect.return_value.close.assert_called_once()
+
     def test_phase_concurrency_observation_rejects_serial_and_records_overlap(self):
         observation = getattr(streaming, "PhaseConcurrency", None)
         self.assertIsNotNone(observation,

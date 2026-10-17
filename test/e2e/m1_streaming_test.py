@@ -15,7 +15,7 @@ import tempfile
 import threading
 import time
 
-from m1_http_test import HttpClient, Response, ServerProcess, data, login
+from m1_http_test import HttpClient, Response, ServerProcess, data
 
 
 FILE_SIZE = 32 * 1024 * 1024
@@ -140,8 +140,12 @@ def request(client, method, path, body=None, headers=None, stream_response=False
         body = json.dumps(body, separators=(",", ":")).encode("utf-8")
         request_headers.setdefault("Content-Type", "application/json")
     connection = http.client.HTTPConnection("127.0.0.1", client.port, timeout=120)
-    connection.request(method, path, body=body, headers=request_headers)
-    raw = connection.getresponse()
+    try:
+        connection.request(method, path, body=body, headers=request_headers)
+        raw = connection.getresponse()
+    except BaseException:
+        connection.close()
+        raise
     if stream_response:
         return connection, raw
     try:
@@ -154,6 +158,12 @@ def request(client, method, path, body=None, headers=None, stream_response=False
         return response
     finally:
         connection.close()
+
+
+def login(client, username, password):
+    # Setup shares the streaming I/O budget; never retry a credential POST.
+    return data(request(client, "POST", "/api/v1/auth/login",
+                        {"username": username, "password": password}))
 
 
 def write_fixture(path, index):
@@ -300,16 +310,19 @@ def main():
         source_hashes = [item[0] for item in generated]
         part_hashes = [item[1] for item in generated]
         try:
+            print("M1 streaming: fixtures ready; starting measurement server", flush=True)
             server.start(environment_overrides={
                 "SMARTDOCS_MAX_FILE_BYTES": str(FILE_SIZE),
                 "SMARTDOCS_CHUNK_BYTES": str(UPLOAD_CHUNK_SIZE),
             })
             clients = [HttpClient(server.port) for _ in range(CONCURRENCY)]
+            print("M1 streaming: authenticating measurement clients", flush=True)
             for client in clients:
                 login(client, context["username"], password)
             tasks = [create_task(client, context, fixture.name, source_hash)
                      for client, fixture, source_hash in
                      zip(clients, fixtures, source_hashes)]
+            print("M1 streaming: tasks ready; measuring transfer phases", flush=True)
             for task in tasks:
                 checker.require(task["chunk_size"] == UPLOAD_CHUNK_SIZE,
                                 "server did not use the required 8 MiB chunks")
