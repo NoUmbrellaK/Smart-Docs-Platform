@@ -1,0 +1,511 @@
+Initial run:
+2026-10-18T02:30:46+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+911196160
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+some avg10=3.23 avg60=3.81 avg300=2.51 total=1562576518
+full avg10=3.23 avg60=3.81 avg300=2.51 total=1545256990
+some avg10=53.54 avg60=14.92 avg300=7.59 total=8118413405
+full avg10=53.54 avg60=14.92 avg300=7.58 total=8031652718
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1720         325          19        1449        1496
+Swap:              0           0           0
+
+2026-10-18T02:31:25+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+1159278592
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+some avg10=0.05 avg60=1.95 avg300=2.18 total=1562576527
+full avg10=0.05 avg60=1.95 avg300=2.18 total=1545256999
+some avg10=72.76 avg60=44.72 avg300=16.54 total=8148660114
+full avg10=72.00 avg60=44.43 avg300=16.46 total=8061704582
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1838         122          19        1533        1378
+Swap:              0           0           0
+
+2026-10-18T02:32:01+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+1109258240
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+some avg10=0.00 avg60=1.07 avg300=1.92 total=1562576529
+full avg10=0.00 avg60=1.07 avg300=1.92 total=1545257001
+some avg10=65.51 avg60=54.78 avg300=22.48 total=8172988456
+full avg10=64.69 avg60=54.19 avg300=22.29 total=8085680631
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1856         126          19        1512        1361
+Swap:              0           0           0
+
+2026-10-18T02:32:39+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+1189904384
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+some avg10=14.97 avg60=3.63 avg300=2.34 total=1564589665
+full avg10=14.97 avg60=3.63 avg300=2.34 total=1547265746
+some avg10=92.61 avg60=68.33 avg300=29.72 total=8204359018
+full avg10=92.56 avg60=67.96 avg300=29.54 total=8116918082
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1881         122          19        1491        1335
+Swap:              0           0           0
+
+2026-10-18T02:33:33+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+1256165376
+low 0
+high 69570
+max 0
+oom 0
+oom_kill 0
+some avg10=63.47 avg60=29.02 avg300=9.23 total=1587926241
+full avg10=62.54 avg60=28.56 avg300=9.11 total=1570247245
+some avg10=92.49 avg60=80.69 avg300=39.67 total=8252430086
+full avg10=90.98 avg60=79.72 avg300=39.30 total=8164297879
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1984         112          23        1397        1228
+Swap:              0           0           0
+
+2026-10-18T02:34:11+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+1037873152
+low 0
+high 71694
+max 0
+oom 0
+oom_kill 0
+some avg10=63.42 avg60=46.77 avg300=16.32 total=1613853961
+full avg10=62.99 avg60=46.21 avg300=16.12 total=1595910803
+some avg10=98.27 avg60=87.98 avg300=46.53 total=8289560938
+full avg10=97.59 avg60=86.84 avg300=46.02 total=8200895842
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2058         312          26        1124        1151
+Swap:              0           0           0
+
+2026-10-18T02:34:57+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:34:17 aliyun-lou bash[688810]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... PASS fixture: real approved vectors published; internal document not vectorized
+948236288
+low 0
+high 73229
+max 0
+oom 0
+oom_kill 0
+some avg10=34.53 avg60=44.18 avg300=20.40 total=1634592121
+full avg10=33.77 avg60=43.64 avg300=20.16 total=1616374300
+some avg10=78.19 avg60=86.95 avg300=52.54 total=8329797410
+full avg10=75.85 avg60=85.52 avg300=51.88 total=8240388017
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2060         401          41        1032        1134
+Swap:              0           0           0
+
+2026-10-18T02:36:04+08:00
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-transient-combo-browser.service
+ActiveState=failed
+SubState=failed
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-combo-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:34:17 aliyun-lou bash[688810]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... PASS fixture: real approved vectors published; internal document not vectorized
+Oct 18 02:35:45 aliyun-lou bash[688810]: ERROR
+Oct 18 02:35:45 aliyun-lou bash[688810]: ======================================================================
+Oct 18 02:35:45 aliyun-lou bash[688810]: ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+Oct 18 02:35:45 aliyun-lou bash[688810]: ----------------------------------------------------------------------
+Oct 18 02:35:45 aliyun-lou bash[688810]: Traceback (most recent call last):
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 147, in test_browser_hybrid_sources_version_change_and_failure
+Oct 18 02:35:45 aliyun-lou bash[688810]:     search("hybrid", "如何恢复备份？", 1, "hybrid")
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 135, in search
+Oct 18 02:35:45 aliyun-lou bash[688810]:     while text("#document-search-status").startswith("Searching") and time.monotonic() < deadline:
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 127, in text
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return browser.inspect('return document.querySelector(arguments[0]).textContent', selector)
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 301, in inspect
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self.command('POST', '/execute/sync', {'script': script, 'args': list(args)})
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 229, in command
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self.request(method, '/session/' + self.session + path, body)
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 223, in request
+Oct 18 02:35:45 aliyun-lou bash[688810]:     response = connection.getresponse()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+Oct 18 02:35:45 aliyun-lou bash[688810]:     response.begin()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 323, in begin
+Oct 18 02:35:45 aliyun-lou bash[688810]:     version, status, reason = self._read_status()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+Oct 18 02:35:45 aliyun-lou bash[688810]:     line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/socket.py", line 705, in readinto
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self._sock.recv_into(b)
+Oct 18 02:35:45 aliyun-lou bash[688810]: TimeoutError: timed out
+Oct 18 02:35:45 aliyun-lou bash[688810]: ----------------------------------------------------------------------
+Oct 18 02:35:45 aliyun-lou bash[688810]: Ran 1 test in 208.715s
+Oct 18 02:35:45 aliyun-lou bash[688810]: FAILED (errors=1)
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Failed with result 'exit-code'.
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Consumed 11.102s CPU time.
+792559616
+low 0
+high 73229
+max 0
+oom 0
+oom_kill 0
+some avg10=5.95 avg60=39.39 avg300=25.60 total=1666608407
+full avg10=5.93 avg60=39.07 avg300=25.35 total=1648263788
+some avg10=40.19 avg60=79.10 avg300=58.29 total=8384202565
+full avg10=40.08 avg60=78.37 avg300=57.67 total=8294581013
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1718         536          19        1240        1499
+Swap:              0           0           0
+
+Traced run:
+2026-10-18T02:38:21+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:37:50 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/trace_combination.py /tmp/smartdocs-safe.h4SzvX/repo.
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+1175486464
+low 0
+high 73479
+max 0
+oom 0
+oom_kill 0
+some avg10=1.04 avg60=5.69 avg300=16.50 total=1667374285
+full avg10=1.04 avg60=5.66 avg300=16.34 total=1649029667
+some avg10=62.24 avg60=64.18 avg300=57.27 total=8456571736
+full avg10=61.39 avg60=63.91 avg300=56.84 total=8366813698
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1829         128          19        1536        1387
+Swap:              0           0           0
+
+2026-10-18T02:39:11+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:37:50 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/trace_combination.py /tmp/smartdocs-safe.h4SzvX/repo.
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:38:58 aliyun-lou bash[690041]: schema_version=5
+1193091072
+low 0
+high 73479
+max 0
+oom 0
+oom_kill 0
+some avg10=0.00 avg60=2.39 avg300=13.80 total=1667374765
+full avg10=0.00 avg60=2.38 avg300=13.67 total=1649030083
+some avg10=66.66 avg60=66.43 avg300=59.15 total=8491567251
+full avg10=65.98 avg60=65.78 avg300=58.62 total=8401326254
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1848         118          19        1527        1368
+Swap:              0           0           0
+
+2026-10-18T02:40:10+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:38:58 aliyun-lou bash[690041]: schema_version=5
+Oct 18 02:39:18 aliyun-lou bash[690080]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:39:33 aliyun-lou bash[690164]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+1227513856
+low 0
+high 73742
+max 0
+oom 0
+oom_kill 0
+some avg10=3.74 avg60=10.12 avg300=14.28 total=1677233629
+full avg10=3.70 avg60=10.05 avg300=14.15 total=1658812857
+some avg10=83.87 avg60=78.14 avg300=63.76 total=8541325880
+full avg10=82.89 avg60=77.37 avg300=63.19 total=8450553321
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1948         110          19        1436        1268
+Swap:              0           0           0
+
+2026-10-18T02:40:50+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:38:58 aliyun-lou bash[690041]: schema_version=5
+Oct 18 02:39:18 aliyun-lou bash[690080]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:39:33 aliyun-lou bash[690164]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:40:37 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 63.652}
+Oct 18 02:40:41 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+961318912
+low 0
+high 76256
+max 0
+oom 0
+oom_kill 0
+some avg10=30.12 avg60=13.62 avg300=14.36 total=1683476163
+full avg10=28.52 avg60=13.15 avg300=14.15 total=1664795591
+some avg10=88.95 avg60=82.79 avg300=66.79 total=8576701682
+full avg10=85.64 avg60=81.14 avg300=65.98 total=8484978026
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2073         379          26        1042        1135
+Swap:              0           0           0
+
+2026-10-18T02:41:33+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:37:50 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/trace_combination.py /tmp/smartdocs-safe.h4SzvX/repo.
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:38:58 aliyun-lou bash[690041]: schema_version=5
+Oct 18 02:39:18 aliyun-lou bash[690080]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:39:33 aliyun-lou bash[690164]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:40:37 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 63.652}
+Oct 18 02:40:41 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:41:11 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "ok", "seconds": 30.012}
+Oct 18 02:41:19 aliyun-lou bash[690164]: PASS fixture: real approved vectors published; internal document not vectorized
+Oct 18 02:41:32 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 13.407}
+1147465728
+low 0
+high 76256
+max 0
+oom 0
+oom_kill 0
+some avg10=30.74 avg60=31.49 avg300=19.56 total=1706408413
+full avg10=30.64 avg60=31.16 avg300=19.35 total=1687619417
+some avg10=82.37 avg60=86.45 avg300=70.21 total=8616517696
+full avg10=81.37 avg60=85.26 avg300=69.41 total=8524548775
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2059         206          30        1228        1145
+Swap:              0           0           0
+
+2026-10-18T02:42:26+08:00
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-browser.service
+ActiveState=active
+SubState=running
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-trace-encoder.service
+ActiveState=active
+SubState=running
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.011}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.011}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.008}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.01}
+Oct 18 02:42:21 aliyun-lou bash[690164]: PASS browser: explicit encoder failure, no internal leak, immutable historical source, new-version exclusion/discovery, approval not inherited, revocation
+1096769536
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+some avg10=24.24 avg60=33.68 avg300=22.37 total=1726035681
+full avg10=24.22 avg60=33.45 avg300=22.17 total=1707107931
+some avg10=62.77 avg60=79.40 avg300=71.23 total=8656820347
+full avg10=62.15 avg60=78.40 avg300=70.41 total=8564350318
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2064         254          30        1176        1141
+Swap:              0           0           0

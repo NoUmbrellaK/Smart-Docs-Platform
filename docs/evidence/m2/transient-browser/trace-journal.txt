@@ -1,0 +1,62 @@
+Oct 18 02:36:43 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:37:40 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:37:50 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/trace_combination.py /tmp/smartdocs-safe.h4SzvX/repo.
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.320935Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 689802
+Oct 18 02:37:53 aliyun-lou bash[689802]: 2026-10-17T18:37:53.920180Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:38:09 aliyun-lou bash[689802]: 2026-10-17T18:38:09.276695Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:38:17 aliyun-lou bash[689802]: 2026-10-17T18:38:17.285282Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:38:58 aliyun-lou bash[690041]: schema_version=5
+Oct 18 02:39:18 aliyun-lou bash[690080]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:39:33 aliyun-lou bash[690164]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:39:33 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:40:37 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 63.652}
+Oct 18 02:40:41 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:41:11 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "ok", "seconds": 30.012}
+Oct 18 02:41:19 aliyun-lou bash[690164]: PASS fixture: real approved vectors published; internal document not vectorized
+Oct 18 02:41:32 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 13.407}
+Oct 18 02:41:34 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 1.654}
+Oct 18 02:41:38 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 2.482}
+Oct 18 02:41:38 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:41:38 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:41:46 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "ok", "seconds": 7.787}
+Oct 18 02:41:53 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 8.719}
+Oct 18 02:41:55 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 17.058}
+Oct 18 02:42:05 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 9.639}
+Oct 18 02:42:06 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 1.196}
+Oct 18 02:42:11 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 4.77}
+Oct 18 02:42:15 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 4.322}
+Oct 18 02:42:16 aliyun-lou bash[690164]: PASS browser: real semantic-only Chinese query -> English source, exact version and lines
+Oct 18 02:42:16 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:17 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:17 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:17 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.859}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:19 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.011}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.011}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:20 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.008}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "begin"}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "encoding", "event": "begin"}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "encoding", "event": "end", "outcome": "error", "seconds": 0.0}
+Oct 18 02:42:21 aliyun-lou bash[690164]: {"stage": "search_coordinator", "event": "end", "outcome": "ok", "seconds": 0.01}
+Oct 18 02:42:21 aliyun-lou bash[690164]: PASS browser: explicit encoder failure, no internal leak, immutable historical source, new-version exclusion/discovery, approval not inherited, revocation
+Oct 18 02:42:31 aliyun-lou bash[690164]: {"stage": "browser_control", "event": "end", "outcome": "ok", "seconds": 10.016}
+Oct 18 02:42:32 aliyun-lou bash[690164]: ok
+Oct 18 02:42:32 aliyun-lou bash[690164]: ----------------------------------------------------------------------
+Oct 18 02:42:32 aliyun-lou bash[690164]: Ran 1 test in 194.151s
+Oct 18 02:42:32 aliyun-lou bash[690164]: OK
+Oct 18 02:42:37 aliyun-lou systemd[1]: smartdocs-transient-trace-browser.service: Deactivated successfully.
+Oct 18 02:42:37 aliyun-lou systemd[1]: smartdocs-transient-trace-browser.service: Consumed 13.581s CPU time.
+Oct 18 02:42:53 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:42:53 aliyun-lou systemd[1]: smartdocs-transient-trace-encoder.service: Deactivated successfully.
+Oct 18 02:42:53 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:42:53 aliyun-lou systemd[1]: smartdocs-transient-trace-encoder.service: Consumed 3.767s CPU time.

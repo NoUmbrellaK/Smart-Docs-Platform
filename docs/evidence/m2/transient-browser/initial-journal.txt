@@ -1,0 +1,46 @@
+Oct 18 02:30:19 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:30:24 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:30:38 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:30:49 aliyun-lou bash[688163]: 2026-10-17T18:30:49.348277Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 688163
+Oct 18 02:30:50 aliyun-lou bash[688163]: 2026-10-17T18:30:50.299783Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:31:05 aliyun-lou bash[688163]: 2026-10-17T18:31:05.636626Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:31:13 aliyun-lou bash[688163]: 2026-10-17T18:31:13.387170Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:31:55 aliyun-lou bash[688474]: schema_version=5
+Oct 18 02:32:16 aliyun-lou bash[688727]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:34:17 aliyun-lou bash[688810]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... PASS fixture: real approved vectors published; internal document not vectorized
+Oct 18 02:35:45 aliyun-lou bash[688810]: ERROR
+Oct 18 02:35:45 aliyun-lou bash[688810]: ======================================================================
+Oct 18 02:35:45 aliyun-lou bash[688810]: ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+Oct 18 02:35:45 aliyun-lou bash[688810]: ----------------------------------------------------------------------
+Oct 18 02:35:45 aliyun-lou bash[688810]: Traceback (most recent call last):
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 147, in test_browser_hybrid_sources_version_change_and_failure
+Oct 18 02:35:45 aliyun-lou bash[688810]:     search("hybrid", "如何恢复备份？", 1, "hybrid")
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 135, in search
+Oct 18 02:35:45 aliyun-lou bash[688810]:     while text("#document-search-status").startswith("Searching") and time.monotonic() < deadline:
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 127, in text
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return browser.inspect('return document.querySelector(arguments[0]).textContent', selector)
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 301, in inspect
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self.command('POST', '/execute/sync', {'script': script, 'args': list(args)})
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 229, in command
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self.request(method, '/session/' + self.session + path, body)
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 223, in request
+Oct 18 02:35:45 aliyun-lou bash[688810]:     response = connection.getresponse()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+Oct 18 02:35:45 aliyun-lou bash[688810]:     response.begin()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 323, in begin
+Oct 18 02:35:45 aliyun-lou bash[688810]:     version, status, reason = self._read_status()
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+Oct 18 02:35:45 aliyun-lou bash[688810]:     line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+Oct 18 02:35:45 aliyun-lou bash[688810]:   File "/usr/lib/python3.10/socket.py", line 705, in readinto
+Oct 18 02:35:45 aliyun-lou bash[688810]:     return self._sock.recv_into(b)
+Oct 18 02:35:45 aliyun-lou bash[688810]: TimeoutError: timed out
+Oct 18 02:35:45 aliyun-lou bash[688810]: ----------------------------------------------------------------------
+Oct 18 02:35:45 aliyun-lou bash[688810]: Ran 1 test in 208.715s
+Oct 18 02:35:45 aliyun-lou bash[688810]: FAILED (errors=1)
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Failed with result 'exit-code'.
+Oct 18 02:35:56 aliyun-lou systemd[1]: smartdocs-transient-combo-browser.service: Consumed 11.102s CPU time.
+Oct 18 02:36:18 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:36:18 aliyun-lou systemd[1]: smartdocs-transient-combo-encoder.service: Deactivated successfully.
+Oct 18 02:36:18 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:36:18 aliyun-lou systemd[1]: smartdocs-transient-combo-encoder.service: Consumed 3.599s CPU time.
