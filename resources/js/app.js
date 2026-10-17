@@ -1,5 +1,6 @@
 import * as api from "./api.js";
 import { UploadController } from "./uploads.js";
+import { SearchPanel } from "./search.js";
 
 export class ProjectGeneration {
   constructor() {
@@ -112,6 +113,7 @@ const projectLoads = new ProjectGeneration();
 const fileLoads = new ProjectGeneration();
 const fileListLoads = new ProjectGeneration();
 let uploads = null;
+let searchPanel = null;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -133,7 +135,7 @@ function errorText(error) {
 }
 
 function showProjectSections(show) {
-  for (const id of ["workbench", "upload-tasks", "file-detail"]) {
+  for (const id of ["workbench", "upload-tasks", "file-detail", "document-search"]) {
     byId(id).hidden = !show;
   }
   byId("project-settings").hidden = true;
@@ -165,6 +167,7 @@ function applyWriteVisibility() {
 }
 
 function resetProjectView(project) {
+  searchPanel.setProject(null, []);
   state.project = project;
   state.projectReady = false;
   state.directories = [];
@@ -236,6 +239,7 @@ function renderIdentity(identity) {
 }
 
 function signedOut() {
+  searchPanel.setProject(null, []);
   projectLoads.begin(null);
   state.identity = null;
   state.project = null;
@@ -278,6 +282,7 @@ function renderFiles(token) {
 
 async function loadFiles(token = state.projectToken) {
   if (!projectLoads.current(token)) return false;
+  searchPanel.invalidate();
   const listToken = fileListLoads.begin(token.projectId);
   const filters = {
     directoryId: byId("directory-filter").value,
@@ -417,6 +422,7 @@ function renderMembers(members, token) {
           state.selectedFileReady ? state.selectedFile : null
         );
         if (synchronized.changed) {
+          searchPanel.invalidate();
           state.identity = synchronized.identity;
           state.project = synchronized.project;
           byId("project-role").textContent = synchronized.project.role;
@@ -475,6 +481,7 @@ async function loadProject(project) {
       byId("member-list").replaceChildren();
     }
     state.projectReady = true;
+    searchPanel.setProject(project.id, state.directories);
     applyWriteVisibility();
     renderUploads(uploads.snapshot());
     setStatus("global-status", "idle");
@@ -497,6 +504,9 @@ function button(text, action, disabled) {
 function renderUploads(tasks, changed) {
   const projectId = state.project && state.project.id;
   const token = state.projectToken;
+  if (changed && changed.projectId === projectId && changed.uiState === "completed") {
+    searchPanel.invalidate();
+  }
   const projectTasks = tasks.filter((task) => task.projectId === projectId);
   const visible = changed && changed.projectId === projectId && !changed.taskId
     ? [changed, ...projectTasks]
@@ -565,6 +575,7 @@ function renderUploads(tasks, changed) {
 
 function bootstrap() {
 uploads = new UploadController(renderUploads);
+searchPanel = new SearchPanel(byId, api, errorText);
 
 byId("login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -580,6 +591,7 @@ byId("login-form").addEventListener("submit", async (event) => {
 });
 
 byId("logout-button").addEventListener("click", async () => {
+  searchPanel.invalidate();
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
@@ -665,6 +677,7 @@ byId("file-update-form").addEventListener("submit", async (event) => {
       token.projectId, fileId, byId("file-name").value,
       byId("file-directory").value
     );
+    if (projectLoads.current(token)) searchPanel.invalidate();
     if (!currentFile(token, fileToken)) return;
     state.selectedFile = updated;
     state.selectedFileReady = false;
@@ -686,6 +699,7 @@ byId("delete-file").addEventListener("click", async () => {
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
   try {
     await api.softDeleteFile(token.projectId, selected.id);
+    if (projectLoads.current(token)) searchPanel.invalidate();
     if (!currentFile(token, fileToken)) return;
     const deleted = { ...selected, deleted: true };
     state.selectedFile = deleted;
@@ -705,6 +719,7 @@ byId("restore-file").addEventListener("click", async () => {
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
   try {
     const restored = await api.restoreFile(token.projectId, fileId);
+    if (projectLoads.current(token)) searchPanel.invalidate();
     if (!currentFile(token, fileToken)) return;
     state.selectedFile = restored;
     state.selectedFileReady = false;

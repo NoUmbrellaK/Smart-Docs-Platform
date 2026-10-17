@@ -174,7 +174,7 @@ def require_pdf_render(content, page):
     return png_details(content, page)
 
 
-def dependencies():
+def dependencies(version_timeout=10):
     found = {}
     for kind, variable, names in (
             ('browser', 'SMARTDOCS_BROWSER_BIN', ('chromium', 'chromium-browser', 'google-chrome')),
@@ -185,7 +185,7 @@ def dependencies():
         if not binary:
             raise RuntimeError(f'missing browser dependency: {variable}')
         result = subprocess.run([binary, '--version'], capture_output=True,
-                                text=True, timeout=10, check=False)
+                                text=True, timeout=version_timeout, check=False)
         product = r'(?:Chromium|Google Chrome(?: for Testing)?|Chrome)' if kind == 'browser' else 'ChromeDriver'
         match = re.search(product + r'\s+(\d+\.\d+\.\d+\.\d+)\b', result.stdout)
         if result.returncode or not match:
@@ -206,8 +206,9 @@ def dependencies():
 
 
 class Browser:
-    def __init__(self, binaries, sandbox, profile):
+    def __init__(self, binaries, sandbox, profile, driver_log=None):
         self.binaries, self.sandbox, self.profile = binaries, sandbox, profile
+        self.driver_log = driver_log
         self.port = ServerProcess._free_port()
         self.process = None
         self.session = None
@@ -229,7 +230,8 @@ class Browser:
 
     def start(self):
         self.process = subprocess.Popen(
-            [self.binaries['webdriver'][0], f'--port={self.port}', '--allowed-ips=127.0.0.1'],
+            [self.binaries['webdriver'][0], f'--port={self.port}', '--allowed-ips=127.0.0.1'] +
+            (['--log-path=' + str(self.driver_log)] if self.driver_log else []),
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         deadline = time.monotonic() + 15
         while True:

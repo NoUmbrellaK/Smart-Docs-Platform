@@ -65,6 +65,7 @@ class UiContractTest(unittest.TestCase):
         cls.api = read_resource("js/api.js")
         cls.app = read_resource("js/app.js")
         cls.uploads = read_resource("js/uploads.js")
+        cls.search = read_resource("js/search.js")
         cls.sha256 = read_resource("js/sha256.js")
         cls.index_parser = WorkbenchParser()
         cls.index_parser.feed(read_resource("index.html"))
@@ -77,7 +78,7 @@ class UiContractTest(unittest.TestCase):
 
     def test_semantic_page_shell_is_accessible(self):
         expected_sections = {"session", "workbench", "upload-tasks",
-                             "file-detail", "project-settings"}
+                             "file-detail", "project-settings", "document-search"}
         actual_sections = {section.get("id") for section in self.parser.sections}
         self.assertEqual(expected_sections, actual_sections)
         self.assertTrue(self.parser.viewport)
@@ -99,7 +100,7 @@ class UiContractTest(unittest.TestCase):
                           f"write control must start hidden: {control_id}")
 
     def test_modules_use_safe_same_origin_api_contract(self):
-        combined = "\n".join((self.api, self.app, self.uploads))
+        combined = "\n".join((self.api, self.app, self.uploads, self.search))
         self.assertNotRegex(combined, r"https?://")
         self.assertNotRegex(combined, r"\.innerHTML\s*=")
         self.assertIn('const API_ROOT = "/api/v1"', self.api)

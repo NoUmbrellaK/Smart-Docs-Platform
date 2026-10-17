@@ -60,6 +60,39 @@
       <p id="files-status" role="status" aria-live="polite">idle</p>
     </section>
 
+    <section id="document-search" aria-labelledby="document-search-title" hidden>
+      <h2 id="document-search-title">Document search</h2>
+      <p>Local search only. Keyword search has ngram/stopword limits; vector search is not available.</p>
+      <form id="document-search-form">
+        <label for="document-search-mode">Search mode</label>
+        <select id="document-search-mode">
+          <option value="metadata">File name (includes unparsed files)</option>
+          <option value="keyword">Extracted text keywords</option>
+        </select>
+        <label for="document-search-query">Query (up to 256 UTF-8 bytes)</label>
+        <input id="document-search-query" type="search" maxlength="256">
+        <label for="document-search-directory">Exact directory (not subdirectories)</label>
+        <select id="document-search-directory"></select>
+        <label for="document-search-media">Exact media type</label>
+        <select id="document-search-media">
+          <option value="">All media types</option>
+          <option value="text/plain">text/plain</option>
+          <option value="text/markdown">text/markdown</option>
+          <option value="application/pdf">application/pdf</option>
+        </select>
+        <button id="document-search-submit" type="submit" disabled>Search documents</button>
+      </form>
+      <p id="document-search-status" role="status" aria-live="polite"></p>
+      <div id="document-search-results" class="task-list"></div>
+      <div class="action-row">
+        <button id="document-search-previous" type="button" disabled>Previous page</button>
+        <button id="document-search-next" type="button" disabled>Next page</button>
+      </div>
+      <h3>Fixed-version source</h3>
+      <p id="document-source-status" role="status" aria-live="polite"></p>
+      <div id="document-search-source"></div>
+    </section>
+
     <section id="upload-tasks" aria-labelledby="uploads-title"
              data-supported-states="idle loading awaiting reselect uploading assembling interrupted failed cancelling cancelled completed"
              hidden>

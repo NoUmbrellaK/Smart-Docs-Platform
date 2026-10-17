@@ -95,6 +95,11 @@ export const restoreFile = (projectId, fileId) =>
   });
 export const listVersions = (projectId, fileId) =>
   metadata(`${projectPath(projectId)}/files/${id(fileId)}/versions`);
+export const searchDocuments = (projectId, criteria) =>
+  metadata(`${projectPath(projectId)}/search`, { method: "POST", body: criteria });
+export const readDocument = (projectId, fileId, versionId, chunkId) =>
+  metadata(`${projectPath(projectId)}/files/${id(fileId)}/versions/${id(versionId)}` +
+    (chunkId ? `/chunks/${id(chunkId)}` : "/document"));
 export const setRemoteAiPolicy = (projectId, fileId, policy,
                                   approvedVersionIds) =>
   metadata(`${projectPath(projectId)}/files/${id(fileId)}/remote-ai-policy`, {
