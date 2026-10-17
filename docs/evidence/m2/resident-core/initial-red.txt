@@ -1,0 +1,9 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B test/e2e/m2_resident_embeddings_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model.
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_resident_embeddings_test.py", line 70, in <module>
+    main()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_resident_embeddings_test.py", line 25, in main
+    assert importlib.util.find_spec("smartdocs.resident_embeddings"), "resident core missing"
+AssertionError: resident core missing
+smartdocs-resident-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-resident-red.service: Failed with result 'exit-code'.

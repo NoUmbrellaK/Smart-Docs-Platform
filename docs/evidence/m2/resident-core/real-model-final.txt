@@ -1,0 +1,30 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B test/e2e/m2_resident_embeddings_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model.
+{
+  "passed": true,
+  "uid": 65534,
+  "ip_sockets_blocked": true,
+  "cases": [
+    "sealed_content_load",
+    "snapshot_descriptors_closed",
+    "old_revision_compatible",
+    "five_request_reuse",
+    "no_source_reopen",
+    "invalid_input_refused",
+    "new_instance_requires_artifacts"
+  ],
+  "startup_seconds": 2.109,
+  "request_seconds": [
+    0.563,
+    0.575,
+    0.555,
+    0.568,
+    0.559
+  ],
+  "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8",
+  "rss_after_requests": "632108 kB",
+  "peak_rss_kib": 637448,
+  "engine_sha256": "99905da38e4817577e1e77fd2035f3c6d99036947ce7085e7cb55512f82f97b9",
+  "shared_sha256": "5dfaf6bf2f4b0c2b63fdb075c4d222a20f5f6191c94a8087b5a9853e8b95ba8f"
+}
+smartdocs-resident-final.service: Deactivated successfully.
+smartdocs-resident-final.service: Consumed 5.193s CPU time.

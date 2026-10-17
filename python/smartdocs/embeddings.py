@@ -271,6 +271,10 @@ def _tokenize(chunks, model_dir):
         tokenizer.add_special_tokens([AddedToken(**token)])
     tokenizer.no_truncation()
     tokenizer.no_padding()
+    return _prepare_chunks(chunks, tokenizer)
+
+
+def _prepare_chunks(chunks, tokenizer):
     ranges = [window_ranges(c["text"], lambda text: len(tokenizer.encode(text).ids)) for c in chunks]
     if sum(map(len, ranges)) > 128:
         raise EmbeddingError("embedding_window_limit")
@@ -291,19 +295,29 @@ def _infer(chunks, prepared, model_dir):
     validate_prepared(prepared, chunks)
     _verify_model(model_dir)
     _verify_dependencies()
-    import numpy as np
+    model = _new_session(str(Path(model_dir)/"model_optimized.onnx"))
+    return _infer_windows(chunks, prepared, model)
+
+
+def _new_session(model_path):
     import onnxruntime as ort
     options = ort.SessionOptions()
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     options.intra_op_num_threads = options.inter_op_num_threads = 1
     options.enable_cpu_mem_arena = False
-    model = ort.InferenceSession(str(Path(model_dir)/"model_optimized.onnx"),
+    model = ort.InferenceSession(model_path,
                                 providers=["CPUExecutionProvider"], sess_options=options)
     if model.get_providers() != ["CPUExecutionProvider"]:
         raise EmbeddingError("embedding_dependency_unavailable")
     names = {node.name for node in model.get_inputs()}
     if names != {"input_ids", "attention_mask", "token_type_ids"}:
         raise EmbeddingError("embedding_dependency_unavailable")
+    return model
+
+
+def _infer_windows(chunks, prepared, model):
+    import numpy as np
+    validate_prepared(prepared, chunks)
     result = {"embedding_revision": EMBEDDING_REVISION, "chunks": []}
     for source in prepared["chunks"]:
         encoded = {"chunk_id": source["chunk_id"], "text_sha256": source["text_sha256"], "windows": []}
