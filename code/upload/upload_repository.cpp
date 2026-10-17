@@ -2,6 +2,7 @@
 
 #include "core/app_error.h"
 #include "core/id.h"
+#include "processing/processing_service.h"
 
 #include <utility>
 
@@ -274,10 +275,7 @@ void UploadRepository::SetCurrentVersion(MySqlConnection& connection,
 void UploadRepository::InsertProcessingJob(MySqlConnection& connection,
                                            const std::string& job_id,
                                            const std::string& version_id) const {
-    connection.Execute(
-        "INSERT INTO processing_jobs(id, file_version_id, task_type, state, "
-        "attempt_count) VALUES (?, ?, 'parse_and_index', 'pending', 0)",
-        {SqlValue(job_id), SqlValue(version_id)});
+    EnqueueProcessingJob(connection, job_id, version_id);
 }
 
 void UploadRepository::SetCompleted(MySqlConnection& connection,

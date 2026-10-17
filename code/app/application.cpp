@@ -13,6 +13,8 @@
 #include "file/file_store.h"
 #include "project/project_routes.h"
 #include "project/project_service.h"
+#include "processing/processing_service.h"
+#include "processing/processing_routes.h"
 #include "upload/upload_routes.h"
 #include "upload/upload_reconciler.h"
 #include "upload/upload_service.h"
@@ -171,7 +173,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     {
         MySqlConnection connection = database->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 2);
+        Schema::RequireVersion(connection, 3);
     }
     if (!StorageReady(config.storage_root)) {
         throw AppError(503, "storage_unavailable",
@@ -189,6 +191,8 @@ Application::Application(const AppConfig& config, std::string static_root)
         *database_, *project_service_, *file_store_, config.max_file_bytes,
         config.chunk_bytes));
     UploadReconciler(*database_, *file_store_).RunAtStartup();
+    processing_service_.reset(new ProcessingService(*database_, *project_service_));
+    processing_service_->RecoverInterrupted();
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);
@@ -198,6 +202,7 @@ Application::Application(const AppConfig& config, std::string static_root)
                        config.max_json_bytes, config.secure_cookie);
     RegisterUploadRoutes(router_, auth_service_, upload_service_,
                          config.max_json_bytes, config.secure_cookie);
+    RegisterProcessingRoutes(router_, auth_service_, processing_service_, config.secure_cookie);
 }
 
 std::unique_ptr<RequestBodyHandler> Application::Prepare(
@@ -225,7 +230,7 @@ bool Application::Ready() const {
     try {
         MySqlConnection connection = database_->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 2);
+        Schema::RequireVersion(connection, 3);
         return StorageReady(storage_root_);
     } catch (...) {
         return false;

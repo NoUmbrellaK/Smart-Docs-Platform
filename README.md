@@ -2,7 +2,7 @@
 
 面向小型项目团队的文档管理与智能整理平台。项目计划以 C++ 文件服务为业务核心，通过 Python MCP/Agent 服务提供受控的资料检索、交接核查和智能归档能力。
 
-> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前已新增 PDF/TXT/Markdown 本地解析模块，尚未接入上传后的后台处理；关键词/向量检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
+> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前已新增 PDF/TXT/Markdown 本地解析及持久任务状态/取消/重试；解析器尚未接入上传后的后台执行，关键词/向量检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
 
 ## 当前实现
 
@@ -21,7 +21,7 @@
 
 M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./docs/api/m1-http-api.md)、[验收说明](./docs/evidence/m1/README.md)和[资源耗尽事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)均在仓库内维护。
 
-### M2 当前增量：离线文档解析
+### M2 当前增量：离线文档解析与持久任务
 
 已新增 [TXT/Markdown 解析函数](./python/smartdocs/text_parser.py)，仅依赖 Python 3.10+ 标准库：严格 UTF-8、BOM/换行规范化、有界分块、固定文件/版本 ID、原始内容哈希、稳定片段 ID 和行号/字符区间。文档中的指令保留为文本，不执行。不读取 API key、不访问网络、不读取任意文件路径。
 
@@ -52,7 +52,11 @@ python3 -m venv /path/to/smartdocs-venv
 
 只测试 TXT/Markdown 时，可用系统 Python 运行 `PYTHONPATH=python python3 -B -m unittest discover -s test/python -p 'test_text_parser.py' -v`，无需 PDF 依赖。
 
-这不是后台自动解析、权限集成或大文件性能验收；本次没有重跑 M1 全套验收，也没有模型请求。后续依次接入持久任务/人工重试、关键词检索和真实向量混合检索，详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)与 [PDF 增量计划](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+新增 C++ [持久任务接口与迁移说明](./docs/api/m2-processing-api.md)：reader 查询，editor/admin 取消和人工重试；pending 上限 100、running 上限 1，队列满仍保存上传文件；重启将运行中任务标记 interrupted，旧 attempt 不能回写新尝试。任务状态接口已复用项目权限和同源检查。
+
+该增量在当前 ECS 受限单元中通过完整 C++ 回归 **100/100**（0 失败、0 跳过）及真实 schema 2→3 升级/重放检查；没有迁移原有业务库。测试范围、源哈希及并发覆盖缺口见[任务验证记录](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md#2026-10-17-验证结果)。
+
+这还不是后台自动解析或大文件性能验收：Python worker 通道、片段持久化、原子完成发布、关键词及向量混合检索尚未实现。本次没有重跑 M1 全套浏览器验收，也没有模型请求。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 
@@ -127,7 +131,7 @@ set +a
 scripts/migrate.sh
 ```
 
-迁移成功输出 `schema_version=2`。完整数据库、目录权限、systemd、HTTPS 和备份步骤见[单机部署手册](./docs/deployment/m1-single-host.md)。
+迁移成功输出 `schema_version=3`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 
@@ -173,12 +177,12 @@ test/e2e/run_m1.sh
 ## 开发路线
 
 1. **M1 文件业务**：实现、完整受限验收和证据审阅已完成，阶段关闭；
-2. **M2 文档检索**：进行中，已实现离线 PDF/TXT/Markdown 解析；后台任务、索引状态、混合检索及业务引用接口待实现；
+2. **M2 文档检索**：进行中，已实现离线 PDF/TXT/Markdown 解析和持久任务状态/取消/重试；worker 通道、索引发布、混合检索及业务引用接口待实现；
 3. **M3 MCP 与 Agent**：实现五项业务工具和可观察的多步调用；
 4. **M4 归档与交接**：方案确认、事务执行、交接清单和带引用报告；
 5. **M5 验收与展示**：固定任务、故障测试、部署文档和可复现实验记录。
 
-M1 已关闭，M2 仅完成上述独立解析增量，M3–M5 仍是计划。阶段验收以需求文档和与目标提交绑定的实际测试证据为准。
+M1 已关闭，M2 目前仅实现上述解析及任务增量，尚未形成端到端检索闭环，M3–M5 仍是计划。阶段验收以需求文档和与目标提交绑定的实际测试证据为准。
 
 ## 安全说明
 

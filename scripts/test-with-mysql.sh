@@ -83,7 +83,7 @@ export SMARTDOCS_MYSQL_SOCKET=$socket_path
 "$repo_root/scripts/migrate.sh"
 
 replay_output=$("$repo_root/scripts/migrate.sh")
-if [[ $replay_output != 'schema_version=2' ]]; then
+if [[ $replay_output != 'schema_version=3' ]]; then
     printf 'migration_replay_failed: unexpected result %s\n' "$replay_output" >&2
     exit 1
 fi
@@ -106,5 +106,7 @@ if (( partial_status == 0 )) || [[ $partial_output != partial_schema:* ]]; then
     exit 1
 fi
 export SMARTDOCS_MYSQL_DATABASE=smart_docs_test
+
+bash "$repo_root/test/e2e/m2_migration_test.sh"
 
 "$@"
