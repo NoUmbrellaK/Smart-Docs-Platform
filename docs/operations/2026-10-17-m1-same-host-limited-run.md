@@ -24,9 +24,28 @@ systemd 249，可以给完整验收进程组施加资源限额，不必先物理
   普通操作仍为 30 秒，超时不会自动重试。回归检查先失败，再修复通过；
   `python3 -B test/e2e/m1_harness_self_test.py` 为 23/23 通过。
 
-完整验收尚未启动：工具的自动审批审查拒绝了本次启动请求，理由是该
-服务器有三次同类崩溃历史，限额下仍存在服务中断或失联风险，需要用户
-明确接受这次完整运行的剩余风险。不能把上述浏览器预检当作 M1 通过证据。
+首次启动申请曾被自动审批审查拒绝。用户随后明确接受剩余风险并要求继续，
+已于 2026-10-17 14:45:23–14:56:34（北京时间）完成第一轮受限运行：
+
+- 被测干净提交为 `a4b69e53591e7603315be103f3981733d762bc0d`；四个 C++
+  目标完成干净构建，隔离 MySQL 正常启动。
+- 驱动自测 23/23；C++ 87/88、失败 1、跳过 0；UI 契约 8/8。
+- C++ 唯一失败是默认配置测试继承了验收环境的线程数 4，却断言默认值 6。
+  修正仅使配置测试夹具清除并在结束时恢复全部可选配置环境变量。
+- systemd 使用 `/usr/bin/node` 12.22.9，UI 行为测试在解析 `??` 时失败。
+  已将机器现有 Node 24.18.0 的可执行文件复制到独立工作区的 `bin/`，
+  后续通过显式 PATH 选择，不替换系统 Node。驱动增加了构建前的 Node
+  能力检查，确认 `node:test`、全局 `File` 和项目 ES 模块可加载。
+- 运行器以状态 1 拦截后续 HTTP、浏览器业务、流式和中断阶段，没有生成
+  新的完整证据；测试进程已退出，原 MySQL 服务保持 active。
+- 采样期间测试组内存最高约 802 MiB，宿主机可用内存最低约 1880 MiB；
+  观察到的 cgroup `high/max/oom/oom_kill` 计数均为 0。这些是离散采样，
+  不是连续采集的绝对峰值，也不是服务自身 RSS 指标。
+
+修正后的聚焦验证：5 项配置测试在 14 个可选配置均被故意污染时全部通过；
+非 root、显式 Node 24 的 UI 行为测试 18/18；驱动自测 24/24。
+真实系统 Node 12 在新前置检查中立即返回 `unsupported_node_runtime`，
+未进入构建或 MySQL；Node 24 能力检查通过。完整验收仍待修正后的运行结果。
 
 ## 运行方式
 
@@ -37,7 +56,8 @@ systemd 249，可以给完整验收进程组施加资源限额，不必先物理
 
 以下是已准备的完整运行命令；执行前须取得本次风险授权，并将
 `m1_run_root` 设置为已准备的独立临时工作区的绝对路径。
-其中应已有 `repo/`、`home/`、`chrome-linux64/`、`chromedriver-linux64/`。
+其中应已有 `repo/`、`home/`、`bin/node`（本机验证版本 24.18.0）、
+`chrome-linux64/`、`chromedriver-linux64/`。
 代码副本须为干净的目标提交，磁盘仍须是已验证的 `/dev/vda`。
 
 ```bash
@@ -56,6 +76,7 @@ systemd-run --unit=smartdocs-m1-acceptance --no-block \
   -p StandardError=inherit \
   -p IOAccounting=yes -p CPUAccounting=yes -p MemoryAccounting=yes \
   --setenv="HOME=$m1_run_root/home" \
+  --setenv="PATH=$m1_run_root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
   --setenv=SMARTDOCS_BUILD_JOBS=1 --setenv=PYTHONUNBUFFERED=1 \
   --setenv="SMARTDOCS_BROWSER_BIN=$m1_run_root/chrome-linux64/chrome" \
   --setenv="SMARTDOCS_WEBDRIVER_BIN=$m1_run_root/chromedriver-linux64/chromedriver" \

@@ -5,10 +5,12 @@ test design and the evidence still needed; it is not an acceptance result.
 
 Same-host execution is now required by the user. The
 [resource-capped procedure](../../operations/2026-10-17-m1-same-host-limited-run.md)
-has passed kernel-limit and sandboxed browser-startup probes, but full execution
-was rejected by automatic approval review pending explicit outage-risk acceptance.
-No M1 business, streaming, PDF screenshot or interruption result is claimed from
-these probes; the two blockers below remain open.
+has passed kernel-limit and sandboxed browser-startup probes. Following explicit
+risk acceptance, the first run built all targets but failed closed at supporting
+suites (inherited config-test environment and systemd Node 12). Both causes have
+focused fixes and checks; a passing complete run remains pending. No M1 browser
+business, streaming, PDF screenshot or interruption result is claimed from
+these probes or the failed run; the two blockers below remain open.
 
 The source requirements are [F-01 through F-04 and T-01 through T-09](../../../团队文档管理与智能整理平台_需求文档.md).
 The stage boundary is the same document's section 14: M1 covers project roles,

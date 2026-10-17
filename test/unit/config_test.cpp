@@ -10,9 +10,18 @@ void SetValidEnvironment(ScopedEnvironment& environment) {
     environment.Set("SMARTDOCS_MYSQL_USER", "smart_docs");
     environment.Set("SMARTDOCS_MYSQL_PASSWORD", "development-only");
     environment.Set("SMARTDOCS_STORAGE_ROOT", "/tmp/smart-docs-config-test");
-    environment.Unset("SMARTDOCS_PORT");
-    environment.Unset("SMARTDOCS_CHUNK_BYTES");
-    environment.Unset("SMARTDOCS_MYSQL_SOCKET");
+    // Defaults must not depend on the acceptance runner's resource settings.
+    // ScopedEnvironment restores these overrides for subsequent DB/HTTP tests.
+    for (const char* name : {
+             "SMARTDOCS_LISTEN_ADDRESS", "SMARTDOCS_PORT",
+             "SMARTDOCS_THREAD_COUNT", "SMARTDOCS_CONNECTION_TIMEOUT_MS",
+             "SMARTDOCS_MYSQL_PORT", "SMARTDOCS_MYSQL_SOCKET",
+             "SMARTDOCS_MYSQL_POOL_SIZE", "SMARTDOCS_MAX_FILE_BYTES",
+             "SMARTDOCS_CHUNK_BYTES", "SMARTDOCS_MAX_JSON_BYTES",
+             "SMARTDOCS_SESSION_SECONDS", "SMARTDOCS_PASSWORD_ITERATIONS",
+             "SMARTDOCS_SECURE_COOKIE", "SMARTDOCS_LOG_LEVEL"}) {
+        environment.Unset(name);
+    }
 }
 
 }  // namespace

@@ -67,6 +67,16 @@ for artifact in test/fixtures/m1/plain.txt test/fixtures/m1/sample.pdf; do
     }
 done
 
+if ! node --input-type=module -e '
+    import "node:test";
+    import assert from "node:assert/strict";
+    assert.equal(typeof File, "function");
+    await import(process.argv[1]);
+' "file://$repo_root/resources/js/sha256.js" >/dev/null 2>&1; then
+    printf 'unsupported_node_runtime: require node:test, global File and ES module loading (tested with Node 24)\n' >&2
+    exit 1
+fi
+
 python3 -B "$repo_root/test/e2e/m1_browser_test.py" --check-dependencies
 python3 -B "$repo_root/test/e2e/m1_harness_self_test.py"
 build_head=$(git -C "$repo_root" rev-parse HEAD)

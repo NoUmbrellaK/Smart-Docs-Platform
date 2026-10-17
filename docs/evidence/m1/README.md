@@ -28,6 +28,10 @@ acceptance host may explicitly set
 `SMARTDOCS_BROWSER_ALLOW_ROOT_NO_SANDBOX=1`; only that root opt-in adds
 `--no-sandbox`, and evidence records the reduced browser-process isolation.
 Same-origin, certificate, and web security checks are never disabled.
+The UI suite also needs Node with `node:test`, global `File`, and ES module
+loading (validated with Node 24.18.0). A capability probe rejects an unsupported
+Node before any build or MySQL startup. Non-interactive systemd services do not
+inherit an interactive shell's nvm selection; set their PATH explicitly.
 Creating the WebDriver session allows up to 120 seconds for cold browser loading
 under disk I/O limits. Other WebDriver requests retain their 30-second timeout;
 timeouts propagate without automatically replaying browser actions.
@@ -170,8 +174,10 @@ tests passed (23/23). This is not business-scenario or PDF screenshot evidence.
 
 The [same-host limited-run procedure](../../operations/2026-10-17-m1-same-host-limited-run.md)
 replaces the earlier blanket prohibition with an isolated, resource-capped
-execution proposal. Automatic approval review rejected launching the full run
-because of the three previous host failures; explicit acceptance of the remaining
-outage risk is still needed. No full-run result was generated. Do not invoke the
-uncapped runner directly on the affected host. Browser and streaming runtime
-proof remain part of the full-artifact blocker.
+execution procedure. After explicit risk acceptance, the first bounded run built
+all targets and reached supporting suites, then failed closed on a configuration
+test's inherited environment and systemd's old Node runtime. Both causes were
+corrected and checked independently; see the run record for exact counts.
+No passing full-run result was generated. Do not invoke the uncapped runner
+directly on the affected host. Browser and streaming runtime proof remain part
+of the full-artifact blocker.

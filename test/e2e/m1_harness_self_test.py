@@ -885,6 +885,26 @@ class HarnessEvidenceTest(unittest.TestCase):
             self.assertNotEqual(completed.returncode, 0)
             self.assertIn("unsafe_build_parallelism", completed.stderr)
 
+    def test_runner_rejects_unsupported_node_before_build_or_services(self):
+        with tempfile.TemporaryDirectory(prefix="m1-node-preflight.") as root:
+            repo = pathlib.Path(root)
+            (repo / "test/e2e").mkdir(parents=True)
+            (repo / "test/fixtures/m1").mkdir(parents=True)
+            fake_bin = repo / "fake-bin"
+            fake_bin.mkdir()
+            runner = repo / "test/e2e/run_m1.sh"
+            shutil.copy2(pathlib.Path(__file__).with_name("run_m1.sh"), runner)
+            for name in ("plain.txt", "sample.pdf"):
+                (repo / "test/fixtures/m1" / name).touch()
+            for name in ("node", "mysqld", "mysql", "mysqladmin", "python3", "git", "make", "cat"):
+                self._write_executable(fake_bin / name, "#!/bin/sh\nexit 98\n")
+            environment = {**os.environ, "PATH": str(fake_bin) + os.pathsep + os.defpath,
+                           "SMARTDOCS_BUILD_JOBS": "1"}
+            completed = subprocess.run([str(runner)], cwd=repo, env=environment,
+                                       text=True, capture_output=True, check=False)
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertIn("unsupported_node_runtime", completed.stderr)
+
     @staticmethod
     def _write_executable(path, content):
         path.write_text(content, encoding="utf-8")
