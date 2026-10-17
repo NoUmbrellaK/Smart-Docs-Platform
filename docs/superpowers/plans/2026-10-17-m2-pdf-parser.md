@@ -73,7 +73,7 @@ resource.setrlimit(resource.RLIMIT_FSIZE, (16 * 1024 * 1024,) * 2)
 
 在当前服务器串行运行文本 + PDF 套件；测试进程另限 512 MiB 虚拟内存、90 秒墙钟。记录真实通过数量和资源限制探针，不声称生产沙箱、OCR 或后台接入已完成。执行 `git diff --check`，独立只读审阅此增量。
 
-- [ ] **Step 5: 文档、提交与正常推送**
+- [x] **Step 5: 文档、提交与正常推送**
 
 更新 README 实际能力、依赖安装、测试命令和未完成事项；只推 `codex/m2-document-processing`，不合并 main。整个 M2 仍待持久任务、索引、检索及阶段验收。
 
@@ -84,6 +84,7 @@ resource.setrlimit(resource.RLIMIT_FSIZE, (16 * 1024 * 1024,) * 2)
 
 ## 实测记录（2026-10-17）
 
+- 实现与 README 提交 `ad9ab97` 已正常推送到 `origin/codex/m2-document-processing`，未合并 main；提交前最后一轮仍为 28/28，3.564 秒。
 - 独立 venv：`/tmp/smartdocs-m2-pdf.FLxk0l/venv`。本机缺 ensurepip，采用 `venv --without-pip` 后用系统 pip 的 `--target` 只安装到该 venv，未修改系统包；官方 PyPI 下载两个已核验哈希的 wheel，约 450 kB。
 - RED：11 个 PDF 入口缺失断言失败。首轮 24/24 通过后补充错误边界，异常 Unicode 和过深 JSON 两项复现失败并修正；缺依赖场景通过，不跳过。
 - 审阅发现 pypdf 会吞掉嵌套 XObject 提取异常，以及初版解压上限只覆盖页主内容。真实缺失/循环 Form 和压缩嵌套 Form 回归复现两项失败；按根因增加不保存消息的警告标记和嵌套流总量检查。两项定向复查通过。
