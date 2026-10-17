@@ -1,0 +1,29 @@
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+Oct 18 02:15:36 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/resident-heap/heap_probe.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:15:36 aliyun-lou python[684028]: {"stage": "before_constructor", "elapsed_s": 0.001, "Rss_kib": 21620, "Pss_kib": 15970, "Shared_Clean_kib": 7028, "Private_Dirty_kib": 11600, "Anonymous_kib": 11600, "peak_rss_kib": 21388, "allocator_bytes": {"arena": 3313664, "hblkhd": 995328, "uordblks": 2984288, "fordblks": 329376, "keepcost": 69504}}
+Oct 18 02:16:37 aliyun-lou python[684028]: {"stage": "after_constructor", "elapsed_s": 60.733, "Rss_kib": 622564, "Pss_kib": 615705, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 586576, "Anonymous_kib": 586576, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 378380288, "hblkhd": 210329600, "uordblks": 347819600, "fordblks": 30560688, "keepcost": 131232}}
+Oct 18 02:16:37 aliyun-lou python[684028]: {"stage": "after_gc", "elapsed_s": 60.75, "Rss_kib": 622564, "Pss_kib": 615705, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 586576, "Anonymous_kib": 586576, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 378380288, "hblkhd": 210329600, "uordblks": 347820288, "fordblks": 30560000, "keepcost": 131232}, "collected": 0}
+Oct 18 02:16:37 aliyun-lou python[684028]: {"stage": "after_trim", "elapsed_s": 60.763, "Rss_kib": 622500, "Pss_kib": 615641, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 586512, "Anonymous_kib": 586512, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 378249216, "hblkhd": 210329600, "uordblks": 347820976, "fordblks": 30428240, "keepcost": 160}, "trim_return": 1}
+Oct 18 02:16:38 aliyun-lou python[684028]: {"stage": "request_1", "elapsed_s": 61.345, "Rss_kib": 630720, "Pss_kib": 623861, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 593640, "Anonymous_kib": 593640, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 384761856, "hblkhd": 210329600, "uordblks": 348006544, "fordblks": 36755312, "keepcost": 1073168}, "request_s": 0.57, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:16:38 aliyun-lou python[684028]: {"stage": "request_2", "elapsed_s": 61.92, "Rss_kib": 633544, "Pss_kib": 626685, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 596464, "Anonymous_kib": 596464, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 387428352, "hblkhd": 210329600, "uordblks": 348010800, "fordblks": 39417552, "keepcost": 2327888}, "request_s": 0.562, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:16:39 aliyun-lou python[684028]: {"stage": "request_3", "elapsed_s": 62.548, "Rss_kib": 633544, "Pss_kib": 626685, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 596464, "Anonymous_kib": 596464, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 387428352, "hblkhd": 210329600, "uordblks": 348013440, "fordblks": 39414912, "keepcost": 3112848}, "request_s": 0.615, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:16:39 aliyun-lou python[684028]: {"stage": "request_4", "elapsed_s": 63.129, "Rss_kib": 633544, "Pss_kib": 626685, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 596464, "Anonymous_kib": 596464, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 387428352, "hblkhd": 210329600, "uordblks": 348013728, "fordblks": 39414624, "keepcost": 4366352}, "request_s": 0.568, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:16:40 aliyun-lou python[684028]: {"stage": "request_5", "elapsed_s": 63.701, "Rss_kib": 633544, "Pss_kib": 626685, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 596464, "Anonymous_kib": 596464, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 387428352, "hblkhd": 210329600, "uordblks": 348014944, "fordblks": 39413408, "keepcost": 4993168}, "request_s": 0.559, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:16:40 aliyun-lou python[684028]: {"stage": "after_requests_trim", "elapsed_s": 63.714, "Rss_kib": 624880, "Pss_kib": 618021, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 587800, "Anonymous_kib": 587800, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 382435328, "hblkhd": 210329600, "uordblks": 348014944, "fordblks": 34420384, "keepcost": 144}, "trim_return": 1}
+Oct 18 02:16:40 aliyun-lou python[684028]: {"stage": "without_tokenizer_trim", "elapsed_s": 63.904, "Rss_kib": 339292, "Pss_kib": 332433, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 302212, "Anonymous_kib": 302212, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 382435328, "hblkhd": 193024000, "uordblks": 100717200, "fordblks": 281718128, "keepcost": 144}, "trim_return": 1}
+Oct 18 02:16:40 aliyun-lou python[684028]: {"stage": "without_model_trim", "elapsed_s": 63.93, "Rss_kib": 66552, "Pss_kib": 59693, "Shared_Clean_kib": 8680, "Private_Dirty_kib": 29472, "Anonymous_kib": 29472, "peak_rss_kib": 639028, "allocator_bytes": {"arena": 382435328, "hblkhd": 995328, "uordblks": 12859888, "fordblks": 369575440, "keepcost": 144}, "trim_return": 1}
+Oct 18 02:16:40 aliyun-lou python[684028]: {"passed": true, "requests": 5, "remote_calls": 0}
+Oct 18 02:16:40 aliyun-lou systemd[1]: smartdocs-resident-heap-probe.service: Deactivated successfully.
+Oct 18 02:16:40 aliyun-lou systemd[1]: smartdocs-resident-heap-probe.service: Consumed 5.338s CPU time.
+low 0
+high 68423
+max 0
+oom 0
+oom_kill 0
+MemTotal:        3579040 kB
+MemFree:          756860 kB
+MemAvailable:    1915504 kB
+Buffers:           49072 kB
