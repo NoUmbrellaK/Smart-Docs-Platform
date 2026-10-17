@@ -10,9 +10,9 @@
 
 | M2 门槛 | 已有证据及边界 | 关闭前待办 |
 | --- | --- | --- |
-| PDF/TXT/Markdown 真实解析、明确失败 | [worker 旧验收](../../superpowers/plans/2026-10-17-m2-local-worker.md#2026-10-17-验证记录)报告 7/7 真实 HTTP，但原始日志在临时目录；[当前 Python 回归](resident-service/python-regression.txt)覆盖解析器边界 | 在当前代码重跑真实 worker 并将原始输出永久归档 |
-| 物理页/文本行、固定版本出处 | [处理页](processing-ui/README.md)、[混合后端](hybrid-search/README.md)有分层记录；真实三格式 worker 测试目前明确读取 PDF 第 1 页，未逐页断言两页出处 | 补强两页 PDF 与 TXT/MD 行范围和 version_id 的真实来源证据；验证 PDF 页定位链接 |
-| 持久任务、人工取消/重试、独立状态 | [处理 UI](processing-ui/README.md)真实失败→重试→取消→刷新→完成及 reader 403；[worker](../../superpowers/plans/2026-10-17-m2-local-worker.md#2026-10-17-验证记录)记录 C++ 重启中断/人工重试 | 将当前 worker 复验归档；不声称任意内部步骤自动恢复 |
+| PDF/TXT/Markdown 真实解析、明确失败 | [当前三格式 worker](source-locations/README.md)7/7，完整日志永久归档；覆盖明确解析失败及原件仍可管理/下载 | 本项当前代码复验完成；不扩大到 OCR 或未支持格式 |
+| 物理页/文本行、固定版本出处 | [三格式来源](source-locations/README.md)逐字段验证 PDF 两页、TXT/MD 行范围、SHA/版本及历史引用；真实页面最终 1/1（含初版失败为 1/2），固定版本链接、页锚点及受保护原始字节通过 | R-01 的 UI“从 1 开始的物理页码，与印刷页码可能不同”说明仍待补；本轮未重跑原生 PDF 渲染 |
+| 持久任务、人工取消/重试、独立状态 | [处理 UI](processing-ui/README.md)真实失败→重试→取消→刷新→完成及 reader 403；[当前 worker](source-locations/README.md)重新验证 C++ 重启中断/人工重试及锁恢复 | 本地解析 worker 证据已归档；常驻编码中断联合场景见下方，不声称任意内部步骤自动恢复 |
 | 真实混合检索及明确降级 | [优化后组合](transient-browser/README.md)计时诊断轮 1/1，真实向量跨语言命中与明确关键词降级均通过；同轮首次 0/1 为浏览器控制超时，两次合计 1/2 | 语义闭环已有实际通过；保留启动/IO波动风险，不声明稳定性或性能 SLA |
 | 新版/旧 attempt 防陈旧发布 | [向量发布](vector-publication/README.md)、[混合后端](hybrid-search/README.md)、[关键词版本](keyword-version-browser/README.md)覆盖；[新组合](transient-browser/README.md)验证新版未解析时旧正文排除、关键词只返回新版、旧出处保持旧版 | 已有分层及本轮页面证据；其余门槛仍需补齐，不放宽结果身份检查 |
 | 越权、删除、外发撤销及批准不继承 | [处理 UI](processing-ui/README.md)与其完整 C++ 输出、[向量 worker](vector-worker/README.md)、[混合后端](hybrid-search/README.md)分层覆盖；C++ 仍为唯一权威 | 不要求把全部分支放到一个浏览器场景；新常驻入口不得绕过编码前后 C++ 检查 |
@@ -32,7 +32,9 @@
 完整 Python **102/102**、真实核心 9 项、私有服务 7 项检查通过；新增分词孙进程
 挂起的总截止期/回收验证，请求间模型 RSS 约 373–376 MiB。
 [后续组合](transient-browser/README.md)原断言在计时诊断轮 1/1 通过，第一次
-0/1 同样保留；不是仅以单模型结果代替。下一步补三格式/双页出处及真实服务
+0/1 同样保留；不是仅以单模型结果代替。[三格式出处补验](source-locations/README.md)
+已补齐当前 worker 7/7 和页面最终 1/1；页面初版因 ngram 精确匹配假设错误 0/1，
+修正目标文件/版本范围后通过，失败记录保留。下一步补物理页码说明及真实服务
 中断后的持久失败与人工重试，不能据此关闭 M2 全阶段或宣称消除资源波动。
 
 M2 关闭前按表补齐并更新最终被测提交、命令、原始日志、源哈希与清理终态。

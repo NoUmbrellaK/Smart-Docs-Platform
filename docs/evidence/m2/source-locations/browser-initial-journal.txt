@@ -1,0 +1,27 @@
+2026-10-18T02:48:00+0800 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+2026-10-18T02:48:00+0800 aliyun-lou bash[692112]: 2026-10-17T18:48:00.777356Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 692112
+2026-10-18T02:48:00+0800 aliyun-lou bash[692112]: 2026-10-17T18:48:00.782015Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T02:48:16+0800 aliyun-lou bash[692112]: 2026-10-17T18:48:16.014286Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T02:48:25+0800 aliyun-lou bash[692112]: 2026-10-17T18:48:25.313337Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T02:49:03+0800 aliyun-lou bash[692731]: schema_version=5
+2026-10-18T02:49:23+0800 aliyun-lou bash[692872]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T02:50:13+0800 aliyun-lou bash[692952]: test_three_formats_source_locations_and_links (__main__.SourceBrowser) ... {"browser_source": "hello.txt", "page": 0, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: FAIL
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: ======================================================================
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: FAIL: test_three_formats_source_locations_and_links (__main__.SourceBrowser)
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: ----------------------------------------------------------------------
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: Traceback (most recent call last):
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_sources_browser_test.py", line 48, in test_three_formats_source_locations_and_links
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]:     self.assertEqual(len(cards), len(segments))
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: AssertionError: 2 != 1
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: ----------------------------------------------------------------------
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: Ran 1 test in 50.367s
+2026-10-18T02:50:14+0800 aliyun-lou bash[692952]: FAILED (failures=1)
+2026-10-18T02:50:15+0800 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-18T02:50:15+0800 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Failed with result 'exit-code'.
+2026-10-18T02:50:15+0800 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Consumed 9.864s CPU time.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed
+SubState=failed

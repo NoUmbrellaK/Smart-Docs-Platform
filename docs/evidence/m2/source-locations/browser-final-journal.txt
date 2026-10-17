@@ -1,0 +1,20 @@
+2026-10-18T02:50:42+0800 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+2026-10-18T02:50:43+0800 aliyun-lou bash[693300]: 2026-10-17T18:50:43.117543Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 693300
+2026-10-18T02:50:43+0800 aliyun-lou bash[693300]: 2026-10-17T18:50:43.122663Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T02:50:58+0800 aliyun-lou bash[693300]: 2026-10-17T18:50:58.455746Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T02:51:06+0800 aliyun-lou bash[693300]: 2026-10-17T18:51:06.056976Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T02:51:43+0800 aliyun-lou bash[693675]: schema_version=5
+2026-10-18T02:52:03+0800 aliyun-lou bash[693726]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T02:52:10+0800 aliyun-lou bash[693786]: test_three_formats_source_locations_and_links (__main__.SourceBrowser) ... {"search": "hello.txt", "total_cards": 1, "target_cards": 1}
+2026-10-18T02:52:10+0800 aliyun-lou bash[693786]: {"browser_source": "hello.txt", "page": 0, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+2026-10-18T02:52:10+0800 aliyun-lou bash[693786]: {"search": "guide.md", "total_cards": 2, "target_cards": 1}
+2026-10-18T02:52:11+0800 aliyun-lou bash[693786]: {"browser_source": "guide.md", "page": 0, "lines": [1, 3], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+2026-10-18T02:52:11+0800 aliyun-lou bash[693786]: {"search": "pages.pdf", "total_cards": 2, "target_cards": 2}
+2026-10-18T02:52:11+0800 aliyun-lou bash[693786]: {"browser_source": "pages.pdf", "page": 1, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+2026-10-18T02:52:11+0800 aliyun-lou bash[693786]: {"browser_source": "pages.pdf", "page": 2, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+2026-10-18T02:52:12+0800 aliyun-lou bash[693786]: ok
+2026-10-18T02:52:12+0800 aliyun-lou bash[693786]: ----------------------------------------------------------------------
+2026-10-18T02:52:12+0800 aliyun-lou bash[693786]: Ran 1 test in 8.641s
+2026-10-18T02:52:12+0800 aliyun-lou bash[693786]: OK
+2026-10-18T02:52:14+0800 aliyun-lou systemd[1]: smartdocs-m2-source-browser-final.service: Deactivated successfully.
+2026-10-18T02:52:14+0800 aliyun-lou systemd[1]: smartdocs-m2-source-browser-final.service: Consumed 9.320s CPU time.

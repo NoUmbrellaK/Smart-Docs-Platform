@@ -19,6 +19,18 @@ from smartdocs import worker
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def source_examples():
+    # Hand-checked expectations, not computed with the parser under test.
+    return [
+        ("hello.txt", "\ufeffHello 文档\r\nSecond 🙂 line\r\n".encode(), "text/plain", "utf8-lines-v1",
+         [("Hello 文档\nSecond 🙂 line\n", 0, 2)], "文档"),
+        ("guide.md", b"# Setup\r\n\r\nOnly local.\r\n", "application/octet-stream", "utf8-lines-v1",
+         [("# Setup\n\nOnly local.\n", 0, 3)], "Setup"),
+        ("pages.pdf", (ROOT/"test/fixtures/m1/sample.pdf").read_bytes(), "application/pdf",
+         "pypdf-6.21.0-lines-v1", [("PAGE ONE", 1, 1), ("PAGE TWO", 2, 1)], "PAGE"),
+    ]
+
+
 class WorkerE2E(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -82,10 +94,7 @@ class WorkerE2E(unittest.TestCase):
         return result
 
     def test_three_formats_publish_real_chunks_and_index(self):
-        examples = [("hello.txt", "Hello 文档\n".encode(), "text/plain", "utf8-lines-v1", "Hello 文档\n", 0),
-                    ("guide.md", b"# Setup\nOnly local.\n", "application/octet-stream", "utf8-lines-v1", "# Setup\nOnly local.\n", 0),
-                    ("pages.pdf", (ROOT/"test/fixtures/m1/sample.pdf").read_bytes(), "application/pdf", "pypdf-6.21.0-lines-v1", "PAGE ONE", 1)]
-        for name, content, mime, revision, text, page in examples:
+        for name, content, mime, revision, segments, query in source_examples():
             with self.subTest(format=name):
                 job = self.upload(name, content, mime)
                 self.assertIn("worker: completed", self.cli().stdout)
@@ -93,20 +102,28 @@ class WorkerE2E(unittest.TestCase):
                 status = self.document(job)
                 self.assertEqual((status["parse_state"], status["keyword_state"], status["vector_state"]),
                                  ("completed", "completed", "not_applicable"))
-                identity = [revision, job["file_id"], job["version_id"], hashlib.sha256(content).hexdigest()]
-                if page: identity.append(page)
-                identity.extend([0, len(text)])
-                chunk = hashlib.sha256(json.dumps(identity, separators=(",", ":")).encode()).hexdigest()
-                source = data(self.user.request("GET", self.version_path(job) + "/chunks/" + chunk))
-                self.assertEqual(source["chunk"]["text"], text)
-                self.assertEqual(source["version_id"], job["version_id"])
-                if page: self.assertEqual(source["chunk"]["page"], 1)
-                query = "文档" if name == "hello.txt" else "Setup" if name == "guide.md" else "PAGE"
+                self.assertEqual(status["chunk_count"], len(segments))
+                self.assertEqual(status["page_count"], 2 if name == "pages.pdf" else 0)
+                self.assertEqual(status["pages_without_text"], [])
+                saved_sources = {}
+                for text, page, last_line in segments:
+                    identity = [revision, job["file_id"], job["version_id"], hashlib.sha256(content).hexdigest()]
+                    if page: identity.append(page)
+                    identity.extend([0, len(text)])
+                    chunk = hashlib.sha256(json.dumps(identity, separators=(",", ":")).encode()).hexdigest()
+                    source = data(self.user.request("GET", self.version_path(job) + "/chunks/" + chunk))
+                    expected = {"chunk_id": chunk, "file_id": job["file_id"], "version_id": job["version_id"],
+                        "source_sha256": hashlib.sha256(content).hexdigest(), "parser_revision": revision,
+                        "text": text, "char_start": 0, "char_end": len(text), "line_start": 1, "line_end": last_line}
+                    if page: expected["page"] = page
+                    self.assertEqual(source["chunk"], expected)
+                    self.assertEqual((source["file_id"], source["version_id"], source["is_current"]),
+                                     (job["file_id"], job["version_id"], True))
+                    saved_sources[chunk] = expected
                 results = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
                                                 {"mode": "keyword", "query": query}))
                 hits = [hit for hit in results["items"] if hit["file_id"] == job["file_id"]]
-                self.assertTrue(hits)
-                self.assertTrue(any(hit["chunk"]["chunk_id"] == chunk for hit in hits))
+                self.assertEqual({hit["chunk"]["chunk_id"]: hit["chunk"] for hit in hits}, saved_sources)
                 self.assertEqual(results["retrieval"], "keyword_only")
                 if name == "hello.txt":
                     sql = "SELECT COUNT(*) FROM document_chunks WHERE version_id='" + job["version_id"] + "' AND MATCH(body) AGAINST('文档' IN BOOLEAN MODE)"
@@ -114,6 +131,22 @@ class WorkerE2E(unittest.TestCase):
                                             "--user=root", "--batch", "--skip-column-names", "smart_docs_test", "--execute", sql],
                                            capture_output=True, text=True, check=True)
                     self.assertEqual(query.stdout.strip(), "1")
+                # Same bytes, new immutable version: old citations must not silently redirect.
+                task = create_upload(self.user, self.project["id"], self.project["root_directory_id"],
+                    name, content, mime, job["file_id"], job["version_id"])
+                upload_parts(self.user, self.project["id"], task, content)
+                latest = data(complete(self.user, self.project["id"], task["task_id"]))
+                self.jobs.append(latest)
+                self.assertIn("worker: completed", self.cli().stdout)
+                self.assertNotEqual(latest["version_id"], job["version_id"])
+                for chunk, expected in saved_sources.items():
+                    historical = data(self.user.request("GET", self.version_path(job)+"/chunks/"+chunk))
+                    self.assertFalse(historical["is_current"])
+                    self.assertEqual(historical["chunk"], expected)
+                    self.assertEqual(self.user.request("GET", self.version_path(latest)+"/chunks/"+chunk).status, 404)
+                print(json.dumps({"format": name, "source_check": "passed", "pages": [s[1] for s in segments],
+                    "line_ranges": [[1, s[2]] for s in segments], "chunks": len(saved_sources),
+                    "old_version_preserved": True, "cross_version_chunk_refused": True}), flush=True)
 
     def test_large_result_uses_worker_limit_without_raising_user_limit(self):
         content = ("甲乙" * 300000).encode()

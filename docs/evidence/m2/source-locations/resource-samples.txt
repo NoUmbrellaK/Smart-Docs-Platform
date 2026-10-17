@@ -1,0 +1,191 @@
+2026-10-18T02:48:21+08:00
+MainPID=692106
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:48:00 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.777356Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 692112
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.782015Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:48:16 aliyun-lou bash[692112]: 2026-10-17T18:48:16.014286Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+602177536
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1448         524           2        1522        1785
+Swap:              0           0           0
+
+2026-10-18T02:48:38+08:00
+MainPID=692106
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:48:00 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.777356Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 692112
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.782015Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:48:16 aliyun-lou bash[692112]: 2026-10-17T18:48:16.014286Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:48:25 aliyun-lou bash[692112]: 2026-10-17T18:48:25.313337Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+669626368
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1508         358           2        1628        1725
+Swap:              0           0           0
+
+2026-10-18T02:49:05+08:00
+MainPID=692106
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:48:00 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.777356Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 692112
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.782015Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:48:16 aliyun-lou bash[692112]: 2026-10-17T18:48:16.014286Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:48:25 aliyun-lou bash[692112]: 2026-10-17T18:48:25.313337Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:49:03 aliyun-lou bash[692731]: schema_version=5
+664006656
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1508         359           2        1626        1724
+Swap:              0           0           0
+
+2026-10-18T02:49:41+08:00
+MainPID=692106
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:48:00 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.777356Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 692112
+Oct 18 02:48:00 aliyun-lou bash[692112]: 2026-10-17T18:48:00.782015Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:48:16 aliyun-lou bash[692112]: 2026-10-17T18:48:16.014286Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:48:25 aliyun-lou bash[692112]: 2026-10-17T18:48:25.313337Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:49:03 aliyun-lou bash[692731]: schema_version=5
+Oct 18 02:49:23 aliyun-lou bash[692872]: PASS m2_migration_preserves_103_files_without_fabricating_results
+840290304
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1582         196           2        1716        1651
+Swap:              0           0           0
+
+2026-10-18T02:50:19+08:00
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed
+SubState=failed
+Oct 18 02:48:25 aliyun-lou bash[692112]: 2026-10-17T18:48:25.313337Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:49:03 aliyun-lou bash[692731]: schema_version=5
+Oct 18 02:49:23 aliyun-lou bash[692872]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:50:13 aliyun-lou bash[692952]: test_three_formats_source_locations_and_links (__main__.SourceBrowser) ... {"browser_source": "hello.txt", "page": 0, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+Oct 18 02:50:14 aliyun-lou bash[692952]: FAIL
+Oct 18 02:50:14 aliyun-lou bash[692952]: ======================================================================
+Oct 18 02:50:14 aliyun-lou bash[692952]: FAIL: test_three_formats_source_locations_and_links (__main__.SourceBrowser)
+Oct 18 02:50:14 aliyun-lou bash[692952]: ----------------------------------------------------------------------
+Oct 18 02:50:14 aliyun-lou bash[692952]: Traceback (most recent call last):
+Oct 18 02:50:14 aliyun-lou bash[692952]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_sources_browser_test.py", line 48, in test_three_formats_source_locations_and_links
+Oct 18 02:50:14 aliyun-lou bash[692952]:     self.assertEqual(len(cards), len(segments))
+Oct 18 02:50:14 aliyun-lou bash[692952]: AssertionError: 2 != 1
+Oct 18 02:50:14 aliyun-lou bash[692952]: ----------------------------------------------------------------------
+Oct 18 02:50:14 aliyun-lou bash[692952]: Ran 1 test in 50.367s
+Oct 18 02:50:14 aliyun-lou bash[692952]: FAILED (failures=1)
+Oct 18 02:50:15 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 02:50:15 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Failed with result 'exit-code'.
+Oct 18 02:50:15 aliyun-lou systemd[1]: smartdocs-m2-source-browser.service: Consumed 9.864s CPU time.
+601100288
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1389         508           2        1597        1844
+Swap:              0           0           0
+
+2026-10-18T02:51:01+08:00
+MainPID=693294
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:50:42 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:50:43 aliyun-lou bash[693300]: 2026-10-17T18:50:43.117543Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 693300
+Oct 18 02:50:43 aliyun-lou bash[693300]: 2026-10-17T18:50:43.122663Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:50:58 aliyun-lou bash[693300]: 2026-10-17T18:50:58.455746Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+784527360
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1458         292           2        1743        1775
+Swap:              0           0           0
+
+2026-10-18T02:51:46+08:00
+MainPID=693294
+Result=success
+ExecMainStatus=0
+ActiveState=active
+SubState=running
+Oct 18 02:50:42 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+Oct 18 02:50:43 aliyun-lou bash[693300]: 2026-10-17T18:50:43.117543Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 693300
+Oct 18 02:50:43 aliyun-lou bash[693300]: 2026-10-17T18:50:43.122663Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:50:58 aliyun-lou bash[693300]: 2026-10-17T18:50:58.455746Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:51:06 aliyun-lou bash[693300]: 2026-10-17T18:51:06.056976Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:51:43 aliyun-lou bash[693675]: schema_version=5
+859885568
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1494         180           2        1820        1739
+Swap:              0           0           0
+
+2026-10-18T02:52:23+08:00
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+Oct 18 02:52:03 aliyun-lou bash[693726]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:52:10 aliyun-lou bash[693786]: test_three_formats_source_locations_and_links (__main__.SourceBrowser) ... {"search": "hello.txt", "total_cards": 1, "target_cards": 1}
+Oct 18 02:52:10 aliyun-lou bash[693786]: {"browser_source": "hello.txt", "page": 0, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+Oct 18 02:52:10 aliyun-lou bash[693786]: {"search": "guide.md", "total_cards": 2, "target_cards": 1}
+Oct 18 02:52:11 aliyun-lou bash[693786]: {"browser_source": "guide.md", "page": 0, "lines": [1, 3], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+Oct 18 02:52:11 aliyun-lou bash[693786]: {"search": "pages.pdf", "total_cards": 2, "target_cards": 2}
+Oct 18 02:52:11 aliyun-lou bash[693786]: {"browser_source": "pages.pdf", "page": 1, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+Oct 18 02:52:11 aliyun-lou bash[693786]: {"browser_source": "pages.pdf", "page": 2, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+Oct 18 02:52:12 aliyun-lou bash[693786]: ok
+Oct 18 02:52:12 aliyun-lou bash[693786]: ----------------------------------------------------------------------
+Oct 18 02:52:12 aliyun-lou bash[693786]: Ran 1 test in 8.641s
+Oct 18 02:52:12 aliyun-lou bash[693786]: OK
+Oct 18 02:52:14 aliyun-lou systemd[1]: smartdocs-m2-source-browser-final.service: Deactivated successfully.
+Oct 18 02:52:14 aliyun-lou systemd[1]: smartdocs-m2-source-browser-final.service: Consumed 9.320s CPU time.
+571510784
+low 0
+high 77682
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1397         539           2        1557        1835
+Swap:              0           0           0
