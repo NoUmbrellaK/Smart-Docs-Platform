@@ -1,6 +1,7 @@
 #include "app/application.h"
 #include "http/httpconn.h"
 #include "server/webserver.h"
+#include "server/epoller.h"
 #include "../test_support.h"
 
 #include <arpa/inet.h>
@@ -10,11 +11,21 @@
 #include <memory>
 #include <string>
 #include <sys/socket.h>
+#include <sys/epoll.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
 
 namespace {
+
+struct SocketTestScope {
+    int peer;
+    bool original_et;
+    ~SocketTestScope() {
+        close(peer);
+        HttpConn::isET = original_et;
+    }
+};
 
 std::string Exchange(const std::shared_ptr<Application>& application,
                      const std::string& request) {
@@ -129,6 +140,61 @@ TEST_CASE(http_connection_reports_not_ready_before_database_bootstrap) {
         "GET /api/v1/health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
     CHECK(response.find("HTTP/1.1 503 Service Unavailable\r\n") == 0);
     CHECK(response.find("\"status\":\"not_ready\"") != std::string::npos);
+}
+
+TEST_CASE(http_connection_bounds_et_reads_and_rearms_queued_bytes) {
+    HttpConn connection(std::make_shared<Application>());
+    int sockets[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0);
+    SocketTestScope scope{sockets[1], HttpConn::isET};
+    sockaddr_in address{};
+    connection.init(sockets[0], address);
+    CHECK(WebServer::SetFdNonblock(sockets[0]) == 0);
+    HttpConn::isET = true;
+    Epoller events;
+    const uint32_t flags = EPOLLIN | EPOLLET | EPOLLONESHOT;
+    CHECK(events.AddFd(sockets[0], flags));
+    const std::string queued(128 * 1024, 'x');
+    CHECK(send(sockets[1], queued.data(), queued.size(), MSG_NOSIGNAL) ==
+          static_cast<ssize_t>(queued.size()));
+    CHECK(events.Wait(1000) == 1);
+    int error = 0;
+    const ssize_t first = connection.read(&error);
+    CHECK(events.ModFd(sockets[0], flags));
+    const int next_event = events.Wait(1000);
+    const ssize_t second = next_event == 1 ? connection.read(&error) : -1;
+    connection.Close();
+    CHECK(first > 0 && first <= 64 * 1024);
+    CHECK(next_event == 1);
+    CHECK(second > 0 && second <= 64 * 1024);
+    CHECK(first + second == static_cast<ssize_t>(queued.size()));
+}
+
+TEST_CASE(http_connection_rejects_pipeline_still_queued_in_socket) {
+    HttpConn connection(std::make_shared<Application>());
+    int sockets[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0);
+    SocketTestScope scope{sockets[1], HttpConn::isET};
+    sockaddr_in address{};
+    connection.init(sockets[0], address);
+    CHECK(WebServer::SetFdNonblock(sockets[0]) == 0);
+    const std::string request = "GET /api/v1/health/live HTTP/1.1\r\nHost: localhost\r\n\r\n";
+    CHECK(write(sockets[1], request.data(), request.size()) ==
+          static_cast<ssize_t>(request.size()));
+    int error = 0;
+    CHECK(connection.read(&error) == static_cast<ssize_t>(request.size()));
+    // First request ends exactly at the current read boundary. The next
+    // request is already queued before processing/response publication.
+    CHECK(write(sockets[1], request.data(), request.size()) ==
+          static_cast<ssize_t>(request.size()));
+    CHECK(connection.process());
+    while (connection.ToWriteBytes() != 0) CHECK(connection.write(&error) >= 0);
+    char bytes[4096];
+    const ssize_t size = read(sockets[1], bytes, sizeof(bytes));
+    const std::string response(bytes, size > 0 ? static_cast<size_t>(size) : 0);
+    connection.Close();
+    CHECK(response.find("HTTP/1.1 400 Bad Request\r\n") == 0);
+    CHECK(response.find("pipelining_not_supported") != std::string::npos);
 }
 
 TEST_CASE(http_connection_streams_only_the_allowlisted_static_shell) {

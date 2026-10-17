@@ -16,6 +16,7 @@
 #include <limits>
 #include <stdexcept>
 #include <sys/sendfile.h>
+#include <sys/socket.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <utility>
@@ -85,30 +86,19 @@ ssize_t HttpConn::read(int* saved_errno) {
         return -1;
     }
     *saved_errno = 0;
-    ssize_t total = 0;
+    // Let process() consume each bounded window before reading more. The
+    // server's EPOLLONESHOT MOD rechecks bytes still queued in the socket.
+    char bytes[64 * 1024];
+    ssize_t size;
     do {
-        int read_errno = 0;
-        const ssize_t size = read_buffer_.ReadFd(fd_, &read_errno);
-        if (size > 0) {
-            total += size;
-            if (!isET) {
-                break;
-            }
-            continue;
-        }
-        if (size == 0) {
-            return total == 0 ? 0 : total;
-        }
-        *saved_errno = read_errno;
-        if (read_errno == EINTR) {
-            continue;
-        }
-        if ((read_errno == EAGAIN || read_errno == EWOULDBLOCK) && total > 0) {
-            return total;
-        }
-        return total > 0 ? total : -1;
-    } while (isET);
-    return total;
+        size = recv(fd_, bytes, sizeof(bytes), MSG_DONTWAIT);
+    } while (size < 0 && errno == EINTR);
+    if (size > 0) {
+        read_buffer_.Append(bytes, static_cast<size_t>(size));
+    } else if (size < 0) {
+        *saved_errno = errno;
+    }
+    return size;
 }
 
 void HttpConn::SetResponse(HttpResponse response, bool keep_alive) {
@@ -163,6 +153,20 @@ bool HttpConn::process() {
             }
         }
 
+        // A second request may be queued just beyond the bounded read window.
+        // Reject it before Finish() can publish the first request's result.
+        char extra;
+        ssize_t queued;
+        do {
+            queued = recv(fd_, &extra, 1, MSG_PEEK | MSG_DONTWAIT);
+        } while (queued < 0 && errno == EINTR);
+        if (queued > 0) {
+            throw AppError(400, "pipelining_not_supported",
+                           "pipelined requests are not supported");
+        }
+        if (queued < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+            throw std::runtime_error("socket boundary check failed");
+        }
         SetResponse(body_handler_->Finish(), request_.head().keep_alive);
         return true;
     } catch (const AppError& error) {
