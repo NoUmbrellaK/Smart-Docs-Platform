@@ -72,7 +72,7 @@ next_line_start = line_start + part.count('\n')
 
 重跑 Step 2 同一命令，预期所有测试通过、无跳过。执行 `git diff --check`。在 README 写明这不是已接入上传链路的后台解析，也不是 M2 验收完成。
 
-- [ ] **Step 5: 审阅、提交、推送**
+- [x] **Step 5: 审阅、提交、推送**
 
 ```bash
 git add python/smartdocs/__init__.py python/smartdocs/text_parser.py test/python/test_text_parser.py README.md docs/superpowers/plans/2026-10-17-m2-text-parser.md
@@ -83,3 +83,10 @@ git push -u origin codex/m2-document-processing
 ```
 
 只推已验证的 M2 分支，不合并 main、不修改已关闭的 M1 分支。记录实测结果及遗留 M2 工作，不标记全项目目标完成。
+
+## 执行记录（2026-10-17）
+
+- 实现提交 `8effae6`，已推送 `origin/codex/m2-document-processing`。
+- 上述受限命令：RED 为 13 个缺少解析功能的断言失败；GREEN 为 13/13 通过，无跳过，0.004 秒。独立只读审阅再次运行 13/13，无需修正项。
+- `git diff --check` 与暂存区检查通过；未安装依赖、调用模型、启动数据库/浏览器或重跑 M1。
+- README 已同步实际范围。下个增量为受限 PDF 文本提取；后台任务、关键词和真实混合检索均未完成，M2 阶段仍进行中。
