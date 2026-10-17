@@ -48,9 +48,8 @@ class Chunk:
     line_end: int
 
 
-def parse_text(data: bytes, *, file_id: str, version_id: str, kind: str,
-               limits: Limits = Limits()) -> list[Chunk]:
-    """Return all chunks or raise ParseError; never return truncated success."""
+def _validate_input(data: bytes, file_id: str, version_id: str, limits: Limits):
+    """Shared caller boundary for local text and PDF parsing."""
     if not isinstance(data, bytes) or not isinstance(limits, Limits):
         raise ParseError("invalid_input")
     for identifier in (file_id, version_id):
@@ -58,10 +57,16 @@ def parse_text(data: bytes, *, file_id: str, version_id: str, kind: str,
                 or len(identifier) > 128
                 or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in identifier)):
             raise ParseError("invalid_input")
-    if kind not in ("txt", "md"):
-        raise ParseError("unsupported_format")
     if len(data) > limits.max_bytes:
         raise ParseError("input_too_large")
+
+
+def parse_text(data: bytes, *, file_id: str, version_id: str, kind: str,
+               limits: Limits = Limits()) -> list[Chunk]:
+    """Return all chunks or raise ParseError; never return truncated success."""
+    _validate_input(data, file_id, version_id, limits)
+    if kind not in ("txt", "md"):
+        raise ParseError("unsupported_format")
     try:
         text = data.decode("utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
     except UnicodeDecodeError:

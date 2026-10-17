@@ -2,7 +2,7 @@
 
 面向小型项目团队的文档管理与智能整理平台。项目计划以 C++ 文件服务为业务核心，通过 Python MCP/Agent 服务提供受控的资料检索、交接核查和智能归档能力。
 
-> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前新增 TXT/Markdown 本地解析模块，尚未接入上传后的后台处理；PDF 文本解析、关键词/向量检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
+> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前已新增 PDF/TXT/Markdown 本地解析模块，尚未接入上传后的后台处理；关键词/向量检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
 
 ## 当前实现
 
@@ -21,23 +21,38 @@
 
 M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./docs/api/m1-http-api.md)、[验收说明](./docs/evidence/m1/README.md)和[资源耗尽事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)均在仓库内维护。
 
-### M2 当前增量：离线文本解析
+### M2 当前增量：离线文档解析
 
 已新增 [TXT/Markdown 解析函数](./python/smartdocs/text_parser.py)，仅依赖 Python 3.10+ 标准库：严格 UTF-8、BOM/换行规范化、有界分块、固定文件/版本 ID、原始内容哈希、稳定片段 ID 和行号/字符区间。文档中的指令保留为文本，不执行。不读取 API key、不访问网络、不读取任意文件路径。
 
 默认解析上限为 8 MiB 输入、2,000,000 个字符、每片段 1,200 个字符、最多 2,000 个片段；超限或乱码明确失败，不返回静默截断结果。偏移是规范化文本的 Unicode 码点位置 `[start, end)`，行号从 1 起，不是原始字节或浏览器 UTF-16 偏移。未来调用方仍须在读取文件前鉴权并限制读取大小。
 
-本次小夹具测试 **13/13** 通过，先验证缺少解析功能时失败，再实现通过。可复现命令（在仓库根目录运行）：
+新增 [PDF 解析入口](./python/smartdocs/pdf_parser.py)：pypdf 6.21.0 在独立子进程中提取文字，片段绑定原始 PDF 哈希、固定版本及从 1 起的物理页码，字符/行号按页计数。最多 300 页，单页内容及嵌套 Form 内容流解压后的合计最多 16 MiB（同一 Form 只计一次）；子进程虚拟内存最多 256 MiB、CPU 时间 10 秒、墙钟默认 15 秒、输出文件 16 MiB，继承到的更紧限制不会被放宽。超时会终止并回收子进程，不返回部分成功。
+
+全部无文本时明确失败；部分页无文本时返回 `pages_without_text`，这些可能是空白页或扫描页，不能宣称全页覆盖。没有 OCR，不接收密码；空密码可读取的加密 PDF 可以提取，其余明确拒绝。依赖缺失、损坏、超限和异常退出均返回不带原文的错误码。pypdf 提取警告（例如嵌套对象缺失或循环）也按失败处理，不把库返回的部分文本当完整结果；这是一项保守策略，可能拒绝部分可被阅读器容错打开的 PDF。子进程清空环境，资源限额不等于文件/网络安全沙箱；未来服务仍须非 root 运行、由 C++ 鉴权。
+
+PDF 依赖安装到仓库外虚拟环境，按 [requirements](./python/requirements.txt) 校验 wheel 哈希，不安装可选 OCR/加密组件：
+
+```bash
+python3 -m venv /path/to/smartdocs-venv
+/path/to/smartdocs-venv/bin/python -m pip install --require-hashes --only-binary=:all: -r python/requirements.txt
+```
+
+当前服务器 Python 3.10 缺少 ensurepip，本次没有修改系统软件包，而是使用 `python3 -m venv --without-pip`，再用现有 pip 的 `--target /path/to/smartdocs-venv/lib/python3.10/site-packages` 将同一锁定依赖装入该环境。其他 Python 版本需使用对应的 site-packages 路径，不要安装到系统环境。
+
+本次小夹具测试 **28/28** 通过（文本 13、PDF 15），包含真实 PDF 提取、嵌套流/不完整提取拒绝、超时回收和子进程 300 MiB 分配被 256 MiB 内存限制拒绝；不代表最大规模性能验收。可复现命令（在仓库根目录运行）：
 
 ```bash
 (
-  ulimit -v 262144
-  ulimit -t 20
-  PYTHONPATH=python timeout 30s python3 -B -m unittest discover -s test/python -p 'test_*.py' -v
+  ulimit -v 524288
+  ulimit -t 60
+  PYTHONPATH=python timeout 90s /path/to/smartdocs-venv/bin/python -B -m unittest discover -s test/python -p 'test_*.py' -v
 )
 ```
 
-这不是后台自动解析、权限集成或大文件性能验收；本次没有重跑 M1 全套验收，也没有模型请求。后续依次接入受限 PDF 解析、持久任务/人工重试、关键词检索和真实向量混合检索，详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)与[本增量计划](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+只测试 TXT/Markdown 时，可用系统 Python 运行 `PYTHONPATH=python python3 -B -m unittest discover -s test/python -p 'test_text_parser.py' -v`，无需 PDF 依赖。
+
+这不是后台自动解析、权限集成或大文件性能验收；本次没有重跑 M1 全套验收，也没有模型请求。后续依次接入持久任务/人工重试、关键词检索和真实向量混合检索，详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)与 [PDF 增量计划](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 
@@ -158,7 +173,7 @@ test/e2e/run_m1.sh
 ## 开发路线
 
 1. **M1 文件业务**：实现、完整受限验收和证据审阅已完成，阶段关闭；
-2. **M2 文档检索**：进行中，已实现离线 TXT/Markdown 解析；PDF、后台任务、索引状态、混合检索及业务引用接口待实现；
+2. **M2 文档检索**：进行中，已实现离线 PDF/TXT/Markdown 解析；后台任务、索引状态、混合检索及业务引用接口待实现；
 3. **M3 MCP 与 Agent**：实现五项业务工具和可观察的多步调用；
 4. **M4 归档与交接**：方案确认、事务执行、交接清单和带引用报告；
 5. **M5 验收与展示**：固定任务、故障测试、部署文档和可复现实验记录。
