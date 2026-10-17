@@ -726,7 +726,11 @@ byId("preview-form").addEventListener("submit", (event) => {
                                     byId("preview-version").value);
   const preview = `${url}#page=${Math.max(1, Number(byId("preview-page").value) || 1)}`;
   byId("preview-link").href = preview;
-  byId("pdf-preview").src = preview;
+  // A fragment-only update can leave the native PDF viewer on its old page.
+  const frame = byId("pdf-preview");
+  const replacement = frame.cloneNode(false);
+  replacement.src = preview;
+  frame.replaceWith(replacement);
 });
 
 byId("remote-ai-form").addEventListener("submit", async (event) => {

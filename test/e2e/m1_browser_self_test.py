@@ -94,6 +94,28 @@ class BrowserEvidenceTest(unittest.TestCase):
             connection.return_value.request.assert_called_once()
             connection.return_value.close.assert_called_once()
 
+    def test_iframe_screenshot_scrolls_clipped_frame_into_outer_viewport(self):
+        import base64
+        browser = self.driver()
+        content = png_fixture(2)
+        for top, bottom, scroll in ((594, 1042, 578), (-24, 424, -40), (100, 548, None)):
+            with self.subTest(top=top, bottom=bottom):
+                viewer = browser.Browser.__new__(browser.Browser)
+                viewer.inspect = mock.Mock(return_value={
+                    'top': top, 'bottom': bottom, 'viewport': 857})
+                viewer.find = mock.Mock(return_value='preview-element')
+                viewer.command = mock.Mock(side_effect=lambda method, path, *args:
+                    base64.b64encode(content).decode() if method == 'GET' else None)
+                self.assertEqual(viewer.screenshot(), content)
+                expected = []
+                if scroll is not None:
+                    expected.append(mock.call('POST', '/actions', {'actions': [{
+                        'type': 'wheel', 'id': 'preview-scroll', 'actions': [{
+                            'type': 'scroll', 'x': 0, 'y': 0, 'deltaX': 0,
+                            'deltaY': scroll, 'duration': 250}]}]}))
+                expected.append(mock.call('GET', '/element/preview-element/screenshot'))
+                self.assertEqual(viewer.command.call_args_list, expected)
+
     def test_aggregate_rejects_mixed_pages_with_only_toolbar_changes(self):
         import m1_interrupt_test as harness
         evidence, _ = browser_fixture()

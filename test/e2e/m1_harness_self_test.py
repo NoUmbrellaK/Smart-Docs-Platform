@@ -643,6 +643,7 @@ class HarnessEvidenceTest(unittest.TestCase):
                 fake_bin / "node",
                "#!/bin/sh\n"
                 "if [ \"${1:-}\" = --version ]; then printf 'v24.18.0\\n'; exit 0; fi\n"
+                "if [ \"${1:-}\" = --input-type=module ]; then exit 0; fi\n"
                 "printf marker >\"${FAKE_MARKER_ROOT}/ui-behavior-ran\"\n"
                "tests=18\n"
                 "if [ \"${1:-}\" = --test ]; then tests=1; fi\n"
@@ -772,6 +773,8 @@ class HarnessEvidenceTest(unittest.TestCase):
             self.assertNotEqual(dependency.returncode, 0)
             self.assertFalse((repo / "build-arguments").exists(),
                              "missing browser dependency must stop before building")
+            self.assertFalse((repo / "ui-behavior-ran").exists(),
+                             "Node preflight is not UI suite execution")
             failing_environment = environment.copy()
             failing_environment["FAKE_CPP_FAILURE"] = "1"
             failed = subprocess.run(

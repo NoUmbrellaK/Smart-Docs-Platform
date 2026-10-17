@@ -307,6 +307,14 @@ class Browser:
         return self.command('POST', '/se/log', {'type': 'performance'})
 
     def screenshot(self):
+        bounds = self.inspect('const r = document.querySelector("#pdf-preview").getBoundingClientRect(); '
+                              'return {top:r.top, bottom:r.bottom, viewport:innerHeight};')
+        if bounds['top'] < 0 or bounds['bottom'] > bounds['viewport']:
+            # Scroll the outer page, not the PDF's internal document viewport.
+            self.command('POST', '/actions', {'actions': [{
+                'type': 'wheel', 'id': 'preview-scroll', 'actions': [{
+                    'type': 'scroll', 'x': 0, 'y': 0, 'deltaX': 0,
+                    'deltaY': round(bounds['top']) - 16, 'duration': 250}]}]})
         element = self.find('#pdf-preview')
         return base64.b64decode(self.command('GET', '/element/' + element + '/screenshot'), validate=True)
 
