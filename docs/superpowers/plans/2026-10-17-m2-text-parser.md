@@ -32,7 +32,7 @@
 - Produces: 不可变 `Limits(max_bytes, max_chars, chunk_chars, max_chunks)`；不可变 `Chunk(chunk_id, file_id, version_id, source_sha256, parser_revision, text, char_start, char_end, line_start, line_end)`；带 `code` 的 `ParseError`。
 - 对外错误码：`invalid_input`、`unsupported_format`、`input_too_large`、`invalid_encoding`、`binary_text`、`empty_text`、`text_too_large`、`too_many_chunks`。
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 测试先检查解析入口存在，避免把拼错 import 当业务失败。关键夹具与手算结果：
 
@@ -45,7 +45,7 @@ assert [(c.text, c.char_start, c.char_end, c.line_start, c.line_end) for c in ch
 
 覆盖稳定 ID、换版本/文件/源字节防碰撞、中文长行、尾部换行、UTF-8 错误、控制字符、空内容、所有上限的等于/超过和非法参数。重组片段必须等于规范化全文，Markdown 中的指令只是普通文本。
 
-- [ ] **Step 2: 运行 RED，确认失败源自缺少解析功能**
+- [x] **Step 2: 运行 RED，确认失败源自缺少解析功能**
 
 ```bash
 ulimit -v 262144
@@ -55,7 +55,7 @@ PYTHONPATH=python timeout 30s python3 -B -m unittest discover -s test/python -p 
 
 预期：解析入口缺失的断言失败，未运行数据库或网络请求。
 
-- [ ] **Step 3: 最小实现**
+- [x] **Step 3: 最小实现**
 
 先校验真实类型（bool 不能作为正整数限制）、标识非空且不含控制字符、格式和输入长度；严格解码、规范化、校验空文本/控制字符/字符与片段总量，再返回全部片段。片段 ID 使用 SHA-256(JSON([解析修订, 文件 ID, 版本 ID, 源哈希, 起点, 终点]))。
 
@@ -68,7 +68,7 @@ next_line_start = line_start + part.count('\n')
 
 修订名固定为 `utf8-lines-v1`；换行在其前一行，避免块尾换行把引用错误扩展到未包含字符的下一行。最后一个片段不得产生空尾块。
 
-- [ ] **Step 4: 运行 GREEN，检查输出与 diff**
+- [x] **Step 4: 运行 GREEN，检查输出与 diff**
 
 重跑 Step 2 同一命令，预期所有测试通过、无跳过。执行 `git diff --check`。在 README 写明这不是已接入上传链路的后台解析，也不是 M2 验收完成。
 
