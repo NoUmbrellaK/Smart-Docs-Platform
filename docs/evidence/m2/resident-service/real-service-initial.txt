@@ -1,0 +1,25 @@
+Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_resident_service_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python.
+{
+  "passed": true,
+  "cases": [
+    "ready_after_load",
+    "unchanged_private_client",
+    "same_child_three_requests",
+    "old_fingerprint",
+    "invalid_input_safe",
+    "sigterm_reaps_model"
+  ],
+  "startup_seconds": 3.128,
+  "request_seconds": [
+    0.605,
+    0.643,
+    0.571
+  ],
+  "model_rss": "640804 kB",
+  "model_peak_rss": "640804 kB",
+  "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8",
+  "uid": 65534,
+  "ip_sockets_blocked": true
+}
+smartdocs-resident-service-real.service: Deactivated successfully.
+smartdocs-resident-service-real.service: Consumed 4.155s CPU time.

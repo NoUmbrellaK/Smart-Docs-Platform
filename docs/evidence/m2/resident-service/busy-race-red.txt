@@ -1,0 +1,14 @@
+Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest test_resident_service.ResidentServiceTests.test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay -v.
+test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... ERROR
+======================================================================
+ERROR: test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_service.py", line 97, in test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay
+    delayed.sendall(json.dumps(CHUNKS).encode()); delayed.shutdown(socket.SHUT_WR)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------------------------------------
+Ran 1 test in 0.437s
+FAILED (errors=1)
+smartdocs-resident-busy-race-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-resident-busy-race-red.service: Failed with result 'exit-code'.

@@ -1,0 +1,59 @@
+test_child_crash_returns_safe_failure_and_removes_listener (test_resident_service.ResidentServiceTests) ... FAIL
+test_existing_path_unsafe_directory_and_shared_lock_refused (test_resident_service.ResidentServiceTests) ... FAIL
+test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests) ... FAIL
+test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests) ... FAIL
+test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests) ... FAIL
+test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... FAIL
+
+======================================================================
+FAIL: test_child_crash_returns_safe_failure_and_removes_listener (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+======================================================================
+FAIL: test_existing_path_unsafe_directory_and_shared_lock_refused (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+======================================================================
+FAIL: test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+======================================================================
+FAIL: test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+======================================================================
+FAIL: test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+======================================================================
+FAIL: test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_resident_service.py", line 22, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_service"),
+AssertionError: unexpectedly None : resident supervision missing
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+FAILED (failures=6)
