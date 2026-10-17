@@ -1,0 +1,35 @@
+2026-10-18T03:00:00+08:00
+MainPID=0
+Result=success
+ExecMainStatus=0
+ControlGroup=
+Id=smartdocs-m2-recovery-encoder.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+ControlGroup=
+Id=smartdocs-m2-recovery-encoder-restarted.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+ControlGroup=
+Id=smartdocs-m2-recovery-business.service
+ActiveState=inactive
+SubState=dead
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1387         940           2        1166        1845
+Swap:              0           0           0

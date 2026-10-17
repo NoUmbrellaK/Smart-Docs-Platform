@@ -1,0 +1,26 @@
+2026-10-18T02:55:15+0800 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-18T02:56:17+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T02:56:27+0800 aliyun-lou systemd[1]: Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_resident_recovery_test.py.
+2026-10-18T02:56:31+0800 aliyun-lou bash[695287]: 2026-10-17T18:56:31.771042Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 695287
+2026-10-18T02:56:31+0800 aliyun-lou bash[695287]: 2026-10-17T18:56:31.779390Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T02:56:47+0800 aliyun-lou bash[695287]: 2026-10-17T18:56:47.110784Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T02:56:55+0800 aliyun-lou bash[695287]: 2026-10-17T18:56:55.124495Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T02:57:37+0800 aliyun-lou bash[695587]: schema_version=5
+2026-10-18T02:57:57+0800 aliyun-lou bash[695671]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T02:58:04+0800 aliyun-lou bash[695773]: test_stopped_request_stays_failed_until_explicit_retry (__main__.ResidentRecovery) ... {"stage": "inflight_second_batch", "encoder_busy": true, "stored_counts": [1, 8, 16], "partial_vectors_visible": false}
+2026-10-18T02:58:04+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-encoder.service: Deactivated successfully.
+2026-10-18T02:58:04+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-encoder.service: Consumed 4.187s CPU time.
+2026-10-18T02:58:05+0800 aliyun-lou bash[695773]: {"stage": "await_manual_encoder_restart", "persistent_state": "failed", "error_code": "embedding_invalid_result", "attempt_count": 1, "old_parent_and_model_exited": true}
+2026-10-18T02:58:41+0800 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-18T02:59:33+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T02:59:41+0800 aliyun-lou bash[695773]: {"stage": "explicit_retry_completed", "attempt_count": 2, "stored_counts": [2, 9, 17], "retrieval": "hybrid", "same_file_version": true, "automatic_retry": false}
+2026-10-18T02:59:41+0800 aliyun-lou bash[695773]: ok
+2026-10-18T02:59:41+0800 aliyun-lou bash[695773]: ----------------------------------------------------------------------
+2026-10-18T02:59:41+0800 aliyun-lou bash[695773]: Ran 1 test in 103.306s
+2026-10-18T02:59:41+0800 aliyun-lou bash[695773]: OK
+2026-10-18T02:59:43+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-business.service: Deactivated successfully.
+2026-10-18T02:59:43+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-business.service: Consumed 6.418s CPU time.
+2026-10-18T03:00:00+0800 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-18T03:00:00+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-encoder-restarted.service: Deactivated successfully.
+2026-10-18T03:00:00+0800 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/recovery-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T03:00:00+0800 aliyun-lou systemd[1]: smartdocs-m2-recovery-encoder-restarted.service: Consumed 4.146s CPU time.

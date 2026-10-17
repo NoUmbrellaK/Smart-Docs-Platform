@@ -1,0 +1,7 @@
+MainPID=0
+Result=success
+ControlGroup=
+ActiveState=inactive
+SubState=dead
+
+checks_exit_code=0

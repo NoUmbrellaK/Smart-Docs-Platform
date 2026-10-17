@@ -134,6 +134,8 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 [三格式与双页出处补验](./docs/evidence/m2/source-locations/README.md)：真实 worker **7/7**；真实 C++/MySQL/Chrome 来源测试最终 **1/1**，初版 ngram 检索计数假设失败记录保留（两轮 **1/2**）。覆盖 TXT/Markdown 行范围、PDF 两页、固定版本/SHA、历史引用、跨版本拒绝、页锚点和受保护原件字节；宽窄出处截图已归档。本次按最小实现原则复用测试设施，无生产代码/配额改动、无模型调用；临时进程全部退出，原 MySQL 正常，无新增 OOM。M2 仍未验收：待补物理页码 UI 说明及常驻服务中断→持久失败→人工重试的联合证据。
 
+[常驻编码中断恢复联合验证](./docs/evidence/m2/resident-recovery/README.md) **1/1**：真实第一批 8 片段暂存后停止处理第二批的服务，部分向量不参与检索；failed 状态跨 C++ 重启保留，编码服务恢复不自动重试，显式 retry 后 attempt2 完成 9 片段并恢复 hybrid。无生产代码或配额调整、无 DeepSeek 调用；临时服务全部退出，原 MySQL 正常。无 OOM，但 memory.high 增加，资源压力仍保留。下一步补物理页码说明并审计 M2 全阶段证据，尚不进入 M3。
+
 ## 规划架构
 
 ```mermaid
