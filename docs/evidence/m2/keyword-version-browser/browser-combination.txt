@@ -1,0 +1,41 @@
+2026-10-18T01:11:22+0800 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T01:11:22+0800 aliyun-lou systemd-socket-activate[667666]: Listening on /tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock as 3.
+2026-10-18T01:11:30+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+2026-10-18T01:11:30+0800 aliyun-lou bash[667703]: 2026-10-17T17:11:30.895025Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 667703
+2026-10-18T01:11:30+0800 aliyun-lou bash[667703]: 2026-10-17T17:11:30.899741Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T01:11:46+0800 aliyun-lou bash[667703]: 2026-10-17T17:11:46.232832Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T01:11:54+0800 aliyun-lou bash[667703]: 2026-10-17T17:11:54.430003Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T01:12:33+0800 aliyun-lou bash[668107]: schema_version=5
+2026-10-18T01:12:53+0800 aliyun-lou bash[668157]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T01:13:49+0800 aliyun-lou systemd-socket-activate[667666]: Communication attempt on fd 3.
+2026-10-18T01:13:49+0800 aliyun-lou systemd-socket-activate[667666]: Connection from PID 668203/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock
+2026-10-18T01:13:49+0800 aliyun-lou systemd-socket-activate[667666]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 668511.
+2026-10-18T01:13:49+0800 aliyun-lou systemd-socket-activate[668511]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T01:14:49+0800 aliyun-lou systemd-socket-activate[667666]: Child 668511 died with code 0
+2026-10-18T01:14:49+0800 aliyun-lou bash[668203]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... OBSERVED cold encoding timeout: persisted failure; exercising one explicit API retry
+2026-10-18T01:14:49+0800 aliyun-lou systemd-socket-activate[667666]: Communication attempt on fd 3.
+2026-10-18T01:14:49+0800 aliyun-lou systemd-socket-activate[667666]: Connection from PID 668203/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock
+2026-10-18T01:14:49+0800 aliyun-lou systemd-socket-activate[667666]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 668584.
+2026-10-18T01:14:49+0800 aliyun-lou systemd-socket-activate[668584]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T01:15:51+0800 aliyun-lou systemd-socket-activate[667666]: Child 668584 died with code 0
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: FAIL
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: ======================================================================
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: FAIL: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: ----------------------------------------------------------------------
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: Traceback (most recent call last):
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 113, in test_browser_hybrid_sources_version_change_and_failure
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]:     self.assertEqual(result, "completed", self.state(self.vector_job(recovery)).get("error_code"))
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: AssertionError: 'failed' != 'completed'
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: - failed
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: + completed
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]:  : embedding_timeout
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: ----------------------------------------------------------------------
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: Ran 1 test in 197.154s
+2026-10-18T01:16:10+0800 aliyun-lou bash[668203]: FAILED (failures=1)
+2026-10-18T01:16:15+0800 aliyun-lou systemd[1]: smartdocs-keyword-browser-check.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-18T01:16:15+0800 aliyun-lou systemd[1]: smartdocs-keyword-browser-check.service: Failed with result 'exit-code'.
+2026-10-18T01:16:15+0800 aliyun-lou systemd[1]: smartdocs-keyword-browser-check.service: Consumed 9.869s CPU time.
+2026-10-18T01:16:41+0800 aliyun-lou systemd[1]: Stopping /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-18T01:16:41+0800 aliyun-lou systemd[1]: smartdocs-keyword-browser-encoder.service: Deactivated successfully.
+2026-10-18T01:16:41+0800 aliyun-lou systemd[1]: Stopped /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/keyword-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T01:16:41+0800 aliyun-lou systemd[1]: smartdocs-keyword-browser-encoder.service: Consumed 5.701s CPU time.

@@ -1,0 +1,15 @@
+2026-10-18T01:09:35+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_search_version_test.py.
+2026-10-18T01:09:37+0800 aliyun-lou bash[667240]: 2026-10-17T17:09:37.225911Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 667240
+2026-10-18T01:09:37+0800 aliyun-lou bash[667240]: 2026-10-17T17:09:37.491676Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T01:09:52+0800 aliyun-lou bash[667240]: 2026-10-17T17:09:52.847473Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T01:10:00+0800 aliyun-lou bash[667240]: 2026-10-17T17:10:00.886103Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T01:10:42+0800 aliyun-lou bash[667465]: schema_version=5
+2026-10-18T01:11:02+0800 aliyun-lou bash[667519]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T01:11:07+0800 aliyun-lou bash[667559]: test_ngram_extra_match_does_not_hide_current_version_or_restore_old_one (__main__.SearchVersionE2E) ... PASS real keyword API: Replacement returns current recovery + internal ngram match; old version excluded before/after parsing; unapproved versions excluded from hybrid
+2026-10-18T01:11:07+0800 aliyun-lou bash[667559]: ok
+2026-10-18T01:11:07+0800 aliyun-lou bash[667559]: ----------------------------------------------------------------------
+2026-10-18T01:11:07+0800 aliyun-lou bash[667559]: Ran 1 test in 4.692s
+2026-10-18T01:11:07+0800 aliyun-lou bash[667559]: OK
+2026-10-18T01:11:22+0800 aliyun-lou systemd[1]: smartdocs-keyword-version.service: Deactivated successfully.
+2026-10-18T01:11:22+0800 aliyun-lou systemd[1]: Stopped /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_search_version_test.py.
+2026-10-18T01:11:22+0800 aliyun-lou systemd[1]: smartdocs-keyword-version.service: Consumed 6.092s CPU time.

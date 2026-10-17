@@ -135,9 +135,13 @@ class HybridBrowser(VectorE2E):
                     while text("#document-search-status").startswith("Searching") and time.monotonic() < deadline:
                         time.sleep(.2)
                     status = text("#document-search-status")
-                    self.assertIn(f"{count} results", status, status)
+                    actual = browser.inspect('return document.querySelectorAll(".search-card").length')
+                    self.assertIn(f"{actual} results", status, status)
                     self.assertIn(retrieval, status, status)
-                    self.assertEqual(browser.inspect('return document.querySelectorAll(".search-card").length'), count)
+                    if count is None:
+                        self.assertGreater(actual, 0, status)
+                    else:
+                        self.assertEqual(actual, count)
                     return status
 
                 search("hybrid", "如何恢复备份？", 1, "hybrid")
@@ -182,7 +186,9 @@ class HybridBrowser(VectorE2E):
                 self.assertIn("Parse: pending", text("#document-search-results"))
                 self.assertEqual(worker.run_once(self.client), "completed")
                 search("hybrid", "Replacement", 0, "keyword_only")
-                search("keyword", "Replacement", 1, "keyword_only")
+                # Natural-language ngram may also match other locally readable files.
+                search("keyword", "Replacement", None, "keyword_only")
+                self.assertIn(latest["version_id"], text("#document-search-results"))
                 self.assertNotIn(recovery["version_id"], text("#document-search-results"))
                 self.policy(latest, True)
                 self.jobs.append(self.vector_job(latest))

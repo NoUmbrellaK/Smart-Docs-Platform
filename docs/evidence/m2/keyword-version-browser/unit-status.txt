@@ -1,0 +1,47 @@
+RuntimeMaxUSec=13min
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+User=nobody
+Group=nogroup
+PrivateNetwork=no
+NoNewPrivileges=no
+RestrictAddressFamilies=~
+KillMode=control-group
+Id=smartdocs-keyword-browser-check.service
+LoadState=loaded
+SubState=failed
+
+RuntimeMaxUSec=15min
+MainPID=667666
+Result=success
+ExecMainStatus=0
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+KillMode=control-group
+Id=smartdocs-keyword-browser-encoder.service
+LoadState=loaded
+SubState=running
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 55921
+max 0
+oom 0
+oom_kill 0
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+MemTotal:        3579040 kB
+MemFree:          700268 kB
+MemAvailable:    1886520 kB
