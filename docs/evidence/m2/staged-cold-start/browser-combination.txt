@@ -1,0 +1,51 @@
+Oct 18 01:18:49 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py client /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/client.jsonl.
+Oct 18 01:18:52 aliyun-lou bash[669300]: 2026-10-17T17:18:52.500829Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 669300
+Oct 18 01:18:52 aliyun-lou bash[669300]: 2026-10-17T17:18:52.572587Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 01:19:07 aliyun-lou bash[669300]: 2026-10-17T17:19:07.903482Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 01:19:15 aliyun-lou bash[669300]: 2026-10-17T17:19:15.955787Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 01:19:56 aliyun-lou bash[669557]: schema_version=5
+Oct 18 01:20:16 aliyun-lou bash[669613]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 01:21:59 aliyun-lou bash[669721]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... OBSERVED cold encoding timeout: persisted failure; exercising one explicit API retry
+Oct 18 01:22:45 aliyun-lou bash[669721]: PASS fixture: real approved vectors published; internal document not vectorized
+Oct 18 01:23:19 aliyun-lou bash[669721]: ERROR
+Oct 18 01:23:20 aliyun-lou bash[669721]: ======================================================================
+Oct 18 01:23:20 aliyun-lou bash[669721]: ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+Oct 18 01:23:20 aliyun-lou bash[669721]: ----------------------------------------------------------------------
+Oct 18 01:23:20 aliyun-lou bash[669721]: Traceback (most recent call last):
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 119, in test_browser_hybrid_sources_version_change_and_failure
+Oct 18 01:23:20 aliyun-lou bash[669721]:     browser.command("POST", "/url", {"url": origin+"/app.html"})
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 229, in command
+Oct 18 01:23:20 aliyun-lou bash[669721]:     return self.request(method, '/session/' + self.session + path, body)
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 223, in request
+Oct 18 01:23:20 aliyun-lou bash[669721]:     response = connection.getresponse()
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+Oct 18 01:23:20 aliyun-lou bash[669721]:     response.begin()
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/usr/lib/python3.10/http/client.py", line 323, in begin
+Oct 18 01:23:20 aliyun-lou bash[669721]:     version, status, reason = self._read_status()
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+Oct 18 01:23:20 aliyun-lou bash[669721]:     line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+Oct 18 01:23:20 aliyun-lou bash[669721]:   File "/usr/lib/python3.10/socket.py", line 705, in readinto
+Oct 18 01:23:20 aliyun-lou bash[669721]:     return self._sock.recv_into(b)
+Oct 18 01:23:20 aliyun-lou bash[669721]: TimeoutError: timed out
+Oct 18 01:23:20 aliyun-lou bash[669721]: ----------------------------------------------------------------------
+Oct 18 01:23:20 aliyun-lou bash[669721]: Ran 1 test in 183.970s
+Oct 18 01:23:20 aliyun-lou bash[669721]: FAILED (errors=1)
+Oct 18 01:23:24 aliyun-lou systemd[1]: smartdocs-stage-profile-check.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 01:23:24 aliyun-lou systemd[1]: smartdocs-stage-profile-check.service: Failed with result 'exit-code'.
+Oct 18 01:23:24 aliyun-lou systemd[1]: smartdocs-stage-profile-check.service: Consumed 9.454s CPU time.
+Oct 18 01:18:37 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 01:18:37 aliyun-lou systemd-socket-activate[669274]: Listening on /tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock as 3.
+Oct 18 01:20:58 aliyun-lou systemd-socket-activate[669274]: Communication attempt on fd 3.
+Oct 18 01:20:58 aliyun-lou systemd-socket-activate[669274]: Connection from PID 669721/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock
+Oct 18 01:20:58 aliyun-lou systemd-socket-activate[669274]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 669899.
+Oct 18 01:20:58 aliyun-lou systemd-socket-activate[669899]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+Oct 18 01:21:59 aliyun-lou systemd-socket-activate[669274]: Child 669899 died with code 0
+Oct 18 01:21:59 aliyun-lou systemd-socket-activate[669274]: Communication attempt on fd 3.
+Oct 18 01:21:59 aliyun-lou systemd-socket-activate[669274]: Connection from PID 669721/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock
+Oct 18 01:21:59 aliyun-lou systemd-socket-activate[669274]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 670022.
+Oct 18 01:21:59 aliyun-lou systemd-socket-activate[670022]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+Oct 18 01:22:43 aliyun-lou systemd-socket-activate[669274]: Child 670022 died with code 0
+Oct 18 01:23:36 aliyun-lou systemd[1]: Stopping /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 01:23:36 aliyun-lou systemd[1]: smartdocs-stage-profile-encoder.service: Deactivated successfully.
+Oct 18 01:23:36 aliyun-lou systemd[1]: Stopped /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/stage-profile.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/probe.py service /tmp/smartdocs-safe.h4SzvX/staged-cold-probe/encoder.jsonl /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 01:23:36 aliyun-lou systemd[1]: smartdocs-stage-profile-encoder.service: Consumed 7.024s CPU time.

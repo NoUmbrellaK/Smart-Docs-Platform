@@ -1,0 +1,20 @@
+{"epoch": 1792257658.2938976, "event": "client_request", "pid": 669721}
+{"code": "embedding_timeout", "epoch": 1792257719.6934228, "event": "client_error", "pid": 669721}
+{"epoch": 1792257719.7173011, "event": "client_request", "pid": 669721}
+{"epoch": 1792257763.2329276, "event": "client_result", "pid": 669721}
+{"epoch": 1792257506.8732793, "event": "child_wrapper_enter", "pid": 669240, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.927825, "function": "_main", "line": 325, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9279451, "function": "_main", "line": 326, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9280467, "function": "_main", "line": 327, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9281154, "function": "_main", "line": 328, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9281747, "function": "_main", "line": 330, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9282348, "function": "_main", "line": 331, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9283085, "function": "_main", "line": 332, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.076, "elapsed": 0.055, "epoch": 1792257506.9283721, "function": "_main", "line": 334, "major_faults": 8, "maxrss_kib": 17932, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.055, "epoch": 1792257506.9284344, "function": "_main", "line": 335, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.055, "epoch": 1792257506.928532, "function": "_main", "line": 336, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.055, "epoch": 1792257506.928597, "function": "_main", "line": 337, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.055, "epoch": 1792257506.9286664, "function": "_main", "line": 349, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.055, "epoch": 1792257506.9287221, "function": "_main", "line": 350, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"cpu": 0.077, "elapsed": 0.056, "epoch": 1792257506.928868, "function": "_main", "line": 357, "major_faults": 8, "maxrss_kib": 18256, "pid": 669240, "read_bytes": 253952, "stage": "tokenize"}
+{"epoch": 1792257506.9289436, "event": "child_wrapper_exit", "pid": 669240, "stage": "tokenize"}
