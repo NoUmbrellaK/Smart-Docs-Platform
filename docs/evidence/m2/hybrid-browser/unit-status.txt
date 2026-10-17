@@ -1,0 +1,43 @@
+Observed 2026-10-17, local timezone Asia/Shanghai.
+smartdocs-hybrid-browser-recovery.service
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 22:45:55 CST
+ExecMainExitTimestamp=Sat 2026-10-17 22:51:28 CST
+ExecMainStatus=1
+ActiveState=failed
+SubState=failed
+
+smartdocs-browser-encoder.service
+MainPID=0
+Result=timeout
+ExecMainStartTimestamp=Sat 2026-10-17 22:30:37 CST
+ExecMainExitTimestamp=Sat 2026-10-17 22:50:38 CST
+ExecMainStatus=15
+ActiveState=failed
+SubState=failed
+RuntimeMaxSec=1200
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+RestrictAddressFamilies=AF_UNIX
+NoNewPrivileges=yes
+Private socket directory=0700 nobody
+browser.sock=0600 nobody (after initial setup correction)
+
+smartdocsvectorcheck.slice
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+
+memory.events before all runs: low=0 high=10601 max=0 oom=0 oom_kill=0
+memory.events after all runs: low=0 high=19412 max=0 oom=0 oom_kill=0
+systemctl list-units 'smartdocs*' --type=service --state=running: 0 loaded units listed.
+systemctl is-active mysql: active
+Host final available memory: 1917 MiB; swap=0.

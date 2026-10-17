@@ -1,0 +1,151 @@
+test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ok
+test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ok
+test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ok
+test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ok
+test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ok
+test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ok
+test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ok
+test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ok
+test_child_receives_no_secret_environment_and_ignores_python_injection (test_pdf_parser.PdfParserTest) ... ok
+test_empty_pages_preserve_physical_page_numbers_and_coverage (test_pdf_parser.PdfParserTest) ... ok
+test_encrypted_unreadable_pdf_fails_but_empty_password_is_readable (test_pdf_parser.PdfParserTest) ... ok
+test_file_page_text_chunk_and_stream_limits_are_enforced (test_pdf_parser.PdfParserTest) ... ok
+test_invalid_extracted_unicode_has_a_safe_error_not_raw_text (test_pdf_parser.PdfParserTest) ... ok
+test_kernel_memory_limit_blocks_allocation_in_real_child (test_pdf_parser.PdfParserTest) ... ok
+test_library_warning_about_missing_or_cyclic_form_cannot_publish_partial_text (test_pdf_parser.PdfParserTest) ... ok
+test_malformed_pdf_never_returns_success_or_content_in_error (test_pdf_parser.PdfParserTest) ... ok
+test_missing_pdf_dependency_is_explicit_without_skipping_test (test_pdf_parser.PdfParserTest) ... ok
+test_nested_compressed_form_streams_are_included_in_page_limit (test_pdf_parser.PdfParserTest) ... ok
+test_real_child_crash_and_bad_response_are_safe_failures (test_pdf_parser.PdfParserTest) ... ok
+test_real_timeout_kills_and_reaps_child (test_pdf_parser.PdfParserTest) ... ok
+test_real_two_page_pdf_uses_physical_pages_and_page_local_offsets (test_pdf_parser.PdfParserTest) ... ok
+test_resource_and_processing_limits_cannot_be_disabled_or_increased (test_pdf_parser.PdfParserTest) ... ok
+test_stable_citations_bind_pdf_file_version_content_and_page (test_pdf_parser.PdfParserTest) ... ok
+test_denied_preflight_never_encodes (test_search.SearchTests) ... ok
+test_encodes_query_only_after_backend_authorization (test_search.SearchTests) ... ok
+test_encoding_failure_rechecks_backend_instead_of_returning_stale_preflight (test_search.SearchTests) ... ok
+test_model_arguments_cannot_supply_mode_vector_or_identity (test_search.SearchTests) ... ok
+test_permission_revoked_during_encoding_is_not_hidden_by_preflight (test_search.SearchTests) ... ok
+test_bad_origin_host_cookie_never_reaches_backend_or_encoder (test_search_http.SearchHttpTests) ... ok
+test_config_disallows_remote_plaintext_and_untrusted_origin_components (test_search_http.SearchHttpTests) ... ok
+test_degraded_query_forwards_only_session_and_fixed_origin_and_rechecks (test_search_http.SearchHttpTests) ... ok
+test_denied_backend_never_encodes_and_does_not_leak_error (test_search_http.SearchHttpTests) ... ok
+test_limits_body_route_and_media_type (test_search_http.SearchHttpTests) ... ok
+test_malformed_oversized_or_redirected_backend_is_sanitized_unavailable (test_search_http.SearchHttpTests) ... ok
+test_rejects_ambiguous_http_framing_and_duplicate_origin (test_search_http.SearchHttpTests) ... ok
+test_rejects_invalid_body_identity_mode_vectors_and_duplicate_keys (test_search_http.SearchHttpTests) ... ok
+test_revocation_after_encoding_returns_error_not_stale_preflight (test_search_http.SearchHttpTests) ... ok
+test_two_slow_connections_bound_threads_and_third_is_rejected (test_search_http.SearchHttpTests) ... ok
+test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest) ... ok
+test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest) ... ok
+test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest) ... ok
+test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest) ... ok
+test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest) ... ok
+test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest) ... ok
+test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest) ... ok
+test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest) ... ok
+test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest) ... ok
+test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest) ... ok
+test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest) ... ok
+test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest) ... ok
+test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest) ... ok
+test_entrypoint_refuses_missing_kernel_network_restriction (test_vector_worker.EncodingServiceTests) ... ok
+test_stdio_service_bounds_input_and_sanitizes_errors (test_vector_worker.EncodingServiceTests) ... ok
+test_bad_batch_fails_before_encoding_or_publication (test_vector_worker.VectorWorkerTests) ... ok
+test_changed_batch_total_fails_before_more_encoding (test_vector_worker.VectorWorkerTests) ... ok
+test_encoder_failure_and_invalid_result_do_not_publish (test_vector_worker.VectorWorkerTests) ... ok
+test_idle_and_malformed_claim_never_encode_or_fetch (test_vector_worker.VectorWorkerTests) ... ok
+test_invalid_failure_ack_also_exits (test_vector_worker.VectorWorkerTests) ... ok
+test_misleading_ack_exits_without_overwriting_uncertain_publication (test_vector_worker.VectorWorkerTests) ... ok
+test_revoked_attempt_stops_before_next_batch_and_transport_uncertainty_exits (test_vector_worker.VectorWorkerTests) ... ok
+test_socket_exchange_validates_results_limits_and_safe_errors (test_vector_worker.VectorWorkerTests) ... ok
+test_two_batches_replay_same_publication_then_finish_only_on_final_ack (test_vector_worker.VectorWorkerTests) ... ok
+test_unsafe_socket_path_refused_without_connection (test_vector_worker.VectorWorkerTests) ... ok
+test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ok
+test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ok
+test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ok
+test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ok
+test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ok
+test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ok
+test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ok
+test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ok
+test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ok
+test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+
+----------------------------------------------------------------------
+Ran 74 tests in 12.999s
+
+OK
+✔ logout fences a delayed version load before it can enter the processing panel (64.592697ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.172262ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.914209ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.621447ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.829492ms)
+✔ project/file reset fences late status and old buttons (0.45326ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.549758ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (1.228337ms)
+✔ null jobs are explicit and safe text remains text (1.557614ms)
+✔ task API uses same-origin exact job and empty POST bodies (44.677524ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.662573ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.606755ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.427439ms)
+✔ failed source reads clear old content; logout fences a pending source (0.488676ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.585184ms)
+✔ newer searches and source selections win over late successes and errors (0.544052ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (53.721968ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.746136ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.766853ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.480984ms)
+✔ API response parser accepts 204 and maps the unified error (30.327509ms)
+✔ logout API rejects an unexpected successful status (1.446893ms)
+✔ all upload tasks share four actual PUT slots (21.500081ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.632697ms)
+✔ duplicate resume is single-flight and completes only once (2.17047ms)
+✔ pause after part hashing starts schedules no later PUT (1.383912ms)
+✔ project refresh during hashing invalidates the old upload (16.652002ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (4.157859ms)
+✔ pending cancel is single-flight and blocks pause and resume (2.678986ms)
+✔ failed cancel clears pending state and can be retried (0.792494ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.754482ms)
+✔ resume read failure clears the file and returns to actionable state (0.565695ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.449118ms)
+✔ project generation drops A after B and project actions retain scope (3.96528ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.548304ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.384093ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.467632ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 574.062423
+2026-10-17T14:36:39.838708Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 643190
+2026-10-17T14:36:39.843186Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T14:36:55.077114Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T14:37:03.042589Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... PASS fixture: real approved vectors published; internal document not vectorized
+ERROR
+
+======================================================================
+ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 108, in test_browser_hybrid_sources_version_change_and_failure
+    browser.start()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+
+----------------------------------------------------------------------
+Ran 1 test in 126.740s
+
+FAILED (errors=1)

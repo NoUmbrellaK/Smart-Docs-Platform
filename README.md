@@ -90,6 +90,8 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 该状态面板增量通过完整 C++ **141/141**、前端行为 **37/37**、页面契约 **8/8**，以及真实 Chrome→C++→临时 MySQL→本地 TXT 解析组合场景 **1/1**（含六屏宽、reader 拒绝写入和删除后拒绝读取）。实际链路还发现并修复搜索/处理 JS 静态白名单遗漏；审查发现的退出登录竞态也有回归覆盖。失败过程、资源限制和截图见[验证记录](./docs/evidence/m2/processing-ui/README.md)。这轮没有模型调用，不代表浏览器直通混合模型或 M2 全阶段验收。
 
+新增[真实浏览器→混合网关→本地模型组合验收](./docs/evidence/m2/hybrid-browser/README.md)，**当前尚未通过**：Python 74/74、JS 37/37 及隔离库迁移通过，但浏览器与模型共用原资源限额时出现 `embedding_timeout`，一次显式人工重试仍失败，最终编码服务也达到预设总运行时限。未进入搜索断言，不可声称浏览器直通模型成功。全部临时服务已停止，生产 MySQL 保持运行；有内存节流但没有 OOM。生产代码未改，没有扩容或放宽限额；失败日志与复现条件已归档，冷加载和总服务寿命因素仍需进一步区分。
+
 本机 worker 默认关闭，尚未安装为生产常驻服务；M2 尚未完成阶段验收。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
