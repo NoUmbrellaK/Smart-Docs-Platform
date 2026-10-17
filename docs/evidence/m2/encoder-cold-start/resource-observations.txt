@@ -1,0 +1,43 @@
+Read-only runtime observations, 2026-10-17 Asia/Shanghai.
+Transcribed from command output during this investigation, not an automated time series.
+The exact wall-clock timestamp of this sample was not recorded; PID 647191 was the
+first diagnostic run's retry child, with ELAPSED=48 seconds at the sample.
+Do not treat these values as whole-run peaks or a quantified causal breakdown.
+
+Command: ps -p 647191 -o pid,rss,vsz,etimes,time,stat,wchan:30
+    PID   RSS    VSZ ELAPSED     TIME STAT WCHAN
+ 647191 727460 876976     48 00:00:02 DNs  wait_on_page_bit_common
+
+Command: cat /proc/647191/io
+rchar: 513144124
+wchar: 6576
+syscr: 1781
+syscw: 38
+read_bytes: 158990336
+write_bytes: 24576
+cancelled_write_bytes: 4096
+
+Selected /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.stat:
+anon 1090416640
+file 136478720
+workingset_refault_file 1182462
+pgscan 2129932
+pgsteal 2008888
+
+/sys/fs/cgroup/smartdocsvectorcheck.slice/io.pressure:
+some avg10=69.57 avg60=75.60 avg300=54.76 total=4562869028
+full avg10=69.08 avg60=74.75 avg300=54.02 total=4512780194
+
+/sys/fs/cgroup/smartdocsvectorcheck.slice/memory.pressure:
+some avg10=19.32 avg60=14.70 avg300=10.76 total=459634007
+full avg10=19.13 avg60=14.56 avg300=10.64 total=452871954
+
+Separate baseline observation before the diagnostic run:
+/sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+low 0
+high 19412
+max 0
+oom 0
+oom_kill 0
+
+Final memory.events and service state are captured separately in unit-status.txt.

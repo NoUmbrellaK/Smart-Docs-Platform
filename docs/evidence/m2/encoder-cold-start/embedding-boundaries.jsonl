@@ -1,0 +1,76 @@
+{"epoch": 1792249533.9106774, "event": "client_request", "pid": 647806}
+{"epoch": 1792249534.034206, "event": "service_enter", "pid": 648005}
+{"epoch": 1792249534.0530932, "event": "parent_spawn", "pid": 648005, "timeout": 60}
+{"epoch": 1792249534.10135, "event": "child_wrapper_enter", "pid": 648007}
+{"cpu": 0.063, "elapsed": 0.041, "epoch": 1792249534.1427398, "function": "_main", "line": 253, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.142904, "function": "_main", "line": 254, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.143058, "function": "_main", "line": 255, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.1431386, "function": "_main", "line": 257, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.1432135, "function": "_main", "line": 258, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.143282, "function": "_main", "line": 260, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.1433432, "function": "_main", "line": 261, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.143451, "function": "_main", "line": 264, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.064, "elapsed": 0.042, "epoch": 1792249534.143805, "function": "_main", "line": 265, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.1438825, "function": "_encode", "line": 216, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.1439893, "function": "_verify_model", "line": 200, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.1440504, "function": "_verify_model", "line": 201, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.1441076, "function": "_verify_model", "line": 202, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.144206, "function": "_verify_model", "line": 203, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.14431, "function": "_verify_model", "line": 205, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.1443892, "function": "_verify_model", "line": 206, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.065, "elapsed": 0.043, "epoch": 1792249534.144491, "function": "_verify_model", "line": 207, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 8192}
+{"cpu": 0.066, "elapsed": 0.194, "epoch": 1792249534.2950046, "function": "_verify_model", "line": 208, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 1884160}
+{"cpu": 0.844, "elapsed": 44.997, "epoch": 1792249579.0982094, "function": "_verify_model", "line": 209, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 195997696}
+{"cpu": 0.897, "elapsed": 48.49, "epoch": 1792249582.5915105, "function": "_encode", "line": 217, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 213094400}
+{"cpu": 0.897, "elapsed": 48.49, "epoch": 1792249582.591681, "function": "_encode", "line": 218, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 213094400}
+{"cpu": 0.911, "elapsed": 48.506, "epoch": 1792249582.6070642, "function": "_encode", "line": 220, "major_faults": 0, "maxrss_kib": 21084, "pid": 648007, "read_bytes": 213209088}
+{"cpu": 1.475, "elapsed": 59.153, "epoch": 1792249593.253883, "function": "_encode", "line": 223, "major_faults": 67, "maxrss_kib": 75060, "pid": 648007, "read_bytes": 258244608}
+{"cpu": 1.475, "elapsed": 59.153, "epoch": 1792249593.2541487, "function": "_encode", "line": 224, "major_faults": 67, "maxrss_kib": 75060, "pid": 648007, "read_bytes": 258244608}
+{"cpu": 1.476, "elapsed": 59.153, "epoch": 1792249593.2542288, "function": "_encode", "line": 225, "major_faults": 67, "maxrss_kib": 75060, "pid": 648007, "read_bytes": 258244608}
+{"code": "embedding_timeout", "epoch": 1792249594.0833585, "event": "parent_error", "pid": 648005}
+{"epoch": 1792249594.0834973, "event": "service_exit", "pid": 648005}
+{"code": "embedding_timeout", "epoch": 1792249594.0936062, "event": "client_error", "pid": 647806}
+{"epoch": 1792249594.8163898, "event": "client_request", "pid": 647806}
+{"epoch": 1792249594.8685665, "event": "service_enter", "pid": 648073}
+{"epoch": 1792249594.8880892, "event": "parent_spawn", "pid": 648073, "timeout": 60}
+{"epoch": 1792249594.9110446, "event": "child_wrapper_enter", "pid": 648074}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.949809, "function": "_main", "line": 253, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9499292, "function": "_main", "line": 254, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9501057, "function": "_main", "line": 255, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9501855, "function": "_main", "line": 257, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9502678, "function": "_main", "line": 258, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9503355, "function": "_main", "line": 260, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9504187, "function": "_main", "line": 261, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.061, "elapsed": 0.039, "epoch": 1792249594.9505012, "function": "_main", "line": 264, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9508424, "function": "_main", "line": 265, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9509258, "function": "_encode", "line": 216, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9509861, "function": "_verify_model", "line": 200, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9510465, "function": "_verify_model", "line": 201, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9511027, "function": "_verify_model", "line": 202, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9512162, "function": "_verify_model", "line": 203, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9513009, "function": "_verify_model", "line": 205, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.951376, "function": "_verify_model", "line": 206, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.062, "elapsed": 0.04, "epoch": 1792249594.9514406, "function": "_verify_model", "line": 207, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.063, "elapsed": 0.041, "epoch": 1792249594.9519937, "function": "_verify_model", "line": 208, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 8192}
+{"cpu": 0.726, "elapsed": 13.511, "epoch": 1792249608.4217267, "function": "_verify_model", "line": 209, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 62132224}
+{"cpu": 0.772, "elapsed": 13.557, "epoch": 1792249608.4677794, "function": "_encode", "line": 217, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 62132224}
+{"cpu": 0.772, "elapsed": 13.557, "epoch": 1792249608.4679003, "function": "_encode", "line": 218, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 62132224}
+{"cpu": 0.787, "elapsed": 13.572, "epoch": 1792249608.482568, "function": "_encode", "line": 220, "major_faults": 0, "maxrss_kib": 21084, "pid": 648074, "read_bytes": 62132224}
+{"cpu": 1.309, "elapsed": 15.689, "epoch": 1792249610.5995693, "function": "_encode", "line": 223, "major_faults": 8, "maxrss_kib": 74464, "pid": 648074, "read_bytes": 70832128}
+{"cpu": 1.309, "elapsed": 15.689, "epoch": 1792249610.5998397, "function": "_encode", "line": 224, "major_faults": 8, "maxrss_kib": 74464, "pid": 648074, "read_bytes": 70832128}
+{"cpu": 1.309, "elapsed": 15.689, "epoch": 1792249610.599929, "function": "_encode", "line": 225, "major_faults": 8, "maxrss_kib": 74464, "pid": 648074, "read_bytes": 70832128}
+{"cpu": 2.733, "elapsed": 47.734, "epoch": 1792249642.6445384, "function": "_encode", "line": 226, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.64471, "function": "_encode", "line": 228, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.644789, "function": "_encode", "line": 229, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.6448631, "function": "_encode", "line": 230, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.6449244, "function": "_encode", "line": 231, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.6453683, "function": "_encode", "line": 232, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.734, "elapsed": 47.734, "epoch": 1792249642.645468, "function": "_encode", "line": 234, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.735, "elapsed": 47.735, "epoch": 1792249642.6455278, "function": "_encode", "line": 235, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.735, "elapsed": 47.735, "epoch": 1792249642.6455908, "function": "_encode", "line": 236, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.735, "elapsed": 47.735, "epoch": 1792249642.645679, "function": "_encode", "line": 237, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.735, "elapsed": 47.735, "epoch": 1792249642.6457708, "function": "_encode", "line": 238, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"cpu": 2.735, "elapsed": 47.735, "epoch": 1792249642.6458309, "function": "_encode", "line": 239, "major_faults": 35, "maxrss_kib": 744208, "pid": 648074, "read_bytes": 129839104}
+{"code": "embedding_timeout", "epoch": 1792249654.932232, "event": "parent_error", "pid": 648073}
+{"epoch": 1792249654.9323814, "event": "service_exit", "pid": 648073}
+{"code": "embedding_timeout", "epoch": 1792249654.9427307, "event": "client_error", "pid": 647806}

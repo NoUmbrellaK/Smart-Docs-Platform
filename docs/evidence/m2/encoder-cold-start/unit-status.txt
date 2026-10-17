@@ -1,0 +1,48 @@
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 22:56:25 CST
+ExecMainExitTimestamp=Sat 2026-10-17 23:01:37 CST
+ExecMainStatus=1
+Id=smartdocs-hybrid-profile.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+ExecMainStartTimestamp=n/a
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-profile-encoder.service
+ActiveState=inactive
+
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 23:03:26 CST
+ExecMainExitTimestamp=Sat 2026-10-17 23:08:47 CST
+ExecMainStatus=1
+Id=smartdocs-hybrid-boundary.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+ExecMainStartTimestamp=n/a
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-boundary-encoder.service
+ActiveState=inactive
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 27699
+max 0
+oom 0
+oom_kill 0
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
