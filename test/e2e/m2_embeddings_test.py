@@ -21,8 +21,14 @@ from smartdocs.worker import worker_lock
 
 def main():
     assert os.geteuid() != 0
-    interfaces = sorted(name for _, name in socket.if_nameindex())
-    assert interfaces == ["lo"]
+    for family in (socket.AF_INET, socket.AF_INET6):
+        try:
+            probe = socket.socket(family, socket.SOCK_STREAM)
+        except OSError:
+            continue
+        else:
+            probe.close()
+            raise AssertionError("encoder test requires blocked IP sockets")
     model_dir, executable = sys.argv[1:]
     text = ("项目部署需要配置数据库，访问权限必须经过审核。" * 60)[:1200]
     assert len(text) == 1200
@@ -64,6 +70,17 @@ def main():
         assert a["windows"][0] == b["windows"][0], "unchanged prefix drifted"
         assert a["windows"][-1]["vector"] != b["windows"][-1]["vector"], "suffix ignored"
 
+        # Recorded from the original one-process encoder, not computed by this implementation.
+        # See docs/evidence/m2/serial-encoder-spike/baseline.txt (6 chunks, 16 windows).
+        compatibility_texts = [
+            'Database disaster recovery: restore the latest backup to recover lost data.',
+            '部署流程与备份恢复验证。'*80, 'ＡＢＣ café e\u0301 👩‍💻\n备份\t恢复',
+            '<s> [MASK] </s>', '如何恢复备份？', 'x'*1200]
+        compatible = encode([{'chunk_id': str(i)*64, 'text': value}
+                             for i, value in enumerate(compatibility_texts)])
+        compatibility_sha = hashlib.sha256(json.dumps(compatible, sort_keys=True, allow_nan=False).encode()).hexdigest()
+        assert compatibility_sha == '6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8'
+
         # Mismatched local artifacts fail closed, before inference, without mutating the model.
         bad = Path(tmp) / "bad-model"
         bad.mkdir()
@@ -103,13 +120,14 @@ def main():
         assert all(abs(math.fsum(v*v for v in w["vector"]) - 1) < 1e-5 for w in encoded["windows"])
     print(json.dumps({"passed": True, "cases": ["exact_unicode_coverage", "real_token_budget",
         "suffix_affects_vector", "fresh_process_repeatability", "unit_vectors", "flock_busy",
-        "timeout_then_reuse", "model_tamper_refusal", "inherited_limits_not_relaxed"],
+        "timeout_then_reuse", "model_tamper_refusal", "inherited_limits_not_relaxed", "old_revision_compatible"],
+        "compatibility_sha256": compatibility_sha,
         "embedding_revision": m.EMBEDDING_REVISION, "window_token_counts": token_counts,
         "first_seconds": round(first_seconds, 3), "second_seconds": round(second_seconds, 3),
         "child_peak_rss_kib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
         "encoder_sha256": hashlib.sha256((ROOT / "python/smartdocs/embeddings.py").read_bytes()).hexdigest(),
         "test_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        "network_interfaces": interfaces, "uid": os.geteuid()}, indent=2))
+        "ip_sockets_blocked": True, "uid": os.geteuid()}, indent=2))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,39 @@
+test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests) ... FAIL
+test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests) ... FAIL
+
+======================================================================
+FAIL: test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_embeddings.py", line 52, in test_stages_share_deadline_and_lock_until_validated_result
+    actual = m.encode_chunks(chunks, model_dir="/model", python_executable=sys.executable,
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/python/smartdocs/embeddings.py", line 180, in encode_chunks
+    validate_result(result, chunks)
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/python/smartdocs/embeddings.py", line 106, in validate_result
+    invalid()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/python/smartdocs/embeddings.py", line 87, in invalid
+    raise EmbeddingError("embedding_invalid_result")
+smartdocs.embeddings.EmbeddingError: embedding_invalid_result
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_embeddings.py", line 55, in test_stages_share_deadline_and_lock_until_validated_result
+    self.fail("valid staged request rejected: " + error.code)
+AssertionError: valid staged request rejected: embedding_invalid_result
+
+======================================================================
+FAIL: test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_embeddings.py", line 78, in test_first_stage_timeout_never_starts_inference_and_releases_lock
+    self.assertEqual(caught.exception.code, "embedding_timeout")
+AssertionError: 'embedding_invalid_result' != 'embedding_timeout'
+- embedding_invalid_result
++ embedding_timeout
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.022s
+
+FAILED (failures=2)

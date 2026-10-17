@@ -16,6 +16,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+from time import monotonic
 
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -31,6 +32,7 @@ VERSIONS = {"fastembed": "0.9.0", "onnxruntime": "1.23.2", "numpy": "2.2.6",
 EMBEDDING_REVISION = "minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1"
 MAX_INPUT_BYTES = 64 * 1024
 MAX_OUTPUT_BYTES = 2 * 1024 * 1024
+MAX_STAGE_BYTES = 256 * 1024
 CHILD_ERRORS = frozenset({"embedding_invalid_input", "embedding_window_limit",
     "embedding_model_unavailable", "embedding_dependency_unavailable",
     "embedding_resource_limit", "embedding_invalid_result", "embedding_worker_failed",
@@ -83,6 +85,14 @@ def window_ranges(text, count_tokens):
 
 
 def validate_result(result, chunks):
+    _validate_encoded(result, chunks, tokenized=False)
+
+
+def validate_prepared(result, chunks):
+    _validate_encoded(result, chunks, tokenized=True)
+
+
+def _validate_encoded(result, chunks, *, tokenized):
     def invalid():
         raise EmbeddingError("embedding_invalid_result")
 
@@ -102,21 +112,33 @@ def validate_result(result, chunks):
         if total > 128:
             invalid()
         for window in encoded["windows"]:
-            if not isinstance(window, dict) or set(window) != {"char_start", "char_end", "vector"}:
+            fields = {"ids", "mask"} if tokenized else {"vector"}
+            if not isinstance(window, dict) or set(window) != {"char_start", "char_end"} | fields:
                 invalid()
-            start, end, vector = window["char_start"], window["char_end"], window["vector"]
+            start, end = window["char_start"], window["char_end"]
             if (type(start) is not int or type(end) is not int or start != cursor
-                    or not start < end <= len(source["text"])
-                    or not isinstance(vector, list) or len(vector) != 384
-                    or any(type(v) not in (int, float) or not -1.00001 <= v <= 1.00001 for v in vector)
-                    or not math.isclose(math.fsum(v*v for v in vector), 1.0, abs_tol=1e-5)):
+                    or not start < end <= len(source["text"])):
                 invalid()
+            if tokenized:
+                ids, mask = window["ids"], window["mask"]
+                # Fixed config.json declares 250037 embeddings; no padding is sent.
+                if (not isinstance(ids, list) or not 1 <= len(ids) <= 128
+                        or any(type(i) is not int or not 0 <= i < 250037 for i in ids)
+                        or not isinstance(mask, list) or len(mask) != len(ids)
+                        or any(type(i) is not int or i != 1 for i in mask)):
+                    invalid()
+            else:
+                vector = window["vector"]
+                if (not isinstance(vector, list) or len(vector) != 384
+                        or any(type(v) not in (int, float) or not -1.00001 <= v <= 1.00001 for v in vector)
+                        or not math.isclose(math.fsum(v*v for v in vector), 1.0, abs_tol=1e-5)):
+                    invalid()
             cursor = end
         if cursor != len(source["text"]):
             invalid()
 
 
-def _run_child(command, payload, timeout):
+def _run_child(command, payload, timeout, *, output_limit=MAX_OUTPUT_BYTES):
     env = {"HF_HUB_OFFLINE": "1", "HF_HUB_DISABLE_TELEMETRY": "1",
            "HF_HUB_DISABLE_IMPLICIT_TOKEN": "1", "TOKENIZERS_PARALLELISM": "false",
            "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"}
@@ -143,8 +165,8 @@ def _run_child(command, payload, timeout):
         except OSError:
             raise EmbeddingError("embedding_worker_failed") from None
         output.seek(0)
-        raw = output.read(MAX_OUTPUT_BYTES + 1)
-    if len(raw) > MAX_OUTPUT_BYTES:
+        raw = output.read(output_limit + 1)
+    if len(raw) > output_limit:
         raise EmbeddingError("embedding_result_too_large")
     try:
         result = json.loads(raw)
@@ -175,9 +197,24 @@ def encode_chunks(chunks, *, model_dir, python_executable, lock_path, timeout_se
     try:
         # ponytail: one shared lock on this ECS; reconsider only after measured throughput needs.
         with worker_lock(lock_path):
+            deadline = monotonic() + timeout_seconds
+            def remaining():
+                seconds = deadline - monotonic()
+                if seconds <= 0:
+                    raise EmbeddingError("embedding_timeout")
+                return seconds
             command = [python_executable, "-I", "-B", str(Path(__file__).resolve()), model_dir]
-            result = _run_child(command, payload, timeout_seconds)
+            # Sibling processes: tokenizer exits before ORT loads, no nested sessions.
+            prepared = _run_child(command + ["tokenize"], payload, remaining(), output_limit=MAX_STAGE_BYTES)
+            remaining()
+            validate_prepared(prepared, chunks)
+            payload = json.dumps({"chunks": chunks, "prepared": prepared}, ensure_ascii=False,
+                                 separators=(",", ":")).encode("utf-8")
+            if len(payload) > MAX_STAGE_BYTES:
+                raise EmbeddingError("embedding_result_too_large")
+            result = _run_child(command + ["infer"], payload, remaining())
             validate_result(result, chunks)
+            remaining()
             return result
     except WorkerError as error:
         raise EmbeddingError("embedding_busy" if str(error) == "worker_already_running"
@@ -196,9 +233,11 @@ def _set_limits():
         resource.setrlimit(kind, (new_soft, new_hard))
 
 
-def _verify_model(model_dir):
+def _verify_model(model_dir, *, tokenizer_only=False):
     try:
         for name, expected in MODEL_HASHES.items():
+            if tokenizer_only and name.endswith(".onnx"):
+                continue
             path = Path(model_dir) / name
             if not path.is_file() or path.stat().st_size > 256*1024*1024:
                 raise EmbeddingError("embedding_model_unavailable")
@@ -212,59 +251,98 @@ def _verify_model(model_dir):
         raise EmbeddingError("embedding_model_unavailable") from None
 
 
-def _encode(chunks, model_dir):
-    _verify_model(model_dir)
+def _verify_dependencies():
     try:
         if any(importlib.metadata.version(name) != version for name, version in VERSIONS.items()):
             raise EmbeddingError("embedding_dependency_unavailable")
-        from fastembed import TextEmbedding
     except (ImportError, importlib.metadata.PackageNotFoundError):
         raise EmbeddingError("embedding_dependency_unavailable") from None
-    with tempfile.TemporaryDirectory(prefix="smartdocs-embedding-") as cache:
-        # The capped ECS probe measured lower retained RSS without ORT's CPU arena.
-        model = TextEmbedding(MODEL_NAME, threads=1, providers=["CPUExecutionProvider"],
-                              enable_cpu_mem_arena=False,
-                              local_files_only=True, specific_model_path=model_dir, cache_dir=cache)
-        if model.model.model.get_providers() != ["CPUExecutionProvider"]:
-            raise EmbeddingError("embedding_dependency_unavailable")
-        tokenizer = model.model.tokenizer
-        tokenizer.no_truncation()
-        tokenizer.no_padding()
-        ranges = [window_ranges(c["text"], lambda text: len(tokenizer.encode(text).ids)) for c in chunks]
-        if sum(map(len, ranges)) > 128:
-            raise EmbeddingError("embedding_window_limit")
-        result = {"embedding_revision": EMBEDDING_REVISION, "chunks": []}
-        for chunk, windows in zip(chunks, ranges):
-            encoded = {"chunk_id": chunk["chunk_id"],
-                       "text_sha256": sha256(chunk["text"].encode("utf-8")).hexdigest(), "windows": []}
-            for start, end in windows:
-                vector = [float(v) for v in next(model.embed([chunk["text"][start:end]], batch_size=1, parallel=None))]
-                if len(vector) != 384 or any(not math.isfinite(v) for v in vector):
-                    raise EmbeddingError("embedding_invalid_result")
-                norm = math.sqrt(math.fsum(v*v for v in vector))
-                if not math.isfinite(norm) or norm == 0:
-                    raise EmbeddingError("embedding_invalid_result")
-                encoded["windows"].append({"char_start": start, "char_end": end,
-                                           "vector": [v/norm for v in vector]})
-            result["chunks"].append(encoded)
-        validate_result(result, chunks)
-        return result
+
+
+def _tokenize(chunks, model_dir):
+    _verify_model(model_dir, tokenizer_only=True)
+    _verify_dependencies()
+    from fastembed.common.preprocessor_utils import load_tokenizer
+    tokenizer, _ = load_tokenizer(Path(model_dir))
+    tokenizer.no_truncation()
+    tokenizer.no_padding()
+    ranges = [window_ranges(c["text"], lambda text: len(tokenizer.encode(text).ids)) for c in chunks]
+    if sum(map(len, ranges)) > 128:
+        raise EmbeddingError("embedding_window_limit")
+    result = {"embedding_revision": EMBEDDING_REVISION, "chunks": []}
+    for chunk, windows in zip(chunks, ranges):
+        encoded = {"chunk_id": chunk["chunk_id"],
+                   "text_sha256": sha256(chunk["text"].encode("utf-8")).hexdigest(), "windows": []}
+        for start, end in windows:
+            tokens = tokenizer.encode_batch([chunk["text"][start:end]])[0]
+            encoded["windows"].append({"char_start": start, "char_end": end,
+                                       "ids": tokens.ids, "mask": tokens.attention_mask})
+        result["chunks"].append(encoded)
+    validate_prepared(result, chunks)
+    return result
+
+
+def _infer(chunks, prepared, model_dir):
+    validate_prepared(prepared, chunks)
+    _verify_model(model_dir)
+    _verify_dependencies()
+    import numpy as np
+    import onnxruntime as ort
+    from fastembed.common.utils import mean_pooling
+    options = ort.SessionOptions()
+    options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+    options.intra_op_num_threads = options.inter_op_num_threads = 1
+    options.enable_cpu_mem_arena = False
+    model = ort.InferenceSession(str(Path(model_dir)/"model_optimized.onnx"),
+                                providers=["CPUExecutionProvider"], sess_options=options)
+    if model.get_providers() != ["CPUExecutionProvider"]:
+        raise EmbeddingError("embedding_dependency_unavailable")
+    names = {node.name for node in model.get_inputs()}
+    if names != {"input_ids", "attention_mask", "token_type_ids"}:
+        raise EmbeddingError("embedding_dependency_unavailable")
+    result = {"embedding_revision": EMBEDDING_REVISION, "chunks": []}
+    for source in prepared["chunks"]:
+        encoded = {"chunk_id": source["chunk_id"], "text_sha256": source["text_sha256"], "windows": []}
+        for window in source["windows"]:
+            ids = np.array([window["ids"]], dtype=np.int64)
+            mask = np.array([window["mask"]], dtype=np.int64)
+            output = model.run(None, {"input_ids": ids, "attention_mask": mask,
+                                      "token_type_ids": np.zeros_like(ids)})[0]
+            vector = [float(v) for v in mean_pooling(output, mask).astype(output.dtype, copy=False)[0]]
+            if len(vector) != 384 or any(not math.isfinite(v) for v in vector):
+                raise EmbeddingError("embedding_invalid_result")
+            norm = math.sqrt(math.fsum(v*v for v in vector))
+            if not math.isfinite(norm) or norm == 0:
+                raise EmbeddingError("embedding_invalid_result")
+            encoded["windows"].append({"char_start": window["char_start"], "char_end": window["char_end"],
+                                       "vector": [v/norm for v in vector]})
+        result["chunks"].append(encoded)
+    validate_result(result, chunks)
+    return result
 
 
 def _main():
     try:
         _set_limits()
-        if len(sys.argv) != 2 or not os.path.isabs(sys.argv[1]):
+        if (len(sys.argv) != 3 or not os.path.isabs(sys.argv[1])
+                or sys.argv[2] not in ("tokenize", "infer")):
             raise EmbeddingError("embedding_invalid_input")
-        raw = sys.stdin.buffer.read(MAX_INPUT_BYTES + 1)
-        if len(raw) > MAX_INPUT_BYTES:
+        bound = MAX_INPUT_BYTES if sys.argv[2] == "tokenize" else MAX_STAGE_BYTES
+        raw = sys.stdin.buffer.read(bound + 1)
+        if len(raw) > bound:
             raise EmbeddingError("embedding_invalid_input")
         try:
-            chunks = json.loads(raw)
+            payload = json.loads(raw)
         except (ValueError, UnicodeError, RecursionError):
             raise EmbeddingError("embedding_invalid_input") from None
-        validate_chunks(chunks)
-        result = _encode(chunks, sys.argv[1])
+        if sys.argv[2] == "tokenize":
+            validate_chunks(payload)
+            result = _tokenize(payload, sys.argv[1])
+        else:
+            if not isinstance(payload, dict) or set(payload) != {"chunks", "prepared"}:
+                raise EmbeddingError("embedding_invalid_input")
+            validate_chunks(payload["chunks"])
+            result = _infer(payload["chunks"], payload["prepared"], sys.argv[1])
         output = json.dumps(result, ensure_ascii=True, allow_nan=False, separators=(",", ":")).encode("ascii")
         if len(output) > MAX_OUTPUT_BYTES:
             raise EmbeddingError("embedding_resource_limit")
@@ -272,6 +350,8 @@ def _main():
         output = json.dumps({"error": error.code}).encode("ascii")
     except MemoryError:
         output = b'{"error":"embedding_resource_limit"}'
+    except ImportError:
+        output = b'{"error":"embedding_dependency_unavailable"}'
     except Exception:
         output = b'{"error":"embedding_worker_failed"}'
     sys.stdout.buffer.write(output)

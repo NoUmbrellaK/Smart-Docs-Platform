@@ -1,0 +1,17 @@
+test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests) ... FAIL
+
+======================================================================
+FAIL: test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_embeddings.py", line 345, in test_tokenizer_stdout_is_bounded_before_json_parsing
+    self.assertEqual(caught.exception.code, 'embedding_result_too_large')
+AssertionError: 'embedding_invalid_result' != 'embedding_result_too_large'
+- embedding_invalid_result
++ embedding_result_too_large
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.059s
+
+FAILED (failures=1)

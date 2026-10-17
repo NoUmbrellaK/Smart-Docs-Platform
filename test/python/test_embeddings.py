@@ -5,9 +5,104 @@ import math
 import os
 import sys
 import unittest
+from copy import deepcopy
+from hashlib import sha256
+from pathlib import Path
+import tempfile
+from unittest.mock import patch
 
 
 class EmbeddingTests(unittest.TestCase):
+    def stage_fixtures(self):
+        chunks = [{"chunk_id": "a"*64, "text": "abc"}]
+        common = {"chunk_id": "a"*64, "text_sha256": sha256(b"abc").hexdigest()}
+        prepared = {"embedding_revision": self.module().EMBEDDING_REVISION, "chunks": [{
+            **common, "windows": [{"char_start": 0, "char_end": 3,
+                                   "ids": [0, 123, 2], "mask": [1, 1, 1]}]}]}
+        result = {"embedding_revision": self.module().EMBEDDING_REVISION, "chunks": [{
+            **common, "windows": [{"char_start": 0, "char_end": 3,
+                                   "vector": [1.0] + [0.0]*383}]}]}
+        return chunks, prepared, result
+
+    def test_stages_share_deadline_and_lock_until_validated_result(self):
+        m = self.module()
+        from smartdocs.worker import WorkerError, worker_lock
+        chunks, prepared, result = self.stage_fixtures()
+        clock = [100.0]
+        stages = []
+        with tempfile.TemporaryDirectory() as directory:
+            lock = str(Path(directory)/"model.lock")
+            def child(command, payload, timeout, **kwargs):
+                with self.assertRaises(WorkerError):
+                    with worker_lock(lock):
+                        pass
+                stages.append(command[-1])
+                if len(stages) == 1:
+                    self.assertEqual(json.loads(payload), chunks)
+                    self.assertEqual(timeout, 60)
+                    clock[0] += 41
+                    return prepared
+                self.assertEqual(json.loads(payload), {"chunks": chunks, "prepared": prepared})
+                self.assertEqual(timeout, 19)
+                return result
+            with patch.object(m.os, "geteuid", return_value=65534), \
+                    patch.object(m, "monotonic", side_effect=lambda: clock[0], create=True), \
+                    patch.object(m, "_run_child", side_effect=child):
+                try:
+                    actual = m.encode_chunks(chunks, model_dir="/model", python_executable=sys.executable,
+                                             lock_path=lock)
+                except m.EmbeddingError as error:
+                    self.fail("valid staged request rejected: " + error.code)
+                self.assertEqual(actual, result)
+            self.assertEqual(stages, ["tokenize", "infer"])
+            with worker_lock(lock):
+                pass
+
+    def test_first_stage_timeout_never_starts_inference_and_releases_lock(self):
+        m = self.module()
+        from smartdocs.worker import worker_lock
+        chunks, prepared, _ = self.stage_fixtures()
+        clock = [0.0]
+        calls = []
+        def child(*args, **kwargs):
+            calls.append(args)
+            clock[0] = 61
+            return prepared
+        with tempfile.TemporaryDirectory() as directory:
+            lock = str(Path(directory)/"model.lock")
+            with patch.object(m.os, "geteuid", return_value=65534), \
+                    patch.object(m, "monotonic", side_effect=lambda: clock[0], create=True), \
+                    patch.object(m, "_run_child", side_effect=child):
+                with self.assertRaises(m.EmbeddingError) as caught:
+                    m.encode_chunks(chunks, model_dir="/model", python_executable=sys.executable, lock_path=lock)
+                self.assertEqual(caught.exception.code, "embedding_timeout")
+            self.assertEqual(len(calls), 1)
+            with worker_lock(lock):
+                pass
+
+    def test_malformed_stage_output_is_rejected_before_inference(self):
+        m = self.module()
+        chunks, prepared, _ = self.stage_fixtures()
+        changes = [lambda p: p.update(embedding_revision="wrong"),
+                   lambda p: p["chunks"][0].update(chunk_id="b"*64),
+                   lambda p: p["chunks"][0].update(text_sha256="0"*64),
+                   lambda p: p["chunks"][0]["windows"][0].update(char_end=2),
+                   lambda p: p["chunks"][0]["windows"][0].update(ids=[True]),
+                   lambda p: p["chunks"][0]["windows"][0].update(ids=[250037]*3),
+                   lambda p: p["chunks"][0]["windows"][0].update(ids=[1]*129, mask=[1]*129),
+                   lambda p: p["chunks"][0]["windows"][0].update(mask=[1, 0, 1])]
+        for change in changes:
+            bad = deepcopy(prepared)
+            change(bad)
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as directory, \
+                    patch.object(m.os, "geteuid", return_value=65534), \
+                    patch.object(m, "_run_child", return_value=bad) as child:
+                with self.assertRaises(m.EmbeddingError) as caught:
+                    m.encode_chunks(chunks, model_dir="/model", python_executable=sys.executable,
+                                    lock_path=str(Path(directory)/"model.lock"))
+                self.assertEqual(caught.exception.code, "embedding_invalid_result")
+                self.assertEqual(child.call_count, 1)
+
     def module(self):
         self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
                              "bounded embedding encoder is missing")
@@ -104,16 +199,150 @@ class EmbeddingTests(unittest.TestCase):
             pass
 
         def constructor(*args, **kwargs):
-            self.assertIs(kwargs.get("enable_cpu_mem_arena", True), False)
+            options = kwargs["sess_options"]
+            self.assertIs(options.enable_cpu_mem_arena, False)
+            self.assertEqual((options.intra_op_num_threads, options.inter_op_num_threads), (1, 1))
+            self.assertEqual(kwargs["providers"], ["CPUExecutionProvider"])
             raise ConfigurationObserved()
 
         # Stop at the native loading boundary; the capped real-model probe separately
         # checks the resulting ORT option, memory and unchanged complete vectors.
-        with patch.object(m, "_verify_model"), \
-                patch.object(m.importlib.metadata, "version", side_effect=m.VERSIONS.__getitem__), \
-                patch.dict(sys.modules, {"fastembed": SimpleNamespace(TextEmbedding=constructor)}):
+        chunks, prepared, _ = self.stage_fixtures()
+        with patch.object(m, "_verify_model"), patch.object(m, "_verify_dependencies"), \
+                patch.dict(sys.modules, {
+                    "numpy": SimpleNamespace(),
+                    "fastembed.common.utils": SimpleNamespace(mean_pooling=None),
+                    "onnxruntime": SimpleNamespace(SessionOptions=SimpleNamespace,
+                        GraphOptimizationLevel=SimpleNamespace(ORT_ENABLE_ALL=99),
+                        InferenceSession=constructor)}):
             with self.assertRaises(ConfigurationObserved):
-                m._encode([{"chunk_id": "a"*64, "text": "Artificial memory policy check."}], "/unused-model")
+                m._infer(chunks, prepared, "/unused-model")
+
+    def test_real_stages_run_serially_and_reap_after_second_stage_timeout(self):
+        m = self.module()
+        from smartdocs.worker import worker_lock
+        chunks, prepared, result = self.stage_fixtures()
+        run_child = m._run_child
+        for fail_stage in (None, "tokenize", "infer"):
+            with self.subTest(fail_stage=fail_stage), tempfile.TemporaryDirectory() as directory:
+                lock = str(Path(directory)/"model.lock")
+                stages = []
+                pids = []
+                def run(command, payload, timeout, **kwargs):
+                    stage = command[-1]
+                    # No first-stage process may remain when inference starts.
+                    self.assertTrue(all(not Path('/proc', str(pid)).exists() for pid in pids))
+                    stages.append(stage)
+                    pid_file = Path(directory)/(stage+'.pid')
+                    body = prepared if stage == "tokenize" else result
+                    script = ("import json,os,pathlib,sys,time; sys.stdin.buffer.read(); "
+                        "pathlib.Path(" + repr(str(pid_file)) + ").write_text(str(os.getpid())); "
+                        + ("time.sleep(10); " if stage == fail_stage else "")
+                        + "print(" + repr(json.dumps(body)) + ")")
+                    try:
+                        return run_child([sys.executable, '-I', '-B', '-c', script], payload,
+                                         min(timeout, 0.3) if stage == fail_stage else timeout, **kwargs)
+                    finally:
+                        if pid_file.exists():
+                            pids.append(int(pid_file.read_text()))
+                with patch.object(m.os, 'geteuid', return_value=65534), \
+                        patch.object(m, '_run_child', side_effect=run):
+                    if fail_stage:
+                        with self.assertRaises(m.EmbeddingError) as caught:
+                            m.encode_chunks(chunks, model_dir='/model', python_executable=sys.executable,
+                                            lock_path=lock)
+                        self.assertEqual(caught.exception.code, 'embedding_timeout')
+                    else:
+                        self.assertEqual(m.encode_chunks(chunks, model_dir='/model',
+                            python_executable=sys.executable, lock_path=lock), result)
+                self.assertEqual(stages, ['tokenize'] if fail_stage == 'tokenize' else ['tokenize', 'infer'])
+                self.assertTrue(pids)
+                self.assertTrue(all(not Path('/proc', str(pid)).exists() for pid in pids))
+                with worker_lock(lock):
+                    pass
+
+    def test_second_stage_overrun_cannot_return_success(self):
+        m = self.module()
+        chunks, prepared, result = self.stage_fixtures()
+        clock = [0.0]
+        def run(command, payload, timeout, **kwargs):
+            if command[-1] == 'tokenize':
+                clock[0] = 40
+                return prepared
+            clock[0] = 61
+            return result
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(m.os, 'geteuid', return_value=65534), \
+                patch.object(m, 'monotonic', side_effect=lambda: clock[0]), \
+                patch.object(m, '_run_child', side_effect=run):
+            with self.assertRaises(m.EmbeddingError) as caught:
+                m.encode_chunks(chunks, model_dir='/model', python_executable=sys.executable,
+                                lock_path=str(Path(directory)/'model.lock'))
+            self.assertEqual(caught.exception.code, 'embedding_timeout')
+
+    def test_interrupt_during_either_stage_reaps_child_and_releases_lock(self):
+        import signal
+        m = self.module()
+        from smartdocs.worker import worker_lock
+        chunks, prepared, _ = self.stage_fixtures()
+        run_child = m._run_child
+        def interrupt(signum, frame):
+            raise KeyboardInterrupt()
+        previous = signal.signal(signal.SIGALRM, interrupt)
+        try:
+            for interrupted_stage in ('tokenize', 'infer'):
+                with self.subTest(stage=interrupted_stage), tempfile.TemporaryDirectory() as directory:
+                    pid_file = Path(directory)/'child.pid'
+                    lock = str(Path(directory)/'model.lock')
+                    def run(command, payload, timeout, **kwargs):
+                        if command[-1] != interrupted_stage:
+                            return prepared
+                        script = ("import os,pathlib,time; pathlib.Path(" + repr(str(pid_file))
+                                  + ").write_text(str(os.getpid())); time.sleep(10)")
+                        signal.setitimer(signal.ITIMER_REAL, 0.3)
+                        return run_child([sys.executable, '-I', '-B', '-c', script], payload, timeout, **kwargs)
+                    with patch.object(m.os, 'geteuid', return_value=65534), \
+                            patch.object(m, '_run_child', side_effect=run), self.assertRaises(KeyboardInterrupt):
+                        m.encode_chunks(chunks, model_dir='/model', python_executable=sys.executable, lock_path=lock)
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+                    self.assertTrue(pid_file.exists())
+                    self.assertFalse(Path('/proc', pid_file.read_text()).exists())
+                    with worker_lock(lock):
+                        pass
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, previous)
+
+    def test_missing_stage_dependency_returns_safe_dependency_error(self):
+        import io
+        from types import SimpleNamespace
+        m = self.module()
+        chunks, prepared, _ = self.stage_fixtures()
+        for mode in ('tokenize', 'infer'):
+            payload = chunks if mode == 'tokenize' else {'chunks': chunks, 'prepared': prepared}
+            output = io.BytesIO()
+            with self.subTest(mode=mode), patch.object(m, '_set_limits'), \
+                    patch.object(m, '_'+mode, side_effect=ImportError('private deployment detail')), \
+                    patch.object(sys, 'argv', ['embeddings.py', '/model', mode]), \
+                    patch.object(sys, 'stdin', SimpleNamespace(buffer=io.BytesIO(json.dumps(payload).encode()))), \
+                    patch.object(sys, 'stdout', SimpleNamespace(buffer=output)):
+                m._main()
+            self.assertEqual(json.loads(output.getvalue()), {'error': 'embedding_dependency_unavailable'})
+
+    def test_tokenizer_stdout_is_bounded_before_json_parsing(self):
+        m = self.module()
+        chunks, _, _ = self.stage_fixtures()
+        popen = m.subprocess.Popen
+        def large_stage_output(command, **kwargs):
+            return popen([sys.executable, '-I', '-B', '-c',
+                "import sys; sys.stdin.buffer.read(); print(' '*(256*1024)+'{}')"], **kwargs)
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(m.os, 'geteuid', return_value=65534), \
+                patch.object(m.subprocess, 'Popen', side_effect=large_stage_output):
+            with self.assertRaises(m.EmbeddingError) as caught:
+                m.encode_chunks(chunks, model_dir='/model', python_executable=sys.executable,
+                                lock_path=str(Path(directory)/'model.lock'))
+            self.assertEqual(caught.exception.code, 'embedding_result_too_large')
 
     def test_process_group_cleanup_also_terminates_descendants(self):
         m = self.module()
