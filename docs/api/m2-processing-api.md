@@ -1,6 +1,6 @@
 # M2 持久处理任务（当前增量）
 
-当前提供任务状态、取消、人工重试、可信本地 Python worker 通道及鉴权后的固定版本来源读取。单独启用 worker 后才会消费上传任务；pending 不代表已经解析。没有搜索业务接口或模型调用。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
+当前提供任务状态、取消、人工重试、可信本地 Python worker 通道及鉴权后的固定版本来源读取。单独启用 worker 后才会消费上传任务；pending 不代表已经解析。已新增 [本地元数据/关键词搜索 API](m2-search-api.md)，没有向量或模型调用。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
 
 ## 用户接口
 
@@ -64,7 +64,7 @@ Python 仅连接固定 `127.0.0.1`，忽略代理环境、不跟随重定向。c
 
 历史版本不会跳转新版；删除、跨项目或撤销成员资格后不可读；内容 unavailable 时返回 `409 content_unavailable`。本接口属于普通本地阅读，不是 Agent 外发授权入口，未来 Agent 不能绕过额外的具体版本外发检查直接转发结果。文本以 JSON 数据返回，前端必须用 textContent 等安全方式显示。
 
-parse_state 单独描述解析阶段；keyword_state 只有同事务成功写入 FULLTEXT 后为 completed；vector_state 对内部资料为 not_applicable、批准版本为 pending，目前没有向量完成写入。变更批准或整体撤销会同步向量适用状态，新版本默认不继承批准。搜索业务、关键词边界覆盖和真实向量验证仍在后续增量。
+parse_state 单独描述解析阶段；keyword_state 只有同事务成功写入 FULLTEXT 后为 completed；vector_state 对内部资料为 not_applicable、批准版本为 pending，目前没有向量完成写入。变更批准或整体撤销会同步向量适用状态，新版本默认不继承批准。本地搜索与关键词边界说明见上述搜索 API；真实向量验证仍在后续增量。
 
 关键词索引使用 MySQL 的 [ngram FULLTEXT](https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html)，实际分词受 ngram_token_size 和停用词配置影响；一个中文 MATCH 回归不代表完整搜索质量验收。改变这些配置必须重建索引并重新验证，不可假定配置变更会自动重写旧索引。
 

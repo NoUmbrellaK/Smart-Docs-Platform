@@ -10,7 +10,8 @@ enum class FaultPoint {
     AfterObjectRename,
     BeforeDatabaseCommit,
     AfterDatabaseCommit,
-    BeforeHttpResponse
+    BeforeHttpResponse,
+    AfterSearchCandidates
 };
 
 class FaultInjector {

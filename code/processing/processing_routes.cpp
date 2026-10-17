@@ -5,6 +5,7 @@
 #include "core/id.h"
 #include "http/jsonbody.h"
 #include "http/router.h"
+#include <algorithm>
 
 namespace {
 HttpResponse Response(const ProcessingJob& job, const std::string& request, bool keep_alive) {
@@ -20,7 +21,20 @@ void RequireEmpty(const RequestHead& head) {
 }  // namespace
 
 void RegisterProcessingRoutes(Router& router, std::shared_ptr<AuthService> auth,
-                               std::shared_ptr<ProcessingService> jobs, bool secure_cookie) {
+                               std::shared_ptr<ProcessingService> jobs, bool secure_cookie,
+                               uint64_t max_json_bytes) {
+    router.Add("POST", "/api/v1/projects/{project_id}/search",
+        [auth, jobs, secure_cookie, max_json_bytes](const RequestHead& head, const RouteParams& params) {
+            RequireSameOrigin(head, secure_cookie);
+            if (!head.query.empty()) throw AppError(400, "invalid_request", "search parameters belong in the JSON body");
+            const auto session = auth->Authenticate(RequireSessionCookie(head));
+            const auto project = params.at("project_id");
+            return PrepareJsonBody(head, std::min<uint64_t>(4096, max_json_bytes),
+                [jobs, session, project, keep_alive=head.keep_alive](const nlohmann::json& body) {
+                    return HttpResponse::Json(200, {{"request_id",GenerateId()},
+                        {"data",jobs->Search(session, project, body)}}, keep_alive);
+                });
+        });
     const std::string path = "/api/v1/projects/{project_id}/processing-jobs/{job_id}";
     router.Add("GET", path, [auth, jobs](const RequestHead& head, const RouteParams& params) {
         RequireEmpty(head);

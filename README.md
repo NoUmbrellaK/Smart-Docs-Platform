@@ -2,7 +2,7 @@
 
 面向小型项目团队的文档管理与智能整理平台。项目计划以 C++ 文件服务为业务核心，通过 Python MCP/Agent 服务提供受控的资料检索、交接核查和智能归档能力。
 
-> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前已实现 PDF/TXT/Markdown 本地解析、持久任务、可信本机 worker、事务式关键词索引发布及固定版本来源读取。需单独部署启用 worker；搜索业务/向量混合检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
+> M1 文件业务已于 2026-10-17 在当前 ECS 的资源限额内完成验收并审阅证据：登录会话、项目角色、目录、分片续传、不可变版本、受保护下载/PDF 翻页、文件状态操作和同源 Web 工作台。M1 被测干净提交为 `ed14dcf6029e53ac7106847fa456b3067af0147c`，M1 交接提交仅更新文档和归档证据。用户随后批准启动 M2 并选择方案 A：当前已实现 PDF/TXT/Markdown 本地解析、持久任务、可信本机 worker、事务式关键词索引发布、固定版本来源读取及本地元数据/关键词搜索 API。需单独部署启用 worker；搜索页面、向量混合检索及 M3–M5 仍未完成。详细边界见[需求文档](./团队文档管理与智能整理平台_需求文档.md)。
 
 ## 当前实现
 
@@ -62,9 +62,13 @@ python3 -m venv /path/to/smartdocs-venv
 
 新增 [本机 Python worker](./python/smartdocs/worker.py)：受独立 bearer 保护的 C++ 回环接口领取任务、流式读取受控版本、执行真实解析并原子发布结果。单 worker 锁先于恢复，重启后的 interrupted 等待人工重试；取消/新版覆盖阻止旧 attempt 发布。仅 publish/fail 的传输失败或 5xx 最多原样重放一次，不把响应丢失当作事务失败。普通用户 JSON 限额不变，worker 结果最多 16 MiB。
 
-本次完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python **39/39**、隔离数据库真实 HTTP **7/7** 通过；包括三种格式、中文 FULLTEXT、60 万字符/500 块结果、损坏/不支持文件仍可下载、取消/新版冲突、单实例锁、C++ 重启与人工重试。使用当前 ECS 的非 root 受限单元串行验证，未迁移原有业务库。部署配置及复现命令见 [worker 手册](./docs/deployment/m2-local-worker.md)，完整构建/回归证据见 [worker 计划](./docs/superpowers/plans/2026-10-17-m2-local-worker.md)。
+worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python **39/39**、隔离数据库真实 HTTP **7/7** 通过；包括三种格式、中文 FULLTEXT、60 万字符/500 块结果、损坏/不支持文件仍可下载、取消/新版冲突、单实例锁、C++ 重启与人工重试。使用当前 ECS 的非 root 受限单元串行验证，未迁移原有业务库。部署配置及复现命令见 [worker 手册](./docs/deployment/m2-local-worker.md)，完整构建/回归证据见 [worker 计划](./docs/superpowers/plans/2026-10-17-m2-local-worker.md)。
 
-本机 worker 默认关闭，尚未安装为生产常驻服务；搜索业务接口及向量混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。没有模型请求或 DeepSeek token 消耗。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+新增同源、会话鉴权的 [本地搜索 API](./docs/api/m2-search-api.md)：metadata 支持名称子串及空查询分页发现未解析资料；keyword 返回当前已发布版本的真实片段与固定出处。支持目录/MIME 条件、有限分页和覆盖警告，返回正文前重新检查候选状态。仅本地普通阅读，不可代替 Agent 外发授权；尚未实现搜索页面。测试范围和限制见[搜索增量证据](./docs/superpowers/plans/2026-10-17-m2-local-search.md)。
+
+搜索增量完整 C++ 回归 **127/127**（0 失败、0 跳过），Python **39/39**，扩展后的真实 HTTP **7/7**；覆盖中文/英文/短词/停用词、跨项目隔离、分页、同一文件多片段、候选读取后的版本/删除/移动等状态变化，以及真实 worker 发布后的搜索和来源读取。仍为当前 ECS 上串行、非 root、受限测试，无生产部署或模型调用。
+
+本机 worker 默认关闭，尚未安装为生产常驻服务；向量混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。没有模型请求或 DeepSeek token 消耗。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 
@@ -185,7 +189,7 @@ test/e2e/run_m1.sh
 ## 开发路线
 
 1. **M1 文件业务**：实现、完整受限验收和证据审阅已完成，阶段关闭；
-2. **M2 文档检索**：进行中，已实现离线解析、持久任务、片段/本地索引事务发布和固定版本来源读取；worker 通道、搜索业务及混合检索待实现；
+2. **M2 文档检索**：进行中，已实现本地解析、持久任务、worker 通道、片段/本地索引事务发布、固定版本来源读取及元数据/关键词搜索 API；搜索页面和真实混合检索待实现；
 3. **M3 MCP 与 Agent**：实现五项业务工具和可观察的多步调用；
 4. **M4 归档与交接**：方案确认、事务执行、交接清单和带引用报告；
 5. **M5 验收与展示**：固定任务、故障测试、部署文档和可复现实验记录。

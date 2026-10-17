@@ -14,6 +14,7 @@
 
 #include <nlohmann/json.hpp>
 #include <exception>
+#include <algorithm>
 #include <string>
 #include <thread>
 #include <sys/stat.h>
@@ -87,19 +88,37 @@ nlohmann::json Body(HttpResponse response) {
     return nlohmann::json::parse(text.substr(text.find("\r\n\r\n") + 4)).at("data");
 }
 
-nlohmann::json TextResult(const JobFixture& job) {
+nlohmann::json TextResult(const JobFixture& job, const std::string& text = "部署文档") {
     using Json = nlohmann::json;
+    const uint64_t count = std::count_if(text.begin(), text.end(), [](unsigned char c) { return (c & 0xc0) != 0x80; });
     Json identity = Json::array({"utf8-lines-v1", job.file_id, job.version_id,
-                                std::string(64, 'a'), 0, 4});
+                                std::string(64, 'a'), 0, count});
     const auto bytes = identity.dump();
     Json chunk = {{"chunk_id", Sha256Hex(bytes.data(), bytes.size())},
         {"file_id", job.file_id}, {"version_id", job.version_id},
         {"source_sha256", std::string(64, 'a')}, {"parser_revision", "utf8-lines-v1"},
-        {"text", "部署文档"}, {"char_start", 0}, {"char_end", 4},
+        {"text", text}, {"char_start", 0}, {"char_end", count},
         {"line_start", 1}, {"line_end", 1}};
     return {{"file_id", job.file_id}, {"version_id", job.version_id},
         {"source_sha256", std::string(64, 'a')}, {"parser_revision", "utf8-lines-v1"},
         {"page_count", 0}, {"pages_without_text", Json::array()}, {"chunks", Json::array({chunk})}};
+}
+
+nlohmann::json Search(Application& app, Fixture& f, const nlohmann::json& body,
+                      const std::string& token = "") {
+    auto head = f.Head("POST", "", "", token);
+    head.path = "/api/v1/projects/" + f.project.id + "/search";
+    const auto bytes = body.dump(); head.content_length = bytes.size();
+    head.headers["content-type"] = "application/json";
+    auto handler = app.Prepare(head); handler->OnData(bytes.data(), bytes.size());
+    return Body(handler->Finish());
+}
+
+void PublishText(Fixture& f, const std::string& text = "部署文档") {
+    ProcessingService service(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(service.ClaimNext(&claim));
+    service.Publish(claim.job.id, claim.attempt_token,
+        TextResult({claim.job.id, claim.job.file_id, claim.job.version_id}, text));
 }
 
 }  // namespace
@@ -466,4 +485,152 @@ TEST_CASE(processing_worker_result_body_is_bounded_before_buffering) {
     CHECK_THROWS_CODE(app.Prepare(head), "body_too_large");
     head.headers["authorization"] = "Bearer wrong";
     CHECK_THROWS_CODE(app.Prepare(head), "worker_unauthorized");
+}
+
+TEST_CASE(processing_search_metadata_discovers_unparsed_and_literal_names_with_pagination) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    auto a = f.AddJob(), b = f.AddJob();
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE files SET name='100%_guide.txt' WHERE id=?", {SqlValue(a.file_id)}); }
+    auto found = Search(app, f, {{"mode","metadata"},{"query","%_"}});
+    CHECK(found.at("items").size() == 1);
+    CHECK(found.at("items")[0].at("file_id") == a.file_id);
+    CHECK(found.at("items")[0].at("parse_state") == "pending");
+    CHECK(!found.at("items")[0].contains("chunk"));
+    CHECK(found.at("coverage").at("keyword_ready_files") == 0);
+    auto page1 = Search(app, f, {{"mode","metadata"},{"query",""},{"page_size",1}});
+    auto page2 = Search(app, f, {{"mode","metadata"},{"query",""},{"page_size",1},{"page",2}});
+    CHECK(page1.at("items").size() == 1 && page1.at("has_more") == true);
+    CHECK(page1.at("next_page") == 2);
+    CHECK(page2.at("items").size() == 1 && page2.at("has_more") == false);
+    CHECK(page2.at("next_page").is_null());
+    CHECK(page1.at("items")[0].at("file_id") != page2.at("items")[0].at("file_id"));
+    CHECK(Search(app, f, {{"mode","metadata"},{"query","%' OR 1=1 --"}}).at("items").empty());
+}
+
+TEST_CASE(processing_search_keyword_returns_exact_sources_and_explicit_limits) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    auto a = f.AddJob(); PublishText(f, "部署文档 orbit"); f.AddJob();
+    for (const std::string query : {"部署", "orbit"}) {
+        const auto found = Search(app, f, {{"mode","keyword"},{"query",query}});
+        CHECK(found.at("retrieval") == "keyword_only");
+        CHECK(found.at("items").size() == 1);
+        const auto& hit = found.at("items")[0];
+        CHECK(hit.at("version_id") == a.version_id);
+        CHECK(hit.at("chunk").at("text") == "部署文档 orbit");
+        CHECK(hit.at("chunk").at("char_end") == 10);
+        CHECK(hit.at("coverage").at("page_count") == 0);
+        CHECK(found.at("coverage").at("current_files") == 2);
+        CHECK(found.at("coverage").at("keyword_ready_files") == 1);
+        CHECK(!found.at("warnings").empty());
+        ProcessingService jobs(TestDatabase(), f.projects);
+        CHECK(jobs.ReadDocument(f.admin.session, f.project.id, a.file_id, a.version_id,
+            hit.at("chunk").at("chunk_id").get<std::string>()).at("chunk") == hit.at("chunk"));
+    }
+    // Isolated mysqld uses its default bigram parser and English stopword list.
+    for (const std::string query : {"部", "+", "x", "or"})
+        CHECK(Search(app, f, {{"mode","keyword"},{"query",query}}).at("items").empty());
+}
+
+TEST_CASE(processing_search_enforces_roles_input_limits_and_same_origin) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    f.AddJob();
+    auto reader = f.auth.CreateUser("search_reader", "test-only-password");
+    f.projects.SetMemberRole(f.admin.session, f.project.id, reader.id, Role::Reader);
+    const auto token = f.auth.Login("search_reader", "test-only-password").raw_token;
+    CHECK(Search(app, f, {{"mode","metadata"},{"query",""}}, token).at("items").size() == 1);
+    { auto db = TestDatabase().Acquire(); db.Execute("DELETE FROM project_members WHERE user_id=?", {SqlValue(reader.id)}); }
+    CHECK_THROWS_CODE(Search(app, f, {{"mode","metadata"},{"query",""}}, token), "resource_not_found");
+    auto head = f.Head("POST", ""); head.path = "/api/v1/projects/" + f.project.id + "/search";
+    head.headers["origin"] = "http://evil.test";
+    CHECK_THROWS_CODE(app.Prepare(head), "origin_mismatch");
+    head.headers["origin"] = "http://smartdocs.test";
+    head.headers["content-type"] = "application/json"; head.content_length = 4097;
+    CHECK_THROWS_CODE(app.Prepare(head), "body_too_large");
+    for (const auto& invalid : std::vector<nlohmann::json>{
+        {{"mode","hybrid"},{"query","x"}}, {{"mode","keyword"},{"query"," "}},
+        {{"mode","keyword"},{"query",std::string(257,'a')}}, {{"mode","metadata"},{"query",""},{"page",0}},
+        {{"mode","metadata"},{"query",""},{"page",true}}, {{"mode","metadata"},{"query",""},{"page_size",21}},
+        {{"mode","metadata"},{"query",""},{"page",-1}}, {{"mode","metadata"},{"query",""},{"page",1001}},
+        {{"mode","metadata"},{"query",""},{"page_size",0}}, {{"mode","metadata"},{"query",""},{"page",1.5}},
+        {{"mode","metadata"},{"query",std::string("bad\0query",9)}}, {{"mode","metadata"},{"query",""},{"directory_id","../"}},
+        {{"mode","metadata"},{"query",""},{"media_type","bad"}},
+        {{"mode","metadata"},{"query",""},{"user_id",f.admin.user.id}}})
+        CHECK_THROWS_CODE(Search(app, f, invalid), "invalid_request");
+}
+
+TEST_CASE(processing_search_filters_current_deleted_unavailable_and_restored_versions) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    auto old = f.AddJob(); PublishText(f);
+    auto search = [&]() { return Search(app, f, {{"mode","keyword"},{"query","部署"}}); };
+    CHECK(search().at("items").size() == 1);
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET availability_state='unavailable' WHERE id=?", {SqlValue(old.version_id)}); }
+    CHECK(search().at("items").empty());
+    CHECK(Search(app, f, {{"mode","metadata"},{"query",""}}).at("items")[0].at("availability_state") == "unavailable");
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET availability_state='available' WHERE id=?", {SqlValue(old.version_id)});
+      db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?", {SqlValue(old.file_id)}); }
+    CHECK(search().at("items").empty());
+    CHECK(Search(app, f, {{"mode","metadata"},{"query",""}}).at("items").empty());
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=NULL WHERE id=?", {SqlValue(old.file_id)}); }
+    CHECK(search().at("items").size() == 1);
+    const auto current = f.AddJob(old.file_id);
+    CHECK(search().at("items").empty());
+    CHECK(Search(app, f, {{"mode","metadata"},{"query",""}}).at("items")[0].at("version_id") == current.version_id);
+    PublishText(f, "部署新版");
+    CHECK(search().at("items")[0].at("version_id") == current.version_id);
+    CHECK(search().at("items")[0].at("chunk").at("text") == "部署新版");
+}
+
+TEST_CASE(processing_search_limits_project_directory_type_and_keyword_pages) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto first = f.AddJob(); PublishText(f);
+    const auto second = f.AddJob(); PublishText(f);
+    auto page1 = Search(app, f, {{"mode","keyword"},{"query","部署"},{"page_size",1}});
+    auto page2 = Search(app, f, {{"mode","keyword"},{"query","部署"},{"page_size",1},{"page",2}});
+    CHECK(page1.at("has_more") == true && page2.at("has_more") == false);
+    CHECK(page1.at("items")[0].at("file_id") != page2.at("items")[0].at("file_id"));
+    const auto directory = f.projects.CreateDirectory(f.admin.session, f.project.id, f.project.root_directory_id, "Sub");
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE files SET directory_id=? WHERE id=?", {SqlValue(directory.id), SqlValue(first.file_id)}); }
+    const auto filtered = Search(app, f, {{"mode","keyword"},{"query","部署"},{"directory_id",directory.id},{"media_type","TEXT/PLAIN"}});
+    CHECK(filtered.at("items").size() == 1 && filtered.at("items")[0].at("file_id") == first.file_id);
+    CHECK(filtered.at("coverage").at("current_files") == 1);
+    CHECK(Search(app, f, {{"mode","keyword"},{"query","部署"},{"media_type","application/pdf"}}).at("items").empty());
+    const auto project = f.project;
+    f.project = f.projects.CreateProject(f.admin.user.id, "Secret other project");
+    const auto foreign = f.AddJob(); PublishText(f);
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE files SET name='private-foreign-guide.txt' WHERE id=?", {SqlValue(foreign.file_id)}); }
+    const auto foreign_dir = f.project.root_directory_id; f.project = project;
+    CHECK(Search(app, f, {{"mode","keyword"},{"query","部署"}}).at("items").size() == 2);
+    CHECK(Search(app, f, {{"mode","metadata"},{"query","private-foreign-guide"}}).at("items").empty());
+    CHECK_THROWS_CODE(Search(app, f, {{"mode","metadata"},{"query",""},{"directory_id",foreign_dir}}), "resource_not_found");
+}
+
+TEST_CASE(processing_search_revalidates_candidates_after_concurrent_state_changes) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job = f.AddJob(); PublishText(f);
+    const auto directory = f.projects.CreateDirectory(f.admin.session, f.project.id, f.project.root_directory_id, "Moved");
+    for (const std::string change : {"deleted", "unavailable", "moved", "renamed", "superseded"}) {
+        { auto db = TestDatabase().Acquire();
+          db.Execute("UPDATE files SET deleted_at=NULL,directory_id=?,name='find-me.txt' WHERE id=?",
+              {SqlValue(f.project.root_directory_id), SqlValue(job.file_id)});
+          db.Execute("UPDATE file_versions SET availability_state='available' WHERE id=?", {SqlValue(job.version_id)}); }
+        bool observed = false;
+        FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+            if (point != FaultPoint::AfterSearchCandidates) return;
+            observed = true;
+            if (change == "superseded") { f.AddJob(job.file_id); return; }
+            auto db = TestDatabase().Acquire();
+            if (change == "deleted") db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?", {SqlValue(job.file_id)});
+            if (change == "unavailable") db.Execute("UPDATE file_versions SET availability_state='unavailable' WHERE id=?", {SqlValue(job.version_id)});
+            if (change == "moved") db.Execute("UPDATE files SET directory_id=? WHERE id=?", {SqlValue(directory.id),SqlValue(job.file_id)});
+            if (change == "renamed") db.Execute("UPDATE files SET name='no-match.txt' WHERE id=?", {SqlValue(job.file_id)});
+        });
+        nlohmann::json result;
+        try { result = Search(app, f, {{"mode",change == "renamed" ? "metadata" : "keyword"},
+            {"query",change == "renamed" ? "find-me" : "部署"},{"directory_id",f.project.root_directory_id}}); }
+        catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+        FaultInjector::ClearObserverForTesting();
+        CHECK(observed); CHECK(result.at("items").empty());
+        CHECK(result.at("truncated") == true);
+        CHECK(std::find(result.at("warnings").begin(), result.at("warnings").end(), "scope_changed") != result.at("warnings").end());
+    }
 }

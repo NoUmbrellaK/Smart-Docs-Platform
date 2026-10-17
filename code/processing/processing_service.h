@@ -50,6 +50,8 @@ public:
     nlohmann::json ReadDocument(const SessionContext&, const std::string& project_id,
         const std::string& file_id, const std::string& version_id,
         const std::string& chunk_id = "");
+    nlohmann::json Search(const SessionContext&, const std::string& project_id,
+                          const nlohmann::json& request);
 
 private:
     MySqlPool& pool_;

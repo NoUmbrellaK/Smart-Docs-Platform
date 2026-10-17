@@ -204,7 +204,7 @@ Application::Application(const AppConfig& config, std::string static_root)
                        config.max_json_bytes, config.secure_cookie);
     RegisterUploadRoutes(router_, auth_service_, upload_service_,
                          config.max_json_bytes, config.secure_cookie);
-    RegisterProcessingRoutes(router_, auth_service_, processing_service_, config.secure_cookie);
+    RegisterProcessingRoutes(router_, auth_service_, processing_service_, config.secure_cookie, config.max_json_bytes);
     RegisterWorkerRoutes(router_, processing_service_, file_store_, config.worker_token);
 }
 

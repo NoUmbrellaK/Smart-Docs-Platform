@@ -101,6 +101,13 @@ class WorkerE2E(unittest.TestCase):
                 self.assertEqual(source["chunk"]["text"], text)
                 self.assertEqual(source["version_id"], job["version_id"])
                 if page: self.assertEqual(source["chunk"]["page"], 1)
+                query = "文档" if name == "hello.txt" else "Setup" if name == "guide.md" else "PAGE"
+                results = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
+                                                {"mode": "keyword", "query": query}))
+                hits = [hit for hit in results["items"] if hit["file_id"] == job["file_id"]]
+                self.assertTrue(hits)
+                self.assertTrue(any(hit["chunk"]["chunk_id"] == chunk for hit in hits))
+                self.assertEqual(results["retrieval"], "keyword_only")
                 if name == "hello.txt":
                     sql = "SELECT COUNT(*) FROM document_chunks WHERE version_id='" + job["version_id"] + "' AND MATCH(body) AGAINST('文档' IN BOOLEAN MODE)"
                     query = subprocess.run(["mysql", "--protocol=SOCKET", "--socket="+os.environ["SMARTDOCS_MYSQL_SOCKET"],
@@ -115,6 +122,18 @@ class WorkerE2E(unittest.TestCase):
         status = self.document(job)
         self.assertEqual(status["char_count"], 600000)
         self.assertEqual(status["chunk_count"], 500)
+        chunk_ids = set()
+        for page in (1, 2):
+            found = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
+                {"mode": "keyword", "query": "甲乙", "page": page, "page_size": 20}))
+            self.assertEqual(len(found["items"]), 20)
+            self.assertTrue(found["has_more"])
+            self.assertEqual(found["next_page"], page + 1)
+            for item in found["items"]:
+                self.assertEqual(item["file_id"], job["file_id"])
+                self.assertNotIn(item["chunk"]["chunk_id"], chunk_ids)
+                chunk_ids.add(item["chunk"]["chunk_id"])
+        self.assertEqual(len(chunk_ids), 40)
         connection = http.client.HTTPConnection("127.0.0.1", self.server.port, timeout=5)
         try:
             connection.putrequest("POST", "/api/v1/projects")
@@ -139,6 +158,11 @@ class WorkerE2E(unittest.TestCase):
             download = self.user.request("GET", self.version_path(job) + "/content")
             self.assertEqual(download.status, 200)
             self.assertEqual(download.body, body)
+            found = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
+                                           {"mode": "metadata", "query": name}))
+            self.assertEqual(len(found["items"]), 1)
+            self.assertEqual(found["items"][0]["parse_state"], "failed")
+            self.assertNotIn("chunk", found["items"][0])
 
     def test_worker_startup_recovers_only_after_acquiring_singleton_lock(self):
         job = self.upload("restart.txt", b"restart", "text/plain")

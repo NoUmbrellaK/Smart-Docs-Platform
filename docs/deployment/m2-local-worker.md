@@ -1,6 +1,6 @@
 # M2 本机 Python worker
 
-本手册描述可选部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，数据库要求 schema 4；本增量没有新迁移。搜索/向量与 Agent 尚未实现。
+本手册描述可选部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，数据库要求 schema 4；本增量没有新迁移。后续已接通 [本地搜索 API](../api/m2-search-api.md)；向量与 Agent 尚未实现。
 
 ## 身份与凭据
 
