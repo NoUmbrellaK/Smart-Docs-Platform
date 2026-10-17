@@ -1,6 +1,7 @@
 # M2 本机向量调度与隔离编码服务
 
-本部署增量接通已有 C++ schema 5 队列与固定的 MiniLM 编码器，不实现向量搜索/融合，
+本部署手册负责 C++ schema 5 队列与固定的 MiniLM 编码器；搜索入口另见
+[同源混合检索网关](m2-hybrid-search.md)。这些模板
 不表示生产库已升级或生产服务已安装。先阅读 [解析 worker 手册](m2-local-worker.md)：
 C++ 仍是版本、批准和任务状态的唯一权威，内部接口不经公网反向代理暴露。
 
@@ -120,8 +121,8 @@ IOWriteIOPSMax=/dev/vda 200
 
 ```ini
 [Unit]
-After=smartdocs.service smartdocs-encoder.socket
-Requires=smartdocs.service smartdocs-encoder.socket
+After=smart-docs.service smartdocs-encoder.socket
+Requires=smart-docs.service smartdocs-encoder.socket
 
 [Service]
 Slice=smartdocs-processing.slice
@@ -156,4 +157,4 @@ SMARTDOCS_ENCODER_SOCKET=/controlled/runtime/encoder.sock PYTHONPATH=python \
 模型加载也计入 60 秒超时：限速磁盘和缓存状态会影响冷启动，超时需要查看任务
 错误码并手动 retry，不靠自动无限重试或抬高主机限额掩盖问题。
 它验证真实模型输出通过 C++ 向量校验并持久发布，不用人工单位向量冒充模型结果。
-搜索排序、混合检索与整个 M2 验收仍是后续工作。
+混合检索后端和网关已有独立增量；整个 M2 阶段综合验收仍未完成。

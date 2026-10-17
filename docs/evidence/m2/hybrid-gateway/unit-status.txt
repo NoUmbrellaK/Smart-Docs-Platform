@@ -1,0 +1,36 @@
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-gateway-verified.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-gateway-encoder.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-gateway-browser-final.service
+ActiveState=inactive
+2026-10-17T21:32:21+0800 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/gateway.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-17T21:34:22+0800 aliyun-lou systemd[1]: Started /bin/bash /tmp/smartdocs-safe.h4SzvX/gateway-check.sh.
+2026-10-17T21:36:51+0800 aliyun-lou systemd[1]: smartdocs-gateway-verified.service: Deactivated successfully.
+2026-10-17T21:36:51+0800 aliyun-lou systemd[1]: smartdocs-gateway-verified.service: Consumed 11.752s CPU time.
+2026-10-17T21:37:01+0800 aliyun-lou systemd[1]: Stopping /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/gateway.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-17T21:37:01+0800 aliyun-lou systemd[1]: smartdocs-gateway-encoder.service: Deactivated successfully.
+2026-10-17T21:37:01+0800 aliyun-lou systemd[1]: Stopped /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/gateway.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-17T21:37:01+0800 aliyun-lou systemd[1]: smartdocs-gateway-encoder.service: Consumed 24.406s CPU time.
+2026-10-17T21:40:00+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/search_browser_test.py /tmp/smartdocs-safe.h4SzvX/gateway-browser-final.
+2026-10-17T21:40:08+0800 aliyun-lou systemd[1]: smartdocs-gateway-browser-final.service: Deactivated successfully.
+2026-10-17T21:40:08+0800 aliyun-lou systemd[1]: smartdocs-gateway-browser-final.service: Consumed 4.507s CPU time.
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+low 0
+high 6203
+max 0
+oom 0
+oom_kill 0

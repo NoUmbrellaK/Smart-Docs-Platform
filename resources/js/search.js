@@ -69,11 +69,11 @@ export class SearchPanel {
       status.textContent = "Query must be at most 256 UTF-8 bytes.";
       return;
     }
-    if (criteria.mode === "keyword" && !criteria.query.trim()) {
+    if (criteria.mode !== "metadata" && !criteria.query.trim()) {
       status.textContent = "Enter a keyword; file-name search may be empty.";
       return;
     }
-    status.textContent = "Searching…";
+    status.textContent = criteria.mode === "hybrid" ? "Searching approved current versions… Local encoding may take a minute." : "Searching…";
     try {
       const response = await this.api.searchDocuments(project, { ...criteria, page });
       if (generation !== this.generation) return;
@@ -84,8 +84,11 @@ export class SearchPanel {
       this.get("document-search-next").disabled = !this.next;
       const coverage = response.coverage;
       status.textContent = `Page ${response.page} · ${response.items.length} results · ${response.retrieval}. ` +
+        (criteria.mode === "hybrid" ? "Approved current versions only. " +
+          (response.retrieval !== "hybrid" ? "Vector search unavailable; degraded to keywords within the same approved scope. " : "") : "") +
         `Scope snapshot (not a match count): ${coverage.current_files} files, ` +
         `${coverage.keyword_ready_files} keyword ready, ${coverage.unsearched_files} unindexed. ` +
+        (coverage.vector_completed_files !== undefined ? `${coverage.vector_completed_files} vector completed (not a recall guarantee). ` : "") +
         `${response.truncated ? "Partial result page. " : ""}` +
         `Warnings: ${response.warnings.join(", ") || "none"}. ` +
         "Live pages can shift, repeat or omit results. No matches does not prove absence.";
@@ -96,6 +99,7 @@ export class SearchPanel {
           `File ${item.file_id} · Version ${item.version_id}`), this.node("p",
           `Parse: ${item.parse_state} · Keyword: ${item.keyword_state} · Vector: ${item.vector_state} · ${item.availability_state}`));
         if (item.chunk) card.append(this.node("p", item.chunk.text));
+        if (item.match_sources) card.append(this.node("p", `Matched by: ${item.match_sources.join(", ")}`));
         const open = this.node("button", "Read fixed-version source");
         open.type = "button";
         open.addEventListener("click", () => this.source(project, item, generation));

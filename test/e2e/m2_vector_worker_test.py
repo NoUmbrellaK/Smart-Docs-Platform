@@ -1,8 +1,13 @@
 """Real C++/MySQL + real offline encoder socket; requires the capped test environment."""
 from functools import partial
+from contextlib import contextmanager
+import http.client
+import json
 import os
+import socket
 import subprocess
 import sys
+import time
 import unittest
 
 import m2_worker_test as support
@@ -47,9 +52,47 @@ class VectorE2E(support.WorkerE2E):
         self.assertNotIn(self.token, result.stdout+result.stderr)
         return result
 
+    @contextmanager
+    def gateway(self, encoder_socket):
+        port = support.ServerProcess._free_port()
+        host = f"127.0.0.1:{self.server.port}"
+        environment = {"PYTHONPATH": str(support.ROOT/"python"),
+                       "SMARTDOCS_PUBLIC_ORIGIN": "http://"+host,
+                       "SMARTDOCS_ENCODER_SOCKET": encoder_socket}
+        with subprocess.Popen([sys.executable, "-B", "-m", "smartdocs.search_http",
+                "--port", str(port), "--backend-port", str(self.server.port)],
+                env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            try:
+                deadline = time.monotonic()+10
+                while True:
+                    self.assertIsNone(process.poll(), "gateway exited during startup")
+                    try:
+                        with socket.create_connection(("127.0.0.1", port), timeout=1): break
+                    except ConnectionRefusedError:
+                        if time.monotonic() >= deadline: raise
+                        time.sleep(.05)
+                def query(arguments, cookie=None, expected=200):
+                    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=120)
+                    try:
+                        connection.request("POST", f'/api/v1/projects/{self.project["id"]}/hybrid-search',
+                            json.dumps(arguments).encode(), {"Host": host, "Origin": "http://"+host,
+                            "Content-Type": "application/json", "Cookie": cookie if cookie is not None else self.user._cookie_header()})
+                        response = connection.getresponse()
+                        payload = json.loads(response.read())
+                        self.assertEqual(response.status, expected, payload)
+                        self.assertEqual(response.getheader("Cache-Control"), "no-store")
+                        return payload.get("data", payload.get("error"))
+                    finally:
+                        connection.close()
+                yield query
+            finally:
+                process.terminate()
+                try: output = process.communicate(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill(); output = process.communicate(timeout=5)
+                self.assertNotIn(self.user._cookie_header().encode(), b"".join(output))
+
     def test_vector_hybrid_real_query_and_encoding_failure(self):
-        from smartdocs.search import search_documents
-        from smartdocs.embeddings import EmbeddingError
         recovery = self.upload("recovery.txt", b"Database disaster recovery: restore the latest backup to recover lost data.", "text/plain")
         other = self.upload("cooking.txt", b"Recipe: mix flour and eggs, bake a cake in the oven.", "text/plain")
         for job in (recovery, other):
@@ -59,18 +102,21 @@ class VectorE2E(support.WorkerE2E):
             self.assertEqual(vector_worker.run_once(self.vector, self.encoder), "completed")
         path = f'/api/v1/projects/{self.project["id"]}/search'
         backend = lambda request: data(self.user.request("POST", path, request))
-        result = search_documents(backend, self.encoder, {"query": "如何恢复备份？"})
+        with self.gateway(os.environ["SMARTDOCS_ENCODER_SOCKET"]) as query:
+            self.assertEqual(query({"query": "backup"}, cookie="smartdocs_session="+"0"*64,
+                                   expected=401)["code"], "authentication_required")
+            result = query({"query": "如何恢复备份？"})
         self.assertEqual(result["retrieval"], "hybrid")
         self.assertEqual(result["items"][0]["file_id"], recovery["file_id"])
         self.assertEqual(result["items"][0]["match_sources"], ["vector"])
         self.assertEqual(result["items"][0]["chunk"]["version_id"], recovery["version_id"])
-        def unavailable(chunks): raise EmbeddingError("embedding_timeout")
-        degraded = search_documents(backend, unavailable, {"query": "backup"})
-        self.assertEqual(degraded["retrieval"], "keyword_only")
-        self.assertIn("query_embedding_unavailable", degraded["warnings"])
-        self.assertIn(recovery["file_id"], [item["file_id"] for item in degraded["items"]])
-        self.policy(recovery, False)
-        self.assertEqual(backend({"mode": "hybrid", "query": "backup"})["items"], [])
+        with self.gateway(str(self.root/"missing-query.sock")) as query:
+            degraded = query({"query": "backup"})
+            self.assertEqual(degraded["retrieval"], "keyword_only")
+            self.assertIn("query_embedding_unavailable", degraded["warnings"])
+            self.assertIn(recovery["file_id"], [item["file_id"] for item in degraded["items"]])
+            self.policy(recovery, False)
+            self.assertEqual(query({"query": "backup"})["items"], [])
 
     def test_vector_real_model_two_batches_gate_and_cli(self):
         job = self.upload("vectors.txt", ("部署文档🙂。"*1601).encode(), "text/plain")

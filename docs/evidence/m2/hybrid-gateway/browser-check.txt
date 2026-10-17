@@ -1,0 +1,1 @@
+PASS: real Chrome + local HTTP fixture; metadata/keyword/hybrid, gateway route/body, approved scope, vector lane, degradation, pagination, fixed source, access error, safe text, filter reset, switched-selection delete, resumed upload; 6 viewport widths

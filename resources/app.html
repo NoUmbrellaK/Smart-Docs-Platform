@@ -62,12 +62,13 @@
 
     <section id="document-search" aria-labelledby="document-search-title" hidden>
       <h2 id="document-search-title">Document search</h2>
-      <p>Local search only. Keyword search has ngram/stopword limits; vector search is not available.</p>
+      <p>Local search only; no remote AI request. Keywords have ngram/stopword limits. Hybrid search covers approved current versions only and needs the local search gateway and encoder; degraded results are labeled.</p>
       <form id="document-search-form">
         <label for="document-search-mode">Search mode</label>
         <select id="document-search-mode">
           <option value="metadata">File name (includes unparsed files)</option>
           <option value="keyword">Extracted text keywords</option>
+          <option value="hybrid">Hybrid (approved versions)</option>
         </select>
         <label for="document-search-query">Query (up to 256 UTF-8 bytes)</label>
         <input id="document-search-query" type="search" maxlength="256">

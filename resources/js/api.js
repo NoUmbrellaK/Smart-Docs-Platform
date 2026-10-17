@@ -95,8 +95,13 @@ export const restoreFile = (projectId, fileId) =>
   });
 export const listVersions = (projectId, fileId) =>
   metadata(`${projectPath(projectId)}/files/${id(fileId)}/versions`);
-export const searchDocuments = (projectId, criteria) =>
-  metadata(`${projectPath(projectId)}/search`, { method: "POST", body: criteria });
+export const searchDocuments = (projectId, criteria) => {
+  if (criteria.mode === "hybrid") {
+    const { mode, ...body } = criteria;
+    return metadata(`${projectPath(projectId)}/hybrid-search`, { method: "POST", body });
+  }
+  return metadata(`${projectPath(projectId)}/search`, { method: "POST", body: criteria });
+};
 export const readDocument = (projectId, fileId, versionId, chunkId) =>
   metadata(`${projectPath(projectId)}/files/${id(fileId)}/versions/${id(versionId)}` +
     (chunkId ? `/chunks/${id(chunkId)}` : "/document"));

@@ -54,7 +54,7 @@ chunk 原样返回已发布的最多 1200 个 Unicode 字符，不返回 HTML �
 
 ## 有界混合检索
 
-Python `smartdocs.search.search_documents(backend_search, encoder, arguments)` 是可调用适配层，**尚未接入 HTTP 网关、工作台或 MCP**。可信调用方绑定项目及登录会话到 backend_search；模型参数只能含查询、目录、MIME、分页。先向 C++ 发起无查询向量的 hybrid 请求验证参数/权限，再通过已部署的私有 Unix 编码服务编码查询，最后向 C++ 重新请求。编码失败也重新请求，不返回此前可能已过期的预检结果。每次最多一次编码，不自动重试，不读取 DeepSeek 凭据。
+Python `smartdocs.search.search_documents(backend_search, encoder, arguments)` 是可调用适配层，已由下述同源 HTTP 网关供工作台使用，**不是 MCP 服务**。可信调用方绑定项目及登录会话到 backend_search；模型参数只能含查询、目录、MIME、分页。先向 C++ 发起无查询向量的 hybrid 请求验证参数/权限，再通过已部署的私有 Unix 编码服务编码查询，最后向 C++ 重新请求。编码失败也重新请求，不返回此前可能已过期的预检结果。每次最多一次编码，不自动重试，不读取 DeepSeek 凭据。
 
 查询片段 ID 与 text_sha256 都为查询 UTF-8 的 SHA-256。采用固定 embedding_revision、384 维有限单位向量、连续覆盖查询的 Unicode 窗口；修订、哈希、范围、维数或范数不符返回 400。客户端可控制查询向量影响排名，但不能改变项目/版本/批准边界；向量格式校验不是模型来源证明。
 
@@ -72,4 +72,27 @@ keyword 始终提示 ngram_stopwords_apply 和 vector_search_unavailable；有�
 
 缺失/无效会话沿用 M1；非同源 403；无项目权限、外项目/不存在目录 404 resource_not_found；字段、模式、类型、UTF-8、长度及分页错误 400 invalid_request；正文超限 413 body_too_large；数据库忙或不可用 503。未知参数（如 user_id、approved、路径或模型参数）一律拒绝。
 
-实现和实际测试证据见 [本地搜索增量](../superpowers/plans/2026-10-17-m2-local-search.md)和[混合检索记录](../evidence/m2/hybrid-search/README.md)。普通搜索已有工作台，混合检索页面、Agent 和完整 M2 验收尚未交付。
+## 工作台混合检索网关
+
+`POST /api/v1/projects/{project_id}/hybrid-search` 由同源反向代理转到私有 Python
+网关，不是 C++ 新路由。沿用浏览器登录会话 Cookie 和 Origin；JSON 最多 4096 字节，
+只接受 query、directory_id、media_type、page、page_size，约束与 C++ hybrid 一致，
+**不能传 mode 或 query_embedding**。例如 `{"query":"如何恢复备份？","page_size":10}`。
+前端只有 Hybrid 选项走该入口，其余模式继续使用 `/search`。
+
+成功外层为 `{data}`（不转发上游 request_id），data 与 C++ hybrid 响应一致。
+返回 Cache-Control: no-store、Connection: close，不设 Cookie、不缓存查询结果。
+网关只接受配置的 Host/Origin 和唯一会话；身份不来自请求 JSON。
+输入错误 400 invalid_request、跨站 403 origin_mismatch、会话格式/验证失败
+401 authentication_required、类型错误 415 unsupported_media_type、超体积
+413 request_too_large、两连接占满 503 search_busy。C++ 400/401/403/404/409/429
+保留状态并归类为 invalid_request/authentication_required/forbidden/not_found/conflict/rate_limited，
+不暴露原始错误信息；后端超时/断连/无效或超限响应/其他状态均为
+503 search_backend_unavailable。错误外层 `{error:{code,message,retryable}}`。
+
+编码服务不可用仍可返回 200 keyword_only，不等于网关/数据库故障被隐藏。
+页面展示真实 retrieval、获批当前版本范围、向量覆盖快照、命中通道、warnings、
+固定版本来源；不会把“请求 hybrid”或“无匹配”当作完整检索。
+部署边界和限流模板见 [混合检索部署](../deployment/m2-hybrid-search.md)。
+
+实现和实际测试证据见 [本地搜索增量](../superpowers/plans/2026-10-17-m2-local-search.md)和[混合检索记录](../evidence/m2/hybrid-search/README.md)。Agent 和完整 M2 验收尚未交付。

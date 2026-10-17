@@ -165,3 +165,37 @@ test("API sends same-origin search POST and exact encoded version/chunk GETs", a
     assert.equal(requests[2][0], "/api/v1/projects/p/files/f/versions/old/document");
   } finally { globalThis.fetch = original; }
 });
+
+test("hybrid mode uses session-bound gateway without client-supplied mode", async () => {
+  const api = await import("../../resources/js/api.js");
+  const original = globalThis.fetch;
+  let request;
+  globalThis.fetch = async (url, options) => {
+    request = [url, options];
+    return new Response(JSON.stringify({ data: {} }), { status: 200 });
+  };
+  try {
+    await api.searchDocuments("p", { mode: "hybrid", query: "恢复", page: 1, page_size: 10 });
+    assert.equal(request[0], "/api/v1/projects/p/hybrid-search");
+    assert.equal(request[1].credentials, "same-origin");
+    assert.deepEqual(JSON.parse(request[1].body), { query: "恢复", page: 1, page_size: 10 });
+  } finally { globalThis.fetch = original; }
+});
+
+test("hybrid UI distinguishes approval scope, vector coverage, lanes and degradation", async () => {
+  const { get } = setup({ searchDocuments: async () => result({ retrieval: "hybrid",
+    coverage: { current_files: 3, keyword_ready_files: 3, unsearched_files: 0, vector_completed_files: 2 },
+    items: [{ ...item, match_sources: ["vector"] }], warnings: ["vector_index_partial"] }) });
+  get("document-search-mode").value = "hybrid";
+  await get("document-search-form").fire("submit");
+  assert.match(text(get("document-search-status")), /approved current versions only/i);
+  assert.match(text(get("document-search-status")), /2 vector completed/);
+  assert.match(text(get("document-search-results")), /Matched by: vector/);
+  const degraded = setup();
+  degraded.get("document-search-mode").value = "hybrid";
+  await degraded.get("document-search-form").fire("submit");
+  assert.match(text(degraded.get("document-search-status")), /degraded to keywords/i);
+  degraded.get("document-search-query").value = " ";
+  await degraded.get("document-search-form").fire("submit");
+  assert.equal(degraded.calls.length, 1);
+});

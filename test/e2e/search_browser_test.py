@@ -22,7 +22,7 @@ ITEM = {"file_id": "f" * 32, "version_id": "v" * 32,
         "name": "<img src=x onerror=alert(1)>" + "long-name-" * 12,
         "directory_id": "d" * 32, "media_type": "application/pdf",
         "parse_state": "completed", "keyword_state": "completed",
-        "vector_state": "pending", "availability_state": "available"}
+        "vector_state": "completed", "availability_state": "available"}
 CHUNK = {"chunk_id": "c" * 64, "text": "<script>not executable</script>\nHandover source.",
          "page": 2, "line_start": 1, "line_end": 2}
 
@@ -30,6 +30,7 @@ CHUNK = {"chunk_id": "c" * 64, "text": "<script>not executable</script>\nHandove
 class Fixture(SimpleHTTPRequestHandler):
     requests = []
     deny_source = False
+    degraded = False
     mutation_started = threading.Event()
     mutation_release = threading.Event()
 
@@ -76,18 +77,25 @@ class Fixture(SimpleHTTPRequestHandler):
         body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
         if self.path.endswith("/uploads/resume/complete"):
             return self.reply({"file_id": "first", "version_id": "new", "processing_job_id": "job"})
-        if not self.path.endswith("/search"):
+        hybrid = self.path.endswith("/hybrid-search")
+        if not self.path.endswith("/search") and not hybrid:
             return self.reply({}, 404)
+        if hybrid:
+            assert "mode" not in body, "gateway body must not contain a client mode"
         Fixture.requests.append(body)
+        mode = "hybrid" if hybrid else body["mode"]
         item = dict(ITEM)
-        if body["mode"] == "keyword":
+        if mode != "metadata":
             item["chunk"] = CHUNK
+        if hybrid:
+            item["match_sources"] = ["keyword" if self.degraded else "vector"]
         self.reply({"items": [item], "page": body["page"], "page_size": 10,
                     "next_page": 2 if body["page"] == 1 else None,
                     "has_more": body["page"] == 1, "truncated": body["page"] == 1,
-                    "retrieval": "keyword_only" if body["mode"] == "keyword" else "metadata",
-                    "coverage": {"current_files": 3, "keyword_ready_files": 1, "unsearched_files": 2},
-                    "warnings": ["live_pagination", "vector_search_unavailable"]})
+                    "retrieval": "hybrid" if hybrid and not self.degraded else "metadata" if mode == "metadata" else "keyword_only",
+                    "coverage": {"current_files": 3, "keyword_ready_files": 1, "unsearched_files": 2,
+                                 **({"vector_completed_files": 1} if hybrid else {})},
+                    "warnings": ["live_pagination"] + (["vector_search_unavailable"] if not hybrid or self.degraded else ["vector_index_partial"])})
 
     def do_DELETE(self):
         self.mutation_started.set()
@@ -124,6 +132,12 @@ def main():
             browser.click("#document-search-next")
             browser.wait('return document.querySelector("#document-search-status").textContent.includes("Page 2")')
             assert Fixture.requests[-1]["page"] == 2
+            browser.click('#document-search-mode option[value="hybrid"]')
+            browser.click("#document-search-submit")
+            browser.wait('return document.querySelector("#document-search-status").textContent.includes("results · hybrid")')
+            assert "mode" not in Fixture.requests[-1]
+            assert "Approved current versions only" in browser.inspect('return document.querySelector("#document-search-status").textContent')
+            assert "Matched by: vector" in browser.inspect('return document.querySelector(".search-card").textContent')
             browser.click(".search-card button")
             browser.wait('return document.querySelector("#document-source-status").textContent.includes("historical")')
             assert Fixture.requests[-1].endswith("/versions/" + ITEM["version_id"] + "/chunks/" + CHUNK["chunk_id"])
@@ -147,6 +161,9 @@ def main():
                         image_width, image_height = struct.unpack("!II", png[16:24])
                         assert image_width >= 200 and image_height >= 100, "Screenshot was clipped"
                         (output / f"search-{width}{suffix}.png").write_bytes(png)
+            Fixture.degraded = True
+            browser.click("#document-search-submit")
+            browser.wait('return document.querySelector("#document-search-status").textContent.includes("degraded to keywords")')
             Fixture.deny_source = True
             browser.click(".search-card button")
             browser.wait('return document.querySelector("#document-source-status").textContent.includes("Access revoked")')
@@ -171,7 +188,7 @@ def main():
             browser.click(".task-actions button")
             browser.wait('return document.querySelector("#upload-list").textContent.includes("completed")')
             assert browser.inspect('return document.querySelectorAll(".search-card").length') == 0
-            print("PASS: real Chrome + local HTTP fixture; metadata/keyword, pagination, fixed source, access error, safe text, filter reset, switched-selection delete, resumed upload; 6 viewport widths", flush=True)
+            print("PASS: real Chrome + local HTTP fixture; metadata/keyword/hybrid, gateway route/body, approved scope, vector lane, degradation, pagination, fixed source, access error, safe text, filter reset, switched-selection delete, resumed upload; 6 viewport widths", flush=True)
         finally:
             browser.stop()
             server.shutdown()
