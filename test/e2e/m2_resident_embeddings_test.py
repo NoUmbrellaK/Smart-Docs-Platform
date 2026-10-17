@@ -44,10 +44,13 @@ def main():
         start = time.monotonic()
         engine = ResidentEncoder(str(local))
         startup = time.monotonic()-start
+        retained = set(engine._tokenizer_fds)
+        assert len(retained) == 2
         for fd in Path("/proc/self/fd").iterdir():
             try: target = os.readlink(fd)
             except FileNotFoundError: continue  # The directory iterator's own fd.
-            assert "memfd:smartdocs-model" not in target, target
+            if "memfd:smartdocs-model" in target:
+                assert int(fd.name) in retained, target
             assert not target.startswith(str(local)+"/"), target
         base._set_limits()  # Request-phase limits; not a service watchdog.
         # Remove only the fixture links. Original model files remain untouched.
@@ -61,6 +64,7 @@ def main():
             base.validate_result(result, chunks)
             digest = sha256(json.dumps(result, sort_keys=True, allow_nan=False).encode()).hexdigest()
             assert digest == "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8", digest
+            assert not Path(f"/proc/{os.getpid()}/task/{os.getpid()}/children").read_text().strip()
         try: engine.encode([])
         except base.EmbeddingError as error: assert error.code == "embedding_invalid_input"
         else: raise AssertionError("invalid request accepted")
@@ -68,9 +72,14 @@ def main():
         except base.EmbeddingError as error: assert error.code == "embedding_model_unavailable"
         else: raise AssertionError("new instance accepted missing artifacts")
     status = dict(line.split(":", 1) for line in Path("/proc/self/status").read_text().splitlines())
+    engine.close()
+    for fd in retained:
+        try: os.fstat(fd)
+        except OSError: continue
+        raise AssertionError("retained snapshot descriptor leaked")
     print(json.dumps({"passed": True, "uid": os.geteuid(), "ip_sockets_blocked": True,
-        "cases": ["sealed_content_load", "snapshot_descriptors_closed", "old_revision_compatible", "five_request_reuse",
-                  "no_source_reopen", "invalid_input_refused", "new_instance_requires_artifacts"],
+        "cases": ["sealed_content_load", "two_sealed_snapshots_only", "old_revision_compatible", "five_request_reuse",
+                  "tokenizers_reaped", "snapshot_close", "no_source_reopen", "invalid_input_refused", "new_instance_requires_artifacts"],
         "startup_seconds": round(startup, 3), "request_seconds": timings,
         "compatibility_sha256": digest, "rss_after_requests": status["VmRSS"].strip(),
         "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,

@@ -7,6 +7,7 @@ import sys
 import time
 import socket
 import struct
+import signal
 from unittest.mock import patch
 
 from smartdocs import resident_service as service
@@ -22,13 +23,21 @@ class FixtureEncoder:
         if (self.directory/"fail").exists(): raise RuntimeError("private model path")
 
     def encode(self, chunks):
+        if (self.directory/"tokenizer_fault").exists():
+            def command(fds):
+                return [sys.executable, "-B", __file__, "tokenizer", str(self.directory)]
+            with patch.object(resident_embeddings, "_tokenizer_command", command):
+                return resident_embeddings._tokenize_snapshot(chunks, ())
         (self.directory/"encoded").touch()
         return {"embedding_revision": EMBEDDING_REVISION, "chunks": [dict(
             chunk_id=c["chunk_id"], text_sha256=hashlib.sha256(c["text"].encode()).hexdigest(),
             windows=[dict(char_start=0, char_end=len(c["text"]), vector=[1.0]+[0.0]*383)]) for c in chunks]}
 
 
-if sys.argv[1] == "child":
+if sys.argv[1] == "tokenizer":
+    (Path(sys.argv[2])/"tokenizer_pid").write_text(str(os.getpid()))
+    os.kill(os.getpid(), signal.SIGSTOP)
+elif sys.argv[1] == "child":
     if (Path(sys.argv[3])/"wire_fault").exists():
         directory = Path(sys.argv[3])
         (directory/"pid").write_text(str(os.getpid()))

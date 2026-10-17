@@ -1,0 +1,49 @@
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-tokenizer-unit.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-supervision-unit.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-python-regression.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-real-core.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-transient-real-service.service
+ActiveState=inactive
+SubState=dead
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1372         742           2        1380        1861
+Swap:              0           0           0

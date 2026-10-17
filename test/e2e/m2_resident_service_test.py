@@ -48,6 +48,7 @@ def main():
                     digest = sha256(json.dumps(result, sort_keys=True, allow_nan=False).encode()).hexdigest()
                     assert digest == "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8", digest
                     assert children_path.read_text().split() == children
+                    assert not Path(f"/proc/{child}/task/{child}/children").read_text().strip(), "tokenizer survived request"
                 with socket.socket(socket.AF_UNIX) as connection:
                     connection.settimeout(3); connection.connect(path)
                     connection.sendall(b"{}"); connection.shutdown(socket.SHUT_WR)
@@ -65,7 +66,7 @@ def main():
         assert not Path(f"/proc/{child}").exists(), "model child survived supervisor"
         assert not os.path.exists(path)
     print(json.dumps({"passed": True, "cases": ["ready_after_load", "unchanged_private_client",
-        "same_child_three_requests", "old_fingerprint", "invalid_input_then_reuse", "sigterm_reaps_model"],
+        "same_child_three_requests", "tokenizers_reaped", "old_fingerprint", "invalid_input_then_reuse", "sigterm_reaps_model"],
         "startup_seconds": round(startup, 3), "request_seconds": durations,
         "model_rss": status["VmRSS"].strip(), "model_peak_rss": status["VmHWM"].strip(),
         "compatibility_sha256": digest, "uid": os.geteuid(), "ip_sockets_blocked": True}, indent=2))

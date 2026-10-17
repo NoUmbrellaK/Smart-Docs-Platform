@@ -1,0 +1,50 @@
+test_bad_oversized_crash_and_safe_errors_never_return_partial_tokens (test_transient_tokenizer.TransientTokenizerTests) ... FAIL
+test_invalid_input_does_not_spawn (test_transient_tokenizer.TransientTokenizerTests) ... FAIL
+test_native_stop_times_out_and_is_reaped (test_transient_tokenizer.TransientTokenizerTests) ... FAIL
+test_real_child_rejects_non_model_sealed_bytes (test_transient_tokenizer.TransientTokenizerTests) ... FAIL
+test_sealed_descriptors_only_environment_and_reaping_before_result (test_transient_tokenizer.TransientTokenizerTests) ... FAIL
+
+======================================================================
+FAIL: test_bad_oversized_crash_and_safe_errors_never_return_partial_tokens (test_transient_tokenizer.TransientTokenizerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_transient_tokenizer.py", line 19, in setUp
+    self.assertTrue(callable(getattr(m, '_tokenize_snapshot', None)),
+AssertionError: False is not true : bounded transient tokenizer transport missing
+
+======================================================================
+FAIL: test_invalid_input_does_not_spawn (test_transient_tokenizer.TransientTokenizerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_transient_tokenizer.py", line 19, in setUp
+    self.assertTrue(callable(getattr(m, '_tokenize_snapshot', None)),
+AssertionError: False is not true : bounded transient tokenizer transport missing
+
+======================================================================
+FAIL: test_native_stop_times_out_and_is_reaped (test_transient_tokenizer.TransientTokenizerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_transient_tokenizer.py", line 19, in setUp
+    self.assertTrue(callable(getattr(m, '_tokenize_snapshot', None)),
+AssertionError: False is not true : bounded transient tokenizer transport missing
+
+======================================================================
+FAIL: test_real_child_rejects_non_model_sealed_bytes (test_transient_tokenizer.TransientTokenizerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_transient_tokenizer.py", line 19, in setUp
+    self.assertTrue(callable(getattr(m, '_tokenize_snapshot', None)),
+AssertionError: False is not true : bounded transient tokenizer transport missing
+
+======================================================================
+FAIL: test_sealed_descriptors_only_environment_and_reaping_before_result (test_transient_tokenizer.TransientTokenizerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_transient_tokenizer.py", line 19, in setUp
+    self.assertTrue(callable(getattr(m, '_tokenize_snapshot', None)),
+AssertionError: False is not true : bounded transient tokenizer transport missing
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+FAILED (failures=5)

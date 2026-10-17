@@ -117,6 +117,23 @@ class ResidentServiceTests(unittest.TestCase):
             self.assertEqual(json.loads(conn.recv(4096)), {"error": "embedding_timeout"})
         parent.wait(timeout=3); self.assert_reaped(pid)
 
+    def test_total_deadline_kills_model_and_stopped_transient_tokenizer(self):
+        (self.root/"tokenizer_fault").touch()
+        parent = self.start(request=1)
+        pid = self.child(); self.wait_for(lambda: os.path.exists(self.path))
+        with socket.socket(socket.AF_UNIX) as conn:
+            conn.settimeout(4); conn.connect(self.path)
+            conn.sendall(json.dumps(CHUNKS).encode()); conn.shutdown(socket.SHUT_WR)
+            marker = self.root/"tokenizer_pid"
+            self.wait_for(marker.exists)
+            tokenizer_pid = int(marker.read_text())
+            self.assertEqual(os.getpgid(tokenizer_pid), pid)
+            self.assertEqual(json.loads(conn.recv(4096)), {"error": "embedding_timeout"})
+        self.assertEqual(parent.wait(timeout=3), 1)
+        self.assert_reaped(pid)
+        self.wait_for(lambda: not Path(f"/proc/{tokenizer_pid}").exists())
+        self.assertFalse((self.root/"encoded").exists())
+
     def test_existing_path_unsafe_directory_and_shared_lock_refused(self):
         Path(self.path).write_text("keep")
         self.assertEqual(self.start().wait(timeout=3), 1)

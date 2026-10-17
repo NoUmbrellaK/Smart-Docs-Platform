@@ -1,0 +1,27 @@
+Oct 18 02:24:47 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p test_transient_tokenizer.py -v.
+Oct 18 02:24:48 aliyun-lou python[686298]: test_bad_oversized_crash_and_safe_errors_never_return_partial_tokens (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: test_constructor_retains_only_sealed_fds_and_close_is_idempotent (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: test_invalid_input_does_not_spawn (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: test_native_stop_times_out_and_is_reaped (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: test_real_child_rejects_non_model_sealed_bytes (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: test_sealed_descriptors_only_environment_and_reaping_before_result (test_transient_tokenizer.TransientTokenizerTests) ... ok
+Oct 18 02:24:48 aliyun-lou python[686298]: ----------------------------------------------------------------------
+Oct 18 02:24:48 aliyun-lou python[686298]: Ran 6 tests in 0.568s
+Oct 18 02:24:48 aliyun-lou python[686298]: OK
+Oct 18 02:24:48 aliyun-lou systemd[1]: smartdocs-transient-tokenizer-unit.service: Deactivated successfully.
+Oct 18 02:25:10 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p test_resident_service.py -v.
+Oct 18 02:25:11 aliyun-lou python[686422]: test_child_crash_returns_safe_failure_and_removes_listener (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:11 aliyun-lou python[686422]: test_entrypoint_refuses_unrestricted_network_before_loading (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:11 aliyun-lou python[686422]: test_existing_path_unsafe_directory_and_shared_lock_refused (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:12 aliyun-lou python[686422]: test_oversized_or_invalid_child_reply_retires_instance (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:12 aliyun-lou python[686422]: test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:13 aliyun-lou python[686422]: test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:13 aliyun-lou python[686422]: test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:15 aliyun-lou python[686422]: test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:15 aliyun-lou python[686422]: test_systemd_ready_notification_follows_model_initialization (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:16 aliyun-lou python[686422]: test_total_deadline_kills_model_and_stopped_transient_tokenizer (test_resident_service.ResidentServiceTests) ... ok
+Oct 18 02:25:16 aliyun-lou python[686422]: ----------------------------------------------------------------------
+Oct 18 02:25:16 aliyun-lou python[686422]: Ran 10 tests in 5.791s
+Oct 18 02:25:16 aliyun-lou python[686422]: OK
+Oct 18 02:25:16 aliyun-lou systemd[1]: smartdocs-transient-supervision-unit.service: Deactivated successfully.
+Oct 18 02:25:16 aliyun-lou systemd[1]: smartdocs-transient-supervision-unit.service: Consumed 2.578s CPU time.

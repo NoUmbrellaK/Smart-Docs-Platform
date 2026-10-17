@@ -1,0 +1,58 @@
+Oct 18 02:26:22 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B test/e2e/m2_resident_embeddings_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model.
+Oct 18 02:26:38 aliyun-lou python[686930]: {
+Oct 18 02:26:38 aliyun-lou python[686930]:   "passed": true,
+Oct 18 02:26:38 aliyun-lou python[686930]:   "uid": 65534,
+Oct 18 02:26:38 aliyun-lou python[686930]:   "ip_sockets_blocked": true,
+Oct 18 02:26:38 aliyun-lou python[686930]:   "cases": [
+Oct 18 02:26:38 aliyun-lou python[686930]:     "sealed_content_load",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "two_sealed_snapshots_only",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "old_revision_compatible",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "five_request_reuse",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "tokenizers_reaped",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "snapshot_close",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "no_source_reopen",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "invalid_input_refused",
+Oct 18 02:26:38 aliyun-lou python[686930]:     "new_instance_requires_artifacts"
+Oct 18 02:26:38 aliyun-lou python[686930]:   ],
+Oct 18 02:26:38 aliyun-lou python[686930]:   "startup_seconds": 8.012,
+Oct 18 02:26:38 aliyun-lou python[686930]:   "request_seconds": [
+Oct 18 02:26:38 aliyun-lou python[686930]:     1.579,
+Oct 18 02:26:38 aliyun-lou python[686930]:     1.378,
+Oct 18 02:26:38 aliyun-lou python[686930]:     1.514,
+Oct 18 02:26:38 aliyun-lou python[686930]:     1.497,
+Oct 18 02:26:38 aliyun-lou python[686930]:     1.414
+Oct 18 02:26:38 aliyun-lou python[686930]:   ],
+Oct 18 02:26:38 aliyun-lou python[686930]:   "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8",
+Oct 18 02:26:38 aliyun-lou python[686930]:   "rss_after_requests": "382280 kB",
+Oct 18 02:26:38 aliyun-lou python[686930]:   "peak_rss_kib": 471476,
+Oct 18 02:26:38 aliyun-lou python[686930]:   "engine_sha256": "224a866b94b6d5a4a8f3e0c80902d8809b7a2f1715698ee3ff29356990048a46",
+Oct 18 02:26:38 aliyun-lou python[686930]:   "shared_sha256": "5dfaf6bf2f4b0c2b63fdb075c4d222a20f5f6191c94a8087b5a9853e8b95ba8f"
+Oct 18 02:26:38 aliyun-lou python[686930]: }
+Oct 18 02:26:38 aliyun-lou systemd[1]: smartdocs-transient-real-core.service: Deactivated successfully.
+Oct 18 02:26:38 aliyun-lou systemd[1]: smartdocs-transient-real-core.service: Consumed 8.809s CPU time.
+Oct 18 02:27:53 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_resident_service_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python.
+Oct 18 02:28:02 aliyun-lou python[687194]: {
+Oct 18 02:28:02 aliyun-lou python[687194]:   "passed": true,
+Oct 18 02:28:02 aliyun-lou python[687194]:   "cases": [
+Oct 18 02:28:02 aliyun-lou python[687194]:     "ready_after_load",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "unchanged_private_client",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "same_child_three_requests",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "tokenizers_reaped",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "old_fingerprint",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "invalid_input_then_reuse",
+Oct 18 02:28:02 aliyun-lou python[687194]:     "sigterm_reaps_model"
+Oct 18 02:28:02 aliyun-lou python[687194]:   ],
+Oct 18 02:28:02 aliyun-lou python[687194]:   "startup_seconds": 2.822,
+Oct 18 02:28:02 aliyun-lou python[687194]:   "request_seconds": [
+Oct 18 02:28:02 aliyun-lou python[687194]:     1.763,
+Oct 18 02:28:02 aliyun-lou python[687194]:     1.416,
+Oct 18 02:28:02 aliyun-lou python[687194]:     1.571
+Oct 18 02:28:02 aliyun-lou python[687194]:   ],
+Oct 18 02:28:02 aliyun-lou python[687194]:   "model_rss": "384852 kB",
+Oct 18 02:28:02 aliyun-lou python[687194]:   "model_peak_rss": "473844 kB",
+Oct 18 02:28:02 aliyun-lou python[687194]:   "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8",
+Oct 18 02:28:02 aliyun-lou python[687194]:   "uid": 65534,
+Oct 18 02:28:02 aliyun-lou python[687194]:   "ip_sockets_blocked": true
+Oct 18 02:28:02 aliyun-lou python[687194]: }
+Oct 18 02:28:02 aliyun-lou systemd[1]: smartdocs-transient-real-service.service: Deactivated successfully.
+Oct 18 02:28:02 aliyun-lou systemd[1]: smartdocs-transient-real-service.service: Consumed 7.580s CPU time.
