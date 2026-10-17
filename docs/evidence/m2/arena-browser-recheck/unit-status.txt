@@ -1,0 +1,89 @@
+Before test: memory.events high=36274 max=0 oom=0 oom_kill=0
+
+After test, before stop:
+TimeoutStopUSec=10s
+RuntimeMaxUSec=13min
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 23:56:27 CST
+ExecMainExitTimestamp=Sun 2026-10-18 00:02:03 CST
+ExecMainStatus=1
+ExecStart={ path=/bin/bash ; argv[]=/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py ; ignore_errors=no ; start_time=[Sat 2026-10-17 23:56:27 CST] ; stop_time=[Sun 2026-10-18 00:02:03 CST] ; pid=655326 ; code=exited ; status=1 }
+Slice=smartdocsvectorcheck.slice
+Environment=PYTHONPATH=python SMARTDOCS_ENCODER_SOCKET=/tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock SMARTDOCS_BROWSER_BIN=/tmp/smartdocs-safe.h4SzvX/chrome-linux64/chrome SMARTDOCS_WEBDRIVER_BIN=/tmp/smartdocs-safe.h4SzvX/chromedriver-linux64/chromedriver SMARTDOCS_HYBRID_BROWSER_OUTPUT=/tmp/smartdocs-safe.h4SzvX/arena-browser-artifacts
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=no
+NoNewPrivileges=no
+RestrictAddressFamilies=~
+Id=smartdocs-arena-browser-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+TimeoutStopUSec=5s
+RuntimeMaxUSec=15min
+MainPID=655298
+Result=success
+ExecMainStartTimestamp=Sat 2026-10-17 23:56:13 CST
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+ExecStart={ path=/usr/bin/systemd-socket-activate ; argv[]=/usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock ; ignore_errors=no ; start_time=[Sat 2026-10-17 23:56:13 CST] ; stop_time=[n/a] ; pid=655298 ; code=(null) ; status=0/0 }
+Slice=smartdocsvectorcheck.slice
+Environment=
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+Id=smartdocs-arena-browser-encoder.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 39710
+max 0
+oom 0
+oom_kill 0
+2026-10-17T23:56:13+0800 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-17T23:56:13+0800 aliyun-lou systemd-socket-activate[655298]: Listening on /tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock as 3.
+2026-10-17T23:59:18+0800 aliyun-lou systemd-socket-activate[655298]: Communication attempt on fd 3.
+2026-10-17T23:59:18+0800 aliyun-lou systemd-socket-activate[655298]: Connection from PID 655747/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock
+2026-10-17T23:59:18+0800 aliyun-lou systemd-socket-activate[655298]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 655968.
+2026-10-17T23:59:18+0800 aliyun-lou systemd-socket-activate[655968]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:00:21+0800 aliyun-lou systemd-socket-activate[655298]: Child 655968 died with code 0
+2026-10-18T00:00:37+0800 aliyun-lou systemd-socket-activate[655298]: Communication attempt on fd 3.
+2026-10-18T00:00:37+0800 aliyun-lou systemd-socket-activate[655298]: Connection from PID 655747/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/arena-browser.sock
+2026-10-18T00:00:37+0800 aliyun-lou systemd-socket-activate[655298]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 656045.
+2026-10-18T00:00:37+0800 aliyun-lou systemd-socket-activate[656045]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:01:41+0800 aliyun-lou systemd-socket-activate[655298]: Child 656045 died with code 0
+
+After explicit stop:
+MainPID=0
+Id=smartdocs-arena-browser-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Id=smartdocs-arena-browser-encoder.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+active
+low 0
+high 39710
+max 0
+oom 0
+oom_kill 0

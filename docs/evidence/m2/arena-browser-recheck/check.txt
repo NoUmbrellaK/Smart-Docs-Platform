@@ -1,0 +1,24 @@
+2026-10-17T15:56:33.500520Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 655332
+2026-10-17T15:56:34.006334Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T15:56:49.320178Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T15:56:56.850050Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... OBSERVED cold encoding timeout: persisted failure; exercising one explicit API retry
+FAIL
+
+======================================================================
+FAIL: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 113, in test_browser_hybrid_sources_version_change_and_failure
+    self.assertEqual(result, "completed", self.state(self.vector_job(recovery)).get("error_code"))
+AssertionError: 'failed' != 'completed'
+- failed
++ completed
+ : embedding_timeout
+
+----------------------------------------------------------------------
+Ran 1 test in 240.485s
+
+FAILED (failures=1)
