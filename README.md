@@ -72,7 +72,9 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 搜索前端增量另通过新交互 **7/7**、原 UI 行为 **18/18**、页面契约 **8/8**、浏览器工具自测 **12/12**；真实 Chrome + 本地模拟 HTTP API 场景通过，覆盖 6 种屏宽和文件变更竞态。未重跑上述后端套件或完整 M1 验收，不将模拟 API 浏览器测试计作新的真实 C++ 端到端验收。
 
-本机 worker 默认关闭，尚未安装为生产常驻服务；向量混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。没有模型请求或 DeepSeek token 消耗。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+另完成[小型 CPU 语义向量可行性验证](./docs/evidence/m2/vector-probe/README.md)：固定公开 ONNX 模型在断外网、非 root、单线程限额下两次运行，峰值 RSS 约 734–735 MiB。4 个预设查询首位命中 3 个；1,200 字符样例被默认截为 128 token，不能直接标记完整索引。后续需验证完整窗口覆盖、独立执行资源及权限/发布集成；实验依赖没有加入生产环境。
+
+本机 worker 默认关闭，尚未安装为生产常驻服务；向量混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 

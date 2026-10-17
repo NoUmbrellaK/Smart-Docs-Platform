@@ -1,0 +1,115 @@
+{
+  "purpose": "synthetic-only disposable feasibility; not M2 acceptance",
+  "model": "Qdrant/paraphrase-multilingual-MiniLM-L12-v2-onnx-Q",
+  "model_revision": "faf4aa4225822f3bc6376869cb1164e8e3feedd0",
+  "model_sha256": {
+    "model_optimized.onnx": "634d0f66c29dc934c8fa72b8a4fe91dd4d420a22f1d82a241058d4316e659a99",
+    "tokenizer.json": "fa685fc160bbdbab64058d4fc91b60e62d207e8dc60b9af5c002c5ab946ded00",
+    "config.json": "c8ec081fdad2df991bf5abbf18418fec7a5cdaa421f60ffb060a30040b8c376f",
+    "tokenizer_config.json": "0666eebf692422757e1dddf3c9fb1ded73ba3dc726c5828671fc89e45bf3609f",
+    "special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835"
+  },
+  "versions": {
+    "fastembed": "0.9.0",
+    "onnxruntime": "1.23.2",
+    "numpy": "2.2.6",
+    "tokenizers": "0.23.3",
+    "huggingface-hub": "1.33.0"
+  },
+  "python": "3.10.12",
+  "uid": 65534,
+  "network_interfaces": [
+    "lo"
+  ],
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "threads": 1,
+  "batch_size": 1,
+  "dimensions": 384,
+  "finite_unit_vectors_after_explicit_normalization": true,
+  "raw_norm_range": [
+    3.0282297134399414,
+    5.396440029144287
+  ],
+  "repeat_atol_1e_6": true,
+  "documents": [
+    "部署应用前，请配置数据库连接地址、账号密码和服务监听端口。",
+    "交接时应提供接口说明、设计文档、测试报告以及尚未完成的事项。",
+    "开票抬头和报销金额需要财务审核。",
+    "The backup procedure takes a database snapshot and copies immutable document files.",
+    "To rotate credentials, replace the secret and restart the application.",
+    "The team picnic is scheduled for Friday afternoon."
+  ],
+  "queries": [
+    "上线需要设置哪些参数？",
+    "离职移交需要准备什么资料？",
+    "How can I recover stored information after disk failure?",
+    "How do I change an application password safely?"
+  ],
+  "expected_top_indices": [
+    0,
+    1,
+    3,
+    4
+  ],
+  "actual_top_indices": [
+    1,
+    1,
+    3,
+    4
+  ],
+  "cosine_scores": [
+    [
+      0.35961776971817017,
+      0.5074272155761719,
+      0.24758091568946838,
+      0.12433715909719467,
+      0.2712559103965759,
+      0.09250082820653915
+    ],
+    [
+      0.2282400131225586,
+      0.4954933822154999,
+      0.31111782789230347,
+      0.2541901767253876,
+      0.22072389721870422,
+      0.06583763659000397
+    ],
+    [
+      0.09004200249910355,
+      0.1078074723482132,
+      0.05560757592320442,
+      0.3707735538482666,
+      0.157542884349823,
+      -0.059513699263334274
+    ],
+    [
+      0.38235604763031006,
+      0.04278789460659027,
+      -0.10391067713499069,
+      0.057498324662446976,
+      0.6199608445167542,
+      -0.13668543100357056
+    ]
+  ],
+  "fixture_matches": 3,
+  "fixture_total": 4,
+  "long_input": {
+    "characters": 1200,
+    "untruncated_tokens": 603,
+    "encoded_tokens": 128,
+    "silently_truncated": true,
+    "may_publish_complete_chunk_index": false
+  },
+  "seconds": {
+    "import": 1.5820137071423233,
+    "load": 1.0959817171096802,
+    "first_ten": 0.11604252317920327,
+    "repeat_ten": 0.1133290259167552,
+    "truncated_long": 0.06178029999136925
+  },
+  "peak_rss_kib": 752040,
+  "inference_peak_rss_kib_before_long_input": 752040,
+  "total_process_cpu_seconds": 2.4951540000000003
+}
