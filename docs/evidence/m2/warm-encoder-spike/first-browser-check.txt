@@ -1,0 +1,26 @@
+2026-10-17T15:21:11.540698Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 649414
+2026-10-17T15:21:12.578720Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T15:21:30.112654Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T15:21:38.749373Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... ERROR
+
+======================================================================
+ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 97, in test_browser_hybrid_sources_version_change_and_failure
+    browser.start()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+
+----------------------------------------------------------------------
+Ran 1 test in 106.103s
+
+FAILED (errors=1)

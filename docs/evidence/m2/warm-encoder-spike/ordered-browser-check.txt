@@ -1,0 +1,47 @@
+2026-10-17T15:25:39.521361Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 650481
+2026-10-17T15:25:39.672531Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T15:25:54.904658Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T15:26:03.166399Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... EXPERIMENT browser ready; waiting for separately capped model initialization
+EXPERIMENT encoder ready; continuing unchanged test
+ERROR
+ERROR
+
+======================================================================
+ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 99, in test_browser_hybrid_sources_version_change_and_failure
+    self.assertEqual(worker.run_once(self.client), "completed")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/worker.py", line 114, in run_once
+    job = _claim(client.claim())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/worker.py", line 95, in claim
+    def claim(self): return self._request("POST", "/claim")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/worker.py", line 91, in _request
+    if not replay or number: raise WorkerError("worker_transport_failed") from None
+smartdocs.worker.WorkerError: worker_transport_failed
+
+======================================================================
+ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 62, in tearDown
+    data(self.user.request("POST", self.job_path(job) + "/cancel"))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 62, in request
+    raw = connection.getresponse()
+  File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+    response.begin()
+  File "/usr/lib/python3.10/http/client.py", line 323, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+TimeoutError: timed out
+
+----------------------------------------------------------------------
+Ran 1 test in 337.425s
+
+FAILED (errors=2)

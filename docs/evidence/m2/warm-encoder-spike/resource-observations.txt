@@ -1,0 +1,43 @@
+Selected read-only command output transcribed during the experiment.
+These are point samples, not exact whole-run peaks or request-level causal traces.
+
+After first test terminated and first encoder was explicitly stopped
+(this command did not print a timestamp):
+smartdocs-warm-spike.service MainPID=0 ActiveState=inactive Result=success
+smartdocs-hybrid-warm-spike.service MainPID=0 ActiveState=failed Result=exit-code ExecMainStatus=1
+memory.events: low=0 high=30790 max=0 oom=0 oom_kill=0
+mysql=active
+
+2026-10-17T23:26:50+08:00, before starting the ordered encoder:
+fresh ordered socket path absent
+Checked with test ! -e and test ! -L on the exact warm-ordered.sock path.
+
+2026-10-17T23:27:57+08:00, watcher observed the browser-ready log:
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... EXPERIMENT browser ready; waiting for separately capped model initialization
+This is the watcher observation time, not an instrumented browser event timestamp.
+
+After READY and before the failed-test summary (this command did not print a timestamp):
+    PID    PPID NLWP   RSS STAT WCHAN                    COMMAND
+ 651073  650475    3 23896 DNl  wait_on_buffer           python
+ 651081  651073    3  8400 SNl  ep_poll                  server
+ 651111       1   37 60036 DNl  wait_on_page_bit_common  chrome
+ 651353       1    1 717692 SNs skb_wait_for_more_packet python
+
+2026-10-17T23:34:17+08:00, after stopping the warm encoder:
+smartdocs-warm-ordered.service MainPID=0 ActiveState=inactive SubState=dead
+smartdocs-hybrid-warm-ordered.service MainPID=650474 ActiveState=active SubState=running
+memory.current=548286464
+memory.events: high=35671 max=0 oom=0 oom_kill=0
+mysql=active
+
+2026-10-17T23:34:35+08:00, failed-test cleanup still running:
+    PID    PPID NLWP   RSS STAT WCHAN                    COMMAND
+ 650474       1    1  3772 SNs  do_wait                  bash
+ 650475  650474    1  3876 SN   do_wait                  bash
+ 650785  650475   26 158492 DNl wait_on_page_bit_common  mysqld
+ 651111       1   37 64000 DNl wait_on_page_bit_common  chrome
+
+Then requested systemctl stop --no-block smartdocs-hybrid-warm-ordered.service.
+Immediate state: MainPID=0 ActiveState=deactivating SubState=stop-sigterm
+TimeoutStopUSec=1min 30s KillMode=control-group Result=exit-code
+Final state and absence of all known test processes: see unit-status.txt.

@@ -1,0 +1,55 @@
+2026-10-17T23:35:37+08:00
+MainPID=0
+Result=success
+ExecMainStartTimestamp=n/a
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-warm-spike.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 23:21:06 CST
+ExecMainExitTimestamp=Sat 2026-10-17 23:24:33 CST
+ExecMainStatus=1
+Id=smartdocs-hybrid-warm-spike.service
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Result=success
+ExecMainStartTimestamp=n/a
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-warm-ordered.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sat 2026-10-17 23:25:37 CST
+ExecMainExitTimestamp=Sat 2026-10-17 23:34:51 CST
+ExecMainStatus=1
+Id=smartdocs-hybrid-warm-ordered.service
+ActiveState=failed
+SubState=failed
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+327503872
+low 0
+high 35671
+max 0
+oom 0
+oom_kill 0
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+    PID    PPID STAT COMMAND

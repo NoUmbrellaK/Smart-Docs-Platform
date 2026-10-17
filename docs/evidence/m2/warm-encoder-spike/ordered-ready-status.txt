@@ -1,0 +1,29 @@
+2026-10-17T23:31:13+08:00
+Type=notify
+TimeoutStartUSec=3min
+RuntimeMaxUSec=15min
+MainPID=651353
+Result=success
+ExecMainStartTimestamp=Sat 2026-10-17 23:28:17 CST
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+KillMode=control-group
+ActiveState=active
+SubState=running
+ActiveEnterTimestamp=Sat 2026-10-17 23:30:38 CST
+700 nobody /tmp/smartdocs-safe.h4SzvX/vector-socket
+600 nobody /tmp/smartdocs-safe.h4SzvX/vector-socket/warm-ordered.sock
+    PID    PPID NLWP   RSS STAT COMMAND
+ 651353       1    1 726048 SNs python
+1263026176
+low 0
+high 34595
+max 0
+oom 0
+oom_kill 0

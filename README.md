@@ -92,7 +92,9 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 新增[真实浏览器→混合网关→本地模型组合验收](./docs/evidence/m2/hybrid-browser/README.md)，**当前尚未通过**：Python 74/74、JS 37/37 及隔离库迁移通过，但浏览器与模型共用原资源限额时出现 `embedding_timeout`，一次显式人工重试仍失败，最终编码服务也达到预设总运行时限。未进入搜索断言，不可声称浏览器直通模型成功。全部临时服务已停止，生产 MySQL 保持运行；有内存节流但没有 OOM。生产代码未改，没有扩容或放宽限额；失败日志与复现条件已归档，冷加载和总服务寿命因素仍需进一步区分。
 
-后续[分层诊断](./docs/evidence/m2/encoder-cold-start/README.md)在新鲜编码服务内重现失败，排除了总寿命到期因素：首次模型文件校验耗时约 48.5 秒，CPU 不到 1 秒；重试加载完成时已用约 47.7 秒、编码进程峰值 RSS 约 727 MiB，随后触发原 60 秒截止期。当前瓶颈证据指向受限磁盘读取、内存回收与每请求重复冷加载，而非已证实的 CPU 算力不足或 OOM。诊断未修改生产逻辑，下一步验证受控初始化复用，M2 验收仍未通过。
+后续[分层诊断](./docs/evidence/m2/encoder-cold-start/README.md)在新鲜编码服务内重现失败，排除了总寿命到期因素：首次模型文件校验耗时约 48.5 秒，CPU 不到 1 秒；重试加载完成时已用约 47.7 秒、编码进程峰值 RSS 约 727 MiB，随后触发原 60 秒截止期。当前瓶颈证据指向受限磁盘读取、内存回收与每请求重复冷加载，而非已证实的 CPU 算力不足或 OOM。诊断未修改生产逻辑，M2 验收仍未通过。
+
+另做了[受控预初始化复用实验](./docs/evidence/m2/warm-encoder-spike/README.md)，**仍未通过组合验收**：同一共享配额内预热成功，但先预热后开浏览器时 Chrome 会话创建失败；先开浏览器再预热时初始化约 138 秒，随后 worker 领取任务发生传输失败、清理请求超时。两轮均未进入编码请求，不能宣称请求复用有效。无 OOM，全部临时进程已回收，生产 MySQL 保持运行；原型仅归档为实验材料，不安装生产服务、不提高原请求上限、不消耗 DeepSeek token。下一步需量化常驻内存及本机接口延迟，不能仅凭预热成功就关闭 M2 或认定必须扩容。
 
 本机 worker 默认关闭，尚未安装为生产常驻服务；M2 尚未完成阶段验收。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
