@@ -30,8 +30,23 @@ INSERT INTO processing_jobs(id,file_version_id,task_type,state,attempt_count)
 SELECT LPAD(n+3000,32,'0'),LPAD(n+1000,32,'0'),'parse_and_index',IF(n=103,'completed',IF(n=102,'running','pending')),IF(n>=102,1,0) FROM fixture_numbers;
 SQL
 export SMARTDOCS_MYSQL_DATABASE=smart_docs_upgrade
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=4' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=4' ]]
+"${mysql_test[@]}" smart_docs_upgrade < "$repo_root/db/migrations/003_processing_jobs.sql"
+"${mysql_test[@]}" smart_docs_upgrade < "$repo_root/db/migrations/004_document_results.sql"
+# A real schema-4 publication awaiting approved vectors: upgrade must queue it,
+# not fabricate vectors or rerun the already complete parser.
+"${mysql_test[@]}" smart_docs_upgrade <<'SQL'
+UPDATE files SET remote_ai_policy='remote_ai_allowed' WHERE id=LPAD('1',32,'0');
+UPDATE file_versions SET remote_ai_approved=TRUE,remote_ai_approved_at=UTC_TIMESTAMP(6),remote_ai_approved_by=LPAD('1',32,'0'),
+ processing_state='completed',parse_state='completed',keyword_state='completed',vector_state='pending'
+ WHERE id=LPAD('1001',32,'0');
+UPDATE processing_jobs SET state='completed' WHERE file_version_id=LPAD('1001',32,'0');
+INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha256,page_count,pages_without_text,chunk_count,char_count)
+ VALUES (LPAD('1001',32,'0'),REPEAT('a',64),'utf8-lines-v1',REPEAT('b',64),0,'[]',1,3);
+INSERT INTO document_chunks(id,version_id,ordinal,char_start,char_end,line_start,line_end,body)
+ VALUES (REPEAT('c',64),LPAD('1001',32,'0'),0,0,3,1,1,'abc');
+SQL
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=5' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=5' ]]
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -42,8 +57,12 @@ result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
 [[ $result == '100/1/1/1/2/103' ]] || { printf 'migration_fixture_failed: %s\n' "$result" >&2; exit 1; }
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM file_versions WHERE parse_state<>processing_state),'/',
- (SELECT COUNT(*) FROM file_versions WHERE keyword_state<>'pending'),'/',
+ (SELECT COUNT(*) FROM file_versions WHERE keyword_state<>'pending' AND id<>LPAD('1001',32,'0')),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='interrupted' AND last_error_code='results_unavailable'),'/',
  (SELECT COUNT(*) FROM document_results),'/',(SELECT COUNT(*) FROM document_chunks));")
-[[ $result == '0/0/1/0/0' ]] || { printf 'migration_result_state_failed: %s\n' "$result" >&2; exit 1; }
+[[ $result == '0/0/1/1/1' ]] || { printf 'migration_result_state_failed: %s\n' "$result" >&2; exit 1; }
+result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
+ (SELECT COUNT(*) FROM processing_jobs WHERE task_type='vectorize' AND state='pending' AND file_version_id=LPAD('1001',32,'0')),'/',
+ (SELECT COUNT(*) FROM document_embeddings),'/',(SELECT COUNT(*) FROM embedding_batches));")
+[[ $result == '1/0/0' ]] || { printf 'migration_vector_state_failed: %s\n' "$result" >&2; exit 1; }
 printf '%s\n' 'PASS m2_migration_preserves_103_files_without_fabricating_results'

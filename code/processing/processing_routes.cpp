@@ -12,7 +12,7 @@ HttpResponse Response(const ProcessingJob& job, const std::string& request, bool
     return HttpResponse::Json(200, {{"request_id", request}, {"data", {
         {"id", job.id}, {"file_id", job.file_id}, {"version_id", job.version_id},
         {"project_id", job.project_id}, {"state", job.state},
-        {"attempt_count", job.attempt_count}, {"error_code", job.error_code}}}}, keep_alive);
+        {"attempt_count", job.attempt_count}, {"error_code", job.error_code},{"task_type",job.task_type}}}}, keep_alive);
 }
 void RequireEmpty(const RequestHead& head) {
     if (head.content_length != 0)

@@ -175,7 +175,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     {
         MySqlConnection connection = database->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 4);
+        Schema::RequireVersion(connection, 5);
     }
     if (!StorageReady(config.storage_root)) {
         throw AppError(503, "storage_unavailable",
@@ -195,6 +195,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     UploadReconciler(*database_, *file_store_).RunAtStartup();
     processing_service_.reset(new ProcessingService(*database_, *project_service_));
     processing_service_->RecoverInterrupted();
+    processing_service_->RecoverInterrupted("vectorize");
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);
@@ -233,7 +234,7 @@ bool Application::Ready() const {
     try {
         MySqlConnection connection = database_->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 4);
+        Schema::RequireVersion(connection, 5);
         return StorageReady(storage_root_);
     } catch (...) {
         return false;

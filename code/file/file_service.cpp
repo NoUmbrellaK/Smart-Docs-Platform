@@ -1,4 +1,5 @@
 #include "file_service.h"
+#include "processing/processing_service.h"
 
 #include "file_repository.h"
 #include "file_store.h"
@@ -311,6 +312,7 @@ RemoteAiState FileService::SetRemoteAiPolicy(
     repository_->SetRemoteAiPolicy(connection, file_id, command.policy);
     repository_->SetVersionApprovals(connection, file_id, approved,
                                      session.user_id);
+    RefreshVectorJobs(connection,file_id);
     repository_->InsertAudit(connection, session.user_id, project_id,
                              "file.remote_ai_policy", file_id,
                              CheckedRequestId(request_id));

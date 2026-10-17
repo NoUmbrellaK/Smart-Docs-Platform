@@ -442,6 +442,223 @@ RequestHead WorkerHead(const std::string& method, const std::string& path, const
     if (!attempt.empty()) head.headers["x-smartdocs-attempt"] = attempt;
     return head;
 }
+
+nlohmann::json VectorCall(Application& app, const std::string& method, const std::string& path,
+                         const std::string& token = "", const nlohmann::json& body = nullptr) {
+    auto head = WorkerHead(method, "/vector" + path, token);
+    std::string bytes;
+    if (!body.is_null()) { bytes = body.dump(); head.content_length = bytes.size(); head.headers["content-type"] = "application/json"; }
+    auto handler = app.Prepare(head);
+    if (!bytes.empty()) handler->OnData(bytes.data(), bytes.size());
+    return Body(handler->Finish());
+}
+
+nlohmann::json VectorResult(const nlohmann::json& batch) {
+    using Json = nlohmann::json;
+    Json chunks = Json::array();
+    for (const auto& chunk : batch.at("chunks")) {
+        const auto text = chunk.at("text").get<std::string>();
+        const uint64_t length = std::count_if(text.begin(), text.end(), [](unsigned char c) { return (c & 0xc0) != 0x80; });
+        Json vector = std::vector<double>(384, 0); vector[0] = 1.0;
+        chunks.push_back({{"chunk_id",chunk.at("chunk_id")}, {"text_sha256",Sha256Hex(text.data(),text.size())},
+            {"windows",Json::array({{{"char_start",0},{"char_end",length},{"vector",vector}}})}});
+    }
+    return {{"batch_start",batch.at("batch_start")}, {"result", {
+        {"embedding_revision","minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1"}, {"chunks",chunks}}}};
+}
+
+void PublishChunks(Fixture& f, const JobFixture& job, unsigned count) {
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim)); CHECK(claim.job.id == job.id);
+    auto result = TextResult(job); auto prototype = result["chunks"][0]; result["chunks"] = nlohmann::json::array();
+    for (unsigned i = 0; i < count; ++i) {
+        auto chunk = prototype; chunk["char_start"] = i*4; chunk["char_end"] = (i+1)*4;
+        const auto identity = nlohmann::json::array({"utf8-lines-v1",job.file_id,job.version_id,std::string(64,'a'),i*4,(i+1)*4}).dump();
+        chunk["chunk_id"] = Sha256Hex(identity.data(),identity.size()); result["chunks"].push_back(chunk);
+    }
+    jobs.Publish(job.id,claim.attempt_token,result);
+}
+}
+
+TEST_CASE(processing_vectors_require_approval_and_publish_all_batches_idempotently) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    const auto job = f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store); ProcessingService jobs(TestDatabase(),f.projects);
+    PublishChunks(f,job,9);
+    CHECK(VectorCall(app,"POST","/claim").is_null());
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto claim = VectorCall(app,"POST","/claim");
+    const auto id = claim.at("id").get<std::string>(), token = claim.at("attempt_token").get<std::string>();
+    CHECK(id != job.id); CHECK(claim.at("version_id") == job.version_id);
+    CHECK(VectorCall(app,"POST","/claim").is_null());
+    ProcessingClaim parse; CHECK(!jobs.ClaimNext(&parse));
+    const auto first = VectorCall(app,"GET","/"+id+"/chunks",token);
+    CHECK(first.at("batch_start") == 0 && first.at("chunks").size() == 8);
+    const auto first_result = VectorResult(first);
+    CHECK(VectorCall(app,"POST","/"+id+"/result",token,first_result).at("state") == "running");
+    CHECK(VectorCall(app,"POST","/"+id+"/result",token,first_result).at("state") == "running");
+    auto db = TestDatabase().Acquire();
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_embeddings") == 8);
+    const auto state = jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,job.version_id);
+    CHECK(state.at("parse_state") == "completed" && state.at("keyword_state") == "completed" && state.at("vector_state") == "processing");
+    const auto last = VectorCall(app,"GET","/"+id+"/chunks",token);
+    CHECK(last.at("batch_start") == 8 && last.at("chunks").size() == 1);
+    CHECK(VectorCall(app,"POST","/"+id+"/result",token,VectorResult(last)).at("state") == "completed");
+    CHECK(VectorCall(app,"POST","/"+id+"/result",token,first_result).at("state") == "completed");
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_embeddings") == 9);
+    CHECK(jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,job.version_id).at("vector_state") == "completed");
+    auto conflict = first_result; conflict["result"]["chunks"][0]["windows"][0]["vector"][0] = -1.0;
+    CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,conflict),"result_conflict");
+}
+
+TEST_CASE(processing_vectors_revoke_reapprove_and_retry_fence_old_attempts) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    const auto job = f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store); ProcessingService jobs(TestDatabase(),f.projects);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    CHECK(VectorCall(app,"POST","/claim").is_null());
+    PublishChunks(f,job,9);
+    const auto claim = VectorCall(app,"POST","/claim");
+    const auto id = claim.at("id").get<std::string>(), old = claim.at("attempt_token").get<std::string>();
+    auto result = VectorResult(VectorCall(app,"GET","/"+id+"/chunks",old));
+    VectorCall(app,"POST","/"+id+"/result",old,result);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"internal_only",{}});
+    CHECK_THROWS_CODE(VectorCall(app,"GET","/"+id+"/chunks",old),"attempt_conflict");
+    CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",old,result),"attempt_conflict");
+    CHECK_THROWS_CODE(jobs.Retry(f.admin.session,f.project.id,id),"vector_not_allowed");
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto current = VectorCall(app,"POST","/claim"); CHECK(current.at("id") == id);
+    const auto token = current.at("attempt_token").get<std::string>(); CHECK(token != old);
+    CHECK(VectorCall(app,"GET","/"+id+"/chunks",token).at("batch_start") == 0);
+    CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",old,result),"attempt_conflict");
+    CHECK(jobs.RecoverInterrupted() == 0); // Parser recovery must not interrupt encoder.
+    CHECK(VectorCall(app,"POST","/recover").at("interrupted_count") == 1);
+    CHECK(jobs.Get(f.admin.session,f.project.id,id).state == "interrupted");
+    jobs.Retry(f.admin.session,f.project.id,id);
+    const auto retried = VectorCall(app,"POST","/claim"); CHECK(retried.at("attempt_token") != token);
+    CHECK_THROWS_CODE(VectorCall(app,"GET","/"+id+"/chunks",token),"attempt_conflict");
+    CHECK(jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,job.version_id).at("parse_state") == "completed");
+}
+
+TEST_CASE(processing_vectors_reject_malformed_or_out_of_order_results_and_rollback_faults) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    const auto job = f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    PublishChunks(f,job,1); files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto claim = VectorCall(app,"POST","/claim");
+    const auto id = claim.at("id").get<std::string>(), token = claim.at("attempt_token").get<std::string>();
+    auto result = VectorResult(VectorCall(app,"GET","/"+id+"/chunks",token));
+    auto invalid = result; invalid["batch_start"] = 1;
+    CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,invalid),"batch_conflict");
+    for (int mutation=0; mutation<8; ++mutation) {
+        invalid = result; auto& c = invalid["result"]["chunks"][0]; auto& w = c["windows"][0];
+        if (mutation==0) c["text_sha256"] = std::string(64,'0');
+        if (mutation==1) c["chunk_id"] = std::string(64,'0');
+        if (mutation==2) w["char_start"] = 1;
+        if (mutation==3) w["char_end"] = 3;
+        if (mutation==4) w["vector"][0] = 0;
+        if (mutation==5) w["vector"][0] = true;
+        if (mutation==6) invalid["result"]["embedding_revision"] = "wrong";
+        if (mutation==7) w["vector"] = nlohmann::json::array({1.0});
+        CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,invalid),"invalid_result");
+    }
+    FaultInjector::SetObserverForTesting([](FaultPoint point) {
+        if (point == FaultPoint::BeforeDatabaseCommit) throw AppError(500,"injected","test");
+    });
+    try { CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,result),"injected"); }
+    catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+    FaultInjector::ClearObserverForTesting();
+    auto db = TestDatabase().Acquire();
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_embeddings") == 0);
+    CHECK(VectorCall(app,"GET","/"+id+"/chunks",token).at("batch_start") == 0);
+    CHECK(VectorCall(app,"POST","/"+id+"/result",token,result).at("state") == "completed");
+}
+
+TEST_CASE(processing_vectors_routes_and_job_controls_reuse_authorization) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    Application disabled(TestAppConfig(f.storage));
+    CHECK_THROWS_CODE(VectorCall(disabled,"POST","/claim"),"route_not_found");
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    const auto job = f.AddJob();
+    for (const std::string key : {"authorization","cookie","origin"}) {
+        auto head = WorkerHead("POST","/vector/claim");
+        if (key == "authorization") head.headers.erase(key); else head.headers[key] = "untrusted";
+        CHECK_THROWS_CODE(app.Prepare(head),"worker_unauthorized");
+    }
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store); ProcessingService jobs(TestDatabase(),f.projects);
+    PublishChunks(f,job,1); files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto claim = VectorCall(app,"POST","/claim"); const auto id = claim.at("id").get<std::string>();
+    const auto token = claim.at("attempt_token").get<std::string>();
+    const auto reader_user = f.auth.CreateUser("vector-reader","test-only-password");
+    f.projects.SetMemberRole(f.admin.session,f.project.id,reader_user.id,Role::Reader);
+    const auto reader = f.auth.Login("vector-reader","test-only-password");
+    CHECK(jobs.Get(reader.session,f.project.id,id).state == "running");
+    CHECK_THROWS_CODE(jobs.Cancel(reader.session,f.project.id,id),"forbidden");
+    { auto db = TestDatabase().Acquire(); db.Execute("DELETE FROM project_members WHERE project_id=? AND user_id=?",
+        {SqlValue(f.project.id),SqlValue(reader_user.id)}); }
+    CHECK_THROWS_CODE(jobs.Get(reader.session,f.project.id,id),"resource_not_found");
+    jobs.Cancel(f.admin.session,f.project.id,id);
+    CHECK_THROWS_CODE(VectorCall(app,"GET","/"+id+"/chunks",token),"attempt_conflict");
+    jobs.Retry(f.admin.session,f.project.id,id);
+    const auto again = VectorCall(app,"POST","/claim").at("attempt_token").get<std::string>();
+    jobs.Fail(id,again,"embedding_timeout"); jobs.Fail(id,again,"embedding_timeout");
+    CHECK(jobs.Get(f.admin.session,f.project.id,id).error_code == "embedding_timeout");
+    const auto state = jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,job.version_id);
+    CHECK(state.at("parse_state") == "completed" && state.at("keyword_state") == "completed" && state.at("vector_state") == "failed");
+}
+
+TEST_CASE(processing_vectors_cannot_read_or_publish_superseded_deleted_or_unavailable_source) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store); ProcessingService jobs(TestDatabase(),f.projects);
+    for (int mutation=0; mutation<3; ++mutation) {
+        const auto job = f.AddJob(); PublishChunks(f,job,1);
+        files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+        const auto claim = VectorCall(app,"POST","/claim");
+        const auto id = claim.at("id").get<std::string>(), token = claim.at("attempt_token").get<std::string>();
+        auto result = VectorResult(VectorCall(app,"GET","/"+id+"/chunks",token));
+        auto db = TestDatabase().Acquire();
+        if (mutation==0) {
+            const auto next = f.AddJob(job.file_id);
+            CHECK(jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,next.version_id).at("vector_state") == "not_applicable");
+            jobs.Cancel(f.admin.session,f.project.id,next.id);
+        }
+        if (mutation==1) db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?",{SqlValue(job.file_id)});
+        if (mutation==2) db.Execute("UPDATE file_versions SET availability_state='unavailable' WHERE id=?",{SqlValue(job.version_id)});
+        CHECK_THROWS_CODE(VectorCall(app,"GET","/"+id+"/chunks",token),"version_conflict");
+        CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,result),"version_conflict");
+        jobs.Fail(id,token,"version_conflict");
+    }
+}
+
+TEST_CASE(processing_vectors_share_queue_capacity_and_bound_version_window_count) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64,'a'); Application app(config);
+    const auto job = f.AddJob(); PublishChunks(f,job,1);
+    std::vector<JobFixture> pending;
+    for (unsigned i=0;i<100;++i) pending.push_back(f.AddJob());
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store); ProcessingService jobs(TestDatabase(),f.projects);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto state = jobs.ReadDocument(f.admin.session,f.project.id,job.file_id,job.version_id);
+    const auto id=state.at("vector_job_id").get<std::string>();
+    CHECK(state.at("vector_state")=="failed" && state.at("parse_state")=="completed");
+    CHECK(jobs.Get(f.admin.session,f.project.id,id).error_code=="queue_full");
+    CHECK_THROWS_CODE(jobs.Retry(f.admin.session,f.project.id,id),"queue_full");
+    jobs.Cancel(f.admin.session,f.project.id,pending[0].id);
+    jobs.Retry(f.admin.session,f.project.id,id);
+    const auto claim=VectorCall(app,"POST","/claim");
+    const auto token=claim.at("attempt_token").get<std::string>();
+    const auto result=VectorResult(VectorCall(app,"GET","/"+id+"/chunks",token));
+    auto db=TestDatabase().Acquire();
+    // Simulate the persisted cumulative budget immediately before another batch.
+    db.Execute("UPDATE processing_jobs SET vector_window_count=4096 WHERE id=?",{SqlValue(id)});
+    CHECK_THROWS_CODE(VectorCall(app,"POST","/"+id+"/result",token,result),"embedding_window_limit");
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_embeddings")==0);
+    CHECK(jobs.Get(f.admin.session,f.project.id,id).state=="running");
+    jobs.Fail(id,token,"embedding_window_limit");
 }
 
 TEST_CASE(processing_worker_routes_are_disabled_by_default_and_require_service_auth) {

@@ -35,6 +35,30 @@ void RegisterWorkerRoutes(Router& router, std::shared_ptr<ProcessingService> job
                           std::shared_ptr<FileStore> store, const std::string& token) {
     if (token.empty()) return;
     const std::string prefix = "/internal/v1/processing";
+    router.Add("POST",prefix+"/vector/claim",[jobs,token](const RequestHead& head,const RouteParams&) {
+        Authenticate(head,token); Empty(head); ProcessingClaim claim; nlohmann::json data=nullptr;
+        if (jobs->ClaimNext(&claim,"vectorize")) data={{"id",claim.job.id},{"file_id",claim.job.file_id},
+            {"version_id",claim.job.version_id},{"attempt_token",claim.attempt_token}};
+        return ReadyResponse(Data(std::move(data),head.keep_alive));
+    });
+    router.Add("POST",prefix+"/vector/recover",[jobs,token](const RequestHead& head,const RouteParams&) {
+        Authenticate(head,token); Empty(head);
+        return ReadyResponse(Data({{"interrupted_count",jobs->RecoverInterrupted("vectorize")}},head.keep_alive));
+    });
+    router.Add("GET",prefix+"/vector/{job_id}/chunks",[jobs,token](const RequestHead& head,const RouteParams& params) {
+        Authenticate(head,token); Empty(head);
+        if (!head.query.empty() || head.headers.count("range")) throw AppError(400,"invalid_request","vector batches do not accept query or range");
+        return ReadyResponse(Data(jobs->ReadVectorBatch(params.at("job_id"),Attempt(head)),head.keep_alive));
+    });
+    router.Add("POST",prefix+"/vector/{job_id}/result",[jobs,token](const RequestHead& head,const RouteParams& params) {
+        Authenticate(head,token); const auto attempt=Attempt(head), id=params.at("job_id");
+        return PrepareJsonBody(head,2*1024*1024+4096,[jobs,id,attempt,keep_alive=head.keep_alive](const nlohmann::json& body) {
+            RequireExactObject(body,{"batch_start","result"}); const auto& start=body.at("batch_start");
+            if (!start.is_number_integer() || (!start.is_number_unsigned() && start.get<int64_t>()<0) || start.get<uint64_t>()>=2000)
+                throw AppError(400,"invalid_request","vector batch offset is invalid");
+            return Data({{"state",jobs->PublishVectorBatch(id,attempt,start.get<uint64_t>(),body.at("result"))}},keep_alive);
+        });
+    });
     router.Add("POST", prefix + "/claim", [jobs, token](const RequestHead& head, const RouteParams&) {
         Authenticate(head, token); Empty(head); ProcessingClaim claim;
         nlohmann::json data = nullptr;

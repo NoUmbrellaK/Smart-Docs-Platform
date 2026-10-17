@@ -1,6 +1,6 @@
 # M2 本机 Python worker
 
-本手册描述可选部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，数据库要求 schema 4；本增量没有新迁移。后续已接通 [本地搜索 API](../api/m2-search-api.md)；向量与 Agent 尚未实现。
+本手册描述可选的解析 worker 部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，当前数据库要求 schema 5（升级见 [处理 API](../api/m2-processing-api.md)）。[本地搜索 API](../api/m2-search-api.md)已接通；C++ 向量任务与分批发布已实现，但独立编码器尚未接入调度，混合检索与 Agent 未完成。不要将约 737 MiB RSS 的编码器加载到本手册限制 512 MiB 地址空间的解析 worker 内。
 
 ## 身份与凭据
 

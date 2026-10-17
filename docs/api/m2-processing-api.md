@@ -1,6 +1,6 @@
 # M2 持久处理任务（当前增量）
 
-当前提供任务状态、取消、人工重试、可信本地 Python worker 通道及鉴权后的固定版本来源读取。单独启用 worker 后才会消费上传任务；pending 不代表已经解析。已新增 [本地元数据/关键词搜索 API](m2-search-api.md)，没有向量或模型调用。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
+当前提供任务状态、取消、人工重试、可信本地 Python 解析 worker 通道、C++ 向量分批发布及鉴权后的固定版本来源读取。单独启用解析 worker 后才会消费上传任务；pending 不代表已经解析。[本地元数据/关键词搜索 API](m2-search-api.md)仍未使用向量；独立编码器尚未接入任务调度。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
 
 ## 用户接口
 
@@ -12,7 +12,7 @@
 | POST `/cancel` | editor | pending/running → cancelled；重复取消返回现状 |
 | POST `/retry` | editor | failed/interrupted/cancelled → pending；pending 重试返回现状 |
 
-成功返回 HTTP 200：`{request_id, data: {id, file_id, version_id, project_id, state, attempt_count, error_code}}`。无错误时 `error_code` 是空字符串。不返回内部 attempt token、正文、存储路径或原始异常文本。任务 ID 来自既有上传完成响应。
+成功返回 HTTP 200：`{request_id, data: {id, file_id, version_id, project_id, task_type, state, attempt_count, error_code}}`。task_type 为 parse_and_index 或 vectorize；无错误时 error_code 为空。不返回内部 attempt token、正文、存储路径或原始异常。解析任务 ID 来自上传完成响应；向量任务 ID 来自固定版本 document 响应的 vector_job_id（尚无任务时为 null）。
 
 取消/重试只在实际转换时各写一条审计记录。幂等性指重复相同状态操作；跨越后续状态转换的再次操作仍重新验证。重试不创建新任务或版本；只允许文件当前、未删除且内容 available 的版本。历史任务可以查询，但不能借重试改写当前版本。
 
@@ -64,15 +64,54 @@ Python 仅连接固定 `127.0.0.1`，忽略代理环境、不跟随重定向。c
 
 历史版本不会跳转新版；删除、跨项目或撤销成员资格后不可读；内容 unavailable 时返回 `409 content_unavailable`。本接口属于普通本地阅读，不是 Agent 外发授权入口，未来 Agent 不能绕过额外的具体版本外发检查直接转发结果。文本以 JSON 数据返回，前端必须用 textContent 等安全方式显示。
 
-parse_state 单独描述解析阶段；keyword_state 只有同事务成功写入 FULLTEXT 后为 completed；vector_state 对内部资料为 not_applicable、批准版本为 pending，目前没有向量完成写入。变更批准或整体撤销会同步向量适用状态，新版本默认不继承批准。本地搜索与关键词边界说明见上述搜索 API；真实向量验证仍在后续增量。
+parse_state 单独描述解析阶段；keyword_state 只有同事务成功写入 FULLTEXT 后为 completed。vector_state 独立取 not_applicable/pending/processing/completed/failed/interrupted/cancelled；仅所有片段向量发布后为 completed，不代表搜索 API 已实现混合排名。向量取消、失败、重试和重启不重置本地 parse/keyword 完成状态。
 
 关键词索引使用 MySQL 的 [ngram FULLTEXT](https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html)，实际分词受 ngram_token_size 和停用词配置影响；一个中文 MATCH 回归不代表完整搜索质量验收。改变这些配置必须重建索引并重新验证，不可假定配置变更会自动重写旧索引。
 
-## schema 2/3 → 4 升级
+## 向量任务和分批发布
 
-本分支启动及 readiness 要求 `schema_version=4`。003 新增队列 guard 和 attempt token，扩展状态约束；原 running 转 interrupted，原 pending 超过 100 时保留最早 100 个，其余变为 failed/queue_full。004 增加独立解析/索引状态及不可变结果/片段表和 FULLTEXT。旧 schema 没有持久解析结果，旧 completed 状态会标记 interrupted/results_unavailable，等待人工重试，不能凭旧状态制造索引就绪。文件、版本和内容不删除。
+使用现有 processing_jobs 的 vectorize 类型。已批准当前版本解析完成时入队；
+解析后才批准也会入队。共用全库 100 pending/1 running 限额；队列满保留本地
+完成状态，向量任务为 failed/queue_full。内部资料和未获批新版不进入向量队列。
 
-部署前停止所有应用/worker，备份数据库与文件存储并核验恢复路径，然后使用既有受保护环境配置执行 `scripts/migrate.sh`，预期输出 `schema_version=4`。成功后再次运行不会重复迁移。不要把 M1 手册中的 schema 2 预期套到此分支。
+同一内部前缀、bearer 和 Origin/Cookie 限制：
+
+| 方法及后缀 | 输入 | data |
+| --- | --- | --- |
+| POST `/vector/claim` | 空正文 | null 或 `{id,file_id,version_id,attempt_token}` |
+| POST `/vector/recover` | 空正文；仅唯一向量 worker 锁持有者 | `{interrupted_count}`，只中断向量任务 |
+| GET `/vector/{job_id}/chunks` | attempt 头；无正文/query/Range | `{batch_start,chunk_count,embedding_revision,chunks:[{chunk_id,text}]}` |
+| POST `/vector/{job_id}/result` | attempt 头；`{batch_start,result}` | `{state:"running"或"completed"}` |
+
+result 为[有界编码器](../evidence/m2/bounded-embeddings/README.md)原样输出。
+每批恰为当前游标开始的至多 8 个权威片段，不允许任意选片段、跳批或少交。
+取源与发布均重新检查具体版本批准、当前版本、删除、available、解析完成及
+attempt。原 claim/recover 只处理解析；C++ 启动恢复两类任务。原 `/{job_id}/fail`
+也接受编码器固定安全错误码；用户 status/cancel/retry 仍使用项目角色规则，
+向量重试另外要求当前版本批准和解析完成，否则返回 vector_not_allowed。
+
+请求正文上限 2 MiB + 4 KiB 包装，result 自身最多 2 MiB；每片段最多 64 窗、
+每批 128 窗、每版本 4096 窗。C++ 校验固定修订、片段 ID/顺序/文本 SHA-256、
+完整连续码点区间、384 维有限单位向量；token 预算由固定 Python 编码器实施。
+这些校验不证明语义质量，协议测试中的单位向量夹具不代表真实模型结果。
+
+向量、批指纹和游标同事务提交；最后一批才令 vector_state=completed。暂存行
+不可作为就绪索引使用。相同 attempt/批起点/结果重放返回当前任务状态，不重复
+插入；异内容为 result_conflict，跳批为 batch_conflict。超过版本预算返回
+413 embedding_window_limit，不提交该批；worker 应报告失败，不无限重试。
+
+每次显式修改批准清单都会取消该文件已有向量 attempt 并清空 token，再为合规
+当前版本排队。即使撤销后重新批准，旧 token 也不能读下一批或发布；此保守策略
+也使相同批准清单重新编码。再次领取清理前次暂存并从 0 开始，取消/中断后的人工
+重试同样产生新 token。不支持从任意编码步骤续跑，也不即时终止已启动子进程。
+旧向量可暂留磁盘，但状态、批准及 attempt 禁止复用；未来检索仍须重新检查
+C++ 权威当前版本与成员权限。当前未接通 Python 向量调度或混合搜索。
+
+## schema 2/3/4 → 5 升级
+
+本分支启动及 readiness 要求 `schema_version=5`。003 新增队列 guard 和 attempt token，扩展状态约束；原 running 转 interrupted，原 pending 超过 100 时保留最早 100 个，其余变为 failed/queue_full。004 增加独立解析/索引状态及不可变结果/片段表和 FULLTEXT。旧 schema 没有持久解析结果，旧 completed 状态会标记 interrupted/results_unavailable，等待人工重试。005 增加向量任务类型、进度、批指纹与窗口表，为已发布且合规当前版本排队；超出共享队列容量为 failed/queue_full，不伪造完成。文件、版本和原始内容不删除。
+
+部署前停止所有应用/worker，备份数据库与文件存储并核验恢复路径，然后使用既有受保护环境配置执行 `scripts/migrate.sh`，预期输出 `schema_version=5`。成功后再次运行不会重复迁移。不要把 M1 手册中的 schema 2 预期套到此分支。
 
 MySQL DDL 非完整事务原子操作。若迁移中断，不要盲目反复执行或手工伪造 schema 记录；保持服务停止，检查实际表结构，从升级前备份恢复后再升级。回退至 M1 也需要恢复匹配的 schema 2 数据库，不能只回退二进制。
 

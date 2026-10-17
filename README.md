@@ -72,9 +72,11 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 搜索前端增量另通过新交互 **7/7**、原 UI 行为 **18/18**、页面契约 **8/8**、浏览器工具自测 **12/12**；真实 Chrome + 本地模拟 HTTP API 场景通过，覆盖 6 种屏宽和文件变更竞态。未重跑上述后端套件或完整 M1 验收，不将模拟 API 浏览器测试计作新的真实 C++ 端到端验收。
 
-另完成[小型 CPU 语义向量可行性验证](./docs/evidence/m2/vector-probe/README.md)：固定公开 ONNX 模型的 4 个预设查询首位命中 3 个；发现默认 128 token 截断及原始向量未归一化的问题。后续[有界本地编码器](./docs/evidence/m2/bounded-embeddings/README.md)已验证完整窗口覆盖、显式归一化、进程资源限制与超时回收：1,200 字符样例分为 8 窗，真实模型子进程峰值 RSS 约 737 MiB，Python 回归 47/47 通过。可选依赖单独锁定，未混入解析 worker；尚未部署、持久化向量或接入业务权限/发布与混合检索。
+另完成[小型 CPU 语义向量可行性验证](./docs/evidence/m2/vector-probe/README.md)：固定公开 ONNX 模型的 4 个预设查询首位命中 3 个；发现默认 128 token 截断及原始向量未归一化的问题。后续[有界本地编码器](./docs/evidence/m2/bounded-embeddings/README.md)已验证完整窗口覆盖、显式归一化、进程资源限制与超时回收：1,200 字符样例分为 8 窗，真实模型子进程峰值 RSS 约 737 MiB，Python 回归 47/47 通过。可选依赖单独锁定，未混入解析 worker；该编码器仍是独立组件，后续发布链路状态见下。
 
-本机 worker 默认关闭，尚未安装为生产常驻服务；向量混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+后续 [C++ 向量发布增量](./docs/evidence/m2/vector-publication/README.md)复用有界任务队列，按具体版本批准领取片段、分批保存向量，全部片段提交后才标记向量就绪。撤销/重新批准、重试和重启均阻止旧 attempt 发布；向量失败不抹掉本地关键词能力。完整 C++ 回归 135/135、隔离库升级与重放通过。数据库要求 schema 5，但本机业务库未迁移。
+
+本机 worker 默认关闭，尚未安装为生产常驻服务；独立编码器尚未接入上述任务调度，混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 
@@ -149,7 +151,7 @@ set +a
 scripts/migrate.sh
 ```
 
-迁移成功输出 `schema_version=4`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+迁移成功输出 `schema_version=5`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

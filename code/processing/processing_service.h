@@ -15,6 +15,7 @@ struct ProcessingJob {
     std::string id, file_id, version_id, project_id, state;
     uint64_t attempt_count = 0;
     std::string error_code;
+    std::string task_type = "parse_and_index";
 };
 
 struct ProcessingClaim {
@@ -27,6 +28,8 @@ struct ProcessingClaim {
 // Within the caller's transaction, after locking/creating the file row.
 void EnqueueProcessingJob(MySqlConnection& connection, const std::string& job_id,
                           const std::string& version_id);
+// After policy/approval changes, within the caller's file-locked transaction.
+void RefreshVectorJobs(MySqlConnection& connection, const std::string& file_id);
 
 class ProcessingService {
 public:
@@ -39,10 +42,13 @@ public:
                         const std::string& job_id, const std::string& request_id = "");
 
     // Trusted local worker operations, not end-user or Agent authorization.
-    bool ClaimNext(ProcessingClaim* claim);
+    bool ClaimNext(ProcessingClaim* claim, const std::string& task_type = "parse_and_index");
     void Fail(const std::string& job_id, const std::string& attempt_token,
               const std::string& error_code);
-    uint64_t RecoverInterrupted();
+    uint64_t RecoverInterrupted(const std::string& task_type = "parse_and_index");
+    nlohmann::json ReadVectorBatch(const std::string& job_id, const std::string& attempt_token);
+    std::string PublishVectorBatch(const std::string& job_id, const std::string& attempt_token,
+        uint64_t batch_start, const nlohmann::json& result);
     AuthorizedVersion OpenInput(const std::string& job_id, const std::string& attempt_token,
                                 FileStore& store);
     void Publish(const std::string& job_id, const std::string& attempt_token,
