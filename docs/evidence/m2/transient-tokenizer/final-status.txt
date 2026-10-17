@@ -1,0 +1,24 @@
+2026-10-18T02:22:34+08:00
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+low 0
+high 68978
+max 0
+oom 0
+oom_kill 0
+MemTotal:        3579040 kB
+MemFree:          719888 kB
+MemAvailable:    1887772 kB
+Buffers:           44988 kB

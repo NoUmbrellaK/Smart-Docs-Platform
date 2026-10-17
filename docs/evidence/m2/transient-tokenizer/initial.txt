@@ -1,0 +1,24 @@
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+Oct 18 02:19:52 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/transient-tokenizer/spike.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:20:12 aliyun-lou python[684983]: {"stage": "ready", "rss_kib": 374852, "peak_rss_kib": 474312, "child_peak_rss_kib": 0, "group_memory_bytes": 448544768, "startup_s": 19.487, "retained_snapshot_bytes": 17083973}
+Oct 18 02:20:13 aliyun-lou python[684983]: {"stage": "tokenizer_exited_1", "rss_kib": 374852, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 448303104, "tokenizer_pid": 685006}
+Oct 18 02:20:14 aliyun-lou python[684983]: {"stage": "request_1", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 448864256, "tokenizer_pid": 685006, "request_s": 1.481, "tokenize_s": 0.925, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:20:14 aliyun-lou python[684983]: {"stage": "tokenizer_exited_2", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 448983040, "tokenizer_pid": 685007}
+Oct 18 02:20:15 aliyun-lou python[684983]: {"stage": "request_2", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 449007616, "tokenizer_pid": 685007, "request_s": 1.378, "tokenize_s": 0.821, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:20:16 aliyun-lou python[684983]: {"stage": "tokenizer_exited_3", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 449126400, "tokenizer_pid": 685008}
+Oct 18 02:20:17 aliyun-lou python[684983]: {"stage": "request_3", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 449064960, "tokenizer_pid": 685008, "request_s": 1.518, "tokenize_s": 0.87, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:20:17 aliyun-lou python[684983]: {"stage": "tokenizer_exited_4", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 449191936, "tokenizer_pid": 685017}
+Oct 18 02:20:18 aliyun-lou python[684983]: {"stage": "request_4", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 449097728, "tokenizer_pid": 685017, "request_s": 1.371, "tokenize_s": 0.824, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:20:19 aliyun-lou python[684983]: {"stage": "tokenizer_exited_5", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 447348736, "tokenizer_pid": 685021}
+Oct 18 02:20:19 aliyun-lou python[684983]: {"stage": "request_5", "rss_kib": 376556, "peak_rss_kib": 474312, "child_peak_rss_kib": 474312, "group_memory_bytes": 447324160, "tokenizer_pid": 685021, "request_s": 1.509, "tokenize_s": 0.92, "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8"}
+Oct 18 02:20:19 aliyun-lou python[684983]: {"passed": true, "requests": 5, "production_entry_unchanged": true}
+Oct 18 02:20:20 aliyun-lou systemd[1]: smartdocs-transient-tokenizer-spike.service: Deactivated successfully.
+Oct 18 02:20:20 aliyun-lou systemd[1]: smartdocs-transient-tokenizer-spike.service: Consumed 8.624s CPU time.
+low 0
+high 68873
+max 0
+oom 0
+oom_kill 0
