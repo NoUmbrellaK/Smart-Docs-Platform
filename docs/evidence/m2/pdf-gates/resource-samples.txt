@@ -1,0 +1,174 @@
+2026-10-18T03:10:01+08:00
+test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests) ... ok
+test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests) ... ok
+test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests) ... ok
+test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... ok
+test_systemd_ready_notification_follows_model_initialization (test_resident_service.ResidentServiceTests) ... ok
+test_total_deadline_kills_model_and_stopped_transient_tokenizer (test_resident_service.ResidentServiceTests) ... ok
+test_denied_preflight_never_encodes (test_search.SearchTests) ... ok
+test_encodes_query_only_after_backend_authorization (test_search.SearchTests) ... ok
+test_encoding_failure_rechecks_backend_instead_of_returning_stale_preflight (test_search.SearchTests) ... ok
+test_model_arguments_cannot_supply_mode_vector_or_identity (test_search.SearchTests) ... ok
+test_permission_revoked_during_encoding_is_not_hidden_by_preflight (test_search.SearchTests) ... ok
+test_bad_origin_host_cookie_never_reaches_backend_or_encoder (test_search_http.SearchHttpTests) ... ok
+test_config_disallows_remote_plaintext_and_untrusted_origin_components (test_search_http.SearchHttpTests) ... ok
+test_degraded_query_forwards_only_session_and_fixed_origin_and_rechecks (test_search_http.SearchHttpTests) ... ok
+test_denied_backend_never_encodes_and_does_not_leak_error (test_search_http.SearchHttpTests) ... ok
+test_limits_body_route_and_media_type (test_search_http.SearchHttpTests) ... ok
+test_malformed_oversized_or_redirected_backend_is_sanitized_unavailable (test_search_http.SearchHttpTests) ... ok
+test_rejects_ambiguous_http_framing_and_duplicate_origin (test_search_http.SearchHttpTests) ... ok
+test_rejects_invalid_body_identity_mode_vectors_and_duplicate_keys (test_search_http.SearchHttpTests) ... ok
+test_revocation_after_encoding_returns_error_not_stale_preflight (test_search_http.SearchHttpTests) ... ok
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1404         376           2        1714        1829
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+
+2026-10-18T03:10:54+08:00
+test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ok
+test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ok
+test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ok
+test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ok
+test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ok
+test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ok
+test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ok
+test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ok
+test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ok
+test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+----------------------------------------------------------------------
+Ran 104 tests in 21.248s
+OK
+2026-10-17T19:10:03.485361Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 700036
+2026-10-17T19:10:03.684050Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T19:10:18.924788Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T19:10:26.654092Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1446         210           2        1838        1786
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+
+2026-10-18T03:11:59+08:00
+test_browser_or_missing_worker_credentials_are_rejected (__main__.WorkerE2E) ... ok
+test_cancelled_and_superseded_attempts_cannot_block_new_version (__main__.WorkerE2E) ... ok
+test_cpp_restart_requires_manual_retry (__main__.WorkerE2E) ... ok
+test_large_result_uses_worker_limit_without_raising_user_limit (__main__.WorkerE2E) ... ok
+test_three_formats_publish_real_chunks_and_index (__main__.WorkerE2E) ... {"format": "hello.txt", "source_check": "passed", "pages": [0], "line_ranges": [[1, 2]], "chunks": 1, "old_version_preserved": true, "cross_version_chunk_refused": true}
+{"format": "guide.md", "source_check": "passed", "pages": [0], "line_ranges": [[1, 3]], "chunks": 1, "old_version_preserved": true, "cross_version_chunk_refused": true}
+{"format": "pages.pdf", "source_check": "passed", "pages": [1, 2], "line_ranges": [[1, 1], [1, 1]], "chunks": 2, "old_version_preserved": true, "cross_version_chunk_refused": true}
+{"format": "chinese.pdf", "source_check": "passed", "pages": [1, 2], "line_ranges": [[1, 2], [1, 2]], "chunks": 2, "old_version_preserved": true, "cross_version_chunk_refused": true}
+ok
+test_unsupported_and_broken_files_remain_managed_but_not_indexed (__main__.WorkerE2E) ... {"format": "image.png", "error_code": "unsupported_format", "chunks": 0, "metadata_discoverable": true, "original_downloadable": true}
+{"format": "broken.pdf", "error_code": "invalid_pdf", "chunks": 0, "metadata_discoverable": true, "original_downloadable": true}
+{"format": "scanned.pdf", "error_code": "no_extractable_text", "chunks": 0, "metadata_discoverable": true, "original_downloadable": true}
+{"format": "blank.txt", "error_code": "empty_text", "chunks": 0, "metadata_discoverable": true, "original_downloadable": true}
+ok
+test_worker_startup_recovers_only_after_acquiring_singleton_lock (__main__.WorkerE2E) ... ok
+----------------------------------------------------------------------
+Ran 7 tests in 13.742s
+OK
+smartdocs-m2-pdf-gates.service: Deactivated successfully.
+smartdocs-m2-pdf-gates.service: Consumed 16.075s CPU time.
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1358         384           2        1753        1874
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+
+2026-10-18T03:12:29+08:00
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+RuntimeMaxUSec=10min
+MainPID=700952
+Nice=10
+User=nobody
+NoNewPrivileges=no
+ActiveState=active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1473         176           2        1845        1758
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+2026-10-17T19:12:09.742075Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 700958
+2026-10-17T19:12:09.746956Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T19:12:25.080778Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+
+2026-10-18T03:13:49+08:00
+Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+2026-10-17T19:12:09.742075Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 700958
+2026-10-17T19:12:09.746956Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T19:12:25.080778Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T19:12:33.183637Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+MainPID=700952
+Result=success
+ExecMainStatus=0
+ActiveState=active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1540         115           2        1839        1691
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+
+2026-10-18T03:15:09+08:00
+Started /usr/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_sources_browser_test.py.
+2026-10-17T19:12:09.742075Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 700958
+2026-10-17T19:12:09.746956Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T19:12:25.080778Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T19:12:33.183637Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_three_formats_source_locations_and_links (__main__.SourceBrowser) ... {"search": "hello.txt", "total_cards": 1, "target_cards": 1}
+{"browser_source": "hello.txt", "page": 0, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+{"search": "guide.md", "total_cards": 2, "target_cards": 1}
+{"browser_source": "guide.md", "page": 0, "lines": [1, 3], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+{"search": "pages.pdf", "total_cards": 2, "target_cards": 2}
+{"browser_source": "pages.pdf", "page": 1, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+{"browser_source": "pages.pdf", "page": 2, "lines": [1, 1], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+{"search": "chinese.pdf", "total_cards": 2, "target_cards": 2}
+{"browser_source": "chinese.pdf", "page": 1, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+{"browser_source": "chinese.pdf", "page": 2, "lines": [1, 2], "exact_version_link": true, "original_bytes_verified": true, "anonymous_refused": true}
+ok
+----------------------------------------------------------------------
+Ran 1 test in 54.461s
+OK
+smartdocs-m2-pdf-browser.service: Deactivated successfully.
+smartdocs-m2-pdf-browser.service: Consumed 11.494s CPU time.
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1379         493           2        1621        1852
+Swap:              0           0           0
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0

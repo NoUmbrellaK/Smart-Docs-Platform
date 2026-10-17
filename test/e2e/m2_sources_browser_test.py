@@ -89,7 +89,7 @@ class SourceBrowser(WorkerE2E):
                                 raw = browser.command("GET", "/element/"+browser.find("#document-search-source")+"/screenshot")
                                 png = base64.b64decode(raw, validate=True)
                                 png_details(png)
-                                (output/f"pdf-page2-source-{width}.png").write_bytes(png)
+                                (output/f"{Path(name).stem}-page2-source-{width}.png").write_bytes(png)
                         print(json.dumps({"browser_source": name, "page": page, "lines": [1, last_line],
                             "exact_version_link": True, "original_bytes_verified": True, "anonymous_refused": True}), flush=True)
             finally:

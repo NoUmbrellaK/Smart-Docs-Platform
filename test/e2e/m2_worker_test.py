@@ -28,6 +28,8 @@ def source_examples():
          [("# Setup\n\nOnly local.\n", 0, 3)], "Setup"),
         ("pages.pdf", (ROOT/"test/fixtures/m1/sample.pdf").read_bytes(), "application/pdf",
          "pypdf-6.21.0-lines-v1", [("PAGE ONE", 1, 1), ("PAGE TWO", 2, 1)], "PAGE"),
+        ("chinese.pdf", (ROOT/"test/fixtures/m2/chinese.pdf").read_bytes(), "application/pdf",
+         "pypdf-6.21.0-lines-v1", [("部署说明\n数据库备份", 1, 2), ("恢复步骤\n验证数据完整性", 2, 2)], "数据"),
     ]
 
 
@@ -103,7 +105,7 @@ class WorkerE2E(unittest.TestCase):
                 self.assertEqual((status["parse_state"], status["keyword_state"], status["vector_state"]),
                                  ("completed", "completed", "not_applicable"))
                 self.assertEqual(status["chunk_count"], len(segments))
-                self.assertEqual(status["page_count"], 2 if name == "pages.pdf" else 0)
+                self.assertEqual(status["page_count"], 2 if mime == "application/pdf" else 0)
                 self.assertEqual(status["pages_without_text"], [])
                 saved_sources = {}
                 for text, page, last_line in segments:
@@ -123,6 +125,7 @@ class WorkerE2E(unittest.TestCase):
                 results = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
                                                 {"mode": "keyword", "query": query}))
                 hits = [hit for hit in results["items"] if hit["file_id"] == job["file_id"]]
+                self.assertEqual(len(hits), len(saved_sources))
                 self.assertEqual({hit["chunk"]["chunk_id"]: hit["chunk"] for hit in hits}, saved_sources)
                 self.assertEqual(results["retrieval"], "keyword_only")
                 if name == "hello.txt":
@@ -182,9 +185,11 @@ class WorkerE2E(unittest.TestCase):
     def test_unsupported_and_broken_files_remain_managed_but_not_indexed(self):
         for name, body, mime, expected in (("image.png", b"PNG", "image/png", "unsupported_format"),
             ("broken.pdf", b"%PDF-1.4\nbroken", "application/pdf", "invalid_pdf"),
+            ("scanned.pdf", (ROOT/"test/fixtures/m2/scanned.pdf").read_bytes(), "application/pdf", "no_extractable_text"),
             ("blank.txt", b" \n", "text/plain", "empty_text")):
             job = self.upload(name, body, mime)
             self.assertIn("worker: failed", self.cli().stdout)
+            self.assertEqual(self.state(job)["state"], "failed")
             self.assertEqual(self.state(job)["error_code"], expected)
             self.assertEqual(self.document(job)["keyword_state"], "pending")
             self.assertEqual(self.document(job)["chunk_count"], 0)
@@ -196,6 +201,8 @@ class WorkerE2E(unittest.TestCase):
             self.assertEqual(len(found["items"]), 1)
             self.assertEqual(found["items"][0]["parse_state"], "failed")
             self.assertNotIn("chunk", found["items"][0])
+            print(json.dumps({"format": name, "error_code": expected, "chunks": 0,
+                "metadata_discoverable": True, "original_downloadable": True}), flush=True)
 
     def test_worker_startup_recovers_only_after_acquiring_singleton_lock(self):
         job = self.upload("restart.txt", b"restart", "text/plain")

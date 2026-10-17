@@ -1,0 +1,9 @@
+python/smartdocs/resident_embeddings.py: OK
+python/smartdocs/resident_service.py: OK
+python/smartdocs/embeddings.py: OK
+test/python/test_transient_tokenizer.py: OK
+test/python/transient_tokenizer_fixture.py: OK
+test/python/test_resident_service.py: OK
+test/python/resident_service_fixture.py: OK
+test/e2e/m2_resident_embeddings_test.py: OK
+test/e2e/m2_resident_service_test.py: OK

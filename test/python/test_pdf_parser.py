@@ -91,6 +91,24 @@ class PdfParserTest(unittest.TestCase):
                           for c in result.chunks], [(1, "PAGE ONE", 0, 8, 1, 1),
                                                    (2, "PAGE TWO", 0, 8, 1, 1)])
 
+    def test_chinese_pdf_preserves_text_physical_pages_and_unicode_offsets(self):
+        data = (Path(__file__).resolve().parents[1] / "fixtures/m2/chinese.pdf").read_bytes()
+        result = self.parse(data)
+        self.assertEqual(result.page_count, 2)
+        self.assertEqual(result.pages_without_text, ())
+        self.assertEqual([(c.page, c.text, c.char_start, c.char_end, c.line_start, c.line_end)
+                          for c in result.chunks], [(1, "部署说明\n数据库备份", 0, 10, 1, 2),
+                                                   (2, "恢复步骤\n验证数据完整性", 0, 12, 1, 2)])
+
+    def test_image_only_pdf_is_not_misreported_as_parsed_text(self):
+        data = (Path(__file__).resolve().parents[1] / "fixtures/m2/scanned.pdf").read_bytes()
+        # Check this is a painted image, not the existing blank-page fixture.
+        page = PdfReader(io.BytesIO(data), strict=True).pages[0]
+        self.assertIn(b" Do", page.get_contents().get_data())
+        images = [obj.get_object() for obj in page["/Resources"]["/XObject"].values()]
+        self.assertTrue(any(obj.get("/Subtype") == "/Image" for obj in images))
+        self.assert_error("no_extractable_text", data)
+
     def test_stable_citations_bind_pdf_file_version_content_and_page(self):
         first = self.parse()
         self.assertEqual(first, self.parse())
