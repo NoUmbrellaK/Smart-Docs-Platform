@@ -133,6 +133,12 @@
       </div>
       <h3>Versions</h3>
       <div id="version-list"></div>
+      <div id="processing-panel">
+      <h3>Document processing</h3>
+      <button id="processing-refresh" type="button" disabled>Refresh processing status</button>
+      <p id="processing-status" role="status" aria-live="polite">Choose a version to inspect processing.</p>
+      <div id="processing-jobs" class="task-list"></div>
+      </div>
       <form id="preview-form" class="compact-form">
         <label for="preview-version">PDF version</label>
         <select id="preview-version"></select>

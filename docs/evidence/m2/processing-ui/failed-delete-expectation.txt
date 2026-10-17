@@ -1,0 +1,88 @@
+make: 'bin/smartdocs_tests' is up to date.
+make: 'bin/server' is up to date.
+make: 'bin/smartdocs-admin' is up to date.
+✔ logout fences a delayed version load before it can enter the processing panel (46.8806ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.672483ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.992491ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.633819ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.850563ms)
+✔ project/file reset fences late status and old buttons (0.47312ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.625551ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (1.265514ms)
+✔ null jobs are explicit and safe text remains text (0.779347ms)
+✔ task API uses same-origin exact job and empty POST bodies (29.956933ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.552365ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.699979ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.479383ms)
+✔ failed source reads clear old content; logout fences a pending source (0.489686ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.560977ms)
+✔ newer searches and source selections win over late successes and errors (0.571416ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (50.021753ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.75285ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.877504ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.579067ms)
+✔ API response parser accepts 204 and maps the unified error (52.408067ms)
+✔ logout API rejects an unexpected successful status (1.297243ms)
+✔ all upload tasks share four actual PUT slots (18.400708ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.373107ms)
+✔ duplicate resume is single-flight and completes only once (0.842803ms)
+✔ pause after part hashing starts schedules no later PUT (1.472226ms)
+✔ project refresh during hashing invalidates the old upload (2.257369ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (3.03539ms)
+✔ pending cancel is single-flight and blocks pause and resume (1.497344ms)
+✔ failed cancel clears pending state and can be retried (0.636514ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.625038ms)
+✔ resume read failure clears the file and returns to actionable state (0.526103ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.358303ms)
+✔ project generation drops A after B and project actions retain scope (2.644479ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.373773ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.363982ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.329546ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 995.404087
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK
+2026-10-17T14:05:54.237561Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 638530
+2026-10-17T14:05:54.339593Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T14:06:09.675182Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T14:06:17.742492Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser) ... FAIL
+FAIL
+
+======================================================================
+FAIL: test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/processing_browser_test.py", line 101, in test_processing_controls_use_real_persisted_state
+    data(self.user.request("DELETE", f'/api/v1/projects/{self.project["id"]}/files/{job["file_id"]}'))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 204: {'body_bytes': 0}
+
+======================================================================
+FAIL: test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 60, in tearDown
+    state = self.state(job)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 66, in state
+    def state(self, job): return data(self.user.request("GET", self.job_path(job)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'resource_not_found', 'message': 'resource was not found', 'retryable': False}, 'request_id': 'd7c1af1b47981a0b624c85b6c4af89cc'}
+
+----------------------------------------------------------------------
+Ran 1 test in 22.868s
+
+FAILED (failures=2)

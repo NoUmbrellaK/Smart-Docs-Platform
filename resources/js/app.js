@@ -1,6 +1,7 @@
 import * as api from "./api.js";
 import { UploadController } from "./uploads.js";
 import { SearchPanel } from "./search.js";
+import { ProcessingPanel } from "./processing.js";
 
 export class ProjectGeneration {
   constructor() {
@@ -114,6 +115,7 @@ const fileLoads = new ProjectGeneration();
 const fileListLoads = new ProjectGeneration();
 let uploads = null;
 let searchPanel = null;
+let processingPanel = null;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -168,6 +170,7 @@ function applyWriteVisibility() {
 
 function resetProjectView(project) {
   searchPanel.setProject(null, []);
+  processingPanel.reset();
   state.project = project;
   state.projectReady = false;
   state.directories = [];
@@ -240,6 +243,7 @@ function renderIdentity(identity) {
 
 function signedOut() {
   searchPanel.setProject(null, []);
+  processingPanel.reset();
   projectLoads.begin(null);
   state.identity = null;
   state.project = null;
@@ -320,6 +324,11 @@ function renderVersions(projectToken, fileToken) {
       projectToken.projectId, fileId, version.id
     );
     card.append(download);
+    card.append(button("View processing status", () => {
+      if (currentFile(projectToken, fileToken)) {
+        return processingPanel.select(projectToken.projectId, fileId, version.id);
+      }
+    }, false));
     return card;
   });
   byId("version-list").replaceChildren(...cards);
@@ -356,6 +365,7 @@ function renderRemoteAiApprovals(projectToken, fileToken) {
 
 async function selectFile(file, token = state.projectToken) {
   if (!projectLoads.current(token)) return false;
+  processingPanel.reset();
   const fileToken = fileLoads.begin(file.id);
   state.fileToken = fileToken;
   state.selectedFile = file;
@@ -382,6 +392,8 @@ async function selectFile(file, token = state.projectToken) {
     state.selectedFileReady = true;
     applyWriteVisibility();
     renderVersions(token, fileToken);
+    const currentVersion = state.versions.find(version => version.id === file.current_version_id);
+    if (currentVersion) processingPanel.select(token.projectId, file.id, currentVersion.id);
     setStatus("detail-status", `${state.versions.length} versions loaded`);
     return true;
   } catch (error) {
@@ -423,6 +435,7 @@ function renderMembers(members, token) {
         );
         if (synchronized.changed) {
           searchPanel.invalidate();
+          processingPanel.reset();
           state.identity = synchronized.identity;
           state.project = synchronized.project;
           byId("project-role").textContent = synchronized.project.role;
@@ -576,6 +589,10 @@ function renderUploads(tasks, changed) {
 function bootstrap() {
 uploads = new UploadController(renderUploads);
 searchPanel = new SearchPanel(byId, api, errorText);
+processingPanel = new ProcessingPanel(byId, api, errorText,
+  () => writeVisibility(state.project && state.project.role, state.projectReady,
+    state.selectedFileReady ? state.selectedFile : null).update,
+  project => { if (state.project && state.project.id === project) searchPanel.invalidate(); });
 
 byId("login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -592,6 +609,10 @@ byId("login-form").addEventListener("submit", async (event) => {
 
 byId("logout-button").addEventListener("click", async () => {
   searchPanel.invalidate();
+  processingPanel.reset();
+  state.fileToken = fileLoads.begin(null);
+  state.selectedFileReady = false;
+  applyWriteVisibility();
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
@@ -762,7 +783,9 @@ byId("remote-ai-form").addEventListener("submit", async (event) => {
   try {
     await api.setRemoteAiPolicy(token.projectId, fileId,
                                 policy, approved_version_ids);
+    if (projectLoads.current(token)) searchPanel.invalidate();
     if (!currentFile(token, fileToken)) return;
+    processingPanel.reset();
     state.selectedFile.remote_ai_policy = policy;
     const approved = new Set(approved_version_ids);
     for (const version of state.versions) {

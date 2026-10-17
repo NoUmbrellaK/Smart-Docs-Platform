@@ -290,6 +290,9 @@ TEST_CASE(processing_document_status_exposes_unparsed_version_without_fake_readi
                 "/versions/" + job.version_id + "/document";
     const auto data = Body(app.Prepare(head)->Finish());
     CHECK(data.at("parse_state") == "pending");
+    CHECK(data.contains("parse_job_id"));
+    CHECK(data.at("parse_job_id") == job.id);
+    CHECK(data.at("vector_job_id").is_null());
     CHECK(data.at("keyword_state") == "pending");
     CHECK(data.at("vector_state") == "not_applicable");
     CHECK(data.at("chunk_count") == 0);
@@ -404,6 +407,7 @@ TEST_CASE(processing_document_history_never_redirects_and_rechecks_access) {
     const auto source = Body(app.Prepare(head)->Finish());
     CHECK(source.at("chunk").at("text") == "部署文档");
     CHECK(source.at("version_id") == old.version_id && source.at("is_current") == false);
+    CHECK(source.at("parse_job_id") == old.id);
     CHECK_THROWS_CODE(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, current.version_id, chunk_id), "resource_not_found");
     const auto other = f.projects.CreateProject(f.admin.user.id, "Other");
     CHECK_THROWS_CODE(jobs.ReadDocument(f.admin.session, other.id, old.file_id, old.version_id, chunk_id), "resource_not_found");

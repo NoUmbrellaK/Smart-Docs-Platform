@@ -1,0 +1,77 @@
+make: 'bin/smartdocs_tests' is up to date.
+make: 'bin/server' is up to date.
+make: 'bin/smartdocs-admin' is up to date.
+✔ logout fences a delayed version load before it can enter the processing panel (62.44329ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.109505ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.947343ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.675724ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.798273ms)
+✔ project/file reset fences late status and old buttons (0.441517ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (17.58967ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.787772ms)
+✔ null jobs are explicit and safe text remains text (0.742969ms)
+✔ task API uses same-origin exact job and empty POST bodies (31.043177ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.664201ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.619779ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.381374ms)
+✔ failed source reads clear old content; logout fences a pending source (0.528017ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.518529ms)
+✔ newer searches and source selections win over late successes and errors (0.559609ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (32.186626ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.838112ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.743051ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.663759ms)
+✔ API response parser accepts 204 and maps the unified error (57.544921ms)
+✔ logout API rejects an unexpected successful status (1.594587ms)
+✔ all upload tasks share four actual PUT slots (26.563733ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.440229ms)
+✔ duplicate resume is single-flight and completes only once (0.966558ms)
+✔ pause after part hashing starts schedules no later PUT (1.43557ms)
+✔ project refresh during hashing invalidates the old upload (1.515879ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (3.140005ms)
+✔ pending cancel is single-flight and blocks pause and resume (2.657927ms)
+✔ failed cancel clears pending state and can be retried (0.624527ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.488351ms)
+✔ resume read failure clears the file and returns to actionable state (0.498905ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.347548ms)
+✔ project generation drops A after B and project actions retain scope (3.38095ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.392956ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.299326ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.388343ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 553.498536
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK
+2026-10-17T13:55:42.681595Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 636542
+2026-10-17T13:55:42.686059Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T13:55:57.991474Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T13:56:05.944338Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser) ... FAIL
+
+======================================================================
+FAIL: test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/processing_browser_test.py", line 41, in test_processing_controls_use_real_persisted_state
+    sign_in("worker-e2e-admin")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/processing_browser_test.py", line 36, in sign_in
+    browser.wait('return document.querySelectorAll("#file-rows tr").length === 1')
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 306, in wait
+    raise AssertionError('browser visible state timed out')
+AssertionError: browser visible state timed out
+
+----------------------------------------------------------------------
+Ran 1 test in 88.921s
+
+FAILED (failures=1)

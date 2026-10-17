@@ -79,12 +79,14 @@ public:
         Write("js/app.js", "app-module");
         Write("js/uploads.js", "uploads-module");
         Write("js/sha256.js", "sha256-module");
+        Write("js/search.js", "search-module");
+        Write("js/processing.js", "processing-module");
     }
 
     ~TemporaryStaticRoot() {
         for (const char* relative : {"index.html", "app.html", "css/app.css",
                                      "js/api.js", "js/app.js", "js/uploads.js",
-                                     "js/sha256.js"}) {
+                                     "js/sha256.js", "js/search.js", "js/processing.js"}) {
             unlink((path_ + "/" + relative).c_str());
         }
         rmdir((path_ + "/css").c_str());
@@ -214,6 +216,8 @@ TEST_CASE(http_connection_streams_only_the_allowlisted_static_shell) {
         {"/js/app.js", "text/javascript; charset=utf-8", "app-module"},
         {"/js/uploads.js", "text/javascript; charset=utf-8", "uploads-module"},
         {"/js/sha256.js", "text/javascript; charset=utf-8", "sha256-module"},
+        {"/js/search.js", "text/javascript; charset=utf-8", "search-module"},
+        {"/js/processing.js", "text/javascript; charset=utf-8", "processing-module"},
     };
     for (const AssetCase& asset : assets) {
         const std::string response = Exchange(

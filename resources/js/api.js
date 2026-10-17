@@ -95,6 +95,12 @@ export const restoreFile = (projectId, fileId) =>
   });
 export const listVersions = (projectId, fileId) =>
   metadata(`${projectPath(projectId)}/files/${id(fileId)}/versions`);
+export const getProcessingJob = (projectId, jobId) =>
+  metadata(`${projectPath(projectId)}/processing-jobs/${id(jobId)}`);
+export const retryProcessingJob = (projectId, jobId) =>
+  metadata(`${projectPath(projectId)}/processing-jobs/${id(jobId)}/retry`, { method: "POST" });
+export const cancelProcessingJob = (projectId, jobId) =>
+  metadata(`${projectPath(projectId)}/processing-jobs/${id(jobId)}/cancel`, { method: "POST" });
 export const searchDocuments = (projectId, criteria) => {
   if (criteria.mode === "hybrid") {
     const { mode, ...body } = criteria;

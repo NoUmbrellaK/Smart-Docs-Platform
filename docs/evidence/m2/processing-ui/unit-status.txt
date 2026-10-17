@@ -1,0 +1,32 @@
+Final observed status: smartdocs-processing-ui-accepted.service
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+
+Journal (Asia/Shanghai):
+2026-10-17T22:09:00+0800 Started /bin/bash /tmp/smartdocs-safe.h4SzvX/processing-ui-check.sh.
+2026-10-17T22:25:06+0800 Deactivated successfully.
+Consumed 44.015s CPU time.
+
+smartdocsvectorcheck.slice:
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+
+Final cumulative memory.events:
+low 0
+high 10601
+max 0
+oom 0
+oom_kill 0
+
+systemctl is-active mysql: active
+systemctl list-units --type=service --state=running --no-legend 'smartdocs-*': no rows

@@ -1,0 +1,144 @@
+g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c test/unit/webserver_socket_test.cpp -o build/obj/tests/test/unit/webserver_socket_test.o
+g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/tests/code/core/crypto.o build/obj/tests/code/core/id.o build/obj/tests/code/core/fault_injector.o build/obj/tests/code/file/range.o build/obj/tests/code/file/file_store.o build/obj/tests/code/file/file_routes.o build/obj/tests/code/file/file_repository.o build/obj/tests/code/file/file_service.o build/obj/tests/code/upload/upload_repository.o build/obj/tests/code/upload/upload_reconciler.o build/obj/tests/code/upload/upload_routes.o build/obj/tests/code/upload/upload_service.o build/obj/tests/code/upload/chunk_body_handler.o build/obj/tests/code/app/application.o build/obj/tests/code/app/config.o build/obj/tests/code/http/router.o build/obj/tests/code/http/httprequest.o build/obj/tests/code/http/httpconn.o build/obj/tests/code/http/httpresponse.o build/obj/tests/code/http/jsonbody.o build/obj/tests/code/processing/processing_routes.o build/obj/tests/code/processing/processing_service.o build/obj/tests/code/processing/worker_routes.o build/obj/tests/code/processing/document_result.o build/obj/tests/code/processing/vector_result.o build/obj/tests/code/processing/document_search.o build/obj/tests/code/log/log.o build/obj/tests/code/buffer/buffer.o build/obj/tests/code/auth/auth_repository.o build/obj/tests/code/auth/auth_service.o build/obj/tests/code/auth/auth_routes.o build/obj/tests/code/timer/heaptimer.o build/obj/tests/code/project/project_service.o build/obj/tests/code/project/project_repository.o build/obj/tests/code/project/project_routes.o build/obj/tests/code/db/schema.o build/obj/tests/code/db/mysql.o build/obj/tests/code/server/webserver.o build/obj/tests/code/server/epoller.o build/obj/tests/test/test_main.o build/obj/tests/test/mysql_test_support.o build/obj/tests/test/unit/file_store_test.o build/obj/tests/test/unit/webserver_socket_test.o build/obj/tests/test/unit/config_test.o build/obj/tests/test/unit/vector_result_test.o build/obj/tests/test/unit/document_result_test.o build/obj/tests/test/unit/core_crypto_test.o build/obj/tests/test/unit/http_request_test.o build/obj/tests/test/unit/baseline_test.o build/obj/tests/test/unit/range_test.o build/obj/tests/test/unit/timer_test.o build/obj/tests/test/unit/router_test.o build/obj/tests/test/unit/authorization_test.o build/obj/tests/test/unit/upload_validation_test.o build/obj/tests/test/unit/http_response_test.o build/obj/tests/test/unit/threadpool_test.o build/obj/tests/test/integration/file_mutation_test.o build/obj/tests/test/integration/mysql_readiness_test.o build/obj/tests/test/integration/auth_project_test.o build/obj/tests/test/integration/upload_part_test.o build/obj/tests/test/integration/mysql_schema_test.o build/obj/tests/test/integration/file_metadata_test.o build/obj/tests/test/integration/processing_jobs_test.o build/obj/tests/test/integration/mysql_transaction_test.o build/obj/tests/test/integration/upload_recovery_test.o build/obj/tests/test/integration/upload_complete_test.o build/obj/tests/test/integration/file_download_test.o -o bin/smartdocs_tests -pthread -lmysqlclient -lcrypto
+PASS file_store_streams_parts_into_an_immutable_object
+PASS file_store_rejects_untrusted_paths_and_removes_unfinished_writes
+PASS file_store_detects_part_order_size_and_digest_mismatches
+PASS webserver_sets_status_flags_nonblocking
+PASS http_connection_serves_live_health_over_socket
+PASS http_connection_reports_not_ready_before_database_bootstrap
+PASS http_connection_bounds_et_reads_and_rearms_queued_bytes
+PASS http_connection_rejects_pipeline_still_queued_in_socket
+FAIL http_connection_streams_only_the_allowlisted_static_shell: test/unit/webserver_socket_test.cpp:226: CHECK failed: response.find("HTTP/1.1 200 OK\r\n") == 0
+PASS config_rejects_missing_mysql_password
+PASS config_uses_documented_defaults
+PASS config_accepts_private_mysql_socket
+PASS config_rejects_invalid_numeric_values
+PASS config_rejects_relative_storage_root
+PASS config_worker_rejects_non_loopback_listener
+PASS config_worker_rejects_weak_or_malformed_credentials
+PASS vector_result_rejects_window_budgets_nonfinite_and_reordered_chunks
+PASS vector_result_counts_unicode_codepoints_not_bytes
+PASS document_result_accepts_python_identity_and_unicode_locations
+PASS document_result_rejects_forged_identity_types_counts_and_locations
+PASS document_result_rejects_controls_invalid_utf8_and_oversized_chunks
+PASS document_result_pdf_requires_complete_explicit_page_coverage
+PASS document_result_contiguous_chunks_preserve_newlines_and_four_byte_unicode
+PASS document_result_accepts_real_python_pdf_page_identities
+PASS document_result_enforces_aggregate_character_and_chunk_boundaries
+PASS ids_are_lower_hex_and_unique
+PASS tokens_have_requested_random_byte_length
+PASS sha256_matches_known_vector
+PASS password_verification_rejects_wrong_password
+PASS request_body_can_arrive_across_reads
+PASS binary_body_preserves_crlf_and_zero_bytes
+PASS duplicate_content_length_is_rejected
+PASS content_length_with_transfer_encoding_is_rejected
+PASS chunked_transfer_encoding_is_rejected
+PASS request_line_over_8192_bytes_is_rejected
+PASS headers_over_32768_bytes_are_rejected
+PASS pipelined_second_request_is_rejected
+PASS request_connection_close_token_is_honored
+PASS baseline_json_version
+PASS range_parses_closed_open_and_suffix_forms_with_clamping
+PASS range_rejects_empty_unsatisfiable_overflow_and_malformed_values
+PASS range_rejects_every_multi_range_with_not_supported
+PASS timer_first_insert_and_cancel_are_safe
+PASS timer_callback_can_reuse_its_identifier
+PASS router_matches_literals_and_decoded_parameters
+PASS router_does_not_treat_query_as_path
+PASS router_rejects_invalid_or_dangerous_path_segments
+PASS router_reports_method_and_route_misses
+PASS authorization_role_matrix_is_explicit
+PASS upload_validation_calculates_zero_and_final_part_layout
+PASS upload_validation_rejects_invalid_part_layout
+PASS upload_validation_rejects_invalid_digests_and_media_types
+PASS http_response_json_sets_required_headers_and_exact_length
+PASS http_response_file_serializes_headers_without_buffering_file
+PASS http_response_move_assignment_closes_replaced_descriptor_once
+PASS threadpool_destruction_waits_for_accepted_tasks
+SKIP file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_mutation_http_routes_enforce_origin_json_limit_and_audit_request_id: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_application_is_ready_with_schema_and_secure_storage: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_application_rejects_missing_storage_directory_at_startup: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_application_rejects_symlink_storage_root_at_startup: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP auth_project_sessions_reject_invalid_expired_and_revoked_tokens: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP auth_project_membership_is_project_scoped_and_directories_are_checked: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP auth_project_http_routes_form_a_same_origin_vertical_slice: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_part_tasks_enforce_boundaries_ownership_and_cancellation: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_part_creation_rejects_name_and_version_conflicts: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_part_http_streams_and_replays_identical_content: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_part_concurrent_identical_puts_create_one_confirmation: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_version_is_five: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_rejects_two_root_directories_for_one_project: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_rejects_duplicate_active_file_name: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_rejects_duplicate_upload_part_number: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_allows_zero_part_upload_tasks: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_schema_allows_zero_based_upload_parts: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_metadata_listing_is_scoped_paginated_and_deletion_explicit: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_metadata_versions_open_only_the_exact_authorized_object: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_metadata_constraints_and_name_validation_prevent_aliasing: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_metadata_http_routes_expose_lists_and_protected_content: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_http_status_cancel_retry_are_persistent_and_idempotent: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_http_reuses_project_roles_and_same_origin: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_http_cannot_retry_superseded_or_deleted_versions: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_queue_capacity_preserves_file_and_reports_busy_failure: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_attempts_are_fenced_across_restart_retry_and_cancel: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_concurrent_claims_allow_only_one_running_task: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_concurrent_enqueue_cannot_overfill_queue: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_stale_deleted_unavailable_jobs_are_not_claimed: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_old_failure_does_not_change_new_version_state: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_retry_obeys_capacity_and_completed_tasks_remain_terminal: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_document_status_exposes_unparsed_version_without_fake_readiness: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_document_missing_chunk_is_not_a_source: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_publication_is_atomic_immutable_and_keyword_indexed: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_publication_rejects_stale_cancelled_and_restarted_attempts: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_publication_checks_authoritative_source_hash_and_size: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_publication_accepts_new_retry_but_never_the_old_token: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_publication_fault_rolls_back_chunks_index_and_status: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_document_history_never_redirects_and_rechecks_access: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_document_vector_applicability_follows_exact_version_approval: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_require_approval_and_publish_all_batches_idempotently: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_revoke_reapprove_and_retry_fence_old_attempts: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_reject_malformed_or_out_of_order_results_and_rollback_faults: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_routes_and_job_controls_reuse_authorization: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_cannot_read_or_publish_superseded_deleted_or_unavailable_source: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_vectors_share_queue_capacity_and_bound_version_window_count: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_worker_routes_are_disabled_by_default_and_require_service_auth: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_worker_claim_exposes_only_bounded_metadata_and_fences_source: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_worker_result_body_is_bounded_before_buffering: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_metadata_discovers_unparsed_and_literal_names_with_pagination: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_keyword_returns_exact_sources_and_explicit_limits: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_enforces_roles_input_limits_and_same_origin: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_degrades_and_validates_query_vectors: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_reports_partial_vector_coverage: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_scan_limit_discards_vector_lane_without_silent_partial_scan: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_hybrid_rechecks_revocation_and_vector_attempt_before_returning: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_filters_current_deleted_unavailable_and_restored_versions: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_limits_project_directory_type_and_keyword_pages: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP processing_search_revalidates_candidates_after_concurrent_state_changes: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+PASS mysql_pool_connection_failure_does_not_publish_null_handles
+SKIP mysql_connection_returns_to_pool_exactly_once_after_move: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_transaction_rolls_back_without_commit: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_transaction_commit_persists_changes: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP mysql_typed_values_and_rows_round_trip: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_interrupts_inflight_tasks_and_only_removes_server_temps: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_keeps_old_content_referenced_by_soft_deleted_file: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_keeps_committed_graph_and_marks_missing_object: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_rejects_completed_graph_that_mismatches_upload_intent: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_accepts_completed_create_file_after_supported_mutation: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_locks_upload_rows_before_destructive_cleanup: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_locks_task_named_orphans_before_unlinking: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_removes_only_old_unreferenced_objects: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_recovery_runs_before_application_readiness_and_rejects_fault_env: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_complete_validates_parts_and_whole_file_before_publication: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_complete_is_idempotent_and_supports_zero_byte_objects: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_complete_concurrent_calls_return_one_committed_graph: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_complete_rechecks_name_version_and_transaction_state: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP upload_complete_http_response_replays_stable_result_ids: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_download_current_binds_one_immutable_version_and_history_is_exact: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_download_authorizes_and_rejects_deleted_files_before_object_open: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+SKIP file_download_http_serves_ranges_safe_disposition_pdf_and_errors: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+RESULT 56 passed, 1 failed, 84 skipped

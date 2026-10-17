@@ -464,8 +464,12 @@ nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, co
         {"parse_state", v.String(0)}, {"keyword_state", v.String(1)}, {"vector_state", v.String(2)},
         {"source_sha256", v.String(3)}, {"parser_revision", ""}, {"page_count", 0},
         {"pages_without_text", Json::array()}, {"chunk_count", 0}, {"char_count", 0}};
-    const auto vector_job = db.Query("SELECT id FROM processing_jobs WHERE file_version_id=? AND task_type='vectorize' FOR SHARE",{SqlValue(version)});
-    data["vector_job_id"] = vector_job.empty() ? Json(nullptr) : Json(vector_job[0].String(0));
+    data["parse_job_id"] = nullptr;
+    data["vector_job_id"] = nullptr;
+    const auto jobs = db.Query("SELECT task_type,id FROM processing_jobs WHERE file_version_id=? FOR SHARE", {SqlValue(version)});
+    for (const auto& job : jobs) {
+        data[job.String(0) == "vectorize" ? "vector_job_id" : "parse_job_id"] = job.String(1);
+    }
     const auto results = db.Query("SELECT parser_revision,page_count,pages_without_text,chunk_count,char_count FROM document_results WHERE version_id=? FOR SHARE",
                                   {SqlValue(version)});
     if (!results.empty()) {

@@ -1,6 +1,6 @@
 # M2 持久处理任务（当前增量）
 
-当前提供任务状态、取消、人工重试、可信本地 Python 解析 worker 通道、C++ 向量分批发布及鉴权后的固定版本来源读取。单独启用解析 worker 后才会消费上传任务；pending 不代表已经解析。[本地元数据/关键词搜索 API](m2-search-api.md)仍未使用向量；独立编码器尚未接入任务调度。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
+当前提供任务状态、取消、人工重试、可信本地 Python 解析 worker 通道、C++ 向量分批发布及鉴权后的固定版本来源读取。单独启用解析 worker 后才会消费上传任务；pending 不代表已经解析。元数据/关键词搜索保持本地执行；混合检索通过独立编码服务及同源网关接入，见[搜索 API](m2-search-api.md)。部署见[本地 worker 手册](../deployment/m2-local-worker.md)和[向量 worker 手册](../deployment/m2-vector-worker.md)。
 
 ## 用户接口
 
@@ -12,7 +12,9 @@
 | POST `/cancel` | editor | pending/running → cancelled；重复取消返回现状 |
 | POST `/retry` | editor | failed/interrupted/cancelled → pending；pending 重试返回现状 |
 
-成功返回 HTTP 200：`{request_id, data: {id, file_id, version_id, project_id, task_type, state, attempt_count, error_code}}`。task_type 为 parse_and_index 或 vectorize；无错误时 error_code 为空。不返回内部 attempt token、正文、存储路径或原始异常。解析任务 ID 来自上传完成响应；向量任务 ID 来自固定版本 document 响应的 vector_job_id（尚无任务时为 null）。
+成功返回 HTTP 200：`{request_id, data: {id, file_id, version_id, project_id, task_type, state, attempt_count, error_code}}`。task_type 为 parse_and_index 或 vectorize；无错误时 error_code 为空。不返回内部 attempt token、正文、存储路径或原始异常。固定版本 document 响应返回 `parse_job_id` 与 `vector_job_id`（各自尚无任务时为 null）；刷新页面后仍可发现持久任务，不依赖上传时的客户端内存。上传完成响应也包含解析任务 ID。
+
+工作台打开文件后读取当前版本处理快照；版本列表中的 `View processing status` 可以切换到指定版本。解析、关键词和向量状态独立显示，不把上传完成当作索引完成。状态需手动 Refresh，没有后台轮询或自动重试。仅当前版本的可写用户显示 Cancel/Retry，历史版本和 reader 只读；最终权限与状态转换仍由 C++ 验证。操作回执不明确时清除旧按钮，要求刷新实际状态；选择文件/项目、退出登录或角色变化时丢弃过期响应。任务操作及远程 AI 批准变更使搜索结果失效，避免继续展示旧覆盖状态。
 
 取消/重试只在实际转换时各写一条审计记录。幂等性指重复相同状态操作；跨越后续状态转换的再次操作仍重新验证。重试不创建新任务或版本；只允许文件当前、未删除且内容 available 的版本。历史任务可以查询，但不能借重试改写当前版本。
 
@@ -59,7 +61,7 @@ Python 仅连接固定 `127.0.0.1`，忽略代理环境、不跟随重定向。c
 
 来源 API 均为无正文 GET，最低 reader，会话及项目权限沿用 M1：
 
-- `/api/v1/projects/{project_id}/files/{file_id}/versions/{version_id}/document`：返回 data 中的固定 file/version ID、is_current、source_sha256、parser_revision、parse_state、keyword_state、vector_state、chunk_count、char_count、page_count 和 pages_without_text。尚未发布时计数为 0，不伪造就绪。
+- `/api/v1/projects/{project_id}/files/{file_id}/versions/{version_id}/document`：返回 data 中的固定 file/version ID、is_current、source_sha256、parser_revision、parse_state、keyword_state、vector_state、parse_job_id、vector_job_id、chunk_count、char_count、page_count 和 pages_without_text。尚未发布时计数为 0，不伪造就绪。
 - 同一版本前缀的 `/chunks/{chunk_id}`：返回上述元数据及单个 chunk（正文、稳定 ID、页码或行号和码点区间）；只返回该精确版本的片段，不能将另一版本片段 ID 混用。
 
 历史版本不会跳转新版；删除、跨项目或撤销成员资格后不可读；内容 unavailable 时返回 `409 content_unavailable`。本接口属于普通本地阅读，不是 Agent 外发授权入口，未来 Agent 不能绕过额外的具体版本外发检查直接转发结果。文本以 JSON 数据返回，前端必须用 textContent 等安全方式显示。
@@ -105,7 +107,7 @@ attempt。原 claim/recover 只处理解析；C++ 启动恢复两类任务。原
 也使相同批准清单重新编码。再次领取清理前次暂存并从 0 开始，取消/中断后的人工
 重试同样产生新 token。不支持从任意编码步骤续跑，也不即时终止已启动子进程。
 旧向量可暂留磁盘，但状态、批准及 attempt 禁止复用；未来检索仍须重新检查
-C++ 权威当前版本与成员权限。当前未接通 Python 向量调度或混合搜索。
+C++ 权威当前版本与成员权限。Python 向量调度与混合检索已接入，但需单独部署启用；不代表生产常驻服务或 M2 阶段验收已完成。
 
 ## schema 2/3/4 → 5 升级
 

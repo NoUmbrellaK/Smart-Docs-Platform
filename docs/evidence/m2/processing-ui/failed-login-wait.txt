@@ -1,0 +1,88 @@
+g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/app/application.cpp -o build/obj/tests/code/app/application.o
+g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/tests/code/core/crypto.o build/obj/tests/code/core/id.o build/obj/tests/code/core/fault_injector.o build/obj/tests/code/file/range.o build/obj/tests/code/file/file_store.o build/obj/tests/code/file/file_routes.o build/obj/tests/code/file/file_repository.o build/obj/tests/code/file/file_service.o build/obj/tests/code/upload/upload_repository.o build/obj/tests/code/upload/upload_reconciler.o build/obj/tests/code/upload/upload_routes.o build/obj/tests/code/upload/upload_service.o build/obj/tests/code/upload/chunk_body_handler.o build/obj/tests/code/app/application.o build/obj/tests/code/app/config.o build/obj/tests/code/http/router.o build/obj/tests/code/http/httprequest.o build/obj/tests/code/http/httpconn.o build/obj/tests/code/http/httpresponse.o build/obj/tests/code/http/jsonbody.o build/obj/tests/code/processing/processing_routes.o build/obj/tests/code/processing/processing_service.o build/obj/tests/code/processing/worker_routes.o build/obj/tests/code/processing/document_result.o build/obj/tests/code/processing/vector_result.o build/obj/tests/code/processing/document_search.o build/obj/tests/code/log/log.o build/obj/tests/code/buffer/buffer.o build/obj/tests/code/auth/auth_repository.o build/obj/tests/code/auth/auth_service.o build/obj/tests/code/auth/auth_routes.o build/obj/tests/code/timer/heaptimer.o build/obj/tests/code/project/project_service.o build/obj/tests/code/project/project_repository.o build/obj/tests/code/project/project_routes.o build/obj/tests/code/db/schema.o build/obj/tests/code/db/mysql.o build/obj/tests/code/server/webserver.o build/obj/tests/code/server/epoller.o build/obj/tests/test/test_main.o build/obj/tests/test/mysql_test_support.o build/obj/tests/test/unit/file_store_test.o build/obj/tests/test/unit/webserver_socket_test.o build/obj/tests/test/unit/config_test.o build/obj/tests/test/unit/vector_result_test.o build/obj/tests/test/unit/document_result_test.o build/obj/tests/test/unit/core_crypto_test.o build/obj/tests/test/unit/http_request_test.o build/obj/tests/test/unit/baseline_test.o build/obj/tests/test/unit/range_test.o build/obj/tests/test/unit/timer_test.o build/obj/tests/test/unit/router_test.o build/obj/tests/test/unit/authorization_test.o build/obj/tests/test/unit/upload_validation_test.o build/obj/tests/test/unit/http_response_test.o build/obj/tests/test/unit/threadpool_test.o build/obj/tests/test/integration/file_mutation_test.o build/obj/tests/test/integration/mysql_readiness_test.o build/obj/tests/test/integration/auth_project_test.o build/obj/tests/test/integration/upload_part_test.o build/obj/tests/test/integration/mysql_schema_test.o build/obj/tests/test/integration/file_metadata_test.o build/obj/tests/test/integration/processing_jobs_test.o build/obj/tests/test/integration/mysql_transaction_test.o build/obj/tests/test/integration/upload_recovery_test.o build/obj/tests/test/integration/upload_complete_test.o build/obj/tests/test/integration/file_download_test.o -o bin/smartdocs_tests -pthread -lmysqlclient -lcrypto
+g++ -I. -Icode -Ithird_party -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/app/application.cpp -o build/obj/server/code/app/application.o
+g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/server/code/core/crypto.o build/obj/server/code/core/id.o build/obj/server/code/core/fault_injector.o build/obj/server/code/file/range.o build/obj/server/code/file/file_store.o build/obj/server/code/file/file_routes.o build/obj/server/code/file/file_repository.o build/obj/server/code/file/file_service.o build/obj/server/code/upload/upload_repository.o build/obj/server/code/upload/upload_reconciler.o build/obj/server/code/upload/upload_routes.o build/obj/server/code/upload/upload_service.o build/obj/server/code/upload/chunk_body_handler.o build/obj/server/code/app/application.o build/obj/server/code/app/config.o build/obj/server/code/http/router.o build/obj/server/code/http/httprequest.o build/obj/server/code/http/httpconn.o build/obj/server/code/http/httpresponse.o build/obj/server/code/http/jsonbody.o build/obj/server/code/processing/processing_routes.o build/obj/server/code/processing/processing_service.o build/obj/server/code/processing/worker_routes.o build/obj/server/code/processing/document_result.o build/obj/server/code/processing/vector_result.o build/obj/server/code/processing/document_search.o build/obj/server/code/log/log.o build/obj/server/code/buffer/buffer.o build/obj/server/code/auth/auth_repository.o build/obj/server/code/auth/auth_service.o build/obj/server/code/auth/auth_routes.o build/obj/server/code/timer/heaptimer.o build/obj/server/code/project/project_service.o build/obj/server/code/project/project_repository.o build/obj/server/code/project/project_routes.o build/obj/server/code/db/schema.o build/obj/server/code/db/mysql.o build/obj/server/code/server/webserver.o build/obj/server/code/server/epoller.o build/obj/server/code/main.o -o bin/server -pthread -lmysqlclient -lcrypto
+g++ -I. -Icode -Ithird_party -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/app/application.cpp -o build/obj/admin/code/app/application.o
+g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/admin/code/core/crypto.o build/obj/admin/code/core/id.o build/obj/admin/code/core/fault_injector.o build/obj/admin/code/file/range.o build/obj/admin/code/file/file_store.o build/obj/admin/code/file/file_routes.o build/obj/admin/code/file/file_repository.o build/obj/admin/code/file/file_service.o build/obj/admin/code/upload/upload_repository.o build/obj/admin/code/upload/upload_reconciler.o build/obj/admin/code/upload/upload_routes.o build/obj/admin/code/upload/upload_service.o build/obj/admin/code/upload/chunk_body_handler.o build/obj/admin/code/app/application.o build/obj/admin/code/app/config.o build/obj/admin/code/http/router.o build/obj/admin/code/http/httprequest.o build/obj/admin/code/http/httpconn.o build/obj/admin/code/http/httpresponse.o build/obj/admin/code/http/jsonbody.o build/obj/admin/code/processing/processing_routes.o build/obj/admin/code/processing/processing_service.o build/obj/admin/code/processing/worker_routes.o build/obj/admin/code/processing/document_result.o build/obj/admin/code/processing/vector_result.o build/obj/admin/code/processing/document_search.o build/obj/admin/code/log/log.o build/obj/admin/code/buffer/buffer.o build/obj/admin/code/auth/auth_repository.o build/obj/admin/code/auth/auth_service.o build/obj/admin/code/auth/auth_routes.o build/obj/admin/code/timer/heaptimer.o build/obj/admin/code/project/project_service.o build/obj/admin/code/project/project_repository.o build/obj/admin/code/project/project_routes.o build/obj/admin/code/db/schema.o build/obj/admin/code/db/mysql.o build/obj/admin/code/server/webserver.o build/obj/admin/code/server/epoller.o build/obj/admin/code/admin/main.o -o bin/smartdocs-admin -pthread -lmysqlclient -lcrypto
+✔ logout fences a delayed version load before it can enter the processing panel (57.357059ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.350762ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.943512ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.549915ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.803369ms)
+✔ project/file reset fences late status and old buttons (0.459753ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.827673ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.751206ms)
+✔ null jobs are explicit and safe text remains text (0.826761ms)
+✔ task API uses same-origin exact job and empty POST bodies (33.251367ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.821473ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.656505ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.411877ms)
+✔ failed source reads clear old content; logout fences a pending source (0.560454ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.528499ms)
+✔ newer searches and source selections win over late successes and errors (3.852015ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (29.415418ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.754231ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.855051ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.875034ms)
+✔ API response parser accepts 204 and maps the unified error (51.733108ms)
+✔ logout API rejects an unexpected successful status (1.046666ms)
+✔ all upload tasks share four actual PUT slots (14.887949ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.489963ms)
+✔ duplicate resume is single-flight and completes only once (0.84087ms)
+✔ pause after part hashing starts schedules no later PUT (1.509621ms)
+✔ project refresh during hashing invalidates the old upload (2.292055ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (2.887219ms)
+✔ pending cancel is single-flight and blocks pause and resume (1.595225ms)
+✔ failed cancel clears pending state and can be retried (0.727454ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.509271ms)
+✔ resume read failure clears the file and returns to actionable state (0.514754ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.351864ms)
+✔ project generation drops A after B and project actions retain scope (2.800635ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.48397ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.382213ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.370895ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 537.773195
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK
+2026-10-17T14:02:40.164786Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 637829
+2026-10-17T14:02:40.567992Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T14:03:04.206686Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T14:03:11.923130Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser) ... ERROR
+
+======================================================================
+ERROR: test_processing_controls_use_real_persisted_state (__main__.ProcessingBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/processing_browser_test.py", line 95, in test_processing_controls_use_real_persisted_state
+    sign_in("processing-reader")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/processing_browser_test.py", line 37, in sign_in
+    browser.click("#file-rows button")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 289, in click
+    self.command('POST', '/element/' + self.find(selector, using) + '/click', {})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 285, in find
+    return self.command('POST', '/element', {'using': using, 'value': selector})[
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 229, in command
+    return self.request(method, '/session/' + self.session + path, body)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver no such element
+
+----------------------------------------------------------------------
+Ran 1 test in 54.738s
+
+FAILED (errors=1)

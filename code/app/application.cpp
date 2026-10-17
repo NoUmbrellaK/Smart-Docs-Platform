@@ -149,6 +149,8 @@ Application::Application(std::string static_root) {
         {"/js/app.js", "/js/app.js", "text/javascript; charset=utf-8"},
         {"/js/uploads.js", "/js/uploads.js", "text/javascript; charset=utf-8"},
         {"/js/sha256.js", "/js/sha256.js", "text/javascript; charset=utf-8"},
+        {"/js/search.js", "/js/search.js", "text/javascript; charset=utf-8"},
+        {"/js/processing.js", "/js/processing.js", "text/javascript; charset=utf-8"},
     };
     for (const StaticAsset& asset : assets) {
         const std::string file_path = static_root + asset.relative_path;
