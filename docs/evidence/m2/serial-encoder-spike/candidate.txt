@@ -1,0 +1,6 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-serial-encoder.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock serial 6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8.
+{"event": "start", "mode": "serial", "seconds": 0.006, "memory_kib_except_threads": {"VmHWM": 21804, "VmRSS": 21804, "RssAnon": 11848, "RssFile": 9956, "Threads": 1}}
+{"event": "tokenizer_exited", "mode": "serial", "seconds": 4.959, "memory_kib_except_threads": {"VmHWM": 23992, "VmRSS": 23988, "RssAnon": 13904, "RssFile": 10084, "Threads": 1}, "tokenizer_peak_rss_kib": 380652}
+{"event": "session_loaded", "mode": "serial", "seconds": 5.792, "memory_kib_except_threads": {"VmHWM": 501316, "VmRSS": 415320, "RssAnon": 376412, "RssFile": 38908, "Threads": 1}}
+{"event": "encoded", "mode": "serial", "seconds": 6.347, "memory_kib_except_threads": {"VmHWM": 501316, "VmRSS": 416604, "RssAnon": 376872, "RssFile": 39732, "Threads": 1}, "output_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8", "chunks": 6, "windows": 16}
+{"event": "complete", "mode": "serial", "seconds": 6.347, "memory_kib_except_threads": {"VmHWM": 501316, "VmRSS": 416604, "RssAnon": 376872, "RssFile": 39732, "Threads": 1}, "matched_control": true}

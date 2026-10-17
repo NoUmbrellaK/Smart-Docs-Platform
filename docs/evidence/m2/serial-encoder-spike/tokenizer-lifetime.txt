@@ -1,0 +1,13 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-tokenizer-lifetime.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+{"event": "imported", "seconds": 1.443, "memory_kib_except_threads": {"VmHWM": 74976, "VmRSS": 74976, "RssAnon": 43672, "RssFile": 31304, "Threads": 1}}
+{"event": "raw_loaded", "seconds": 1.973, "memory_kib_except_threads": {"VmHWM": 380076, "VmRSS": 363804, "RssAnon": 330660, "RssFile": 33144, "Threads": 1}}
+{"event": "raw_retained_trimmed", "seconds": 1.987, "memory_kib_except_threads": {"VmHWM": 380076, "VmRSS": 364308, "RssAnon": 330712, "RssFile": 33596, "Threads": 1}, "trim_result": 1}
+{"event": "raw_deleted", "seconds": 2.161, "memory_kib_except_threads": {"VmHWM": 380076, "VmRSS": 347412, "RssAnon": 313816, "RssFile": 33596, "Threads": 1}}
+{"event": "raw_deleted_trimmed", "seconds": 2.176, "memory_kib_except_threads": {"VmHWM": 380076, "VmRSS": 77628, "RssAnon": 44032, "RssFile": 33596, "Threads": 1}, "trim_result": 1}
+{"event": "fastembed_loaded_equal", "seconds": 2.693, "memory_kib_except_threads": {"VmHWM": 385448, "VmRSS": 385448, "RssAnon": 351852, "RssFile": 33596, "Threads": 1}, "cases": 5, "token_counts": [17, 643, 2, 14, 8], "ids_sha256": "f4ac746ac657219674741c3f470cf3acdd24e64fdc56353301f3836201c51a7c"}
+{"event": "fastembed_retained_trimmed", "seconds": 2.709, "memory_kib_except_threads": {"VmHWM": 385604, "VmRSS": 368912, "RssAnon": 335316, "RssFile": 33596, "Threads": 1}, "trim_result": 1}
+{"event": "fastembed_deleted_trimmed", "seconds": 2.913, "memory_kib_except_threads": {"VmHWM": 385604, "VmRSS": 77788, "RssAnon": 44192, "RssFile": 33596, "Threads": 1}, "trim_result": 1}
+{"event": "complete", "seconds": 2.913, "memory_kib_except_threads": {"VmHWM": 385604, "VmRSS": 77788, "RssAnon": 44192, "RssFile": 33596, "Threads": 1}}
+smartdocs-tokenizer-lifetime.service: Deactivated successfully.
+Stopped /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-tokenizer-lifetime.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+smartdocs-tokenizer-lifetime.service: Consumed 2.611s CPU time.

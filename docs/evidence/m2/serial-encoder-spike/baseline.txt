@@ -1,0 +1,7 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-serial-encoder.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock baseline -.
+{"event": "start", "mode": "baseline", "seconds": 0.006, "memory_kib_except_threads": {"VmHWM": 21592, "VmRSS": 21592, "RssAnon": 11852, "RssFile": 9740, "Threads": 1}}
+{"event": "encoded", "mode": "baseline", "seconds": 2.87, "memory_kib_except_threads": {"VmHWM": 662124, "VmRSS": 450812, "RssAnon": 408904, "RssFile": 41908, "Threads": 1}, "output_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8", "chunks": 6, "windows": 16}
+{"event": "complete", "mode": "baseline", "seconds": 2.87, "memory_kib_except_threads": {"VmHWM": 662124, "VmRSS": 450812, "RssAnon": 408904, "RssFile": 41908, "Threads": 1}, "matched_control": false}
+smartdocs-serial-baseline.service: Deactivated successfully.
+Stopped /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-serial-encoder.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock baseline -.
+smartdocs-serial-baseline.service: Consumed 3.014s CPU time.
