@@ -22,6 +22,9 @@ C++ 仍是版本、批准和任务状态的唯一权威，内部接口不经公�
   固定词表 ID/attention mask。ONNX CPU 内存池仍关闭，未部署常驻模型、未新增依赖。
   模型、池化、归一化与索引修订不变，兼容性与边界见
   [分阶段编码验证](../evidence/m2/staged-encoder/README.md)。
+  当前直接用 tokenizers 加载固定特殊 token、NumPy 完成同样池化，避免 FastEmbed
+  顶层运行时导入；仍保留其锁定安装/版本检查。换模型必须重新验证 map 结构与输出，
+  见[最小导入回归](../evidence/m2/minimal-encoder-imports/README.md)。
 - socket 归 worker 用户所有、0600，父目录 0700；客户端拒绝符号链接、其他所有者和
   组/全局可访问 socket。只允许同一可信服务账号使用它，不作为用户/Agent 编码 API。
   代码、模型和虚拟环境由 root 管理且对该账号只读；不授予业务文件目录访问权。

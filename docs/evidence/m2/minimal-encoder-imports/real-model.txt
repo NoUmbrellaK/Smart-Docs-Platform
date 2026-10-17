@@ -1,0 +1,57 @@
+Oct 18 01:27:33 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B test/e2e/m2_embeddings_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python.
+Oct 18 01:28:04 aliyun-lou python[671192]: {
+Oct 18 01:28:04 aliyun-lou python[671192]:   "passed": true,
+Oct 18 01:28:04 aliyun-lou python[671192]:   "cases": [
+Oct 18 01:28:04 aliyun-lou python[671192]:     "exact_unicode_coverage",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "real_token_budget",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "suffix_affects_vector",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "fresh_process_repeatability",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "unit_vectors",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "flock_busy",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "timeout_then_reuse",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "model_tamper_refusal",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "inherited_limits_not_relaxed",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "old_revision_compatible",
+Oct 18 01:28:04 aliyun-lou python[671192]:     "no_fastembed_runtime_import"
+Oct 18 01:28:04 aliyun-lou python[671192]:   ],
+Oct 18 01:28:04 aliyun-lou python[671192]:   "compatibility_sha256": "6b38c9123a3a3050482b1ea2199b4f83db6475dcfafea3289d429473f0953dd8",
+Oct 18 01:28:04 aliyun-lou python[671192]:   "embedding_revision": "minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1",
+Oct 18 01:28:04 aliyun-lou python[671192]:   "window_token_counts": [
+Oct 18 01:28:04 aliyun-lou python[671192]:     [
+Oct 18 01:28:04 aliyun-lou python[671192]:       87,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       88,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       87,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       88,
+Oct 18 01:28:04 aliyun-lou python[671192]:       88
+Oct 18 01:28:04 aliyun-lou python[671192]:     ],
+Oct 18 01:28:04 aliyun-lou python[671192]:     [
+Oct 18 01:28:04 aliyun-lou python[671192]:       87,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       88,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       87,
+Oct 18 01:28:04 aliyun-lou python[671192]:       89,
+Oct 18 01:28:04 aliyun-lou python[671192]:       88,
+Oct 18 01:28:04 aliyun-lou python[671192]:       91
+Oct 18 01:28:04 aliyun-lou python[671192]:     ],
+Oct 18 01:28:04 aliyun-lou python[671192]:     [
+Oct 18 01:28:04 aliyun-lou python[671192]:       82,
+Oct 18 01:28:04 aliyun-lou python[671192]:       82,
+Oct 18 01:28:04 aliyun-lou python[671192]:       82,
+Oct 18 01:28:04 aliyun-lou python[671192]:       82
+Oct 18 01:28:04 aliyun-lou python[671192]:     ]
+Oct 18 01:28:04 aliyun-lou python[671192]:   ],
+Oct 18 01:28:04 aliyun-lou python[671192]:   "first_seconds": 22.84,
+Oct 18 01:28:04 aliyun-lou python[671192]:   "second_seconds": 4.204,
+Oct 18 01:28:04 aliyun-lou python[671192]:   "child_peak_rss_kib": 472276,
+Oct 18 01:28:04 aliyun-lou python[671192]:   "encoder_sha256": "98942bdc12dc7c74fcf3a9c9564f297482d152e2c179a4865a0bc90c8a372df5",
+Oct 18 01:28:04 aliyun-lou python[671192]:   "test_sha256": "caf6748b0af125c21c868cc0c9f59d98c15c0812804a75bf22b1b068ba8def34",
+Oct 18 01:28:04 aliyun-lou python[671192]:   "ip_sockets_blocked": true,
+Oct 18 01:28:04 aliyun-lou python[671192]:   "uid": 65534
+Oct 18 01:28:04 aliyun-lou python[671192]: }
+Oct 18 01:28:04 aliyun-lou systemd[1]: smartdocs-import-green.service: Deactivated successfully.
+Oct 18 01:28:04 aliyun-lou systemd[1]: smartdocs-import-green.service: Consumed 10.548s CPU time.
+Running as unit: smartdocs-import-python.service

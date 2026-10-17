@@ -1,0 +1,20 @@
+ExecMainStatus=1
+ActiveState=failed
+SubState=failed
+Oct 18 01:27:12 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -B test/e2e/m2_embeddings_test.py /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python.
+Oct 18 01:27:13 aliyun-lou python[671073]: Traceback (most recent call last):
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_embeddings_test.py", line 151, in <module>
+Oct 18 01:27:13 aliyun-lou python[671073]:     main()
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_embeddings_test.py", line 77, in main
+Oct 18 01:27:13 aliyun-lou python[671073]:     first = encode()
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_embeddings_test.py", line 61, in encode
+Oct 18 01:27:13 aliyun-lou python[671073]:     return m.encode_chunks(values, **config)
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/embeddings.py", line 208, in encode_chunks
+Oct 18 01:27:13 aliyun-lou python[671073]:     prepared = _run_child(command + ["tokenize"], payload, remaining(), output_limit=MAX_STAGE_BYTES)
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_embeddings_test.py", line 38, in guarded_child
+Oct 18 01:27:13 aliyun-lou python[671073]:     return original_child(command, payload, timeout, **kwargs)
+Oct 18 01:27:13 aliyun-lou python[671073]:   File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/embeddings.py", line 179, in _run_child
+Oct 18 01:27:13 aliyun-lou python[671073]:     raise EmbeddingError(code if isinstance(code, str) and code in CHILD_ERRORS
+Oct 18 01:27:13 aliyun-lou python[671073]: smartdocs.embeddings.EmbeddingError: embedding_dependency_unavailable
+Oct 18 01:27:13 aliyun-lou systemd[1]: smartdocs-import-red.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 01:27:13 aliyun-lou systemd[1]: smartdocs-import-red.service: Failed with result 'exit-code'.

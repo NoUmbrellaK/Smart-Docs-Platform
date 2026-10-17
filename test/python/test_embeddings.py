@@ -211,7 +211,6 @@ class EmbeddingTests(unittest.TestCase):
         with patch.object(m, "_verify_model"), patch.object(m, "_verify_dependencies"), \
                 patch.dict(sys.modules, {
                     "numpy": SimpleNamespace(),
-                    "fastembed.common.utils": SimpleNamespace(mean_pooling=None),
                     "onnxruntime": SimpleNamespace(SessionOptions=SimpleNamespace,
                         GraphOptimizationLevel=SimpleNamespace(ORT_ENABLE_ALL=99),
                         InferenceSession=constructor)}):

@@ -21,6 +21,22 @@ from smartdocs.worker import worker_lock
 
 def main():
     assert os.geteuid() != 0
+    # Fail if encoding pulls in FastEmbed's unrelated image/sparse/multimodal graph.
+    # Keep actual subprocesses, model checks and numerical results; do not fake libraries.
+    original_child = m._run_child
+    def guarded_child(command, payload, timeout, **kwargs):
+        if command[-1] in ("tokenize", "infer"):
+            guard = """
+import sys, runpy
+class NoFastEmbed:
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == 'fastembed' or fullname.startswith('fastembed.'):
+            raise ImportError('unnecessary FastEmbed runtime import')
+sys.meta_path.insert(0, NoFastEmbed())
+""" + "sys.argv=" + repr(command[3:]) + "\nrunpy.run_path(sys.argv[0],run_name='__main__')"
+            command = command[:3] + ["-c", guard]
+        return original_child(command, payload, timeout, **kwargs)
+    m._run_child = guarded_child
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
             probe = socket.socket(family, socket.SOCK_STREAM)
@@ -120,7 +136,8 @@ def main():
         assert all(abs(math.fsum(v*v for v in w["vector"]) - 1) < 1e-5 for w in encoded["windows"])
     print(json.dumps({"passed": True, "cases": ["exact_unicode_coverage", "real_token_budget",
         "suffix_affects_vector", "fresh_process_repeatability", "unit_vectors", "flock_busy",
-        "timeout_then_reuse", "model_tamper_refusal", "inherited_limits_not_relaxed", "old_revision_compatible"],
+        "timeout_then_reuse", "model_tamper_refusal", "inherited_limits_not_relaxed", "old_revision_compatible",
+        "no_fastembed_runtime_import"],
         "compatibility_sha256": compatibility_sha,
         "embedding_revision": m.EMBEDDING_REVISION, "window_token_counts": token_counts,
         "first_seconds": round(first_seconds, 3), "second_seconds": round(second_seconds, 3),

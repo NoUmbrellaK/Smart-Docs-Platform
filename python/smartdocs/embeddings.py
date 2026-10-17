@@ -262,8 +262,13 @@ def _verify_dependencies():
 def _tokenize(chunks, model_dir):
     _verify_model(model_dir, tokenizer_only=True)
     _verify_dependencies()
-    from fastembed.common.preprocessor_utils import load_tokenizer
-    tokenizer, _ = load_tokenizer(Path(model_dir))
+    from tokenizers import AddedToken, Tokenizer
+    tokenizer = Tokenizer.from_file(str(Path(model_dir) / "tokenizer.json"))
+    # The hash-pinned map contains only AddedToken dictionaries. Preserve their
+    # whitespace/normalization behavior without importing FastEmbed's full graph.
+    tokens = json.loads((Path(model_dir) / "special_tokens_map.json").read_text(encoding="utf-8"))
+    for token in tokens.values():
+        tokenizer.add_special_tokens([AddedToken(**token)])
     tokenizer.no_truncation()
     tokenizer.no_padding()
     ranges = [window_ranges(c["text"], lambda text: len(tokenizer.encode(text).ids)) for c in chunks]
@@ -288,7 +293,6 @@ def _infer(chunks, prepared, model_dir):
     _verify_dependencies()
     import numpy as np
     import onnxruntime as ort
-    from fastembed.common.utils import mean_pooling
     options = ort.SessionOptions()
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     options.intra_op_num_threads = options.inter_op_num_threads = 1
@@ -308,7 +312,10 @@ def _infer(chunks, prepared, model_dir):
             mask = np.array([window["mask"]], dtype=np.int64)
             output = model.run(None, {"input_ids": ids, "attention_mask": mask,
                                       "token_type_ids": np.zeros_like(ids)})[0]
-            vector = [float(v) for v in mean_pooling(output, mask).astype(output.dtype, copy=False)[0]]
+            # Match the pinned FastEmbed float64 accumulation and output-dtype cast.
+            summed = np.sum(output, axis=1, where=mask[:, :, np.newaxis].astype(bool), dtype=np.float64)
+            pooled = summed / np.maximum(np.sum(mask, axis=1, keepdims=True), 1e-9)
+            vector = [float(v) for v in pooled.astype(output.dtype, copy=False)[0]]
             if len(vector) != 384 or any(not math.isfinite(v) for v in vector):
                 raise EmbeddingError("embedding_invalid_result")
             norm = math.sqrt(math.fsum(v*v for v in vector))
