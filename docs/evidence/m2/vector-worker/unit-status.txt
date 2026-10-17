@@ -1,0 +1,7 @@
+2026-10-17T20:17:48+0800 aliyun-lou systemd[1]: Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -v && scripts/test-with-mysql.sh -- /bin/bash -c "/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_vector_worker_test.py && stdbuf -oL ./bin/smartdocs_tests".
+2026-10-17T20:32:49+0800 aliyun-lou systemd[1]: smartdocs-vector-pipeline-test-3.service: Service reached runtime time limit. Stopping.
+2026-10-17T20:32:52+0800 aliyun-lou systemd[1]: smartdocs-vector-pipeline-test-3.service: Failed with result 'timeout'.
+2026-10-17T20:32:52+0800 aliyun-lou systemd[1]: smartdocs-vector-pipeline-test-3.service: Consumed 38.635s CPU time.
+2026-10-17T20:34:32+0800 aliyun-lou systemd[1]: Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -v && scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m2_vector_worker_test.py.
+2026-10-17T20:36:30+0800 aliyun-lou systemd[1]: smartdocs-vector-pipeline-final.service: Deactivated successfully.
+2026-10-17T20:36:30+0800 aliyun-lou systemd[1]: smartdocs-vector-pipeline-final.service: Consumed 11.101s CPU time.

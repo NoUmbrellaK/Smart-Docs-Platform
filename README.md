@@ -76,7 +76,9 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 后续 [C++ 向量发布增量](./docs/evidence/m2/vector-publication/README.md)复用有界任务队列，按具体版本批准领取片段、分批保存向量，全部片段提交后才标记向量就绪。撤销/重新批准、重试和重启均阻止旧 attempt 发布；向量失败不抹掉本地关键词能力。完整 C++ 回归 135/135、隔离库升级与重放通过。数据库要求 schema 5，但本机业务库未迁移。
 
-本机 worker 默认关闭，尚未安装为生产常驻服务；独立编码器尚未接入上述任务调度，混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+新增 [Python 向量调度与隔离编码服务](./docs/deployment/m2-vector-worker.md)：轻量 worker 经 C++ 领取获批版本，以受保护 Unix socket 调用禁网编码服务，再分批提交真实模型结果。异常发布回执立即退出，不能推断事务失败；重启恢复、失败与人工重试保持持久状态。Python 回归 59/59、真实 C++/临时 MySQL/模型闭环 3/3 通过，覆盖 9 片段两批持久化、撤销后拒绝发布和锁/恢复/重试。首次资源受限运行出现过模型超时，缩小临时测试库缓存后复验通过；不据此承诺任意冷启动耗时。详见[本轮证据](./docs/evidence/m2/vector-worker/README.md)。
+
+本机 worker 默认关闭，尚未安装为生产常驻服务；向量生成与持久化已接线，混合检索仍未实现，因此 M2 尚未完成。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 

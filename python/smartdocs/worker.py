@@ -19,7 +19,8 @@ PREFIX = "/internal/v1/processing"
 MAX_INPUT = 8 * 1024 * 1024
 MAX_RESULT = 16 * 1024 * 1024
 SAFE_REMOTE_CODES = {"attempt_conflict", "version_conflict", "content_unavailable",
-                     "input_too_large", "unsupported_format", "source_hash_mismatch", "invalid_result"}
+                     "input_too_large", "unsupported_format", "source_hash_mismatch", "invalid_result",
+                     "embedding_window_limit", "batch_conflict", "result_conflict"}
 
 
 class WorkerError(RuntimeError):

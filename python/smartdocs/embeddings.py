@@ -35,6 +35,8 @@ CHILD_ERRORS = frozenset({"embedding_invalid_input", "embedding_window_limit",
     "embedding_model_unavailable", "embedding_dependency_unavailable",
     "embedding_resource_limit", "embedding_invalid_result", "embedding_worker_failed",
     "embedding_must_be_unprivileged"})
+ENCODING_ERRORS = CHILD_ERRORS | {"embedding_timeout", "embedding_result_too_large",
+                                 "embedding_busy", "embedding_lock_unavailable"}
 
 
 class EmbeddingError(RuntimeError):

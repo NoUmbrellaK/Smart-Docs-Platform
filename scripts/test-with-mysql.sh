@@ -38,7 +38,10 @@ fi
 
 mysqld --no-defaults --initialize-insecure --datadir="$data_dir" \
     "${user_args[@]}"
+# Functional fixtures share this small ECS with the bounded model process.
+# Keep monitoring/caches small; this is not the production/performance profile.
 mysqld --no-defaults --datadir="$data_dir" --socket="$socket_path" \
+    --performance-schema=OFF --innodb-buffer-pool-size=32M \
     --pid-file="$pid_file" --skip-networking --log-error="$error_log" \
     "${user_args[@]}" &
 server_pid=$!
