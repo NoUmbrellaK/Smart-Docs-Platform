@@ -1,0 +1,58 @@
+MainPID=0
+Id=smartdocs-browser-memory-baseline.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Id=smartdocs-browser-startup-red.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Id=smartdocs-browser-startup-green.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Id=smartdocs-blank-browser-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Id=smartdocs-blank-browser-encoder.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Id=smartdocs-ui-first-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Id=smartdocs-ui-first-encoder.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+active
+low 0
+high 47501
+max 0
+oom 0
+oom_kill 0

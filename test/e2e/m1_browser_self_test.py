@@ -94,6 +94,28 @@ class BrowserEvidenceTest(unittest.TestCase):
             connection.return_value.request.assert_called_once()
             connection.return_value.close.assert_called_once()
 
+    def test_session_requests_blank_startup_without_disabling_sandbox_or_pdf(self):
+        browser = self.driver()
+        with mock.patch.object(browser.ServerProcess, '_free_port', return_value=1234):
+            viewer = browser.Browser({'browser': ('chrome', {'version': '131.0.1.2'}),
+                'webdriver': ('chromedriver', {'version': '131.0.1.2'})}, 'enabled', '/tmp/profile')
+        def request(method, path, body=None):
+            if (method, path) == ('GET', '/status'):
+                return {'ready': True}
+            if (method, path) == ('POST', '/session'):
+                options = body['capabilities']['alwaysMatch']['goog:chromeOptions']
+                self.assertEqual(options['prefs'].get('session.restore_on_startup'), 4)
+                self.assertEqual(options['prefs'].get('session.startup_urls'), ['about:blank'])
+                self.assertFalse(options['prefs']['plugins.always_open_pdf_externally'])
+                self.assertNotIn('--no-sandbox', options['args'])
+                return {'sessionId': 'fixture', 'capabilities': {'browserVersion': '131.0.1.2',
+                    'chrome': {'chromedriverVersion': '131.0.1.2 fixture'}}}
+            self.assertEqual((method, path), ('POST', '/session/fixture/timeouts'))
+        with mock.patch.object(browser.subprocess, 'Popen') as process, \
+                mock.patch.object(viewer, 'request', side_effect=request):
+            process.return_value.poll.return_value = None
+            viewer.start()
+
     def test_iframe_screenshot_scrolls_clipped_frame_into_outer_viewport(self):
         import base64
         browser = self.driver()

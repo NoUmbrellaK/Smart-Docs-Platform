@@ -253,7 +253,10 @@ class Browser:
         value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
             'browserName': 'chrome',
             'goog:chromeOptions': {'binary': self.binaries['browser'][0], 'args': flags,
-                                   'prefs': {'plugins.always_open_pdf_externally': False}},
+                                   # Avoid loading Chrome's unrelated New Tab UI in the capped test group.
+                                   'prefs': {'plugins.always_open_pdf_externally': False,
+                                             'session.restore_on_startup': 4,
+                                             'session.startup_urls': ['about:blank']}},
             'goog:loggingPrefs': {'performance': 'ALL'},
         }}})
         self.session = value['sessionId']

@@ -1,0 +1,127 @@
+2026-10-17T16:11:25.894078Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 658092
+2026-10-17T16:11:26.003571Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-17T16:11:41.307531Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-17T16:11:48.995100Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=5
+PASS m2_migration_preserves_103_files_without_fabricating_results
+test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... OBSERVED cold encoding timeout: persisted failure; exercising one explicit API retry
+PASS fixture: real approved vectors published; internal document not vectorized
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 58212)
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 58228)
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 58242)
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/usr/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 70, in relay
+    self.wfile.write(body)
+  File "/usr/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/usr/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 70, in relay
+    self.wfile.write(body)
+  File "/usr/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/usr/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 70, in relay
+    self.wfile.write(body)
+  File "/usr/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+ERROR
+
+======================================================================
+ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 119, in test_browser_hybrid_sources_version_change_and_failure
+    browser.command("POST", "/url", {"url": origin+"/app.html"})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 229, in command
+    return self.request(method, '/session/' + self.session + path, body)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 223, in request
+    response = connection.getresponse()
+  File "/usr/lib/python3.10/http/client.py", line 1404, in getresponse
+    response.begin()
+  File "/usr/lib/python3.10/http/client.py", line 323, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.10/http/client.py", line 284, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+TimeoutError: timed out
+
+----------------------------------------------------------------------
+Ran 1 test in 171.241s
+
+FAILED (errors=1)
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sun 2026-10-18 00:11:23 CST
+ExecMainExitTimestamp=Sun 2026-10-18 00:15:45 CST
+ExecMainStatus=1
+Id=smartdocs-blank-browser-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+MainPID=658067
+Result=success
+ExecMainStartTimestamp=Sun 2026-10-18 00:11:19 CST
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-blank-browser-encoder.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+2026-10-18T00:11:19+0800 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/blank-browser.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T00:11:19+0800 aliyun-lou systemd-socket-activate[658067]: Listening on /tmp/smartdocs-safe.h4SzvX/vector-socket/blank-browser.sock as 3.
+2026-10-18T00:12:57+0800 aliyun-lou systemd-socket-activate[658067]: Communication attempt on fd 3.
+2026-10-18T00:12:57+0800 aliyun-lou systemd-socket-activate[658067]: Connection from PID 658487/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/blank-browser.sock
+2026-10-18T00:12:57+0800 aliyun-lou systemd-socket-activate[658067]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 658647.
+2026-10-18T00:12:57+0800 aliyun-lou systemd-socket-activate[658647]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:13:59+0800 aliyun-lou systemd-socket-activate[658067]: Child 658647 died with code 0
+2026-10-18T00:14:00+0800 aliyun-lou systemd-socket-activate[658067]: Communication attempt on fd 3.
+2026-10-18T00:14:00+0800 aliyun-lou systemd-socket-activate[658067]: Connection from PID 658487/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/blank-browser.sock
+2026-10-18T00:14:00+0800 aliyun-lou systemd-socket-activate[658067]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 658697.
+2026-10-18T00:14:00+0800 aliyun-lou systemd-socket-activate[658697]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:14:44+0800 aliyun-lou systemd-socket-activate[658067]: Child 658697 died with code 0
+low 0
+high 43785
+max 0
+oom 0
+oom_kill 0

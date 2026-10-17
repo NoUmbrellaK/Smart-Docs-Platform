@@ -1,0 +1,18 @@
+test_aggregate_rejects_mixed_pages_with_only_toolbar_changes (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_browser_dependency_overrides_versions_and_explicit_root_exception (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_browser_schema_rejects_incomplete_or_fabricated_results (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_cold_browser_start_gets_extra_time_but_commands_do_not_retry (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_document_fingerprint_ignores_toolbar_pixels (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_iframe_screenshot_scrolls_clipped_frame_into_outer_viewport (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_network_capture_requires_the_service_task_read_not_unrelated_noise (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_pdf_has_two_distinct_valid_page_streams_and_xref (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_png_requires_rendered_pdf_color_not_just_a_changed_toolbar (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_session_requests_blank_startup_without_disabling_sandbox_or_pdf (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_stable_screenshot_fails_closed_when_requested_page_never_renders (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_stable_screenshot_waits_for_requested_page_before_counting_frames (m1_browser_self_test.BrowserEvidenceTest) ... ok
+test_webdriver_protocol_and_network_events_fail_closed (m1_browser_self_test.BrowserEvidenceTest) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.469s
+
+OK

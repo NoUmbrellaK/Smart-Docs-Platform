@@ -1,0 +1,67 @@
+TimeoutStopUSec=10s
+RuntimeMaxUSec=13min
+MainPID=0
+Result=exit-code
+ExecMainStartTimestamp=Sun 2026-10-18 00:17:23 CST
+ExecMainExitTimestamp=Sun 2026-10-18 00:22:20 CST
+ExecMainStatus=1
+ExecStart={ path=/bin/bash ; argv[]=/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py ; ignore_errors=no ; start_time=[Sun 2026-10-18 00:17:23 CST] ; stop_time=[Sun 2026-10-18 00:22:20 CST] ; pid=658978 ; code=exited ; status=1 }
+Slice=smartdocsvectorcheck.slice
+Environment=PYTHONPATH=python SMARTDOCS_ENCODER_SOCKET=/tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock SMARTDOCS_BROWSER_BIN=/tmp/smartdocs-safe.h4SzvX/chrome-linux64/chrome SMARTDOCS_WEBDRIVER_BIN=/tmp/smartdocs-safe.h4SzvX/chromedriver-linux64/chromedriver SMARTDOCS_HYBRID_BROWSER_OUTPUT=/tmp/smartdocs-safe.h4SzvX/ui-first-artifacts
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=no
+NoNewPrivileges=no
+RestrictAddressFamilies=~
+Id=smartdocs-ui-first-check.service
+LoadState=loaded
+ActiveState=failed
+SubState=failed
+
+TimeoutStopUSec=5s
+RuntimeMaxUSec=15min
+MainPID=658964
+Result=success
+ExecMainStartTimestamp=Sun 2026-10-18 00:17:20 CST
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+ExecStart={ path=/usr/bin/systemd-socket-activate ; argv[]=/usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock ; ignore_errors=no ; start_time=[Sun 2026-10-18 00:17:20 CST] ; stop_time=[n/a] ; pid=658964 ; code=(null) ; status=0/0 }
+Slice=smartdocsvectorcheck.slice
+Environment=
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+Id=smartdocs-ui-first-encoder.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 47501
+max 0
+oom 0
+oom_kill 0
+2026-10-18T00:17:20+0800 aliyun-lou systemd[1]: Started /usr/bin/systemd-socket-activate --listen=/tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock --accept --inetd -E PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-18T00:17:20+0800 aliyun-lou systemd-socket-activate[658964]: Listening on /tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock as 3.
+2026-10-18T00:19:26+0800 aliyun-lou systemd-socket-activate[658964]: Communication attempt on fd 3.
+2026-10-18T00:19:26+0800 aliyun-lou systemd-socket-activate[658964]: Connection from PID 659428/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock
+2026-10-18T00:19:26+0800 aliyun-lou systemd-socket-activate[658964]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 659621.
+2026-10-18T00:19:26+0800 aliyun-lou systemd-socket-activate[659621]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:20:26+0800 aliyun-lou systemd-socket-activate[658964]: Child 659621 died with code 0
+2026-10-18T00:20:28+0800 aliyun-lou systemd-socket-activate[658964]: Communication attempt on fd 3.
+2026-10-18T00:20:28+0800 aliyun-lou systemd-socket-activate[658964]: Connection from PID 659428/UID 65534 to /tmp/smartdocs-safe.h4SzvX/vector-socket/ui-first.sock
+2026-10-18T00:20:28+0800 aliyun-lou systemd-socket-activate[658964]: Spawned /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock) as PID 659664.
+2026-10-18T00:20:28+0800 aliyun-lou systemd-socket-activate[659664]: Execing /tmp/smartdocs-safe.h4SzvX/venv/bin/python (/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.embedding_service /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock)
+2026-10-18T00:21:30+0800 aliyun-lou systemd-socket-activate[658964]: Child 659664 died with code 0

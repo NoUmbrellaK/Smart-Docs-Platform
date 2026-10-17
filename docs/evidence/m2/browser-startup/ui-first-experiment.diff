@@ -1,0 +1,26 @@
+diff --git a/test/e2e/hybrid_browser_test.py b/test/e2e/hybrid_browser_test.py
+index 27bf6d3..2efa893 100644
+--- a/test/e2e/hybrid_browser_test.py
++++ b/test/e2e/hybrid_browser_test.py
+@@ -93,8 +93,11 @@ class HybridBrowser(VectorE2E):
+                 tempfile.TemporaryDirectory(prefix="smartdocs-hybrid-browser-") as profile:
+             browser = Browser(binaries, sandbox, profile, output/"driver.log")
+             try:
+-                # Start Chrome before model loading competes for the capped page cache.
++                # Load the real UI before model loading competes for the capped page cache.
+                 browser.start()
++                browser.command("POST", "/url", {"url": origin+"/app.html"})
++                browser.wait('return document.querySelector("#global-status").textContent === "idle"')
++                print("PASS browser startup: actual application loaded before indexing", flush=True)
+                 for job in (recovery, internal):
+                     self.assertEqual(worker.run_once(self.client), "completed")
+                 self.policy(recovery, True)
+@@ -116,8 +119,6 @@ class HybridBrowser(VectorE2E):
+                 self.assertEqual(private["vector_state"], "not_applicable")
+                 self.assertIsNone(private["vector_job_id"])
+                 print("PASS fixture: real approved vectors published; internal document not vectorized", flush=True)
+-                browser.command("POST", "/url", {"url": origin+"/app.html"})
+-                browser.wait('return document.querySelector("#global-status").textContent === "idle"')
+                 browser.fill("#username", "worker-e2e-admin")
+                 browser.fill("#password", self.password)
+                 browser.click('#login-form button[type="submit"]')
