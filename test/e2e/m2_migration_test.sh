@@ -12,7 +12,7 @@ mysql_test=(mysql --protocol=SOCKET --socket="$SMARTDOCS_MYSQL_SOCKET" --user=ro
 "${mysql_test[@]}" smart_docs_upgrade <<'SQL'
 CREATE TEMPORARY TABLE fixture_numbers(n INT PRIMARY KEY);
 INSERT INTO fixture_numbers WITH RECURSIVE seq(n) AS (
-  SELECT 1 UNION ALL SELECT n+1 FROM seq WHERE n<102
+  SELECT 1 UNION ALL SELECT n+1 FROM seq WHERE n<103
 ) SELECT n FROM seq;
 INSERT INTO users(id,login_name,password_salt,password_hash,password_iterations,status)
 VALUES (LPAD('1',32,'0'),'migration_fixture',REPEAT('a',32),REPEAT('b',64),1000,'active');
@@ -24,14 +24,14 @@ INSERT INTO files(id,project_id,directory_id,name,created_by)
 SELECT LPAD(n,32,'0'),LPAD('2',32,'0'),LPAD('3',32,'0'),CONCAT('file-',n),LPAD('1',32,'0') FROM fixture_numbers;
 INSERT INTO file_versions(id,file_id,version_number,content_id,size_bytes,sha256,media_type,created_by,processing_state)
 SELECT LPAD(n+1000,32,'0'),LPAD(n,32,'0'),1,LPAD(n+2000,32,'0'),3,REPEAT('a',64),'text/plain',LPAD('1',32,'0'),
-       IF(n=102,'processing','pending') FROM fixture_numbers;
+       IF(n=103,'completed',IF(n=102,'processing','pending')) FROM fixture_numbers;
 UPDATE files f JOIN file_versions v ON v.file_id=f.id SET f.current_version_id=v.id;
 INSERT INTO processing_jobs(id,file_version_id,task_type,state,attempt_count)
-SELECT LPAD(n+3000,32,'0'),LPAD(n+1000,32,'0'),'parse_and_index',IF(n=102,'running','pending'),IF(n=102,1,0) FROM fixture_numbers;
+SELECT LPAD(n+3000,32,'0'),LPAD(n+1000,32,'0'),'parse_and_index',IF(n=103,'completed',IF(n=102,'running','pending')),IF(n>=102,1,0) FROM fixture_numbers;
 SQL
 export SMARTDOCS_MYSQL_DATABASE=smart_docs_upgrade
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=3' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=3' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=4' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=4' ]]
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -39,5 +39,11 @@ result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM file_versions WHERE processing_state='failed'),'/',
  (SELECT COUNT(*) FROM file_versions WHERE processing_state='interrupted'),'/',
  (SELECT COUNT(*) FROM files WHERE current_version_id IS NOT NULL));")
-[[ $result == '100/1/1/1/1/102' ]] || { printf 'migration_fixture_failed: %s\n' "$result" >&2; exit 1; }
-printf '%s\n' 'PASS m2_migration_preserves_102_files_bounds_pending_and_interrupts_running'
+[[ $result == '100/1/1/1/2/103' ]] || { printf 'migration_fixture_failed: %s\n' "$result" >&2; exit 1; }
+result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
+ (SELECT COUNT(*) FROM file_versions WHERE parse_state<>processing_state),'/',
+ (SELECT COUNT(*) FROM file_versions WHERE keyword_state<>'pending'),'/',
+ (SELECT COUNT(*) FROM processing_jobs WHERE state='interrupted' AND last_error_code='results_unavailable'),'/',
+ (SELECT COUNT(*) FROM document_results),'/',(SELECT COUNT(*) FROM document_chunks));")
+[[ $result == '0/0/1/0/0' ]] || { printf 'migration_result_state_failed: %s\n' "$result" >&2; exit 1; }
+printf '%s\n' 'PASS m2_migration_preserves_103_files_without_fabricating_results'

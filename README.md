@@ -56,7 +56,11 @@ python3 -m venv /path/to/smartdocs-venv
 
 该增量在当前 ECS 受限单元中通过完整 C++ 回归 **100/100**（0 失败、0 跳过）及真实 schema 2→3 升级/重放检查；没有迁移原有业务库。测试范围、源哈希及并发覆盖缺口见[任务验证记录](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md#2026-10-17-验证结果)。
 
-这还不是后台自动解析或大文件性能验收：Python worker 通道、片段持久化、原子完成发布、关键词及向量混合检索尚未实现。本次没有重跑 M1 全套浏览器验收，也没有模型请求。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
+后续结果发布增量新增 C++ 有界结果校验、不可变片段持久化、事务式本地 FULLTEXT 发布及鉴权的固定版本来源读取；解析、关键词和向量状态分开，内部资料不请求远程向量化。详见[发布计划与证据](./docs/superpowers/plans/2026-10-17-m2-result-publication.md)和[来源 API](./docs/api/m2-processing-api.md)。
+
+该发布增量完整 C++ 回归 **112/112**；审阅后仅补强测试，同一生产代码再通过结果校验 **7/7**、任务与来源 **19/19**、103 文件升级夹具；Python 解析回归 **28/28**。定向复验与全量回归存在重叠，不累计成更大的完整验收数字。
+
+这还不是后台自动解析或大文件性能验收：Python worker 通道、搜索业务接口及向量混合检索尚未实现。本次没有重跑 M1 全套浏览器验收，也没有模型请求。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
 ## 规划架构
 
@@ -131,7 +135,7 @@ set +a
 scripts/migrate.sh
 ```
 
-迁移成功输出 `schema_version=3`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+迁移成功输出 `schema_version=4`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 
@@ -177,7 +181,7 @@ test/e2e/run_m1.sh
 ## 开发路线
 
 1. **M1 文件业务**：实现、完整受限验收和证据审阅已完成，阶段关闭；
-2. **M2 文档检索**：进行中，已实现离线 PDF/TXT/Markdown 解析和持久任务状态/取消/重试；worker 通道、索引发布、混合检索及业务引用接口待实现；
+2. **M2 文档检索**：进行中，已实现离线解析、持久任务、片段/本地索引事务发布和固定版本来源读取；worker 通道、搜索业务及混合检索待实现；
 3. **M3 MCP 与 Agent**：实现五项业务工具和可观察的多步调用；
 4. **M4 归档与交接**：方案确认、事务执行、交接清单和带引用报告；
 5. **M5 验收与展示**：固定任务、故障测试、部署文档和可复现实验记录。

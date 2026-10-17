@@ -77,7 +77,7 @@ void ResetTestDatabase() {
     connection.Execute("SET FOREIGN_KEY_CHECKS=0");
     try {
         const char* tables[] = {
-            "audit_records", "upload_parts", "processing_jobs", "upload_tasks",
+            "document_chunks", "document_results", "audit_records", "upload_parts", "processing_jobs", "upload_tasks",
             "file_versions", "files", "directories", "project_members",
             "projects", "auth_sessions", "users"};
         for (const char* table : tables) {

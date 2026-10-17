@@ -2,6 +2,10 @@
 #include "auth/auth_service.h"
 #include "core/app_error.h"
 #include "core/id.h"
+#include "core/crypto.h"
+#include "core/fault_injector.h"
+#include "file/file_service.h"
+#include "file/file_store.h"
 #include "project/project_service.h"
 #include "processing/processing_service.h"
 #include "upload/upload_repository.h"
@@ -81,6 +85,21 @@ nlohmann::json Body(HttpResponse response) {
     CHECK(response.status() == 200);
     const std::string text = response.head_and_body();
     return nlohmann::json::parse(text.substr(text.find("\r\n\r\n") + 4)).at("data");
+}
+
+nlohmann::json TextResult(const JobFixture& job) {
+    using Json = nlohmann::json;
+    Json identity = Json::array({"utf8-lines-v1", job.file_id, job.version_id,
+                                std::string(64, 'a'), 0, 4});
+    const auto bytes = identity.dump();
+    Json chunk = {{"chunk_id", Sha256Hex(bytes.data(), bytes.size())},
+        {"file_id", job.file_id}, {"version_id", job.version_id},
+        {"source_sha256", std::string(64, 'a')}, {"parser_revision", "utf8-lines-v1"},
+        {"text", "部署文档"}, {"char_start", 0}, {"char_end", 4},
+        {"line_start", 1}, {"line_end", 1}};
+    return {{"file_id", job.file_id}, {"version_id", job.version_id},
+        {"source_sha256", std::string(64, 'a')}, {"parser_revision", "utf8-lines-v1"},
+        {"page_count", 0}, {"pages_without_text", Json::array()}, {"chunks", Json::array({chunk})}};
 }
 
 }  // namespace
@@ -240,4 +259,158 @@ TEST_CASE(processing_retry_obeys_capacity_and_completed_tasks_remain_terminal) {
     { auto db = TestDatabase().Acquire(); db.Execute("UPDATE processing_jobs SET state='completed' WHERE id=?", {SqlValue(retry.id)}); }
     CHECK_THROWS_CODE(jobs.Retry(f.admin.session, f.project.id, retry.id), "task_conflict");
     CHECK_THROWS_CODE(jobs.Cancel(f.admin.session, f.project.id, retry.id), "task_conflict");
+}
+
+TEST_CASE(processing_document_status_exposes_unparsed_version_without_fake_readiness) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    Application app(TestAppConfig(f.storage));
+    const auto job = f.AddJob();
+    auto head = f.Head("GET", job.id);
+    head.path = "/api/v1/projects/" + f.project.id + "/files/" + job.file_id +
+                "/versions/" + job.version_id + "/document";
+    const auto data = Body(app.Prepare(head)->Finish());
+    CHECK(data.at("parse_state") == "pending");
+    CHECK(data.at("keyword_state") == "pending");
+    CHECK(data.at("vector_state") == "not_applicable");
+    CHECK(data.at("chunk_count") == 0);
+}
+
+TEST_CASE(processing_document_missing_chunk_is_not_a_source) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    Application app(TestAppConfig(f.storage));
+    const auto job = f.AddJob();
+    auto head = f.Head("GET", job.id);
+    head.path = "/api/v1/projects/" + f.project.id + "/files/" + job.file_id +
+                "/versions/" + job.version_id + "/chunks/" + std::string(64, 'a');
+    CHECK_THROWS_CODE(app.Prepare(head), "resource_not_found");
+}
+
+TEST_CASE(processing_publication_is_atomic_immutable_and_keyword_indexed) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; auto job = f.AddJob();
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim)); auto result = TextResult(job);
+    jobs.Publish(job.id, claim.attempt_token, result);
+    jobs.Publish(job.id, claim.attempt_token, result);
+    CHECK(jobs.Get(f.admin.session, f.project.id, job.id).state == "completed");
+    auto status = jobs.ReadDocument(f.admin.session, f.project.id, job.file_id, job.version_id);
+    CHECK(status.at("parse_state") == "completed");
+    CHECK(status.at("keyword_state") == "completed");
+    CHECK(status.at("vector_state") == "not_applicable");
+    CHECK(status.at("chunk_count") == 1 && status.at("char_count") == 4);
+    auto db = TestDatabase().Acquire();
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_chunks") == 1);
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_chunks WHERE MATCH(body) AGAINST(? IN BOOLEAN MODE)",
+                      {SqlValue("部署")}) == 1);
+    result["chunks"][0]["text"] = "其他文档";
+    CHECK_THROWS_CODE(jobs.Publish(job.id, claim.attempt_token, result), "result_conflict");
+    CHECK(db.Query("SELECT body FROM document_chunks")[0].String(0) == "部署文档");
+}
+
+TEST_CASE(processing_publication_rejects_stale_cancelled_and_restarted_attempts) {
+    RequireMySqlTests();
+    for (const std::string change : {"superseded", "cancelled", "restarted", "deleted", "unavailable"}) {
+        ResetTestDatabase(); Fixture f; const auto job = f.AddJob();
+        ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+        CHECK(jobs.ClaimNext(&claim));
+        if (change == "superseded") f.AddJob(job.file_id);
+        else if (change == "cancelled") jobs.Cancel(f.admin.session, f.project.id, job.id);
+        else if (change == "restarted") jobs.RecoverInterrupted();
+        else {
+            auto db = TestDatabase().Acquire();
+            if (change == "deleted") db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?", {SqlValue(job.file_id)});
+            else db.Execute("UPDATE file_versions SET availability_state='unavailable' WHERE id=?", {SqlValue(job.version_id)});
+        }
+        CHECK_THROWS_CODE(jobs.Publish(job.id, claim.attempt_token, TextResult(job)),
+            change == "cancelled" || change == "restarted" ? "attempt_conflict" : "version_conflict");
+        auto db = TestDatabase().Acquire();
+        CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_results") == 0);
+        CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_chunks") == 0);
+    }
+}
+
+TEST_CASE(processing_publication_checks_authoritative_source_hash_and_size) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; const auto job = f.AddJob();
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim));
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET sha256=? WHERE id=?",
+        {SqlValue(std::string(64, 'b')), SqlValue(job.version_id)}); }
+    CHECK_THROWS_CODE(jobs.Publish(job.id, claim.attempt_token, TextResult(job)), "source_hash_mismatch");
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET sha256=?,size_bytes=8388609 WHERE id=?",
+        {SqlValue(std::string(64, 'a')), SqlValue(job.version_id)}); }
+    CHECK_THROWS_CODE(jobs.Publish(job.id, claim.attempt_token, TextResult(job)), "input_too_large");
+    CHECK(jobs.Get(f.admin.session, f.project.id, job.id).state == "running");
+}
+
+TEST_CASE(processing_publication_accepts_new_retry_but_never_the_old_token) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; const auto job = f.AddJob();
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim old, current;
+    CHECK(jobs.ClaimNext(&old)); jobs.RecoverInterrupted();
+    jobs.Retry(f.admin.session, f.project.id, job.id); CHECK(jobs.ClaimNext(&current));
+    CHECK_THROWS_CODE(jobs.Publish(job.id, old.attempt_token, TextResult(job)), "attempt_conflict");
+    jobs.Publish(job.id, current.attempt_token, TextResult(job));
+    CHECK(jobs.Get(f.admin.session, f.project.id, job.id).state == "completed");
+}
+
+TEST_CASE(processing_publication_fault_rolls_back_chunks_index_and_status) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; const auto job = f.AddJob();
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim));
+    FaultInjector::SetObserverForTesting([](FaultPoint point) {
+        if (point == FaultPoint::BeforeDatabaseCommit) throw AppError(500, "injected", "test");
+    });
+    try { CHECK_THROWS_CODE(jobs.Publish(job.id, claim.attempt_token, TextResult(job)), "injected"); }
+    catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+    FaultInjector::ClearObserverForTesting();
+    auto db = TestDatabase().Acquire();
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_chunks") == 0);
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_results") == 0);
+    CHECK(db.ScalarInt("SELECT COUNT(*) FROM document_chunks WHERE MATCH(body) AGAINST(? IN BOOLEAN MODE)",
+        {SqlValue("部署")}) == 0);
+    CHECK(jobs.Get(f.admin.session, f.project.id, job.id).state == "running");
+    jobs.Publish(job.id, claim.attempt_token, TextResult(job));
+}
+
+TEST_CASE(processing_document_history_never_redirects_and_rechecks_access) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    Application app(TestAppConfig(f.storage));
+    const auto old = f.AddJob(); ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim)); const auto result = TextResult(old);
+    jobs.Publish(old.id, claim.attempt_token, result);
+    const auto current = f.AddJob(old.file_id);
+    const auto chunk_id = result["chunks"][0]["chunk_id"].get<std::string>();
+    auto head = f.Head("GET", old.id);
+    head.path = "/api/v1/projects/" + f.project.id + "/files/" + old.file_id +
+                "/versions/" + old.version_id + "/chunks/" + chunk_id;
+    const auto source = Body(app.Prepare(head)->Finish());
+    CHECK(source.at("chunk").at("text") == "部署文档");
+    CHECK(source.at("version_id") == old.version_id && source.at("is_current") == false);
+    CHECK_THROWS_CODE(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, current.version_id, chunk_id), "resource_not_found");
+    const auto other = f.projects.CreateProject(f.admin.user.id, "Other");
+    CHECK_THROWS_CODE(jobs.ReadDocument(f.admin.session, other.id, old.file_id, old.version_id, chunk_id), "resource_not_found");
+    const auto unrelated = f.AddJob();
+    CHECK_THROWS_CODE(jobs.ReadDocument(f.admin.session, f.project.id, unrelated.file_id, old.version_id, chunk_id), "resource_not_found");
+    auto reader_user = f.auth.CreateUser("source_reader", "test-only-password");
+    f.projects.SetMemberRole(f.admin.session, f.project.id, reader_user.id, Role::Reader);
+    auto reader = f.auth.Login("source_reader", "test-only-password");
+    CHECK(jobs.ReadDocument(reader.session, f.project.id, old.file_id, old.version_id, chunk_id).at("chunk").at("text") == "部署文档");
+    { auto db = TestDatabase().Acquire(); db.Execute("DELETE FROM project_members WHERE project_id=? AND user_id=?",
+        {SqlValue(f.project.id), SqlValue(reader_user.id)}); }
+    CHECK_THROWS_CODE(jobs.ReadDocument(reader.session, f.project.id, old.file_id, old.version_id, chunk_id), "resource_not_found");
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET availability_state='unavailable' WHERE id=?", {SqlValue(old.version_id)}); }
+    CHECK_THROWS_CODE(app.Prepare(head), "content_unavailable");
+    { auto db = TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?", {SqlValue(old.file_id)}); }
+    CHECK_THROWS_CODE(app.Prepare(head), "resource_not_found");
+}
+
+TEST_CASE(processing_document_vector_applicability_follows_exact_version_approval) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; const auto old = f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(), f.projects, store);
+    ProcessingService jobs(TestDatabase(), f.projects); ProcessingClaim claim;
+    CHECK(jobs.ClaimNext(&claim)); jobs.Publish(old.id, claim.attempt_token, TextResult(old));
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"remote_ai_allowed", {old.version_id}});
+    CHECK(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, old.version_id).at("vector_state") == "pending");
+    const auto current = f.AddJob(old.file_id);
+    CHECK(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, current.version_id).at("vector_state") == "not_applicable");
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"internal_only", {}});
+    CHECK(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, old.version_id).at("vector_state") == "not_applicable");
 }

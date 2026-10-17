@@ -1,6 +1,6 @@
 # M2 持久处理任务（当前增量）
 
-当前提供任务状态、取消、人工重试及 C++ 内部领取/失败/启动恢复。Python 解析器尚未接通后台任务，片段持久化、索引发布、检索和完成回调尚未实现；上传后 pending 不代表已经解析。没有公开 worker 接口，也不读取模型密钥。
+当前提供任务状态、取消、人工重试及 C++ 内部领取/失败/启动恢复/结果发布，以及鉴权后的固定版本来源读取。Python 解析器尚未通过 worker 通道接入后台任务；上传后 pending 不代表已经解析。没有公开 worker 提交接口、搜索业务接口或模型调用。
 
 ## 用户接口
 
@@ -24,17 +24,36 @@
 - 领取时 attempt_count 加一并生成新 token。取消、服务重启或重试之后，旧 token 不能回写；同一 attempt 的相同失败回报幂等。
 - 内部领取会重新检查当前版本、删除及内容可用状态。旧任务可被取消，不自动处理历史版本。
 - 启动时 running → `interrupted/service_restarted`，等待人工重试，不自动重跑。单机仅运行一个 C++ 服务实例；不可用第二个实例启动恢复去接管仍在工作的第一个实例。
-- `completed` 保留为终态，但当前没有写入入口；必须等真实解析/索引结果的原子发布实现后启用。
+- 内部 `Publish(job_id, attempt_token, result)` 校验后一次性写入真实结果、片段和 MySQL 本地关键词索引，再将任务标记 completed。此状态只代表本地解析/关键词发布，不代表向量或混合检索已完成。
 - 任务取消目前保证状态和回写隔离，不代表已经实现对 Python 解析子进程的取消信号。worker 通道将在下一增量实现。
 
 事务锁顺序为成员权限（用户操作）→ 文件 → 全局队列 guard → 任务。容量和 running 检查使用当前锁定读；旧版本失败只更新该版本，不改写文件的当前版本指针。
 
-## schema 2 → 3 升级
+## 结果发布与来源读取
 
-本分支启动及 readiness 要求 `schema_version=3`，使用 `db/migrations/003_processing_jobs.sql`。迁移新增队列 guard 和 attempt token，扩展任务/版本状态约束；原 running 转 interrupted，原 pending 超过 100 时保留最早 100 个，其余变为 failed/queue_full。文件、版本和内容不删除。
+结果绑定 file/version ID、原文 SHA-256、解析器修订和稳定 chunk ID。C++ 校验精确 JSON 字段、UTF-8/控制字符、Unicode 码点数、连续偏移和行号、每页覆盖与空页声明，以及与 Python 相同的片段 ID 算法。最大 2,000 块、每块 1,200 字符、全文 2,000,000 字符、PDF 300 页，原始版本大小最多 8 MiB。超限或不完整结构整体拒绝，不截断成功。
 
-部署前停止所有应用/worker，备份数据库与文件存储并核验恢复路径，然后使用既有受保护环境配置执行 `scripts/migrate.sh`，预期输出 `schema_version=3`。成功后再次运行不会重复迁移。不要把 M1 手册中的 schema 2 预期套到此分支。
+验证后的结果在内存暂存，随后在已有文件→队列→任务锁下检查当前版本、删除、内容可用性、原文哈希和 attempt；所有结果、片段、状态在同一事务提交。相同 attempt、相同完整结果重复回报幂等；不同内容不能覆盖已发布引用。旧 attempt 返回 `409 attempt_conflict`；失效版本返回 `409 version_conflict`；不同已发布结果返回 `409 result_conflict`。校验失败不会自行结束任务，未来 worker 需明确报告安全失败码。
+
+这是可信本地解析器的发布边界，不是对任意 worker 的真实性证明：匹配的元数据/哈希不能独立证明任意提交的文字确实来自 PDF。后续内部认证、受控内容读取和实际 Python 提取链路仍不可省略。文档文字不当作授权或指令。
+
+来源 API 均为无正文 GET，最低 reader，会话及项目权限沿用 M1：
+
+- `/api/v1/projects/{project_id}/files/{file_id}/versions/{version_id}/document`：返回 data 中的固定 file/version ID、is_current、source_sha256、parser_revision、parse_state、keyword_state、vector_state、chunk_count、char_count、page_count 和 pages_without_text。尚未发布时计数为 0，不伪造就绪。
+- 同一版本前缀的 `/chunks/{chunk_id}`：返回上述元数据及单个 chunk（正文、稳定 ID、页码或行号和码点区间）；只返回该精确版本的片段，不能将另一版本片段 ID 混用。
+
+历史版本不会跳转新版；删除、跨项目或撤销成员资格后不可读；内容 unavailable 时返回 `409 content_unavailable`。本接口属于普通本地阅读，不是 Agent 外发授权入口，未来 Agent 不能绕过额外的具体版本外发检查直接转发结果。文本以 JSON 数据返回，前端必须用 textContent 等安全方式显示。
+
+parse_state 单独描述解析阶段；keyword_state 只有同事务成功写入 FULLTEXT 后为 completed；vector_state 对内部资料为 not_applicable、批准版本为 pending，目前没有向量完成写入。变更批准或整体撤销会同步向量适用状态，新版本默认不继承批准。搜索业务、关键词边界覆盖和真实向量验证仍在后续增量。
+
+关键词索引使用 MySQL 的 [ngram FULLTEXT](https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html)，实际分词受 ngram_token_size 和停用词配置影响；一个中文 MATCH 回归不代表完整搜索质量验收。改变这些配置必须重建索引并重新验证，不可假定配置变更会自动重写旧索引。
+
+## schema 2/3 → 4 升级
+
+本分支启动及 readiness 要求 `schema_version=4`。003 新增队列 guard 和 attempt token，扩展状态约束；原 running 转 interrupted，原 pending 超过 100 时保留最早 100 个，其余变为 failed/queue_full。004 增加独立解析/索引状态及不可变结果/片段表和 FULLTEXT。旧 schema 没有持久解析结果，旧 completed 状态会标记 interrupted/results_unavailable，等待人工重试，不能凭旧状态制造索引就绪。文件、版本和内容不删除。
+
+部署前停止所有应用/worker，备份数据库与文件存储并核验恢复路径，然后使用既有受保护环境配置执行 `scripts/migrate.sh`，预期输出 `schema_version=4`。成功后再次运行不会重复迁移。不要把 M1 手册中的 schema 2 预期套到此分支。
 
 MySQL DDL 非完整事务原子操作。若迁移中断，不要盲目反复执行或手工伪造 schema 记录；保持服务停止，检查实际表结构，从升级前备份恢复后再升级。回退至 M1 也需要恢复匹配的 schema 2 数据库，不能只回退二进制。
 
-开发验证只使用当前服务器上的隔离临时 MySQL、禁用网络监听、受限 systemd 单元；本次没有升级原有 MySQL 业务库。`test/e2e/m2_migration_test.sh` 仅接受隔离测试 socket，覆盖 102 个旧文件的升级、队列截断、运行中断、版本同步和迁移重放。
+开发验证只使用当前服务器上的隔离临时 MySQL、禁用网络监听、受限 systemd 单元；本次没有升级原有 MySQL 业务库。`test/e2e/m2_migration_test.sh` 仅接受隔离测试 socket，覆盖 103 个旧文件的升级、队列截断、运行中断、旧完成状态失效、版本同步和迁移重放。

@@ -1,7 +1,9 @@
 #include "processing_service.h"
+#include "document_result.h"
 
 #include "core/app_error.h"
 #include "core/id.h"
+#include "core/fault_injector.h"
 #include "db/mysql.h"
 #include "project/project_service.h"
 #include <limits>
@@ -63,8 +65,8 @@ void SetState(MySqlConnection& db, const Record& record, const std::string& stat
                "completed_at=CASE WHEN ?='pending' THEN NULL ELSE UTC_TIMESTAMP(6) END WHERE id=?",
                {SqlValue(state), error.empty() ? SqlValue::Null() : SqlValue(error),
                 SqlValue(state), SqlValue(record.job.id)});
-    db.Execute("UPDATE file_versions SET processing_state=? WHERE id=?",
-               {SqlValue(state), SqlValue(record.job.version_id)});
+    db.Execute("UPDATE file_versions SET processing_state=?,parse_state=? WHERE id=?",
+               {SqlValue(state), SqlValue(state), SqlValue(record.job.version_id)});
 }
 
 void Audit(MySqlConnection& db, const SessionContext& session, const Record& record,
@@ -87,7 +89,7 @@ void EnqueueProcessingJob(MySqlConnection& db, const std::string& job_id,
                "VALUES (?,?,'parse_and_index',?,0,?,CASE WHEN ? THEN UTC_TIMESTAMP(6) ELSE NULL END)",
                {SqlValue(job_id), SqlValue(version_id), SqlValue(full ? "failed" : "pending"),
                 full ? SqlValue("queue_full") : SqlValue::Null(), SqlValue(full)});
-    if (full) db.Execute("UPDATE file_versions SET processing_state='failed' WHERE id=?", {SqlValue(version_id)});
+    if (full) db.Execute("UPDATE file_versions SET processing_state='failed',parse_state='failed' WHERE id=?", {SqlValue(version_id)});
 }
 
 ProcessingService::ProcessingService(MySqlPool& pool, ProjectService& projects)
@@ -167,7 +169,7 @@ bool ProcessingService::ClaimNext(ProcessingClaim* claim) {
     db.Execute("UPDATE processing_jobs SET state='running',attempt_count=attempt_count+1,attempt_token=?,"
                "last_error_code=NULL,last_error_message=NULL,started_at=UTC_TIMESTAMP(6),completed_at=NULL WHERE id=?",
                {SqlValue(token), SqlValue(record.job.id)});
-    db.Execute("UPDATE file_versions SET processing_state='processing' WHERE id=?", {SqlValue(record.job.version_id)});
+    db.Execute("UPDATE file_versions SET processing_state='processing',parse_state='processing' WHERE id=?", {SqlValue(record.job.version_id)});
     claim->job = Read(db, record.job.id, true).job;
     claim->attempt_token = token;
     transaction.Commit(); return true;
@@ -203,4 +205,91 @@ uint64_t ProcessingService::RecoverInterrupted() {
         transaction.Commit();
     }
     return count;
+}
+
+void ProcessingService::Publish(const std::string& id, const std::string& token,
+                                const nlohmann::json& result) {
+    RequireId(id); RequireId(token);
+    const auto document = ValidateDocumentResult(result);
+    auto db = pool_.Acquire(); MySqlTransaction transaction(db);
+    const auto record = LockJob(db, id);
+    if (record.token != token || (record.job.state != "running" && record.job.state != "completed"))
+        throw AppError(409, "attempt_conflict", "processing attempt is no longer active");
+    if (record.deleted || record.current_version != record.job.version_id || record.availability != "available" ||
+        document.file_id != record.job.file_id || document.version_id != record.job.version_id)
+        throw AppError(409, "version_conflict", "document version is no longer publishable");
+    const auto version = db.Query("SELECT v.sha256,v.size_bytes,v.remote_ai_approved AND f.remote_ai_policy='remote_ai_allowed' "
+        "FROM file_versions v JOIN files f ON f.id=v.file_id WHERE v.id=? FOR UPDATE", {SqlValue(record.job.version_id)})[0];
+    if (version.String(0) != document.source_sha256)
+        throw AppError(409, "source_hash_mismatch", "document source hash does not match");
+    if (version.UInt64(1) > 8 * 1024 * 1024)
+        throw AppError(413, "input_too_large", "source exceeds parsing limit");
+    const auto existing = db.Query("SELECT result_sha256 FROM document_results WHERE version_id=? FOR UPDATE", {SqlValue(document.version_id)});
+    if (!existing.empty()) {
+        if (record.job.state != "completed" || existing[0].String(0) != document.fingerprint)
+            throw AppError(409, "result_conflict", "published result is immutable");
+        transaction.Commit(); return;
+    }
+    if (record.job.state != "running") throw AppError(409, "result_conflict", "completed result is unavailable");
+    db.Execute("INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha256,page_count,pages_without_text,chunk_count,char_count) "
+        "VALUES (?,?,?,?,?,?,?,?)", {SqlValue(document.version_id), SqlValue(document.source_sha256),
+        SqlValue(document.parser_revision), SqlValue(document.fingerprint), SqlValue(result.at("page_count").get<uint64_t>()),
+        SqlValue(result.at("pages_without_text").dump()), SqlValue(uint64_t(result.at("chunks").size())), SqlValue(document.char_count)});
+    uint64_t ordinal = 0;
+    for (const auto& chunk : result.at("chunks")) {
+        db.Execute("INSERT INTO document_chunks(id,version_id,ordinal,page,char_start,char_end,line_start,line_end,body) VALUES (?,?,?,?,?,?,?,?,?)",
+            {SqlValue(chunk.at("chunk_id").get<std::string>()), SqlValue(document.version_id), SqlValue(ordinal++),
+             chunk.contains("page") ? SqlValue(chunk.at("page").get<uint64_t>()) : SqlValue::Null(),
+             SqlValue(chunk.at("char_start").get<uint64_t>()), SqlValue(chunk.at("char_end").get<uint64_t>()),
+             SqlValue(chunk.at("line_start").get<uint64_t>()), SqlValue(chunk.at("line_end").get<uint64_t>()),
+             SqlValue(chunk.at("text").get<std::string>())});
+    }
+    SetState(db, record, "completed");
+    db.Execute("UPDATE file_versions SET keyword_state='completed',vector_state=? WHERE id=?",
+               {SqlValue(version.Bool(2) ? "pending" : "not_applicable"), SqlValue(document.version_id)});
+    FaultInjector::Hit(FaultPoint::BeforeDatabaseCommit);
+    transaction.Commit();
+}
+
+nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, const std::string& project,
+    const std::string& file, const std::string& version, const std::string& chunk_id) {
+    using Json = nlohmann::json;
+    RequireId(project); RequireId(file); RequireId(version);
+    if (!chunk_id.empty() && (chunk_id.size() != 64 || chunk_id.find_first_not_of("0123456789abcdef") != std::string::npos))
+        throw AppError(400, "invalid_request", "chunk ID is invalid");
+    auto db = pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db, session.user_id, project, Role::Reader);
+    const auto files = db.Query("SELECT current_version_id FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
+                               {SqlValue(file), SqlValue(project)});
+    if (files.empty()) throw AppError(404, "resource_not_found", "resource was not found");
+    const auto versions = db.Query("SELECT parse_state,keyword_state,vector_state,sha256,availability_state FROM file_versions WHERE id=? AND file_id=? FOR SHARE",
+                                  {SqlValue(version), SqlValue(file)});
+    if (versions.empty()) throw AppError(404, "resource_not_found", "resource was not found");
+    const auto& v = versions[0];
+    if (v.String(4) != "available") throw AppError(409, "content_unavailable", "file content is unavailable");
+    Json data = {{"file_id", file}, {"version_id", version}, {"is_current", files[0].String(0) == version},
+        {"parse_state", v.String(0)}, {"keyword_state", v.String(1)}, {"vector_state", v.String(2)},
+        {"source_sha256", v.String(3)}, {"parser_revision", ""}, {"page_count", 0},
+        {"pages_without_text", Json::array()}, {"chunk_count", 0}, {"char_count", 0}};
+    const auto results = db.Query("SELECT parser_revision,page_count,pages_without_text,chunk_count,char_count FROM document_results WHERE version_id=? FOR SHARE",
+                                  {SqlValue(version)});
+    if (!results.empty()) {
+        const auto& r = results[0];
+        data["parser_revision"] = r.String(0); data["page_count"] = r.UInt64(1);
+        data["pages_without_text"] = Json::parse(r.String(2));
+        data["chunk_count"] = r.UInt64(3); data["char_count"] = r.UInt64(4);
+    }
+    if (!chunk_id.empty()) {
+        const auto chunks = db.Query("SELECT page,char_start,char_end,line_start,line_end,body FROM document_chunks WHERE id=? AND version_id=? FOR SHARE",
+                                    {SqlValue(chunk_id), SqlValue(version)});
+        if (results.empty() || chunks.empty() || v.String(0) != "completed")
+            throw AppError(404, "resource_not_found", "resource was not found");
+        const auto& c = chunks[0];
+        data["chunk"] = {{"chunk_id", chunk_id}, {"file_id", file}, {"version_id", version},
+            {"source_sha256", data["source_sha256"]}, {"parser_revision", data["parser_revision"]},
+            {"char_start", c.UInt64(1)}, {"char_end", c.UInt64(2)}, {"line_start", c.UInt64(3)},
+            {"line_end", c.UInt64(4)}, {"text", c.String(5)}};
+        if (!c.IsNull(0)) data["chunk"]["page"] = c.UInt64(0);
+    }
+    transaction.Commit(); return data;
 }

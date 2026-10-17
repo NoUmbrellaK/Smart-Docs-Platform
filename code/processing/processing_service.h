@@ -3,6 +3,7 @@
 #include "auth/auth_service.h"
 #include <cstdint>
 #include <string>
+#include <nlohmann/json.hpp>
 
 class MySqlConnection;
 class MySqlPool;
@@ -38,6 +39,11 @@ public:
     void Fail(const std::string& job_id, const std::string& attempt_token,
               const std::string& error_code);
     uint64_t RecoverInterrupted();
+    void Publish(const std::string& job_id, const std::string& attempt_token,
+                 const nlohmann::json& result);
+    nlohmann::json ReadDocument(const SessionContext&, const std::string& project_id,
+        const std::string& file_id, const std::string& version_id,
+        const std::string& chunk_id = "");
 
 private:
     MySqlPool& pool_;

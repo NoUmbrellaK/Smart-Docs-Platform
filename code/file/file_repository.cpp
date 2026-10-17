@@ -164,13 +164,13 @@ void FileRepository::SetVersionApprovals(
     const std::string& actor_id) const {
     connection.Execute(
         "UPDATE file_versions SET remote_ai_approved=FALSE, "
-        "remote_ai_approved_at=NULL, remote_ai_approved_by=NULL "
+        "remote_ai_approved_at=NULL, remote_ai_approved_by=NULL, vector_state='not_applicable' "
         "WHERE file_id=?",
         {SqlValue(file_id)});
     for (const std::string& version_id : approved_version_ids) {
         connection.Execute(
             "UPDATE file_versions SET remote_ai_approved=TRUE, "
-            "remote_ai_approved_at=UTC_TIMESTAMP(6), remote_ai_approved_by=? "
+            "remote_ai_approved_at=UTC_TIMESTAMP(6), remote_ai_approved_by=?, vector_state='pending' "
             "WHERE file_id=? AND id=?",
             {SqlValue(actor_id), SqlValue(file_id), SqlValue(version_id)});
     }

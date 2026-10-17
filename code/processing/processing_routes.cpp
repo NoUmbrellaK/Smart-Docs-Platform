@@ -40,4 +40,15 @@ void RegisterProcessingRoutes(Router& router, std::shared_ptr<AuthService> auth,
                 return ReadyResponse(Response(result, request, head.keep_alive));
             });
     }
+    const std::string version = "/api/v1/projects/{project_id}/files/{file_id}/versions/{version_id}";
+    for (const std::string suffix : {"/document", "/chunks/{chunk_id}"}) {
+        router.Add("GET", version + suffix, [auth, jobs](const RequestHead& head, const RouteParams& params) {
+            RequireEmpty(head);
+            const auto session = auth->Authenticate(RequireSessionCookie(head));
+            const auto chunk = params.find("chunk_id");
+            const auto data = jobs->ReadDocument(session, params.at("project_id"), params.at("file_id"),
+                params.at("version_id"), chunk == params.end() ? "" : chunk->second);
+            return ReadyResponse(HttpResponse::Json(200, {{"request_id", GenerateId()}, {"data", data}}, head.keep_alive));
+        });
+    }
 }
