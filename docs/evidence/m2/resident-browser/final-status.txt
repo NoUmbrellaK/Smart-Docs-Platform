@@ -1,0 +1,23 @@
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+active
+low 0
+high 68006
+max 0
+oom 0
+oom_kill 0
+MemTotal:        3579040 kB
+MemFree:          882512 kB
+MemAvailable:    1906476 kB
+Buffers:           50616 kB
+Oct 18 02:09:49 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:10:45 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:12:30 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:12:30 aliyun-lou systemd[1]: smartdocs-resident-startup-encoder.service: Deactivated successfully.
+Oct 18 02:12:30 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:12:30 aliyun-lou systemd[1]: smartdocs-resident-startup-encoder.service: Consumed 2.260s CPU time.

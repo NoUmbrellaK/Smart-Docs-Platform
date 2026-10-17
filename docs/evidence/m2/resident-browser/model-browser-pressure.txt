@@ -1,0 +1,38 @@
+# Capture command (labels added afterward; output below is unchanged):
+# date -Is
+# ps -eo pid,ppid,comm,state,rss,wchan:24 --sort=-rss | head -22
+# cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.pressure
+# cat /sys/fs/cgroup/smartdocsvectorcheck.slice/io.pressure
+# cat /sys/fs/cgroup/smartdocsvectorcheck.slice/cpu.pressure
+# journalctl -u smartdocs-resident-model-browser-probe.service --no-pager
+# Three consecutive some/full pairs below are memory, io, cpu, in that order.
+2026-10-18T02:12:02+08:00
+    PID    PPID COMMAND         S   RSS WCHAN
+ 682298  682297 python          S 622228 do_select
+ 494479       1 codex           S 557060 futex_wait_queue_me
+   1001     982 hermes          S 365996 ep_poll
+ 682558  682552 chrome          S 184348 do_poll.constprop.0
+    975       1 mysqld          S 114924 do_poll.constprop.0
+ 682675  682558 chrome          S 114548 futex_wait_queue_me
+ 682713  682569 chrome          D 108872 wait_on_page_bit_common
+ 682747  682569 chrome          D 98272 wait_on_page_bit_common
+ 682746  682569 chrome          S 72076 futex_wait_queue_me
+ 682663  682566 chrome          S 68000 futex_wait_queue_me
+ 682566  682558 chrome          S 67572 do_poll.constprop.0
+ 682567  682558 chrome          S 67216 do_wait
+ 682789  682569 chrome          S 48824 futex_wait_queue_me
+   1013       1 mihomo          S 34856 futex_wait_queue_me
+    373       1 systemd-journal S 27376 ep_poll
+    412       1 multipathd      S 27104 futex_wait_queue_me
+ 668404       1 fwupd           S 26824 do_poll.constprop.0
+ 441418       1 dockerd         S 22932 futex_wait_queue_me
+ 682297       1 python          S 21068 do_select
+ 682539       1 python          S 20956 do_poll.constprop.0
+ 682569  682567 chrome          S 19140 do_poll.constprop.0
+some avg10=78.49 avg60=41.87 avg300=15.50 total=1539456161
+full avg10=77.46 avg60=41.43 avg300=15.35 total=1522208742
+some avg10=97.40 avg60=76.97 avg300=47.98 total=8015618220
+full avg10=96.05 avg60=76.26 avg300=47.54 total=7929025903
+some avg10=0.34 avg60=0.11 avg300=0.09 total=88985127
+full avg10=0.00 avg60=0.00 avg300=0.00 total=39733991
+Oct 18 02:10:56 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/resident-browser-probe/startup_probe.py.

@@ -1,0 +1,33 @@
+Oct 18 02:02:03 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:02:10 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:02:22 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/hybrid_browser_test.py.
+Oct 18 02:02:32 aliyun-lou bash[680713]: 2026-10-17T18:02:30.965864Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 680713
+Oct 18 02:02:32 aliyun-lou bash[680713]: 2026-10-17T18:02:32.964034Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 18 02:02:48 aliyun-lou bash[680713]: 2026-10-17T18:02:48.397916Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 18 02:02:58 aliyun-lou bash[680713]: 2026-10-17T18:02:58.185883Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 18 02:03:43 aliyun-lou bash[681219]: schema_version=5
+Oct 18 02:04:03 aliyun-lou bash[681279]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 18 02:05:47 aliyun-lou bash[681394]: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser) ... ERROR
+Oct 18 02:05:47 aliyun-lou bash[681394]: ======================================================================
+Oct 18 02:05:47 aliyun-lou bash[681394]: ERROR: test_browser_hybrid_sources_version_change_and_failure (__main__.HybridBrowser)
+Oct 18 02:05:47 aliyun-lou bash[681394]: ----------------------------------------------------------------------
+Oct 18 02:05:47 aliyun-lou bash[681394]: Traceback (most recent call last):
+Oct 18 02:05:47 aliyun-lou bash[681394]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/hybrid_browser_test.py", line 97, in test_browser_hybrid_sources_version_change_and_failure
+Oct 18 02:05:47 aliyun-lou bash[681394]:     browser.start()
+Oct 18 02:05:47 aliyun-lou bash[681394]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+Oct 18 02:05:47 aliyun-lou bash[681394]:     value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+Oct 18 02:05:47 aliyun-lou bash[681394]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+Oct 18 02:05:47 aliyun-lou bash[681394]:     return webdriver_value(response.status, response.read())
+Oct 18 02:05:47 aliyun-lou bash[681394]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+Oct 18 02:05:47 aliyun-lou bash[681394]:     raise RuntimeError(f'WebDriver {safe}')
+Oct 18 02:05:47 aliyun-lou bash[681394]: RuntimeError: WebDriver session not created
+Oct 18 02:05:47 aliyun-lou bash[681394]: ----------------------------------------------------------------------
+Oct 18 02:05:47 aliyun-lou bash[681394]: Ran 1 test in 103.645s
+Oct 18 02:05:47 aliyun-lou bash[681394]: FAILED (errors=1)
+Oct 18 02:05:53 aliyun-lou systemd[1]: smartdocs-resident-combo-browser.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 02:05:53 aliyun-lou systemd[1]: smartdocs-resident-combo-browser.service: Failed with result 'exit-code'.
+Oct 18 02:05:53 aliyun-lou systemd[1]: smartdocs-resident-combo-browser.service: Consumed 8.686s CPU time.
+Oct 18 02:06:45 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+Oct 18 02:06:46 aliyun-lou systemd[1]: smartdocs-resident-combo-encoder.service: Deactivated successfully.
+Oct 18 02:06:46 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-safe.h4SzvX/resident-combo-socket/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+Oct 18 02:06:46 aliyun-lou systemd[1]: smartdocs-resident-combo-encoder.service: Consumed 2.243s CPU time.
