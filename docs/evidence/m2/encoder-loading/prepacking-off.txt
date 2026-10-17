@@ -1,0 +1,11 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-prepacking-probe.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock 1.
+{"event": "start", "seconds": 0.0, "memory_kib_except_threads": {"VmHWM": 20828, "VmRSS": 20828, "RssAnon": 11108, "RssFile": 9720, "Threads": 1}, "disable_prepacking": "1"}
+{"event": "imported", "seconds": 1.67, "memory_kib_except_threads": {"VmHWM": 74736, "VmRSS": 74736, "RssAnon": 43652, "RssFile": 31084, "Threads": 1}}
+{"event": "before_model", "seconds": 2.359, "memory_kib_except_threads": {"VmHWM": 77208, "VmRSS": 77208, "RssAnon": 46060, "RssFile": 31148, "Threads": 1}}
+{"event": "model_ready", "seconds": 3.418, "memory_kib_except_threads": {"VmHWM": 662936, "VmRSS": 662936, "RssAnon": 622764, "RssFile": 40172, "Threads": 1}}
+{"event": "encoded", "seconds": 3.852, "memory_kib_except_threads": {"VmHWM": 664912, "VmRSS": 664912, "RssAnon": 623180, "RssFile": 41732, "Threads": 1}, "iteration": 0, "output_sha256": "3868e57744ddb16be8424a17b145d71026803878a8beaad30d8171dbfc7d468d", "windows": 9}
+{"event": "encoded", "seconds": 4.967, "memory_kib_except_threads": {"VmHWM": 665176, "VmRSS": 665176, "RssAnon": 623444, "RssFile": 41732, "Threads": 1}, "iteration": 1, "output_sha256": "3868e57744ddb16be8424a17b145d71026803878a8beaad30d8171dbfc7d468d", "windows": 9}
+{"event": "complete", "seconds": 4.967, "memory_kib_except_threads": {"VmHWM": 665176, "VmRSS": 665176, "RssAnon": 623444, "RssFile": 41732, "Threads": 1}, "cpu_seconds": 3.675}
+smartdocs-prepacking-off.service: Deactivated successfully.
+Stopped /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-prepacking-probe.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock 1.
+smartdocs-prepacking-off.service: Consumed 3.934s CPU time.

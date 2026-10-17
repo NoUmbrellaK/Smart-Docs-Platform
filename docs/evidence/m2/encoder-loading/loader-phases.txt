@@ -1,0 +1,15 @@
+Started /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-loader-phases.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock 0.
+{"event": "start", "seconds": 0.0, "memory_kib_except_threads": {"VmHWM": 20780, "VmRSS": 20780, "RssAnon": 11100, "RssFile": 9680, "Threads": 1}, "disable_prepacking": "0"}
+{"event": "imported", "seconds": 0.765, "memory_kib_except_threads": {"VmHWM": 74708, "VmRSS": 74708, "RssAnon": 43652, "RssFile": 31056, "Threads": 1}}
+{"event": "before_model", "seconds": 1.5, "memory_kib_except_threads": {"VmHWM": 77172, "VmRSS": 77172, "RssAnon": 46052, "RssFile": 31120, "Threads": 1}}
+{"event": "before_session", "seconds": 1.501, "memory_kib_except_threads": {"VmHWM": 77172, "VmRSS": 77172, "RssAnon": 46052, "RssFile": 31120, "Threads": 1}}
+{"event": "after_session", "seconds": 2.064, "memory_kib_except_threads": {"VmHWM": 500296, "VmRSS": 410632, "RssAnon": 372664, "RssFile": 37968, "Threads": 1}}
+{"event": "before_tokenizer", "seconds": 2.065, "memory_kib_except_threads": {"VmHWM": 500296, "VmRSS": 410632, "RssAnon": 372664, "RssFile": 37968, "Threads": 1}}
+{"event": "after_tokenizer", "seconds": 2.599, "memory_kib_except_threads": {"VmHWM": 661844, "VmRSS": 645380, "RssAnon": 605136, "RssFile": 40244, "Threads": 1}}
+{"event": "model_ready", "seconds": 2.599, "memory_kib_except_threads": {"VmHWM": 661844, "VmRSS": 645380, "RssAnon": 605136, "RssFile": 40244, "Threads": 1}}
+{"event": "encoded", "seconds": 2.943, "memory_kib_except_threads": {"VmHWM": 661844, "VmRSS": 653652, "RssAnon": 612168, "RssFile": 41484, "Threads": 1}, "iteration": 0, "output_sha256": "d9bc3c19fca7336bd245b9d7ffa742f1eb36647589cabdb75f7086f31f8e0226", "windows": 9}
+{"event": "encoded", "seconds": 3.963, "memory_kib_except_threads": {"VmHWM": 661844, "VmRSS": 655500, "RssAnon": 614016, "RssFile": 41484, "Threads": 1}, "iteration": 1, "output_sha256": "d9bc3c19fca7336bd245b9d7ffa742f1eb36647589cabdb75f7086f31f8e0226", "windows": 9}
+{"event": "complete", "seconds": 3.963, "memory_kib_except_threads": {"VmHWM": 661844, "VmRSS": 655500, "RssAnon": 614016, "RssFile": 41484, "Threads": 1}, "cpu_seconds": 4.094}
+smartdocs-loader-phases.service: Deactivated successfully.
+Stopped /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python -I -B /tmp/smartdocs-loader-phases.py /tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock 0.
+smartdocs-loader-phases.service: Consumed 4.173s CPU time.
