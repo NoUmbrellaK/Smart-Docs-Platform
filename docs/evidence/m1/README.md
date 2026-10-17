@@ -1,9 +1,16 @@
 # M1 acceptance evidence
 
 See the [M1 gate coverage matrix](gate-matrix.md) for the requirement-to-test
-mapping, M2+ deferrals, current evidence state, and closure blockers. The matrix
-currently reports M1 as open with two explicit closure blockers: the accepted
-current-HEAD full artifact set, and runtime gate proof/final review.
+mapping, M2+ deferrals and closure review. M1 is closed based on the accepted
+[2026-10-17 run](verified/summary.md) of clean commit
+`ed14dcf6029e53ac7106847fa456b3067af0147c`. The later handoff changes only
+documentation and archived evidence, not the tested implementation.
+
+C++ 90/90, UI 8/8 and 18/18, HTTP 9/9, browser 2/2 and interruptions 20/20
+passed. Four-way 32 MiB streaming grew server RSS by 1,515,520 bytes, below
+64 MiB. Both PDF screenshots were manually reviewed and their image/document
+hashes revalidated; all seven files match the successful runner output.
+This is not production deployment, TLS, backup-restore or M2+ acceptance.
 
 Run the reproducible M1 acceptance command from the repository root:
 
@@ -67,7 +74,12 @@ phase must observe the task GET as well as zero part PUTs.
 
 The PDF scenario uploads the same deterministic two-page fixture used by HTTP
 T-05, checks authentication and exact bytes, then opens it through the workbench
-and submits the visible preview form for pages 1 and 2. Each iframe screenshot
+and submits the visible preview form for pages 1 and 2. The workbench recreates
+the iframe for each submission: changing only the fragment can leave the native
+PDF viewer displaying its old page. Before taking an element screenshot, the
+driver reads the iframe bounds and, if vertically clipped, uses a real WebDriver
+wheel action outside the frame to scroll the outer page. It does not scroll or
+modify the PDF's document contents with JavaScript. Each iframe screenshot
 must first contain the requested page in the central third of the document
 viewport (both axes) before it starts or advances the three-sample stabilization
 count, so identical blank or non-target frames cannot satisfy stabilization. It
@@ -162,22 +174,17 @@ On success, `latest/` contains these review inputs:
 
 `latest/` is generated and ignored. Trust it only after the runner exits zero
 and its commit metadata matches the intended revision. Task 12 is responsible
-for reviewing and copying an accepted run into a dated committed directory.
+for reviewing and copying an accepted dated run into the committed `verified/` directory.
 The evidence contains no passwords, cookies, uploaded bodies, logs, or
 temporary absolute paths.
 
-The F-02.9 measurement and real-browser M1 scenarios remain unexecuted on this
-ECS. On 2026-10-17, after the user required execution on the same server, kernel
-resource-limit probes and a non-root, sandbox-enabled browser startup smoke
-check succeeded. The cold-start timeout regression and other lightweight harness
-tests passed (23/23). This is not business-scenario or PDF screenshot evidence.
+The [same-host limited-run record](../../operations/2026-10-17-m1-same-host-limited-run.md)
+records the prior failures, fixes and final successful run at 16:11:47–16:25:29
+CST on 2026-10-17. The entire test group retained its 1600 MiB hard limit,
+one-CPU quota and disk limits; the browser ran as non-root with sandbox enabled.
+No hardware expansion or swap was needed for this run. On this ECS, do not
+invoke the uncapped runner directly. Keep future builds and full acceptance
+serialized and use the documented resource-capped procedure.
 
-The [same-host limited-run procedure](../../operations/2026-10-17-m1-same-host-limited-run.md)
-replaces the earlier blanket prohibition with an isolated, resource-capped
-execution procedure. After explicit risk acceptance, the first bounded run built
-all targets and reached supporting suites, then failed closed on a configuration
-test's inherited environment and systemd's old Node runtime. Both causes were
-corrected and checked independently; see the run record for exact counts.
-No passing full-run result was generated. Do not invoke the uncapped runner
-directly on the affected host. Browser and streaming runtime proof remain part
-of the full-artifact blocker.
+Streaming setup authentication uses the same 120-second socket I/O timeout as
+its transfers, without credential POST retries; ordinary HTTP tests are unchanged.

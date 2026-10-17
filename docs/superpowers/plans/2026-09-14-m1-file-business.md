@@ -876,6 +876,16 @@ git commit -m "feat: add resumable upload tasks and chunks"
 
 ### Task 8: Idempotent Upload Completion and Restart Reconciliation
 
+**2026-10-17 completion review (Tasks 8–12):** Implementation and test code are
+present in the clean tested commit `ed14dcf6029e53ac7106847fa456b3067af0147c`.
+The complete resource-capped run passed C++ 90/90, UI 8/8 and 18/18, HTTP 9/9,
+browser 2/2, streaming and twenty interruption rounds. The seven-file evidence
+set and both PDF images were reviewed; see the [gate matrix](../../evidence/m1/gate-matrix.md).
+Verification below refers to that full run, not a claim that each historical
+example command was separately re-executed. Unchecked test-first steps record
+an unverified historical red/green order, not missing functionality. The later
+handoff changes documentation/evidence only. M1 closes; M2 does not start.
+
 **Files:**
 - Modify: `code/upload/upload_repository.h`
 - Modify: `code/upload/upload_repository.cpp`
@@ -912,7 +922,7 @@ TEST_CASE(completion_is_idempotent) {
 }
 ```
 
-- [ ] **Step 2: Implement the exact completion state machine**
+- [x] **Step 2: Implement the exact completion state machine**
 
 The ordered operations are:
 
@@ -934,7 +944,7 @@ commit -> return stored IDs
 
 Use unique constraints plus row locks, not a process-local mutex, as the final concurrency authority. A failed database transaction leaves an unreferenced object for reconciliation and never exposes it through file queries.
 
-- [ ] **Step 3: Add test-only fault injection**
+- [x] **Step 3: Add test-only fault injection**
 
 ```cpp
 enum class FaultPoint {
@@ -949,11 +959,11 @@ enum class FaultPoint {
 
 `FaultInjector::Hit` is a no-op in normal builds. In `smartdocs_test_server`, `SMARTDOCS_FAULT_POINT=<name>` causes `_exit(86)` at that exact point. Reject this environment variable in the normal server so production cannot enable intentional crashes.
 
-- [ ] **Step 4: Implement startup reconciliation**
+- [x] **Step 4: Implement startup reconciliation**
 
 Run reconciliation after schema/storage checks and before readiness becomes true. Mark `uploading`, `assembling`, and unverifiable `publishing` tasks as `interrupted`; delete only server-named `*.tmp` files; retain confirmed parts. Repair a task to `completed` only when its result IDs form a valid committed file/version/job graph. Mark a version unavailable and emit an audit error when a published row's object is missing. Remove an orphan object only when no version references it and its age exceeds 24 hours.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 make test
@@ -993,7 +1003,7 @@ struct RemoteAiState { std::string policy; std::vector<std::string> approved_ver
 
 Cover `bytes=0-9`, `bytes=10-`, `bytes=-10`, complete-range clamping, zero-length files, reversed/out-of-bounds ranges, overflow, invalid units, commas/multi-range, whitespace ambiguity, and new-version-during-download behavior. Mutation tests cover role matrix, same-directory rename conflicts, cross-project target directory, deleted download, restore conflict, stable IDs after move, and version-specific remote approval.
 
-- [ ] **Step 2: Implement strict single-range parsing**
+- [x] **Step 2: Implement strict single-range parsing**
 
 ```cpp
 struct ByteRange {
@@ -1005,7 +1015,7 @@ struct ByteRange {
 
 No header means full `200`. One satisfiable range means `206`. Syntactically invalid or unsatisfiable input means `416` with `Content-Range: bytes */<size>`. Any comma means `501 range_not_supported`. Parse digits with checked arithmetic; never rely on signed `atoi`.
 
-- [ ] **Step 3: Implement transactional file mutations**
+- [x] **Step 3: Implement transactional file mutations**
 
 Exact service methods:
 
@@ -1022,11 +1032,11 @@ RemoteAiState FileService::SetRemoteAiPolicy(const SessionContext&, const std::s
 
 Use `SELECT ... FOR UPDATE`, recheck membership and destination directory, rely on the active-name unique index, record audit results, and leave file/version/content IDs unchanged. Setting a file to `internal_only` clears all version approval timestamps in the same transaction. Setting `remote_ai_allowed` approves only explicitly listed version IDs that belong to that file.
 
-- [ ] **Step 4: Implement authenticated download responses**
+- [x] **Step 4: Implement authenticated download responses**
 
 Resolve the current version once, or require the exact historical version route. Check authorization and deletion before `FileStore::OpenObject`. Use the already-open descriptor for the response, so a concurrent new version cannot affect bytes. Return `Accept-Ranges: bytes`, correct lengths, escaped RFC 5987 filename, `nosniff`, and `Content-Disposition: inline` only for PDF; every other upload is `attachment`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 make test
@@ -1066,11 +1076,11 @@ python3 test/e2e/ui_contract_test.py
 
 Expected: fail because `resources/app.html` does not exist.
 
-- [ ] **Step 2: Vendor a pinned incremental SHA-256 browser module**
+- [x] **Step 2: Vendor a pinned incremental SHA-256 browser module**
 
 Vendor `js-sha256` version `0.11.1` from its official tagged distribution into `resources/js/sha256.js`, retain its MIT header/license notice, and expose only the incremental `sha256.create().update(arrayBuffer).hex()` API used by `uploads.js`. Record the upstream URL and version in a comment; do not use `crypto.subtle.digest` on a whole 1 GiB `ArrayBuffer`.
 
-- [ ] **Step 3: Implement the API and upload modules**
+- [x] **Step 3: Implement the API and upload modules**
 
 `api.js` always uses relative `/api/v1/...` URLs, `credentials: "same-origin"`, JSON content type for metadata, and converts the unified error body into an `ApiError` containing HTTP status/code/retryability/request ID.
 
@@ -1089,11 +1099,11 @@ complete once -> display returned file/version/job IDs
 
 Use at most four parallel PUTs, configurable in one constant. Do not manufacture percent progress for hashing, server assembly, or processing; display named phases.
 
-- [ ] **Step 4: Implement the M1 page states**
+- [x] **Step 4: Implement the M1 page states**
 
 Build semantic views for login/project role, directory/file table, upload tasks, version list, download/PDF link, remote-AI policy, and member roles. Distinguish idle, loading, awaiting reselect, uploading, assembling, interrupted, failed, cancelled, and completed. Render API strings with `textContent`, not HTML interpolation.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 python3 test/e2e/ui_contract_test.py
@@ -1136,13 +1146,13 @@ T-09: processing status is visible and never claims parsing/indexing succeeded i
 
 Expected initial run: fail because no isolated runner supplies service URLs and credentials.
 
-- [ ] **Step 2: Implement the isolated runner**
+- [x] **Step 2: Implement the isolated runner**
 
 `run_m1.sh` creates exact `mktemp -d` directories for MySQL, storage, logs, and evidence; starts MySQL on a private socket, migrates, creates users, starts `bin/smartdocs_test_server` on a free loopback port, and runs both Python scripts. A trap terminates only captured PIDs and removes only the created temporary directory.
 
 Evidence files are written to `docs/evidence/m1/latest/` during a run and ignored by default. The operator copies a completed, reviewed run to a dated directory before committing it.
 
-- [ ] **Step 3: Implement twenty deterministic interruption rounds**
+- [x] **Step 3: Implement twenty deterministic interruption rounds**
 
 Run these cases with fixed input/expected result and a fresh task where needed:
 
@@ -1157,17 +1167,15 @@ Run these cases with fixed input/expected result and a fresh task where needed:
 
 For each round, `m1_interrupt_test.py` records fault point, process exit, task state after restart, confirmed parts, result IDs, final content SHA-256, duplicate-version count, and pass/fail. Success requires: no half-published download, no duplicate file/version/job, truthful interrupted/completed state, and correct final hash after permitted retry.
 
-- [ ] **Step 4: Run the full M1 evidence command**
+- [x] **Step 4: Run the full M1 evidence command**
 
-```bash
-make clean
-make server admin test-server test
-test/e2e/run_m1.sh
-```
+On the current ECS, use the [resource-capped same-host procedure](../../operations/2026-10-17-m1-same-host-limited-run.md).
+It invokes `test/e2e/run_m1.sh`, which already clean-builds every required target;
+do not add an uncapped or parallel build.
 
 Expected: C++ tests pass, the M1 HTTP scenario passes, all 20 interruption rounds pass, and `docs/evidence/m1/latest/results.json` reports actual counts rather than fixed success text.
 
-- [ ] **Step 5: Commit tests without claiming unreviewed results**
+- [x] **Step 5: Commit tests without claiming unreviewed results**
 
 ```bash
 git add .gitignore test/e2e test/fixtures docs/evidence/m1/README.md docs/evidence/m1/.gitkeep
@@ -1183,43 +1191,56 @@ git commit -m "test: add reproducible M1 acceptance scenarios"
 - Create: `docs/evidence/m1/verified/environment.txt`
 - Create: `docs/evidence/m1/verified/results.json`
 - Create: `docs/evidence/m1/verified/summary.md`
+- Create: `docs/evidence/m1/verified/browser.json`
+- Create: `docs/evidence/m1/verified/streaming.json`
+- Create: `docs/evidence/m1/verified/browser-artifacts/pdf-page-1.png`
+- Create: `docs/evidence/m1/verified/browser-artifacts/pdf-page-2.png`
 
 **Interfaces:**
 - Produces: reproducible deployment/API instructions and an evidence-backed decision on whether M1 can close.
 - M2 may start only if every M1 gate below is proved by current evidence.
 
-- [ ] **Step 1: Write deployment and API documentation from the running system**
+- [x] **Step 1: Write deployment and API documentation from the running system**
 
 Document exact dependency versions, MySQL database/user creation, migration, protected environment file permissions, storage permissions, admin creation, build/start/stop, reverse-proxy TLS expectation, backup inputs, every M1 route, request/response examples, limits, and error codes. Do not copy passwords, session cookies, absolute temporary paths, or test database contents into Git.
 
-- [ ] **Step 2: Capture an actual dated evidence run**
+- [x] **Step 2: Capture an actual dated evidence run**
 
 ```bash
 mkdir -p docs/evidence/m1/verified
-cp docs/evidence/m1/latest/environment.txt docs/evidence/m1/verified/environment.txt
-cp docs/evidence/m1/latest/results.json docs/evidence/m1/verified/results.json
-cp docs/evidence/m1/latest/summary.md docs/evidence/m1/verified/summary.md
+cp -R --no-preserve=ownership docs/evidence/m1/latest/. docs/evidence/m1/verified/
 ```
 
-Before staging, inspect all three files for secrets and confirm `results.json` contains the current `git rev-parse HEAD`, compiler/MySQL/OpenSSL versions, individual test counts, all interruption rounds, and failure details.
+On the constrained ECS, the source `latest/` is in the independent acceptance
+clone; copy that complete directory only after successful exit and review, not
+the older `latest/` in a different worktree. Before staging, inspect every file
+for secrets and confirm aggregate schema 4, browser schema 2, both real PNGs,
+streaming measurements, dependency versions, suite counts, interruption rounds,
+and failure details. Bind the result to the clean tested commit; a subsequent
+documentation/evidence-only commit must identify that SHA, not claim its own
+new HEAD was executed.
 
-- [ ] **Step 3: Run the M1 completion audit**
+- [x] **Step 3: Run the M1 completion audit**
 
 ```bash
-make clean
-make server admin test-server test
-test/e2e/run_m1.sh
 git diff --check
 git status --short
 ```
 
+The full runner already performs a clean build and all supporting suites. On
+the current ECS, execute it only through the
+[resource-capped same-host procedure](../../operations/2026-10-17-m1-same-host-limited-run.md),
+after checking resources and serial execution. Do not add an uncapped build or
+acceptance invocation before or alongside it. Review both PDF screenshots and
+the complete artifacts after exit; starting the systemd unit is not a pass.
+
 Manually map each F-01 through F-04 rule and the M1 portions of T-01 through T-09 to a named test/evidence record. Any missing, failed, flaky, indirect, or manually assumed item keeps M1 open; document it under `Known gaps` and do not start M2.
 
-- [ ] **Step 4: Update README truthfully**
+- [x] **Step 4: Update README truthfully**
 
 Replace “current WebServer baseline only” text only for capabilities proved by the dated evidence. Keep M2-M5 explicitly planned. Report measured environment and denominators next to any throughput or correctness number; omit metrics not actually measured.
 
-- [ ] **Step 5: Commit the reviewed M1 handoff**
+- [x] **Step 5: Commit the reviewed M1 handoff**
 
 ```bash
 git add README.md docs/deployment docs/api docs/evidence/m1

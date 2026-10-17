@@ -1,0 +1,70 @@
+{
+  "assertions": 20,
+  "browser": {
+    "executable": "chrome",
+    "version": "155.0.8059.84"
+  },
+  "headless": "new",
+  "sandbox": "enabled",
+  "scenarios": {
+    "protected_pdf_page_navigation": {
+      "assertions": 8,
+      "fixture_sha256": "96b602f6d4b99855125ade8fba314e07461f871926e74b8a6bfc4b842acee008",
+      "pages": [
+        {
+          "document_sha256": "b739216f6704683cb07887d999331d00e132170777a8bbb8822900b7db27b989",
+          "page": 1,
+          "screenshot": "pdf-page-1.png",
+          "sha256": "00759711505be4e2bbec233506cbeabc06aa56640f04ecb81d4f2a183f772a33",
+          "size_bytes": 14364,
+          "src": "/api/v1/projects/4685bf079e81baa285580c32384d9f75/files/9750df53ff5c41b9bf352b67d7374278/versions/5b9a0102043edfdf4b7c79e682952c8d/content#page=1"
+        },
+        {
+          "document_sha256": "2df718f6a6ecd95942c0a1472cd1398e0c13c8a0a3001076b09405754b4e051a",
+          "page": 2,
+          "screenshot": "pdf-page-2.png",
+          "sha256": "cdf4a53942325124d20fc095e771d1db7716311eff94af8ebd95b6be5f07ff3b",
+          "size_bytes": 12206,
+          "src": "/api/v1/projects/4685bf079e81baa285580c32384d9f75/files/9750df53ff5c41b9bf352b67d7374278/versions/5b9a0102043edfdf4b7c79e682952c8d/content#page=2"
+        }
+      ],
+      "status": "pass"
+    },
+    "refresh_resume_reselect": {
+      "assertions": 12,
+      "chunk_size_bytes": 16,
+      "confirmed_bytes_before": 16,
+      "confirmed_parts_after": [
+        0,
+        1,
+        2
+      ],
+      "confirmed_parts_after_mismatch": [
+        0
+      ],
+      "confirmed_parts_before": [
+        0
+      ],
+      "download_sha256": "20b886fee380b8f643ff3839dfdfe82579f427e391fa15ecf926a5852ffca93b",
+      "file_id": "a3fb032e89b5c81c3b09e84c0d69f356",
+      "file_size_bytes": 45,
+      "mismatch_put_parts": [],
+      "part_count": 3,
+      "processing_job_id": "79adf84e067d331dfda2ff58227b6ddb",
+      "reloads": 1,
+      "resume_put_parts": [
+        1,
+        2
+      ],
+      "source_sha256": "20b886fee380b8f643ff3839dfdfe82579f427e391fa15ecf926a5852ffca93b",
+      "status": "pass",
+      "version_id": "2d52cb2bb227e89b731c052d3bd5a7f4"
+    }
+  },
+  "schema_version": 2,
+  "status": "pass",
+  "webdriver": {
+    "executable": "chromedriver",
+    "version": "155.0.8059.84"
+  }
+}

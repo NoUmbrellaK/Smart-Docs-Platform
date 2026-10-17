@@ -1,0 +1,56 @@
+{
+  "assertions": 69,
+  "file_size_bytes": 33554432,
+  "hashes": [
+    {
+      "download_sha256": "d05afb8d06afe8ea3d3b37477bcda53a18bd4549e6f7345779dfd20e0ce62910",
+      "file": "streaming-0.bin",
+      "source_sha256": "d05afb8d06afe8ea3d3b37477bcda53a18bd4549e6f7345779dfd20e0ce62910"
+    },
+    {
+      "download_sha256": "0612171d8999ec61553362cfbf6d2e601970bcefa00750d10b0abf287ab27033",
+      "file": "streaming-1.bin",
+      "source_sha256": "0612171d8999ec61553362cfbf6d2e601970bcefa00750d10b0abf287ab27033"
+    },
+    {
+      "download_sha256": "475dbdc3529b68b3accdc74e49263f75368faaf6df384ac482d58ba566387b76",
+      "file": "streaming-2.bin",
+      "source_sha256": "475dbdc3529b68b3accdc74e49263f75368faaf6df384ac482d58ba566387b76"
+    },
+    {
+      "download_sha256": "87bc8ac5d33d0c75130ef14fbd4fee1559c5f1a923b115f34f1e22e61af4322c",
+      "file": "streaming-3.bin",
+      "source_sha256": "87bc8ac5d33d0c75130ef14fbd4fee1559c5f1a923b115f34f1e22e61af4322c"
+    }
+  ],
+  "phases": [
+    {
+      "configured_concurrency": 4,
+      "name": "concurrent_streamed_part_upload",
+      "observed_max_concurrency": 4,
+      "request_count": 16
+    },
+    {
+      "configured_concurrency": 4,
+      "name": "concurrent_upload_completion_integrity_verification",
+      "observed_max_concurrency": 4,
+      "request_count": 4
+    },
+    {
+      "configured_concurrency": 4,
+      "name": "concurrent_streamed_download",
+      "observed_max_concurrency": 4,
+      "request_count": 4
+    }
+  ],
+  "rss": {
+    "baseline_vm_hwm_bytes": 9699328,
+    "baseline_vm_rss_bytes": 9699328,
+    "final_peak_vm_hwm_bytes": 11214848,
+    "growth_limit_bytes": 67108864,
+    "peak_growth_bytes": 1515520
+  },
+  "schema_version": 2,
+  "status": "pass",
+  "upload_chunk_size_bytes": 8388608
+}

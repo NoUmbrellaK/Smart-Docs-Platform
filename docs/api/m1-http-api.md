@@ -4,7 +4,7 @@
 
 ## 通用约定
 
-除健康检查外，接口使用 `smartdocs_session` Cookie 鉴权，不接受客户端在 JSON 中传入用户身份。登录成功的 Cookie 包含 `HttpOnly; SameSite=Strict; Path=/`；生产配置额外包含 `Secure`。
+除健康检查和登录外，接口使用 `smartdocs_session` Cookie 鉴权，不接受客户端在 JSON 中传入用户身份。登录成功的 Cookie 包含 `HttpOnly; SameSite=Strict; Path=/`；生产配置额外包含 `Secure`。
 
 所有修改状态的请求必须同时包含 `Host` 和完全匹配的 `Origin`。当 `SMARTDOCS_SECURE_COOKIE=true` 时，期望值为 `https://<Host>`；否则为 `http://<Host>`。服务不开放跨域凭据。
 
@@ -218,7 +218,7 @@ curl --fail-with-body -b cookie.jar \
 创建上传任务后，按服务返回的 `chunk_size` 在客户端切片并分别计算摘要：
 
 ```bash
-curl --fail-with-body -b cookie.jar \
+curl --fail-with-body --request PUT -b cookie.jar \
   -H "Origin: $BASE_URL" \
   -H 'Content-Type: application/octet-stream' \
   -H 'X-Chunk-SHA256: <part-sha256>' \
