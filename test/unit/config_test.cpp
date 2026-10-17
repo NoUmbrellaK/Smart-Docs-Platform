@@ -19,7 +19,7 @@ void SetValidEnvironment(ScopedEnvironment& environment) {
              "SMARTDOCS_MYSQL_POOL_SIZE", "SMARTDOCS_MAX_FILE_BYTES",
              "SMARTDOCS_CHUNK_BYTES", "SMARTDOCS_MAX_JSON_BYTES",
              "SMARTDOCS_SESSION_SECONDS", "SMARTDOCS_PASSWORD_ITERATIONS",
-             "SMARTDOCS_SECURE_COOKIE", "SMARTDOCS_LOG_LEVEL"}) {
+             "SMARTDOCS_SECURE_COOKIE", "SMARTDOCS_LOG_LEVEL", "SMARTDOCS_WORKER_TOKEN"}) {
         environment.Unset(name);
     }
 }
@@ -70,4 +70,20 @@ TEST_CASE(config_rejects_relative_storage_root) {
     SetValidEnvironment(environment);
     environment.Set("SMARTDOCS_STORAGE_ROOT", "relative/path");
     CHECK_THROWS_CODE(AppConfig::LoadFromEnvironment(), "config_invalid");
+}
+
+TEST_CASE(config_worker_rejects_non_loopback_listener) {
+    ScopedEnvironment environment; SetValidEnvironment(environment);
+    environment.Set("SMARTDOCS_WORKER_TOKEN", std::string(64, 'a'));
+    environment.Set("SMARTDOCS_LISTEN_ADDRESS", "0.0.0.0");
+    CHECK_THROWS_CODE(AppConfig::LoadFromEnvironment(), "config_invalid");
+}
+
+TEST_CASE(config_worker_rejects_weak_or_malformed_credentials) {
+    ScopedEnvironment environment; SetValidEnvironment(environment);
+    environment.Set("SMARTDOCS_LISTEN_ADDRESS", "127.0.0.1");
+    for (const std::string& token : {std::string("short"), std::string(64, 'z')}) {
+        environment.Set("SMARTDOCS_WORKER_TOKEN", token);
+        CHECK_THROWS_CODE(AppConfig::LoadFromEnvironment(), "config_invalid");
+    }
 }

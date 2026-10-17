@@ -414,3 +414,56 @@ TEST_CASE(processing_document_vector_applicability_follows_exact_version_approva
     files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"internal_only", {}});
     CHECK(jobs.ReadDocument(f.admin.session, f.project.id, old.file_id, old.version_id).at("vector_state") == "not_applicable");
 }
+
+namespace {
+RequestHead WorkerHead(const std::string& method, const std::string& path, const std::string& attempt = "") {
+    RequestHead head{}; head.method = method; head.path = "/internal/v1/processing" + path;
+    head.version = "1.1";
+    head.headers = {{"host", "127.0.0.1"}, {"authorization", "Bearer " + std::string(64, 'a')}};
+    if (!attempt.empty()) head.headers["x-smartdocs-attempt"] = attempt;
+    return head;
+}
+}
+
+TEST_CASE(processing_worker_routes_are_disabled_by_default_and_require_service_auth) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    Application disabled(TestAppConfig(f.storage));
+    CHECK_THROWS_CODE(disabled.Prepare(WorkerHead("POST", "/claim")), "route_not_found");
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64, 'a');
+    Application app(config);
+    auto head = WorkerHead("POST", "/claim"); head.headers.erase("authorization");
+    CHECK_THROWS_CODE(app.Prepare(head), "worker_unauthorized");
+    head.headers["authorization"] = "Bearer " + std::string(64, 'b');
+    CHECK_THROWS_CODE(app.Prepare(head), "worker_unauthorized");
+    for (const std::string key : {"origin", "cookie"}) {
+        head = WorkerHead("POST", "/claim"); head.headers[key] = "browser";
+        CHECK_THROWS_CODE(app.Prepare(head), "worker_unauthorized");
+    }
+    CHECK(Body(app.Prepare(WorkerHead("POST", "/claim"))->Finish()).is_null());
+}
+
+TEST_CASE(processing_worker_claim_exposes_only_bounded_metadata_and_fences_source) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64, 'a');
+    Application app(config); const auto job = f.AddJob();
+    const auto claim = Body(app.Prepare(WorkerHead("POST", "/claim"))->Finish());
+    CHECK(claim.at("id") == job.id && claim.at("version_id") == job.version_id);
+    CHECK(claim.at("source_size") == 3 && claim.at("kind") == "txt");
+    CHECK(claim.at("source_sha256") == std::string(64, 'a'));
+    CHECK(claim.size() == 7);
+    CHECK_THROWS_CODE(app.Prepare(WorkerHead("GET", "/" + job.id + "/content", std::string(32, 'b'))), "attempt_conflict");
+    const auto token = claim.at("attempt_token").get<std::string>();
+    ProcessingService jobs(TestDatabase(), f.projects);
+    jobs.Cancel(f.admin.session, f.project.id, job.id);
+    CHECK_THROWS_CODE(app.Prepare(WorkerHead("GET", "/" + job.id + "/content", token)), "attempt_conflict");
+}
+
+TEST_CASE(processing_worker_result_body_is_bounded_before_buffering) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f;
+    auto config = TestAppConfig(f.storage); config.worker_token = std::string(64, 'a');
+    Application app(config); auto head = WorkerHead("POST", "/" + std::string(32, 'b') + "/result", std::string(32, 'c'));
+    head.headers["content-type"] = "application/json"; head.content_length = 16*1024*1024+1;
+    CHECK_THROWS_CODE(app.Prepare(head), "body_too_large");
+    head.headers["authorization"] = "Bearer wrong";
+    CHECK_THROWS_CODE(app.Prepare(head), "worker_unauthorized");
+}

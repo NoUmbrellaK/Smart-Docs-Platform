@@ -1,6 +1,6 @@
 # M2 持久处理任务（当前增量）
 
-当前提供任务状态、取消、人工重试及 C++ 内部领取/失败/启动恢复/结果发布，以及鉴权后的固定版本来源读取。Python 解析器尚未通过 worker 通道接入后台任务；上传后 pending 不代表已经解析。没有公开 worker 提交接口、搜索业务接口或模型调用。
+当前提供任务状态、取消、人工重试、可信本地 Python worker 通道及鉴权后的固定版本来源读取。单独启用 worker 后才会消费上传任务；pending 不代表已经解析。没有搜索业务接口或模型调用。部署见 [本地 worker 手册](../deployment/m2-local-worker.md)。
 
 ## 用户接口
 
@@ -25,7 +25,7 @@
 - 内部领取会重新检查当前版本、删除及内容可用状态。旧任务可被取消，不自动处理历史版本。
 - 启动时 running → `interrupted/service_restarted`，等待人工重试，不自动重跑。单机仅运行一个 C++ 服务实例；不可用第二个实例启动恢复去接管仍在工作的第一个实例。
 - 内部 `Publish(job_id, attempt_token, result)` 校验后一次性写入真实结果、片段和 MySQL 本地关键词索引，再将任务标记 completed。此状态只代表本地解析/关键词发布，不代表向量或混合检索已完成。
-- 任务取消目前保证状态和回写隔离，不代表已经实现对 Python 解析子进程的取消信号。worker 通道将在下一增量实现。
+- 任务取消保证状态和回写隔离；不发送即时 Python 子进程取消信号，已开始的有界解析可能结束，但不能发布已取消 attempt 的结果。
 
 事务锁顺序为成员权限（用户操作）→ 文件 → 全局队列 guard → 任务。容量和 running 检查使用当前锁定读；旧版本失败只更新该版本，不改写文件的当前版本指针。
 
@@ -33,9 +33,29 @@
 
 结果绑定 file/version ID、原文 SHA-256、解析器修订和稳定 chunk ID。C++ 校验精确 JSON 字段、UTF-8/控制字符、Unicode 码点数、连续偏移和行号、每页覆盖与空页声明，以及与 Python 相同的片段 ID 算法。最大 2,000 块、每块 1,200 字符、全文 2,000,000 字符、PDF 300 页，原始版本大小最多 8 MiB。超限或不完整结构整体拒绝，不截断成功。
 
-验证后的结果在内存暂存，随后在已有文件→队列→任务锁下检查当前版本、删除、内容可用性、原文哈希和 attempt；所有结果、片段、状态在同一事务提交。相同 attempt、相同完整结果重复回报幂等；不同内容不能覆盖已发布引用。旧 attempt 返回 `409 attempt_conflict`；失效版本返回 `409 version_conflict`；不同已发布结果返回 `409 result_conflict`。校验失败不会自行结束任务，未来 worker 需明确报告安全失败码。
+验证后的结果在内存暂存，随后在已有文件→队列→任务锁下检查当前版本、删除、内容可用性、原文哈希和 attempt；所有结果、片段、状态在同一事务提交。相同 attempt、相同完整结果重复回报幂等；不同内容不能覆盖已发布引用。旧 attempt 返回 `409 attempt_conflict`；失效版本返回 `409 version_conflict`；不同已发布结果返回 `409 result_conflict`。校验失败不会自行结束任务，worker 明确报告安全失败码；网络故障不能伪装为解析失败。
 
-这是可信本地解析器的发布边界，不是对任意 worker 的真实性证明：匹配的元数据/哈希不能独立证明任意提交的文字确实来自 PDF。后续内部认证、受控内容读取和实际 Python 提取链路仍不可省略。文档文字不当作授权或指令。
+这是可信本地解析器的发布边界，不是对任意 worker 的真实性证明：匹配的元数据/哈希不能独立证明任意提交的文字确实来自 PDF。仅使用内部认证、受控内容读取和实际 Python 提取链路；必须保护 worker 凭据及部署代码。文档文字不当作授权或指令。
+
+## 可信本地 worker 通道
+
+默认禁用。C++ 与 Python 使用独立的 `SMARTDOCS_WORKER_TOKEN`（64 位小写十六进制随机凭据），启用时 C++ 只允许监听 `127.0.0.1`。反向代理必须拒绝 `/internal/`；不得把本通道作为浏览器、Agent 或第三方扩展接口。无/错误 bearer 或带任意 Origin/Cookie 均返回 `401 worker_unauthorized`。
+
+共同前缀 `/internal/v1/processing`，全部要求 `Authorization: Bearer <token>`；三个逐任务接口还要求 `X-SmartDocs-Attempt: <32 位小写十六进制 token>`。
+
+| 方法及后缀 | 输入/限制 | 200 响应 |
+| --- | --- | --- |
+| POST `/claim` | 空正文 | `data: null` 或 `{id,file_id,version_id,attempt_token,source_sha256,source_size,kind}` |
+| POST `/recover` | 空正文；仅持有唯一 worker 锁后调用 | `data: {interrupted_count}` |
+| GET `/{job_id}/content` | 空正文，不接受 Range | 完整原始二进制，`Cache-Control: no-store` |
+| POST `/{job_id}/result` | 既有结果 JSON，最多 16 MiB | `data: {state: "completed"}` |
+| POST `/{job_id}/fail` | 仅 `{"error_code":"安全错误码"}`，最多 1 KiB | `data: {state: "failed"}` |
+
+JSON 响应沿用 request_id/data 包装。领取只返回受控格式名（txt/md/pdf 或空字符串），不返回存储路径/任意 URL。已知 MIME 决定格式，仅 application/octet-stream 可回退到扩展名。
+
+内容读取重新锁定文件/队列/任务，要求当前、未删除、available、running 且 attempt 匹配，大小不超过 8 MiB；通过 FileStore 受控 content ID 打开并核验文件大小。描述符释放给既有流式响应，Python 再检查实际大小和原始 SHA-256。取消/旧 attempt 返回 409；过大为 413，不支持为 422；不可读内容为 503。不接受用户指定的文件路径。
+
+Python 仅连接固定 `127.0.0.1`，忽略代理环境、不跟随重定向。claim/content/recover 不自动重放；publish/fail 的传输失败（含 Content-Length 截断）或 5xx 最多重放一次，保持同一 job、attempt 和正文。两次仍失败则停止，不能据此假定事务未提交或将已完成发布改成失败。重启恢复后由用户查看状态并人工重试。启动先持有共享 flock，再 recover；每个数据库仅允许一个服务和一个 worker，不能用不同锁路径绕开。
 
 来源 API 均为无正文 GET，最低 reader，会话及项目权限沿用 M1：
 

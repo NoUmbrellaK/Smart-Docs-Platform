@@ -15,6 +15,7 @@
 #include "project/project_service.h"
 #include "processing/processing_service.h"
 #include "processing/processing_routes.h"
+#include "processing/worker_routes.h"
 #include "upload/upload_routes.h"
 #include "upload/upload_reconciler.h"
 #include "upload/upload_service.h"
@@ -167,6 +168,7 @@ Application::Application(std::string static_root) {
 
 Application::Application(const AppConfig& config, std::string static_root)
     : Application(std::move(static_root)) {
+    config.ValidateWorkerSettings();
     FaultInjector::RejectEnvironmentInNormalBuild();
     std::shared_ptr<MySqlPool> database(new MySqlPool());
     database->Initialize(MySqlConfig::FromAppConfig(config));
@@ -203,6 +205,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     RegisterUploadRoutes(router_, auth_service_, upload_service_,
                          config.max_json_bytes, config.secure_cookie);
     RegisterProcessingRoutes(router_, auth_service_, processing_service_, config.secure_cookie);
+    RegisterWorkerRoutes(router_, processing_service_, file_store_, config.worker_token);
 }
 
 std::unique_ptr<RequestBodyHandler> Application::Prepare(

@@ -107,5 +107,13 @@ AppConfig AppConfig::LoadFromEnvironment() {
         Integer("SMARTDOCS_PASSWORD_ITERATIONS", 210000, 1000, 10000000);
     config.secure_cookie = Boolean("SMARTDOCS_SECURE_COOKIE", false);
     config.log_level = Integer("SMARTDOCS_LOG_LEVEL", 1, 0, 3);
+    config.worker_token = Optional("SMARTDOCS_WORKER_TOKEN", "");
+    config.ValidateWorkerSettings();
     return config;
+}
+
+void AppConfig::ValidateWorkerSettings() const {
+    if (!worker_token.empty() && (listen_address != "127.0.0.1" || worker_token.size() != 64 ||
+        worker_token.find_first_not_of("0123456789abcdef") != std::string::npos))
+        throw AppError(500, "config_invalid", "worker requires a loopback listener and a 64-hex credential");
 }

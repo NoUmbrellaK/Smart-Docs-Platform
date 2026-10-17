@@ -6,7 +6,12 @@
 #include "core/fault_injector.h"
 #include "db/mysql.h"
 #include "project/project_service.h"
+#include "file/file_service.h"
+#include "file/file_store.h"
+#include <algorithm>
+#include <cctype>
 #include <limits>
+#include <sys/stat.h>
 #include <unordered_set>
 
 namespace {
@@ -14,6 +19,28 @@ namespace {
 void RequireId(const std::string& id) {
     if (id.size() != 32 || id.find_first_not_of("0123456789abcdef") != std::string::npos)
         throw AppError(400, "invalid_request", "entity ID is invalid");
+}
+
+struct Source {
+    std::string hash, kind, content_id;
+    uint64_t size;
+};
+Source ReadSource(MySqlConnection& db, const std::string& version) {
+    const auto row = db.Query("SELECT v.sha256,v.size_bytes,v.content_id,v.media_type,f.name "
+        "FROM file_versions v JOIN files f ON f.id=v.file_id WHERE v.id=? FOR UPDATE", {SqlValue(version)})[0];
+    std::string kind, mime = row.String(3), name = row.String(4);
+    if (mime == "application/pdf") kind = "pdf";
+    else if (mime == "text/plain") kind = "txt";
+    else if (mime == "text/markdown") kind = "md";
+    else if (mime == "application/octet-stream") {
+        const auto dot = name.find_last_of('.');
+        std::string extension = dot == std::string::npos ? "" : name.substr(dot);
+        std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return std::tolower(c); });
+        if (extension == ".pdf") kind = "pdf";
+        else if (extension == ".txt") kind = "txt";
+        else if (extension == ".md" || extension == ".markdown") kind = "md";
+    }
+    return {row.String(0), kind, row.String(2), row.UInt64(1)};
 }
 
 void LockQueue(MySqlConnection& db) {
@@ -172,6 +199,8 @@ bool ProcessingService::ClaimNext(ProcessingClaim* claim) {
     db.Execute("UPDATE file_versions SET processing_state='processing',parse_state='processing' WHERE id=?", {SqlValue(record.job.version_id)});
     claim->job = Read(db, record.job.id, true).job;
     claim->attempt_token = token;
+    const auto source = ReadSource(db, record.job.version_id);
+    claim->source_sha256 = source.hash; claim->source_size = source.size; claim->kind = source.kind;
     transaction.Commit(); return true;
 }
 
@@ -181,7 +210,7 @@ void ProcessingService::Fail(const std::string& id, const std::string& token, co
         "invalid_input", "unsupported_format", "input_too_large", "invalid_encoding", "binary_text", "empty_text",
         "text_too_large", "too_many_chunks", "invalid_pdf", "encrypted_pdf", "too_many_pages", "page_stream_too_large",
         "no_extractable_text", "pdf_timeout", "pdf_resource_limit", "pdf_dependency_unavailable", "pdf_worker_failed",
-        "content_unavailable", "source_hash_mismatch", "worker_failed"};
+        "content_unavailable", "source_hash_mismatch", "version_conflict", "worker_failed"};
     if (!allowed.count(error)) throw AppError(400, "invalid_request", "processing error code is invalid");
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     auto record = LockJob(db, id);
@@ -205,6 +234,28 @@ uint64_t ProcessingService::RecoverInterrupted() {
         transaction.Commit();
     }
     return count;
+}
+
+AuthorizedVersion ProcessingService::OpenInput(const std::string& id, const std::string& token,
+                                               FileStore& store) {
+    RequireId(id); RequireId(token);
+    auto db = pool_.Acquire(); MySqlTransaction transaction(db);
+    const auto record = LockJob(db, id);
+    if (record.token != token || record.job.state != "running")
+        throw AppError(409, "attempt_conflict", "processing attempt is no longer active");
+    if (record.deleted || record.current_version != record.job.version_id || record.availability != "available")
+        throw AppError(409, "version_conflict", "document version is no longer readable by this attempt");
+    const auto source = ReadSource(db, record.job.version_id);
+    if (source.size > 8 * 1024 * 1024) throw AppError(413, "input_too_large", "source exceeds parsing limit");
+    if (source.kind.empty()) throw AppError(422, "unsupported_format", "source format is not supported");
+    FileSummary file{}; file.id = record.job.file_id; file.project_id = record.job.project_id;
+    FileVersionSummary version{}; version.id = record.job.version_id; version.file_id = file.id;
+    version.size = source.size; version.sha256 = source.hash;
+    AuthorizedVersion input(std::move(file), std::move(version), store.OpenObject(source.content_id));
+    struct stat info{};
+    if (fstat(input.fd, &info) != 0 || info.st_size < 0 || static_cast<uint64_t>(info.st_size) != source.size)
+        throw AppError(503, "content_unavailable", "source size does not match the immutable version", true);
+    transaction.Commit(); return input;
 }
 
 void ProcessingService::Publish(const std::string& id, const std::string& token,

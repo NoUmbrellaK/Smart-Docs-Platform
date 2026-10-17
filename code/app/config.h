@@ -25,6 +25,8 @@ struct AppConfig {
     int password_iterations;
     bool secure_cookie;
     int log_level;
+    std::string worker_token;
 
     static AppConfig LoadFromEnvironment();
+    void ValidateWorkerSettings() const;
 };
