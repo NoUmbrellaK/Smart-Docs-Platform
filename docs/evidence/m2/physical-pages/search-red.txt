@@ -1,0 +1,37 @@
+✔ search submits bounded exact filters, paginates and shows truthful coverage (5.507446ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.772003ms)
+✖ exact source is reauthorized; old version, PDF page and missing text are explicit (1.503841ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.762234ms)
+✔ failed source reads clear old content; logout fences a pending source (0.730835ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.820003ms)
+✔ newer searches and source selections win over late successes and errors (0.731294ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (50.308334ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (1.626534ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (1.234508ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80.729041
+
+✖ failing tests:
+
+test at test/e2e/search_ui_test.mjs:73:1
+✖ exact source is reauthorized; old version, PDF page and missing text are explicit (1.503841ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /physical pages start at 1/i. Input:
+
+  ' File f · Version v Parse: completed · Keyword: completed · Vector: pending Chunk c · PDF page 2 · Lines 1–3 <img onerror=bad> Pages without extracted text: 1. No OCR was performed. Open exact original version'
+
+      at TestContext.<anonymous> (file:///root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/search_ui_test.mjs:84:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: ' File f · Version v Parse: completed · Keyword: completed · Vector: pending Chunk c · PDF page 2 · Lines 1–3 <img onerror=bad> Pages without extracted text: 1. No OCR was performed. Open exact original version',
+    expected: /physical pages start at 1/i,
+    operator: 'match',
+    diff: 'simple'
+  }

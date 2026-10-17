@@ -1,0 +1,75 @@
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.280255ms)
+✔ API response parser accepts 204 and maps the unified error (32.915445ms)
+✔ logout API rejects an unexpected successful status (1.439079ms)
+✔ all upload tasks share four actual PUT slots (15.60501ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.03892ms)
+✔ duplicate resume is single-flight and completes only once (0.886248ms)
+✔ pause after part hashing starts schedules no later PUT (1.792461ms)
+✔ project refresh during hashing invalidates the old upload (1.815253ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (2.473855ms)
+✔ pending cancel is single-flight and blocks pause and resume (2.350579ms)
+✔ failed cancel clears pending state and can be retried (0.613313ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.573741ms)
+✔ resume read failure clears the file and returns to actionable state (0.620105ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.39499ms)
+✔ project generation drops A after B and project actions retain scope (3.087114ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.45461ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.337406ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.415717ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.368217
+✔ logout fences a delayed version load before it can enter the processing panel (46.845728ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.845332
+✔ reload obtains persisted job identity and independent states, not upload memory (4.284434ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.745233ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.567582ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.974042ms)
+✔ project/file reset fences late status and old buttons (0.435534ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.595669ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.796622ms)
+✔ null jobs are explicit and safe text remains text (0.754661ms)
+✔ task API uses same-origin exact job and empty POST bodies (29.786161ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48.424626
+✔ search submits bounded exact filters, paginates and shows truthful coverage (5.283732ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.874515ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.925989ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.746081ms)
+✔ failed source reads clear old content; logout fences a pending source (0.599556ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (1.164445ms)
+✔ newer searches and source selections win over late successes and errors (0.77286ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (34.196234ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (1.128791ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.895842ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 58.720402
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK

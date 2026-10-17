@@ -1,0 +1,23 @@
+✔ search submits bounded exact filters, paginates and shows truthful coverage (10.304088ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.786744ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (3.395072ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.82356ms)
+✔ failed source reads clear old content; logout fences a pending source (0.631797ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (2.253046ms)
+✔ newer searches and source selections win over late successes and errors (0.820632ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (52.969878ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (2.042447ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (1.07668ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.254474
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.011s
+
+OK

@@ -81,7 +81,21 @@ test("exact source is reauthorized; old version, PDF page and missing text are e
   const source = get("document-search-source");
   assert.match(text(get("document-source-status")), /historical version/);
   assert.match(text(source), /Pages without extracted text: 1/);
+  assert.match(text(source), /physical pages start at 1/i);
+  assert.match(text(source), /may differ from printed page numbers/i);
   assert.equal(source.children.at(-1).href, "/api/p/f/v/content#page=2");
+});
+
+test("text sources keep line ranges without misleading PDF page guidance", async () => {
+  const { get } = setup({ readDocument: async () => ({ ...item,
+    chunk: { chunk_id: "text", text: "one\ntwo", line_start: 1, line_end: 2 },
+    is_current: true, pages_without_text: [] }) });
+  await get("document-search-form").fire("submit");
+  await get("document-search-results").children[0].children.at(-1).fire("click");
+  const source = get("document-search-source");
+  assert.match(text(source), /Lines 1–2/);
+  assert.doesNotMatch(text(source), /physical pages|printed page numbers/i);
+  assert.equal(source.children.at(-1).href, "/api/p/f/v/content");
 });
 
 test("failed source reads clear old content; logout fences a pending source", async () => {

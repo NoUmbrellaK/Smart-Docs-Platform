@@ -132,6 +132,8 @@ export class SearchPanel {
         container.append(this.node("p", `Chunk ${chunk.chunk_id} · ` +
           `${chunk.page ? `PDF page ${chunk.page} · ` : ""}Lines ${chunk.line_start}–${chunk.line_end}`),
         this.node("pre", chunk.text));
+        if (chunk.page) container.append(this.node("p",
+          "PDF physical pages start at 1 and may differ from printed page numbers."));
       } else {
         container.append(this.node("p", "Document status only; use keyword search for extracted passages or open the original."));
       }

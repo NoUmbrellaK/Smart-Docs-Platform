@@ -39,6 +39,11 @@ class SourceBrowser(WorkerE2E):
                 def text(selector):
                     return browser.inspect('return document.querySelector(arguments[0]).textContent', selector)
 
+                preview_label = text('label[for="preview-page"]')
+                self.assertIn("Physical page", preview_label)
+                self.assertIn("starts at 1", preview_label)
+                self.assertIn("may differ from printed page numbers", preview_label)
+
                 for name, content, segments, query, job in examples:
                     browser.click('#document-search-mode option[value="keyword"]')
                     browser.fill("#document-search-query", query)
@@ -61,8 +66,10 @@ class SourceBrowser(WorkerE2E):
                         self.assertIn(f'File {job["file_id"]} · Version {job["version_id"]}', panel)
                         self.assertIn(f"Lines 1–{last_line}", panel)
                         self.assertEqual("PDF page" in panel, bool(page))
+                        self.assertEqual("physical pages start at 1" in panel, bool(page))
                         if page:
                             self.assertIn(f"PDF page {page} ·", panel)
+                            self.assertIn("may differ from printed page numbers", panel)
                         href = browser.inspect('return document.querySelector("#document-search-source a").href')
                         self.assertEqual(href, origin+self.version_path(job)+"/content"+(f"#page={page}" if page else ""))
                         self.assertIn("Current version", text("#document-source-status"))
@@ -73,10 +80,12 @@ class SourceBrowser(WorkerE2E):
                         self.assertEqual(response.body, content)
                         self.assertEqual(HttpClient(self.server.port).request("GET", path).status, 401)
                         if page == 2:
-                            for width in (1280, 360):
+                            for width in (1280, 768, 360):
                                 browser.command("POST", "/goog/cdp/execute", {"cmd": "Emulation.setDeviceMetricsOverride",
                                     "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
                                 browser.inspect('document.querySelector("#document-search-source").scrollIntoView({block:"start"})')
+                                self.assertTrue(browser.inspect('const p = document.querySelector("#document-search-source"); '
+                                    'return p.scrollWidth <= p.clientWidth && p.getBoundingClientRect().width <= innerWidth'))
                                 raw = browser.command("GET", "/element/"+browser.find("#document-search-source")+"/screenshot")
                                 png = base64.b64decode(raw, validate=True)
                                 png_details(png)
