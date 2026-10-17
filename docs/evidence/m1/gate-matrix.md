@@ -1,7 +1,14 @@
 # M1 gate coverage matrix
 
-Status as reviewed on 2026-10-14: **M1 remains open, with two explicit closure blockers.** This matrix describes
+Status as reviewed on 2026-10-17: **M1 remains open, with two explicit closure blockers.** This matrix describes
 test design and the evidence still needed; it is not an acceptance result.
+
+Same-host execution is now required by the user. The
+[resource-capped procedure](../../operations/2026-10-17-m1-same-host-limited-run.md)
+has passed kernel-limit and sandboxed browser-startup probes, but full execution
+was rejected by automatic approval review pending explicit outage-risk acceptance.
+No M1 business, streaming, PDF screenshot or interruption result is claimed from
+these probes; the two blockers below remain open.
 
 The source requirements are [F-01 through F-04 and T-01 through T-09](../../../团队文档管理与智能整理平台_需求文档.md).
 The stage boundary is the same document's section 14: M1 covers project roles,

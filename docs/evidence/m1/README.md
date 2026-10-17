@@ -162,14 +162,16 @@ for reviewing and copying an accepted run into a dated committed directory.
 The evidence contains no passwords, cookies, uploaded bodies, logs, or
 temporary absolute paths.
 
-The F-02.9 measurement is wired and self-tested, but it was not executed on the
-resource-constrained ECS while this change was prepared. Current-run evidence
-therefore remains pending until the complete runner succeeds on a safe host.
+The F-02.9 measurement and real-browser M1 scenarios remain unexecuted on this
+ECS. On 2026-10-17, after the user required execution on the same server, kernel
+resource-limit probes and a non-root, sandbox-enabled browser startup smoke
+check succeeded. The cold-start timeout regression and other lightweight harness
+tests passed (23/23). This is not business-scenario or PDF screenshot evidence.
 
-Likewise, no real browser result or screenshot was produced on this ECS.
-Only fake-executable/controlled-protocol self-tests, Python AST parsing, shell
-syntax, source/document checks and diff whitespace checks were run here.
-Do not start this full runner, a build/link, MySQL, a real application server,
-Chrome/Chromium or a real browser workload on the affected host. The browser
-test design now has direct coverage; its missing runtime proof is included in
-the current-HEAD full-artifact blocker, following F-02.9's convention.
+The [same-host limited-run procedure](../../operations/2026-10-17-m1-same-host-limited-run.md)
+replaces the earlier blanket prohibition with an isolated, resource-capped
+execution proposal. Automatic approval review rejected launching the full run
+because of the three previous host failures; explicit acceptance of the remaining
+outage risk is still needed. No full-run result was generated. Do not invoke the
+uncapped runner directly on the affected host. Browser and streaming runtime
+proof remain part of the full-artifact blocker.
