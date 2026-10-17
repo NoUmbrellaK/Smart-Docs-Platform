@@ -1,0 +1,7 @@
+{"event": "start", "seconds": 0.0, "memory_kib_except_threads": {"VmHWM": 21400, "VmRSS": 21400, "RssAnon": 11352, "RssFile": 10048, "Threads": 1}, "mode": "default"}
+{"event": "encoded", "seconds": 68.71, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 739624, "RssAnon": 698148, "RssFile": 41476, "Threads": 1}, "windows": 9, "output_sha256": "d9bc3c19fca7336bd245b9d7ffa742f1eb36647589cabdb75f7086f31f8e0226", "cpu_mem_arena": true}
+{"event": "after_gc", "seconds": 68.722, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 739624, "RssAnon": 698148, "RssFile": 41476, "Threads": 1}, "collected": 60}
+{"event": "after_trim", "seconds": 68.723, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 739532, "RssAnon": 698052, "RssFile": 41480, "Threads": 1}, "malloc_trim_result": 1}
+{"event": "repeat_equal", "seconds": 69.734, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 741640, "RssAnon": 700160, "RssFile": 41480, "Threads": 1}, "request_seconds": 1.011, "constructions": 1, "output_sha256": "d9bc3c19fca7336bd245b9d7ffa742f1eb36647589cabdb75f7086f31f8e0226"}
+{"event": "after_second_trim", "seconds": 69.734, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 739592, "RssAnon": 698112, "RssFile": 41480, "Threads": 1}, "malloc_trim_result": 1}
+{"event": "complete", "seconds": 69.735, "memory_kib_except_threads": {"VmHWM": 753800, "VmRSS": 739592, "RssAnon": 698112, "RssFile": 41480, "Threads": 1}, "cpu_seconds": 3.766}

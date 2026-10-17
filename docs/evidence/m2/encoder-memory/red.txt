@@ -1,0 +1,31 @@
+Running as unit: smartdocs-arena-red.service
+test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ok
+test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests) ... FAIL
+test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ok
+test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ok
+test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ok
+test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ok
+test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ok
+test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ok
+test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ok
+
+======================================================================
+FAIL: test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 116, in test_encoder_disables_native_arena_to_limit_retained_memory
+    m._encode([{"chunk_id": "a"*64, "text": "Artificial memory policy check."}], "/unused-model")
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/embeddings.py", line 224, in _encode
+    model = TextEmbedding(MODEL_NAME, threads=1, providers=["CPUExecutionProvider"],
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in constructor
+    self.assertIs(kwargs.get("enable_cpu_mem_arena", True), False)
+AssertionError: True is not False
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.769s
+
+FAILED (failures=1)
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 822ms
+CPU time consumed: 264ms

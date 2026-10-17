@@ -95,6 +95,26 @@ class EmbeddingTests(unittest.TestCase):
                 "'proxy': 'HTTPS_PROXY' in os.environ, 'offline': os.environ.get('HF_HUB_OFFLINE')}))"], b"{}", 2)
         self.assertEqual(result, {"secret": False, "proxy": False, "offline": "1"})
 
+    def test_encoder_disables_native_arena_to_limit_retained_memory(self):
+        m = self.module()
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        class ConfigurationObserved(Exception):
+            pass
+
+        def constructor(*args, **kwargs):
+            self.assertIs(kwargs.get("enable_cpu_mem_arena", True), False)
+            raise ConfigurationObserved()
+
+        # Stop at the native loading boundary; the capped real-model probe separately
+        # checks the resulting ORT option, memory and unchanged complete vectors.
+        with patch.object(m, "_verify_model"), \
+                patch.object(m.importlib.metadata, "version", side_effect=m.VERSIONS.__getitem__), \
+                patch.dict(sys.modules, {"fastembed": SimpleNamespace(TextEmbedding=constructor)}):
+            with self.assertRaises(ConfigurationObserved):
+                m._encode([{"chunk_id": "a"*64, "text": "Artificial memory policy check."}], "/unused-model")
+
     def test_process_group_cleanup_also_terminates_descendants(self):
         m = self.module()
         from pathlib import Path

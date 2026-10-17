@@ -98,6 +98,8 @@ worker 增量的完整 C++ 回归 **121/121**（0 失败、0 跳过）、Python 
 
 本机 worker 默认关闭，尚未安装为生产常驻服务；M2 尚未完成阶段验收。这不是大文件性能验收，也未重跑 M1 全套浏览器验收。未调用远程模型 API 或消耗 DeepSeek token。详见[方案 A 设计](./docs/superpowers/specs/2026-10-17-m2-document-processing-design.md)、[文本增量](./docs/superpowers/plans/2026-10-17-m2-text-parser.md)、[PDF 增量](./docs/superpowers/plans/2026-10-17-m2-pdf-parser.md)与[任务增量计划](./docs/superpowers/plans/2026-10-17-m2-processing-jobs.md)。DeepSeek 聊天凭据不能直接作为向量能力已验证的证据。
 
+后续[内存诊断与修正](./docs/evidence/m2/encoder-memory/README.md)将真实编码样例的编码后 RSS 从约 722 MiB 降至 638 MiB：只关闭现有 ONNX CPU 内存池，没有部署常驻模型或增加依赖。两组 9 个窗口完整结果一致，修改后 Python 回归 75/75、真实新子进程校验 1/1 通过；仍保留原 60 秒截止期。没有重跑浏览器/数据库组合，不能据此宣称 M2 已通过；未使用 DeepSeek token。
+
 ## 规划架构
 
 ```mermaid

@@ -1,0 +1,4 @@
+7c0913f6c470ef5006b5a64e99ef5167b2ccc2f5fbf067b44f512f9880ded781  python/smartdocs/embeddings.py
+6afe6080f1a35507163b10bd3fe23236d47352b719c080ec3c85611e46000cc0  test/python/test_embeddings.py
+3c3c825b4e88e0ba8452ba0a425752b7e79332029283aba02b198a7f88257e41  docs/evidence/m2/encoder-memory/encoder_memory_probe.py
+d6a8232d03df42c94aa0e3f6e14b054ad5f01f07d404b19e5971bb1a8496d788  docs/evidence/m2/encoder-memory/encoder_arena_smoke.py

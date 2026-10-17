@@ -221,7 +221,9 @@ def _encode(chunks, model_dir):
     except (ImportError, importlib.metadata.PackageNotFoundError):
         raise EmbeddingError("embedding_dependency_unavailable") from None
     with tempfile.TemporaryDirectory(prefix="smartdocs-embedding-") as cache:
+        # The capped ECS probe measured lower retained RSS without ORT's CPU arena.
         model = TextEmbedding(MODEL_NAME, threads=1, providers=["CPUExecutionProvider"],
+                              enable_cpu_mem_arena=False,
                               local_files_only=True, specific_model_path=model_dir, cache_dir=cache)
         if model.model.model.get_providers() != ["CPUExecutionProvider"]:
             raise EmbeddingError("embedding_dependency_unavailable")
