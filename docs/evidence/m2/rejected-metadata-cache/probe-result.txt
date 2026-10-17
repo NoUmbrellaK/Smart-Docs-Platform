@@ -1,0 +1,7 @@
+-rw-r--r-- 1 root root  550 Oct 18 01:41 /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/prepare_model.py
+-rw-r--r-- 1 root root 4359 Oct 18 01:41 /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py
+Oct 18 01:42:32 aliyun-lou systemd[1]: Started /usr/bin/python3 -B /tmp/smartdocs-safe.h4SzvX/same_tick_probe.py.
+Oct 18 01:42:32 aliyun-lou python3[674675]: {"metadata_collision_observed": true, "attempt": 1, "before": [64515, 147213, 3, 1792258952315939370, 1792258952315939370], "after": [64515, 147213, 3, 1792258952315939370, 1792258952315939370], "original_sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", "changed_sha256": "2f05d4b689d270cafb02285f35f44866f7dc8a2d368a3f9d1124373eeab31fb1"}
+Oct 18 01:42:32 aliyun-lou systemd[1]: smartdocs-stat-collision.service: Deactivated successfully.
+ExecMainStatus=0
+ActiveState=inactive

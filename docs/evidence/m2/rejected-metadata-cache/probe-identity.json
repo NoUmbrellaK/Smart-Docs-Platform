@@ -1,0 +1,7 @@
+[
+  {
+    "uid": "65534",
+    "gid": "65534",
+    "message": "{\"metadata_collision_observed\": true, \"attempt\": 1, \"before\": [64515, 147213, 3, 1792258952315939370, 1792258952315939370], \"after\": [64515, 147213, 3, 1792258952315939370, 1792258952315939370], \"original_sha256\": \"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad\", \"changed_sha256\": \"2f05d4b689d270cafb02285f35f44866f7dc8a2d368a3f9d1124373eeab31fb1\"}"
+  }
+]

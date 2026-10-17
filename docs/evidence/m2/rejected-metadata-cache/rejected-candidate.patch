@@ -1,0 +1,103 @@
+diff --git a/python/smartdocs/embeddings.py b/python/smartdocs/embeddings.py
+index dedb877..7776681 100644
+--- a/python/smartdocs/embeddings.py
++++ b/python/smartdocs/embeddings.py
+@@ -13,6 +13,7 @@ from pathlib import Path
+ import re
+ import resource
+ import signal
++import stat
+ import subprocess
+ import sys
+ import tempfile
+@@ -233,7 +234,7 @@ def _set_limits():
+         resource.setrlimit(kind, (new_soft, new_hard))
+-
++
+-
++
+-def _verify_model(model_dir, *, tokenizer_only=False):
++def _hash_model(model_dir, *, tokenizer_only=False):
+     try:
+         for name, expected in MODEL_HASHES.items():
+             if tokenizer_only and name.endswith(".onnx"):
+@@ -251,6 +252,77 @@ def _verify_model(model_dir, *, tokenizer_only=False):
+         raise EmbeddingError("embedding_model_unavailable") from None
+-
++
+-
++
++def _protected_model_snapshot(model_dir):
++    """Metadata is reusable only inside a root-controlled, non-symlink tree."""
++    directory = Path(model_dir)
++    if not directory.is_absolute() or ".." in directory.parts:
++        raise EmbeddingError("embedding_model_unavailable")
++    parents = []
++    for parent in (*reversed(directory.parents), directory):
++        info = parent.lstat()
++        # A root-owned child in a root-owned sticky directory (e.g. /tmp) cannot
++        # be replaced by another uid. The actual model directory must be read-only.
++        sticky_ancestor = parent != directory and info.st_mode & stat.S_ISVTX
++        if (not stat.S_ISDIR(info.st_mode) or info.st_uid != 0
++                or (info.st_mode & 0o022 and not sticky_ancestor)):
++            raise EmbeddingError("embedding_model_unavailable")
++        parents.append([str(parent), info.st_dev, info.st_ino])
++    files = {}
++    for name in MODEL_HASHES:
++        info = (directory / name).lstat()
++        if (not stat.S_ISREG(info.st_mode) or info.st_uid != 0
++                or info.st_mode & 0o022 or info.st_size > 256*1024*1024):
++            raise EmbeddingError("embedding_model_unavailable")
++        files[name] = [info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns]
++    return {"parents": parents, "files": files}
++
++
++def prepare_model(model_dir):
++    """Administrator-only provisioning; never overwrites an existing receipt."""
++    if os.geteuid() != 0:
++        raise EmbeddingError("embedding_model_unavailable")
++    try:
++        before = _protected_model_snapshot(model_dir)
++        _hash_model(model_dir)
++        if before != _protected_model_snapshot(model_dir):
++            raise EmbeddingError("embedding_model_unavailable")
++        body = json.dumps({"version": 1, "hashes": MODEL_HASHES, "snapshot": before}).encode()
++        if len(body) > 16384:
++            raise EmbeddingError("embedding_model_unavailable")
++        fd = os.open(Path(model_dir) / ".smartdocs-verified.json",
++                     os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o444)
++        with os.fdopen(fd, "wb") as output:
++            output.write(body)
++            output.flush()
++            os.fsync(output.fileno())
++    except OSError:
++        raise EmbeddingError("embedding_model_unavailable") from None
++
++
++def _verify_model(model_dir, *, tokenizer_only=False):
++    receipt = Path(model_dir) / ".smartdocs-verified.json"
++    try:
++        try:
++            receipt.lstat()
++        except FileNotFoundError:
++            return _hash_model(model_dir, tokenizer_only=tokenizer_only)
++        snapshot = _protected_model_snapshot(model_dir)
++        fd = os.open(receipt, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++        with os.fdopen(fd, "rb") as source:
++            before = os.fstat(source.fileno())
++            if (not stat.S_ISREG(before.st_mode) or before.st_uid != 0
++                    or before.st_mode & 0o022 or before.st_size > 16384):
++                raise EmbeddingError("embedding_model_unavailable")
++            body = source.read(16385)
++            after = os.fstat(source.fileno())
++        if (len(body) > 16384 or before != after
++                or json.loads(body) != {"version": 1, "hashes": MODEL_HASHES, "snapshot": snapshot}
++                or snapshot != _protected_model_snapshot(model_dir)):
++            raise EmbeddingError("embedding_model_unavailable")
++    except (OSError, ValueError, UnicodeError, RecursionError):
++        raise EmbeddingError("embedding_model_unavailable") from None
++
++
+ def _verify_dependencies():
+     try:
+         if any(importlib.metadata.version(name) != version for name, version in VERSIONS.items()):

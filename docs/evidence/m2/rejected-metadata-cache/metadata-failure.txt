@@ -1,0 +1,24 @@
+Oct 18 01:41:37 aliyun-lou systemd[1]: Started /usr/bin/python3 -B test/e2e/m2_model_receipt_test.py.
+Oct 18 01:41:37 aliyun-lou runuser[674232]: pam_unix(runuser:session): session opened for user nobody(uid=65534) by (uid=0)
+Oct 18 01:41:37 aliyun-lou runuser[674232]: pam_unix(runuser:session): session closed for user nobody
+Oct 18 01:41:37 aliyun-lou runuser[674234]: pam_unix(runuser:session): session opened for user nobody(uid=65534) by (uid=0)
+Oct 18 01:41:37 aliyun-lou runuser[674234]: pam_unix(runuser:session): session closed for user nobody
+Oct 18 01:41:37 aliyun-lou runuser[674236]: pam_unix(runuser:session): session opened for user nobody(uid=65534) by (uid=0)
+Oct 18 01:41:37 aliyun-lou runuser[674236]: pam_unix(runuser:session): session closed for user nobody
+Oct 18 01:41:37 aliyun-lou python3[674231]: same_size_timestamps 1792258897811445096 1792258897811445096 1792258897811445096 1792258897811445096
+Oct 18 01:41:37 aliyun-lou runuser[674240]: pam_unix(runuser:session): session opened for user nobody(uid=65534) by (uid=0)
+Oct 18 01:41:37 aliyun-lou runuser[674240]: pam_unix(runuser:session): session closed for user nobody
+Oct 18 01:41:37 aliyun-lou python3[674231]: Traceback (most recent call last):
+Oct 18 01:41:37 aliyun-lou python3[674231]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py", line 95, in <module>
+Oct 18 01:41:37 aliyun-lou python3[674231]:     main()
+Oct 18 01:41:37 aliyun-lou python3[674231]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py", line 85, in main
+Oct 18 01:41:37 aliyun-lou python3[674231]:     check(name, directory, "embedding_model_unavailable")
+Oct 18 01:41:37 aliyun-lou python3[674231]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py", line 53, in check
+Oct 18 01:41:37 aliyun-lou python3[674231]:     assert result.returncode == 0, name + ": " + result.stdout + result.stderr
+Oct 18 01:41:37 aliyun-lou python3[674231]: AssertionError: changed_same_size: Traceback (most recent call last):
+Oct 18 01:41:37 aliyun-lou python3[674231]:   File "<string>", line 12, in <module>
+Oct 18 01:41:37 aliyun-lou python3[674231]: AssertionError: ('ok', 'embedding_model_unavailable')
+Oct 18 01:41:37 aliyun-lou systemd[1]: smartdocs-receipt-diagnose.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 01:41:37 aliyun-lou systemd[1]: smartdocs-receipt-diagnose.service: Failed with result 'exit-code'.
+ExecMainStatus=1
+ActiveState=failed

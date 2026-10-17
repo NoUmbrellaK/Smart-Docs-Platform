@@ -1,0 +1,11 @@
+Oct 18 01:40:38 aliyun-lou systemd[1]: Started /usr/bin/python3 -B test/e2e/m2_model_receipt_test.py.
+Oct 18 01:40:38 aliyun-lou python3[673985]: Traceback (most recent call last):
+Oct 18 01:40:38 aliyun-lou python3[673985]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py", line 90, in <module>
+Oct 18 01:40:38 aliyun-lou python3[673985]:     main()
+Oct 18 01:40:38 aliyun-lou python3[673985]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_model_receipt_test.py", line 20, in main
+Oct 18 01:40:38 aliyun-lou python3[673985]:     assert callable(getattr(m, "prepare_model", None)), "missing protected model receipt preparation"
+Oct 18 01:40:38 aliyun-lou python3[673985]: AssertionError: missing protected model receipt preparation
+Oct 18 01:40:38 aliyun-lou systemd[1]: smartdocs-receipt-red.service: Main process exited, code=exited, status=1/FAILURE
+Oct 18 01:40:38 aliyun-lou systemd[1]: smartdocs-receipt-red.service: Failed with result 'exit-code'.
+ExecMainStatus=1
+ActiveState=failed
