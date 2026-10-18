@@ -1,0 +1,5 @@
+Started /usr/bin/node --experimental-default-type=module --test test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/search_ui_test.mjs test/e2e/processing_ui_test.mjs.
+/usr/bin/node: bad option: --experimental-default-type=module
+/usr/bin/node: bad option: --test
+smartdocs-m3-agent-ui-red.service: Main process exited, code=exited, status=9/n/a
+smartdocs-m3-agent-ui-red.service: Failed with result 'exit-code'.

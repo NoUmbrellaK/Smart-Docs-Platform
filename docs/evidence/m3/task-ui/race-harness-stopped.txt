@@ -1,0 +1,23 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✔ creation requires explicit exact-version consent and never claims execution (6.694137ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.917217ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.761826ms)
+Stopping /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs...
+Interrupted while running:
+⚠ test/e2e/agent_ui_test.mjs (test/e2e/agent_ui_test.mjs:1:1)
+✖ test/e2e/agent_ui_test.mjs (27924.960022ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27935.970567
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:1:1
+✖ test/e2e/agent_ui_test.mjs (27924.960022ms)
+  'Promise resolution is still pending but the event loop has already resolved'
+smartdocs-m3-agent-ui-race-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-agent-ui-race-red.service: Failed with result 'exit-code'.
+Stopped /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.

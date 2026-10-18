@@ -2,7 +2,7 @@
 
 这是M3任务范围基础；后续[有界执行核心](m3-read-agent.md)增加领取、模型前复核、
 持久回答/失败终态。已有[受控供应商适配器](m3-deepseek.md)，尚无真实供应商验证、
-自动续跑、完整usage审计API或Agent网页。
+自动续跑或完整usage审计API；已有[任务创建/查看网页](m3-agent-workspace.md)，但不自动启动执行。
 C++为身份、范围与取消状态的权威，Python不另建权限库。
 
 ## 创建和状态
@@ -25,7 +25,7 @@ POST前缀，JSON最大min(32768,配置max_json_bytes)，示意：
 4000 UTF-8字节（不是字符），允许换行/制表，拒绝其他控制字符；versions为1–100项
 精确file_id/version_id对，同文件不能重复。confirm_remote_ai必须为JSON布尔true，
 表示用户在受控AI入口确认问题和选中文件版本可用于远程AI，不是具体归档方案确认。
-目前只有API，人工确认网页尚待接线；该普通业务接口不作为模型工具开放。
+任务网页提供人工范围确认；该普通业务接口不作为模型工具开放。
 
 创建在事务中逐一检查版本为当前、available、文件未删除、策略remote_ai_allowed、
 精确版本获批准；任何一项无效整批404 resource_not_found，不泄露名称。可以选择

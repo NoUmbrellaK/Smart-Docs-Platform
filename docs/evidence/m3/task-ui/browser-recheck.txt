@@ -1,0 +1,16 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+2026-10-18T15:30:45.064970Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 759976
+2026-10-18T15:30:45.463874Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T15:31:00.698240Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T15:31:08.297839Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... PASS Chrome/C++/MySQL: explicit scope/consent -> pending -> cancel -> reload; seeded answer/fixed citation; text safety; revocation; owner isolation; six viewports. No model call.
+ok
+----------------------------------------------------------------------
+Ran 1 test in 35.598s
+OK
+smartdocs-m3-agent-ui-browser-recheck.service: Deactivated successfully.
+smartdocs-m3-agent-ui-browser-recheck.service: Consumed 10.758s CPU time.

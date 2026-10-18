@@ -1,0 +1,35 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✔ creation requires explicit exact-version consent and never claims execution (5.139098ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.671335ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.612746ms)
+✖ file and project invalidation cannot unlock an in-flight non-idempotent create (1.439615ms)
+✔ completed answers and fixed sources are text only and rechecked on access (1.477553ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.843549ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (1.652824ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 102.043689
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:88:1
+✖ file and project invalidation cannot unlock an in-flight non-idempotent create (1.439615ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  2 !== 1
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:94:73)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-m3-agent-ui-race-red2.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-agent-ui-race-red2.service: Failed with result 'exit-code'.

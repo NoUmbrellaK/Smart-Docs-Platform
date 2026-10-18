@@ -1,0 +1,4 @@
+Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/agent_browser_startup_probe.py.
+PASS sandboxed startup to about:blank; no login or application navigation
+smartdocs-m3-agent-ui-startup-probe.service: Deactivated successfully.
+smartdocs-m3-agent-ui-startup-probe.service: Consumed 1.272s CPU time.

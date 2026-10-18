@@ -1,0 +1,160 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-concurrency=1 test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/search_ui_test.mjs test/e2e/processing_ui_test.mjs.
+✖ creation requires explicit exact-version consent and never claims execution (1.968128ms)
+✖ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.400703ms)
+✖ task list uses cursor and fences late list responses and old buttons (1.128877ms)
+✖ completed answers and fixed sources are text only and rechecked on access (0.376033ms)
+✖ cancel response loss requires refresh and cannot display stale results (0.376833ms)
+✖ logout and data invalidation erase draft, answer and fence pending source (0.328217ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (5.097836ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (1.009839ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.601615ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.84113ms)
+✔ project/file reset fences late status and old buttons (0.463767ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.568889ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.802404ms)
+✔ null jobs are explicit and safe text remains text (0.777556ms)
+✔ task API uses same-origin exact job and empty POST bodies (29.420207ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.468142ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.603337ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.456963ms)
+✔ failed source reads clear old content; logout fences a pending source (0.536207ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.679083ms)
+✔ newer searches and source selections win over late successes and errors (0.560155ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (30.435867ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.767388ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.808235ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.905586ms)
+✔ API response parser accepts 204 and maps the unified error (49.576567ms)
+✔ logout API rejects an unexpected successful status (1.001495ms)
+✔ all upload tasks share four actual PUT slots (15.204067ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.628703ms)
+✔ duplicate resume is single-flight and completes only once (0.997841ms)
+✔ pause after part hashing starts schedules no later PUT (1.622722ms)
+✔ project refresh during hashing invalidates the old upload (1.245395ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (2.931637ms)
+✔ pending cancel is single-flight and blocks pause and resume (3.317952ms)
+✔ failed cancel clears pending state and can be retried (0.657105ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.518753ms)
+✔ resume read failure clears the file and returns to actionable state (0.478414ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.534332ms)
+✔ project generation drops A after B and project actions retain scope (3.241458ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.418286ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.33756ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.335795ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 36
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 995.732684
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:44:1
+✖ creation requires explicit exact-version consent and never claims execution (1.968128ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:45:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:62:1
+✖ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.400703ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:64:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:78:1
+✖ task list uses cursor and fences late list responses and old buttons (1.128877ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:79:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:88:1
+✖ completed answers and fixed sources are text only and rechecked on access (0.376033ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:89:33)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:104:1
+✖ cancel response loss requires refresh and cannot display stale results (0.376833ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:105:42)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:113:1
+✖ logout and data invalidation erase draft, answer and fence pending source (0.328217ms)
+  AssertionError [ERR_ASSERTION]: Agent task UI not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:114:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+smartdocs-m3-agent-ui-red2.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-agent-ui-red2.service: Failed with result 'exit-code'.

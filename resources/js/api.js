@@ -59,6 +59,15 @@ export const login = (username, password) =>
 export const logout = () =>
   metadata("/auth/logout", { method: "POST", body: {}, expectedStatus: 204 });
 export const me = () => metadata("/me");
+const agentPath = projectId => `${projectPath(projectId)}/agent-tasks`;
+export const listAgentTasks = (projectId, before = "") =>
+  metadata(agentPath(projectId) + (before ? `?before=${id(before)}` : ""));
+export const createAgentTask = (projectId, command) =>
+  metadata(agentPath(projectId), { method: "POST", body: command, expectedStatus: 201 });
+export const getAgentTask = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}`);
+export const cancelAgentTask = (projectId, taskId) =>
+  metadata(`${agentPath(projectId)}/${id(taskId)}/cancel`, { method: "POST" });
+export const getAgentResult = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/run/result`);
 export const createProject = (name) =>
   metadata("/projects", { method: "POST", body: { name } });
 

@@ -1,0 +1,33 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+2026-10-18T15:25:32.776260Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 758634
+2026-10-18T15:25:33.191414Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T15:25:50.195963Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T15:26:00.511016Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... ERROR
+======================================================================
+ERROR: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_browser_test.py", line 31, in test_browser_task_lifecycle_and_fixed_citations
+    browser.start()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+----------------------------------------------------------------------
+Ran 1 test in 137.134s
+FAILED (errors=1)
+smartdocs-m3-agent-ui-browser.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-agent-ui-browser.service: Failed with result 'exit-code'.
+smartdocs-m3-agent-ui-browser.service: Consumed 9.160s CPU time.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed

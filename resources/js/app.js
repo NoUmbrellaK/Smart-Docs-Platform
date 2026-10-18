@@ -2,6 +2,7 @@ import * as api from "./api.js";
 import { UploadController } from "./uploads.js";
 import { SearchPanel } from "./search.js";
 import { ProcessingPanel } from "./processing.js";
+import { AgentPanel } from "./agent.js";
 
 export class ProjectGeneration {
   constructor() {
@@ -116,6 +117,7 @@ const fileListLoads = new ProjectGeneration();
 let uploads = null;
 let searchPanel = null;
 let processingPanel = null;
+let agentPanel = null;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -137,7 +139,7 @@ function errorText(error) {
 }
 
 function showProjectSections(show) {
-  for (const id of ["workbench", "upload-tasks", "file-detail", "document-search"]) {
+  for (const id of ["workbench", "upload-tasks", "file-detail", "document-search", "agent-workspace"]) {
     byId(id).hidden = !show;
   }
   byId("project-settings").hidden = true;
@@ -169,6 +171,7 @@ function applyWriteVisibility() {
 }
 
 function resetProjectView(project) {
+  agentPanel.setProject(null);
   searchPanel.setProject(null, []);
   processingPanel.reset();
   state.project = project;
@@ -242,6 +245,7 @@ function renderIdentity(identity) {
 }
 
 function signedOut() {
+  agentPanel.setProject(null);
   searchPanel.setProject(null, []);
   processingPanel.reset();
   projectLoads.begin(null);
@@ -286,6 +290,7 @@ function renderFiles(token) {
 
 async function loadFiles(token = state.projectToken) {
   if (!projectLoads.current(token)) return false;
+  agentPanel.invalidate();
   searchPanel.invalidate();
   const listToken = fileListLoads.begin(token.projectId);
   const filters = {
@@ -329,6 +334,14 @@ function renderVersions(projectToken, fileToken) {
         return processingPanel.select(projectToken.projectId, fileId, version.id);
       }
     }, false));
+    if (!state.selectedFile.deleted && state.selectedFile.remote_ai_policy === "remote_ai_allowed" &&
+        state.selectedFile.current_version_id === version.id && version.remote_ai_approved) {
+      card.append(button("Add current version to Agent task", () => {
+        if (currentFile(projectToken, fileToken) && state.selectedFileReady) {
+          agentPanel.addVersion(projectToken.projectId, state.selectedFile, version);
+        }
+      }, false));
+    }
     return card;
   });
   byId("version-list").replaceChildren(...cards);
@@ -434,6 +447,7 @@ function renderMembers(members, token) {
           state.selectedFileReady ? state.selectedFile : null
         );
         if (synchronized.changed) {
+          agentPanel.invalidate();
           searchPanel.invalidate();
           processingPanel.reset();
           state.identity = synchronized.identity;
@@ -495,6 +509,8 @@ async function loadProject(project) {
     }
     state.projectReady = true;
     searchPanel.setProject(project.id, state.directories);
+    agentPanel.setProject(project.id);
+    agentPanel.refresh();
     applyWriteVisibility();
     renderUploads(uploads.snapshot());
     setStatus("global-status", "idle");
@@ -518,6 +534,7 @@ function renderUploads(tasks, changed) {
   const projectId = state.project && state.project.id;
   const token = state.projectToken;
   if (changed && changed.projectId === projectId && changed.uiState === "completed") {
+    agentPanel.invalidate();
     searchPanel.invalidate();
   }
   const projectTasks = tasks.filter((task) => task.projectId === projectId);
@@ -593,6 +610,7 @@ processingPanel = new ProcessingPanel(byId, api, errorText,
   () => writeVisibility(state.project && state.project.role, state.projectReady,
     state.selectedFileReady ? state.selectedFile : null).update,
   project => { if (state.project && state.project.id === project) searchPanel.invalidate(); });
+agentPanel = new AgentPanel(byId, api, errorText);
 
 byId("login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -608,6 +626,7 @@ byId("login-form").addEventListener("submit", async (event) => {
 });
 
 byId("logout-button").addEventListener("click", async () => {
+  agentPanel.setProject(null);
   searchPanel.invalidate();
   processingPanel.reset();
   state.fileToken = fileLoads.begin(null);
@@ -616,6 +635,7 @@ byId("logout-button").addEventListener("click", async () => {
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
+    agentPanel.setProject(state.projectReady && state.project ? state.project.id : null);
     setStatus("session-error", message);
     setStatus("global-status", "idle");
   });
@@ -693,6 +713,7 @@ byId("file-update-form").addEventListener("submit", async (event) => {
   const fileToken = state.fileToken;
   const fileId = state.selectedFile && state.selectedFile.id;
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
+  agentPanel.invalidate();
   try {
     const updated = await api.updateFile(
       token.projectId, fileId, byId("file-name").value,
@@ -718,6 +739,7 @@ byId("delete-file").addEventListener("click", async () => {
   const fileToken = state.fileToken;
   const selected = state.selectedFile;
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
+  agentPanel.invalidate();
   try {
     await api.softDeleteFile(token.projectId, selected.id);
     if (projectLoads.current(token)) searchPanel.invalidate();
@@ -738,6 +760,7 @@ byId("restore-file").addEventListener("click", async () => {
   const fileToken = state.fileToken;
   const fileId = state.selectedFile && state.selectedFile.id;
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
+  agentPanel.invalidate();
   try {
     const restored = await api.restoreFile(token.projectId, fileId);
     if (projectLoads.current(token)) searchPanel.invalidate();
@@ -775,6 +798,7 @@ byId("remote-ai-form").addEventListener("submit", async (event) => {
   const fileToken = state.fileToken;
   const fileId = state.selectedFile && state.selectedFile.id;
   if (!currentFile(token, fileToken) || !state.selectedFileReady) return;
+  agentPanel.invalidate();
   const policy = byId("remote-ai-policy").value;
   const approved_version_ids = policy === "remote_ai_allowed"
     ? Array.from(byId("approved-versions").querySelectorAll("input:checked"),

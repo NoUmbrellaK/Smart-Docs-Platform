@@ -1,0 +1,61 @@
+Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-concurrency=1 test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/search_ui_test.mjs test/e2e/processing_ui_test.mjs test/e2e/processing_lifecycle_test.mjs && /usr/bin/python3 -B test/e2e/ui_contract_test.py && bin/smartdocs_tests --filter=http_connection_streams_only_the_allowlisted_static_shell.
+✔ creation requires explicit exact-version consent and never claims execution (4.964161ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.759653ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.852196ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.985852ms)
+✔ completed answers and fixed sources are text only and rechecked on access (6.026181ms)
+✔ cancel response loss requires refresh and cannot display stale results (3.909694ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (1.839482ms)
+✔ logout fences a delayed version load before it can enter the processing panel (64.134204ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.569493ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.980079ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.574169ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.809924ms)
+✔ project/file reset fences late status and old buttons (0.481589ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (20.61396ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.967758ms)
+✔ null jobs are explicit and safe text remains text (0.756152ms)
+✔ task API uses same-origin exact job and empty POST bodies (30.075986ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.686689ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.719255ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.484993ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.48353ms)
+✔ failed source reads clear old content; logout fences a pending source (0.406443ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.580726ms)
+✔ newer searches and source selections win over late successes and errors (3.806569ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (29.988567ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.805161ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (1.168035ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (7.221234ms)
+✔ API response parser accepts 204 and maps the unified error (31.284553ms)
+✔ logout API rejects an unexpected successful status (1.053022ms)
+✔ all upload tasks share four actual PUT slots (33.441258ms)
+✔ invalidated slot waiters do not PUT or leak capacity (4.3088ms)
+✔ duplicate resume is single-flight and completes only once (0.778609ms)
+✔ pause after part hashing starts schedules no later PUT (1.650747ms)
+✔ project refresh during hashing invalidates the old upload (2.319449ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (5.616364ms)
+✔ pending cancel is single-flight and blocks pause and resume (1.897952ms)
+✔ failed cancel clears pending state and can be retried (1.088123ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.709704ms)
+✔ resume read failure clears the file and returns to actionable state (0.852572ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.653562ms)
+✔ project generation drops A after B and project actions retain scope (6.851072ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.630437ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.443927ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.537569ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 648.176639
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.006s
+OK
+PASS http_connection_streams_only_the_allowlisted_static_shell
+RESULT 1 passed, 0 failed, 0 skipped
+smartdocs-m3-agent-ui-reviewed.service: Deactivated successfully.

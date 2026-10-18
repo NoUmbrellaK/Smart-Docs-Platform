@@ -78,7 +78,7 @@ class UiContractTest(unittest.TestCase):
 
     def test_semantic_page_shell_is_accessible(self):
         expected_sections = {"session", "workbench", "upload-tasks",
-                             "file-detail", "project-settings", "document-search"}
+                             "file-detail", "project-settings", "document-search", "agent-workspace"}
         actual_sections = {section.get("id") for section in self.parser.sections}
         self.assertEqual(expected_sections, actual_sections)
         self.assertTrue(self.parser.viewport)

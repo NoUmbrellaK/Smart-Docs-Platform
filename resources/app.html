@@ -94,6 +94,39 @@
       <div id="document-search-source"></div>
     </section>
 
+    <section id="agent-workspace" aria-labelledby="agent-title" hidden>
+      <h2 id="agent-title">Agent tasks</h2>
+      <p>Create a pending task for approved public or synthetic materials. Execution currently requires the trusted server-side CLI; this page does not start a model request. No automatic retry or continuation.</p>
+      <form id="agent-form">
+        <label for="agent-question">Question (up to 4000 UTF-8 bytes)</label>
+        <textarea id="agent-question" rows="4" maxlength="4000" required disabled></textarea>
+        <fieldset>
+          <legend>Exact version scope (1–100 files)</legend>
+          <p>Open File detail and add approved current versions. New versions are not automatically selected.</p>
+          <div id="agent-scope" class="task-list"></div>
+        </fieldset>
+        <label for="agent-consent" class="checkbox-label">
+          <input id="agent-consent" type="checkbox" required disabled>
+          I confirm that this question and the selected versions may be sent to the remote AI provider. This is not permission to move files.
+        </label>
+        <button id="agent-create" type="submit" disabled>Create pending task</button>
+        <button id="agent-new-draft" type="button" disabled>New draft (not a retry)</button>
+      </form>
+      <p id="agent-create-status" role="status" aria-live="polite"></p>
+      <h3>My tasks in this project</h3>
+      <div class="action-row">
+        <button id="agent-refresh" type="button" disabled>Refresh tasks</button>
+        <button id="agent-next" type="button" disabled>Next task page</button>
+      </div>
+      <p id="agent-list-status" role="status" aria-live="polite"></p>
+      <div id="agent-list" class="task-list"></div>
+      <h3>Task state and answer</h3>
+      <p id="agent-detail-status" role="status" aria-live="polite"></p>
+      <div id="agent-detail" class="task-list"></div>
+      <h3>Cited source</h3>
+      <div id="agent-source"></div>
+    </section>
+
     <section id="upload-tasks" aria-labelledby="uploads-title"
              data-supported-states="idle loading awaiting reselect uploading assembling interrupted failed cancelling cancelled completed"
              hidden>

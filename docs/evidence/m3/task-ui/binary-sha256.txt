@@ -1,0 +1,5 @@
+Started /usr/bin/sha256sum bin/server bin/smartdocs_tests bin/smartdocs-admin.
+6b986c2a94acc3e9d68bde98578f84c7bfe9b138c3f74cd4a9b58a291eec8e97  bin/server
+243d57fc7dce82bf7075033f44cfb27eb6422afdfa68c123153c746231e47b4a  bin/smartdocs_tests
+48087b9b4460c075cb6e75a96a9193672593ddf002c3b1c458e2268500eea126  bin/smartdocs-admin
+smartdocs-m3-agent-ui-hashes.service: Deactivated successfully.

@@ -59,11 +59,11 @@ form {
 }
 
 label { font-weight: 650; }
-input, select, button, a {
+input, select, textarea, button, a {
   font: inherit;
 }
 
-input, select, button {
+input, select, textarea, button {
   min-width: 0;
   min-height: 44px;
   border: 1px solid #899aae;
@@ -72,6 +72,8 @@ input, select, button {
 }
 
 input, select { width: 100%; padding: 0.55rem 0.65rem; background: white; }
+textarea { width: 100%; padding: 0.55rem 0.65rem; resize: vertical; }
+fieldset { min-width: 0; margin: 0; }
 button {
   padding: 0.55rem 0.9rem;
   color: white;
@@ -138,11 +140,14 @@ td { overflow-wrap: anywhere; }
 .search-card { min-width: 0; padding: 0.75rem; background: #f6f8fb; }
 .search-card h3 { overflow-wrap: anywhere; }
 #document-search-source pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+#agent-workspace pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+#agent-workspace .action-row { margin-block: 0.75rem; }
 #document-search .action-row { margin-block: 0.75rem; }
 
 @media (min-width: 48rem) {
   main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #session, #workbench, #document-search { grid-column: 1 / -1; }
+  #session, #workbench, #document-search, #agent-workspace { grid-column: 1 / -1; }
+  #agent-form .checkbox-label { grid-column: 1 / -1; }
   .compact-form { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
   form:not(.compact-form) { grid-template-columns: minmax(10rem, 1fr) minmax(16rem, 2fr); }
   form:not(.compact-form) > button,

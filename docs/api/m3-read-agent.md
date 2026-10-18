@@ -2,7 +2,8 @@
 
 本接口为可调用的Python库和C++运行API，不是生产Agent入口。后续已增加
 [DeepSeek适配器与可信本机CLI](m3-deepseek.md)，但尚无真实模型效果验证、
-内部Streamable HTTP接线或网页；只开放两个已有只读MCP工具。
+内部Streamable HTTP接线；已有[任务网页](m3-agent-workspace.md)创建pending/查看/取消，
+但不自动调用执行核心。只开放两个已有只读MCP工具。
 调用方必须是可信服务端，model参数是异步函数，不是模型提供的代码或地址。
 
 ## 运行API
