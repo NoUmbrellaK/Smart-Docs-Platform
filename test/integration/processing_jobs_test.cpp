@@ -195,6 +195,77 @@ void Approve(Fixture& f,const JobFixture& job) {
 }
 }  // namespace
 
+TEST_CASE(m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped) {
+    using Json=nlohmann::json;
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); PublishText(f); Approve(f,job);
+    auto body=TaskBody(job); body["question"]="检查交接资料";
+    const auto task=AgentRequest(app,f,"POST","",body);
+    const auto prefix="/"+task.at("id").get<std::string>();
+    CHECK(AgentRequest(app,f,"POST",prefix+"/run/start").at("question")=="检查交接资料");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/start"),"task_inactive");
+    CHECK(AgentRequest(app,f,"POST",prefix+"/run/check").at("model_calls")==1);
+    const auto chunk=TextResult(job).at("chunks")[0];
+    Json result={{"answer","部署文档"},{"citations",Json::array({{{"file_id",job.file_id},
+        {"version_id",job.version_id},{"chunk_id",chunk.at("chunk_id")}}})}};
+    Json finish={{"status","completed"},{"result",result},{"error_code",nullptr}};
+    auto forged=finish; forged["result"]["citations"][0]["chunk_id"]=std::string(64,'0');
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/finish",forged),"invalid_source");
+    CHECK(AgentRequest(app,f,"POST",prefix+"/run/finish",finish).at("state")=="completed");
+    CHECK(AgentRequest(app,f,"POST",prefix+"/run/finish",finish).at("state")=="completed");
+    auto changed=finish; changed["result"]["answer"]="different";
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/finish",changed),"task_conflict");
+    CHECK(AgentRequest(app,f,"GET",prefix+"/run/result").at("result")==result);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"task_inactive");
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET remote_ai_policy='internal_only' WHERE id=?",{SqlValue(job.file_id)}); }
+    CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix+"/run/result"),"task_scope_changed");
+    Approve(f,job);
+    CHECK(AgentRequest(app,f,"GET",prefix+"/run/result").at("result").is_null());
+    CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="failed");
+}
+
+TEST_CASE(m3_run_model_budget_deadline_cancel_and_restart_block_late_results) {
+    using Json=nlohmann::json;
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); Approve(f,job);
+    for(const std::string mode:{"budget","deadline","cancel","restart"}) {
+        const auto task=AgentRequest(app,f,"POST","",TaskBody(job));
+        const auto id=task.at("id").get<std::string>(), prefix="/"+id;
+        AgentRequest(app,f,"POST",prefix+"/run/start");
+        if(mode=="budget") {
+            for(int i=0;i<8;++i) CHECK(AgentRequest(app,f,"POST",prefix+"/run/check").at("model_calls")==i+1);
+            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"budget_exhausted");
+            CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="failed");
+        } else if(mode=="deadline") {
+            auto db=TestDatabase().Acquire(); db.Execute("UPDATE agent_runs SET started_at=UTC_TIMESTAMP(6)-INTERVAL 181 SECOND WHERE task_id=?",{SqlValue(id)});
+            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"budget_exhausted");
+        } else if(mode=="cancel") AgentRequest(app,f,"POST",prefix+"/cancel");
+        else { Application restarted(TestAppConfig(f.storage)); }
+        CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/finish",{{"status","completed"},
+            {"result",{{"answer","late"},{"citations",Json::array()}}},{"error_code",nullptr}}),"task_inactive");
+    }
+}
+
+TEST_CASE(m3_run_checks_all_dependencies_before_first_and_later_model_calls) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto a=f.AddJob(), b=f.AddJob(); Approve(f,a); Approve(f,b);
+    auto body=TaskBody(a); body["versions"].push_back(TaskBody(b)["versions"][0]);
+    auto task=AgentRequest(app,f,"POST","",body);
+    auto prefix="/"+task.at("id").get<std::string>();
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?",{SqlValue(b.file_id)}); }
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/start"),"task_scope_changed");
+    const auto rejected=AgentRequest(app,f,"GET",prefix+"/run/result");
+    CHECK(rejected.at("state")=="failed" && rejected.at("result").is_null() && rejected.at("error_code")=="scope_changed");
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=NULL WHERE id=?",{SqlValue(b.file_id)}); }
+    task=AgentRequest(app,f,"POST","",body); prefix="/"+task.at("id").get<std::string>();
+    AgentRequest(app,f,"POST",prefix+"/run/start");
+    AgentRequest(app,f,"POST",prefix+"/run/check");
+    f.AddJob(b.file_id);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"task_scope_changed");
+    CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="failed");
+    CHECK(AgentRequest(app,f,"GET",prefix+"/run/result").at("result").is_null());
+}
+
 TEST_CASE(m3_task_scopes_search_counts_and_reads_before_returning_data) {
     RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
     const auto selected=f.AddJob(); PublishText(f); Approve(f,selected);

@@ -1,0 +1,28 @@
+Started /usr/bin/env PYTHONPATH=python SMARTDOCS_TEST_PARSER_PYTHON=/tmp/smartdocs-safe.h4SzvX/venv/bin/python /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c set -e; while IFS= read -r test_case; do stdbuf -oL -eL bin/smartdocs_tests --filter="$test_case"; done < cpp-run-remaining-selection.txt; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_read_test.py.
+2026-10-18T14:18:03.680646Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 746345
+2026-10-18T14:18:03.685417Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T14:18:18.916607Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T14:18:27.238152Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS processing_worker_result_body_is_bounded_before_buffering
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_worker_routes_are_disabled_by_default_and_require_service_auth
+RESULT 1 passed, 0 failed, 0 skipped
+test_mcp_agent_dynamic_read_and_persistent_result (__main__.McpReadE2E) ... Agent local supplier: empty search -> changed query -> exact read -> persisted cited answer PASS
+ok
+test_mcp_agent_revocation_blocks_next_model_request (__main__.McpReadE2E) ... Agent local supplier: revoked real MCP output never enters the next model request PASS
+ok
+test_mcp_persistent_task_scope_cancel_and_restart (__main__.McpReadE2E) ... MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS
+ok
+test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E) ... MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS
+ok
+test_mcp_stdio_authorization_and_exact_sources (__main__.McpReadE2E) ... MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS
+ok
+----------------------------------------------------------------------
+Ran 5 tests in 7.385s
+OK
+smartdocs-m3-run-db-final.service: Deactivated successfully.
+smartdocs-m3-run-db-final.service: Consumed 10.630s CPU time.

@@ -18,6 +18,20 @@ HttpResponse Result(const nlohmann::json& data,bool keep_alive,int status=200) {
 void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::shared_ptr<AgentTaskService> tasks,
     std::shared_ptr<ProcessingService> processing,bool secure_cookie,uint64_t max_json_bytes) {
     const std::string path="/api/v1/projects/{project_id}/agent-tasks";
+    for(const std::string operation:{"start","check","result","finish"}) {
+        router.Add(operation=="result" ? "GET" : "POST",path+"/{task_id}/run/"+operation,
+            [=](const RequestHead& head,const RouteParams& params) {
+                NoQuery(head); if(operation!="result") RequireSameOrigin(head,secure_cookie);
+                const auto session=auth->Authenticate(RequireSessionCookie(head));
+                const auto project=params.at("project_id"), task=params.at("task_id");
+                if(operation=="finish") return PrepareJsonBody(head,std::min<uint64_t>(65536,max_json_bytes),[=](const nlohmann::json& body) {
+                    return Result(tasks->FinishRun(session,project,task,body),head.keep_alive);
+                });
+                if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
+                return ReadyResponse(Result(operation=="start" ? tasks->StartRun(session,project,task) :
+                    operation=="check" ? tasks->CheckRun(session,project,task) : tasks->GetResult(session,project,task),head.keep_alive));
+            });
+    }
     router.Add("POST",path,[=](const RequestHead& head,const RouteParams& params) {
         NoQuery(head); RequireSameOrigin(head,secure_cookie);
         const auto session=auth->Authenticate(RequireSessionCookie(head));

@@ -1,0 +1,76 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -v.
+test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests) ... FAIL
+test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests) ... FAIL
+test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests) ... FAIL
+test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests) ... FAIL
+test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests) ... FAIL
+test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests) ... FAIL
+test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests) ... FAIL
+======================================================================
+FAIL: test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+======================================================================
+FAIL: test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 32, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_runner"),"bounded Agent is not implemented")
+AssertionError: unexpectedly None : bounded Agent is not implemented
+----------------------------------------------------------------------
+Ran 7 tests in 0.095s
+FAILED (failures=7)
+smartdocs-m3-run-python-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-run-python-red.service: Failed with result 'exit-code'.

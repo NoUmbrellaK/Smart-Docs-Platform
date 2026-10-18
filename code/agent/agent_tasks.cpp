@@ -6,6 +6,7 @@
 #include "http/jsonbody.h"
 #include <algorithm>
 #include <map>
+#include <set>
 
 namespace {
 using Json=nlohmann::json;
@@ -33,6 +34,61 @@ bool Allowed(MySqlConnection& db,const std::string& project,const std::string& f
     const auto versions=db.Query("SELECT remote_ai_approved,availability_state FROM file_versions WHERE id=? AND file_id=? FOR SHARE",
         {SqlValue(version),SqlValue(file)});
     return !versions.empty() && versions[0].Bool(0) && versions[0].String(1)=="available";
+}
+void Scope(MySqlConnection& db,const std::string& project,const std::string& task,
+    const std::string& file="",const std::string& version="") {
+    const auto scope=db.Query("SELECT file_id,version_id FROM agent_task_versions WHERE task_id=? ORDER BY file_id FOR SHARE",{SqlValue(task)});
+    bool contains=file.empty();
+    if(scope.empty() || scope.size()>100) throw AppError(409,"task_scope_changed","task scope is unavailable");
+    for(const auto& item:scope) {
+        if(!Allowed(db,project,item.String(0),item.String(1)))
+            throw AppError(409,"task_scope_changed","task scope is unavailable");
+        if(item.String(0)==file && item.String(1)==version) contains=true;
+    }
+    if(!contains) Missing();
+}
+void FailRun(MySqlConnection& db,const std::string& task,const std::string& code) {
+    db.Execute("UPDATE agent_tasks SET state='failed' WHERE id=?",{SqlValue(task)});
+    db.Execute("UPDATE agent_runs SET result_json=NULL,finish_code=? WHERE task_id=?",{SqlValue(code),SqlValue(task)});
+}
+void LiveScope(MySqlConnection& db,MySqlTransaction& transaction,const std::string& project,const std::string& task) {
+    try { Scope(db,project,task); }
+    catch(const AppError& error) {
+        if(error.code=="task_scope_changed") { FailRun(db,task,"scope_changed"); transaction.Commit(); }
+        throw;
+    }
+}
+MySqlRow Run(MySqlConnection& db,const std::string& task) {
+    const auto rows=db.Query("SELECT model_calls,result_json,finish_code,"
+        "started_at+INTERVAL 180 SECOND<=UTC_TIMESTAMP(6) FROM agent_runs WHERE task_id=? FOR UPDATE",{SqlValue(task)});
+    if(rows.empty()) Missing();
+    return rows[0];
+}
+void Deadline(MySqlConnection& db,MySqlTransaction& transaction,const std::string& task,const MySqlRow& run) {
+    if(run.Bool(3)) {
+        FailRun(db,task,"budget_exhausted"); transaction.Commit();
+        throw AppError(409,"budget_exhausted","task budget is exhausted");
+    }
+}
+void ValidateResult(MySqlConnection& db,const std::string& task,const Json& result) {
+    RequireExactObject(result,{"answer","citations"});
+    if(!result["answer"].is_string() || result["answer"].get_ref<const std::string&>().size()>16000 ||
+        result["answer"].get_ref<const std::string&>().find_first_not_of(" \t\r\n")==std::string::npos ||
+        !result["citations"].is_array() || result["citations"].size()>100)
+        throw AppError(400,"invalid_request","result is invalid");
+    std::set<std::string> seen;
+    for(const auto& ref:result["citations"]) {
+        RequireExactObject(ref,{"file_id","version_id","chunk_id"});
+        if(!ref["file_id"].is_string() || !ref["version_id"].is_string() || !ref["chunk_id"].is_string())
+            throw AppError(400,"invalid_source","source is invalid");
+        const auto file=ref["file_id"].get<std::string>(), version=ref["version_id"].get<std::string>(), chunk=ref["chunk_id"].get<std::string>();
+        Id(file); Id(version);
+        if(chunk.size()!=64 || chunk.find_first_not_of("0123456789abcdef")!=std::string::npos || !seen.insert(chunk).second ||
+            db.Query("SELECT c.id FROM agent_task_versions a JOIN document_chunks c ON c.version_id=a.version_id "
+                "WHERE a.task_id=? AND a.file_id=? AND a.version_id=? AND c.id=? FOR SHARE",
+                {SqlValue(task),SqlValue(file),SqlValue(version),SqlValue(chunk)}).empty())
+            throw AppError(400,"invalid_source","source is invalid");
+    }
 }
 Json Status(MySqlConnection& db,const MySqlRow& row,const std::string& project) {
     Json scope=Json::array();
@@ -91,20 +147,77 @@ void AgentTaskService::RecoverInterrupted() {
     db.Execute("UPDATE agent_tasks SET state='interrupted' WHERE state='running'"); transaction.Commit();
 }
 
+nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const std::string& project,const std::string& task) {
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
+    if(Task(db,session,project,task).String(1)!="pending") throw AppError(409,"task_inactive","task cannot be claimed");
+    db.Execute("INSERT INTO agent_runs(task_id) VALUES (?)",{SqlValue(task)});
+    LiveScope(db,transaction,project,task);
+    RequireAgentTaskScope(db,session,project,task);
+    const auto question=db.Query("SELECT question FROM agent_tasks WHERE id=?",{SqlValue(task)})[0].String(0);
+    transaction.Commit(); return {{"state","running"},{"question",question}};
+}
+nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const std::string& project,const std::string& task) {
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
+    if(Task(db,session,project,task).String(1)!="running") throw AppError(409,"task_inactive","task is not running");
+    const auto run=Run(db,task); Deadline(db,transaction,task,run); LiveScope(db,transaction,project,task);
+    if(run.UInt64(0)>=8) {
+        FailRun(db,task,"budget_exhausted"); transaction.Commit();
+        throw AppError(409,"budget_exhausted","task budget is exhausted");
+    }
+    db.Execute("UPDATE agent_runs SET model_calls=model_calls+1 WHERE task_id=?",{SqlValue(task)});
+    transaction.Commit(); return {{"model_calls",run.UInt64(0)+1}};
+}
+nlohmann::json AgentTaskService::FinishRun(const SessionContext& session,const std::string& project,const std::string& task,const Json& body) {
+    RequireExactObject(body,{"status","result","error_code"});
+    const std::set<std::string> codes{"timeout","budget_exhausted","model_invalid","invalid_source","dependency_failed",
+        "scope_changed","repeated_tool_error","access_denied","cancelled"};
+    if(!body["status"].is_string()) throw AppError(400,"invalid_request","status is invalid");
+    const auto status=body["status"].get<std::string>();
+    if((status=="completed" && (!body["error_code"].is_null() || !body["result"].is_object())) ||
+        (status=="failed" && (!body["result"].is_null() || !body["error_code"].is_string() || !codes.count(body["error_code"].get<std::string>()))) ||
+        (status!="completed" && status!="failed")) throw AppError(400,"invalid_request","outcome is invalid");
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
+    const auto row=Task(db,session,project,task), run=Run(db,task);
+    if(row.String(1)=="completed" || row.String(1)=="failed") {
+        const Json result=run.IsNull(1) ? Json(nullptr) : Json::parse(run.String(1));
+        const Json error=run.IsNull(2) ? Json(nullptr) : Json(run.String(2));
+        if(row.String(1)!=status) throw AppError(409,"task_inactive","task is not running");
+        if(result!=body["result"] || error!=body["error_code"]) throw AppError(409,"task_conflict","outcome differs");
+        if(status=="completed") LiveScope(db,transaction,project,task);
+        transaction.Commit(); return {{"state",status}};
+    }
+    if(row.String(1)!="running") throw AppError(409,"task_inactive","task is not running");
+    if(status=="completed") {
+        Deadline(db,transaction,task,run); LiveScope(db,transaction,project,task);
+        if(run.UInt64(0)==0) throw AppError(409,"task_conflict","no model request was admitted");
+        ValidateResult(db,task,body["result"]);
+    }
+    db.Execute("UPDATE agent_runs SET result_json=?,finish_code=? WHERE task_id=?",{
+        body["result"].is_null() ? SqlValue::Null() : SqlValue(body["result"].dump()),
+        body["error_code"].is_null() ? SqlValue::Null() : SqlValue(body["error_code"].get<std::string>()),SqlValue(task)});
+    db.Execute("UPDATE agent_tasks SET state=? WHERE id=?",{SqlValue(status),SqlValue(task)});
+    transaction.Commit(); return {{"state",status}};
+}
+nlohmann::json AgentTaskService::GetResult(const SessionContext& session,const std::string& project,const std::string& task) {
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
+    const auto row=Task(db,session,project,task), run=Run(db,task);
+    if(row.String(1)=="completed") LiveScope(db,transaction,project,task);
+    Json result={{"state",row.String(1)},{"model_calls",run.UInt64(0)},
+        {"result",row.String(1)=="completed" && !run.IsNull(1) ? Json::parse(run.String(1)) : Json(nullptr)},
+        {"error_code",run.IsNull(2) ? Json(nullptr) : Json(run.String(2))}};
+    transaction.Commit(); return result;
+}
+
 void RequireAgentTaskScope(MySqlConnection& db,const SessionContext& session,const std::string& project,
     const std::string& task,const std::string& file,const std::string& version) {
     // ponytail: one short task-read transaction at a time; replace the guard with worker admission if measured throughput requires it.
     LockQueue(db); const auto row=Task(db,session,project,task);
     if(row.String(1)!="pending" && row.String(1)!="running") throw AppError(409,"task_inactive","task is not active");
-    const auto scope=db.Query("SELECT file_id,version_id FROM agent_task_versions WHERE task_id=? ORDER BY file_id FOR SHARE",{SqlValue(task)});
-    bool contains=file.empty();
-    if(scope.empty() || scope.size()>100) throw AppError(409,"task_scope_changed","task scope is unavailable");
-    for(const auto& item:scope) {
-        if(!Allowed(db,project,item.String(0),item.String(1)))
-            throw AppError(409,"task_scope_changed","task scope is unavailable");
-        if(item.String(0)==file && item.String(1)==version) contains=true;
-    }
-    if(!contains) Missing();
+    Scope(db,project,task,file,version);
     if(row.String(1)=="pending") {
         if(db.Query("SELECT id FROM agent_tasks WHERE state='running' LIMIT 2 FOR UPDATE").size()>=2)
             throw AppError(429,"agent_busy","agent execution slots are full",true);

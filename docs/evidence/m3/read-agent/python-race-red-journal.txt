@@ -1,0 +1,25 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -m unittest discover -s test/mcp -p test_agent_runner.py -k uncertain_completion -v.
+test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests) ... Executing <Task pending name='Task-1' coro=<IsolatedAsyncioTestCase._asyncioLoopRunner() running at /usr/lib/python3.10/unittest/async_case.py:101> created at /usr/lib/python3.10/unittest/async_case.py:117> took 0.180 seconds
+FAIL
+======================================================================
+FAIL: test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 158, in test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit
+    self.assertEqual(outcome,{"state":"completed"})
+AssertionError: {'state': 'running', 'error_code': 'dependency_failed'} != {'state': 'completed'}
+- {'error_code': 'dependency_failed', 'state': 'running'}
++ {'state': 'completed'}
+----------------------------------------------------------------------
+Ran 1 test in 0.709s
+FAILED (failures=1)
+smartdocs-m3-run-race-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-run-race-red.service: Failed with result 'exit-code'.

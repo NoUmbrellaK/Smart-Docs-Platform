@@ -15,6 +15,10 @@ public:
     nlohmann::json Create(const SessionContext&, const std::string& project, const nlohmann::json& body);
     nlohmann::json Get(const SessionContext&, const std::string& project, const std::string& task);
     nlohmann::json Cancel(const SessionContext&, const std::string& project, const std::string& task);
+    nlohmann::json StartRun(const SessionContext&, const std::string& project, const std::string& task);
+    nlohmann::json CheckRun(const SessionContext&, const std::string& project, const std::string& task);
+    nlohmann::json FinishRun(const SessionContext&, const std::string& project, const std::string& task, const nlohmann::json& body);
+    nlohmann::json GetResult(const SessionContext&, const std::string& project, const std::string& task);
     void RecoverInterrupted();
 private:
     MySqlPool& pool_;

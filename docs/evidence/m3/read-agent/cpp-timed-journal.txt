@@ -1,0 +1,151 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c while IFS= read -r test_case; do stdbuf -oL -eL bin/smartdocs_tests --filter="$test_case" || exit $?; done < cpp-run-selection.txt.
+2026-10-18T14:00:02.153152Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 743962
+2026-10-18T14:00:02.158353Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T14:00:17.370724Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T14:00:25.310057Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+RESULT 1 passed, 0 failed, 0 skipped
+PASS auth_project_http_routes_form_a_same_origin_vertical_slice
+RESULT 1 passed, 0 failed, 0 skipped
+PASS auth_project_membership_is_project_scoped_and_directories_are_checked
+RESULT 1 passed, 0 failed, 0 skipped
+PASS auth_project_sessions_reject_invalid_expired_and_revoked_tokens
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_search_rechecks_approval_after_candidate_selection
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_caps_active_work_and_restart_never_claims_completion
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_application_is_ready_with_schema_and_secure_storage
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_application_rejects_missing_storage_directory_at_startup
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_application_rejects_symlink_storage_root_at_startup
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_allows_zero_based_upload_parts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_allows_zero_part_upload_tasks
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_rejects_duplicate_active_file_name
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_rejects_duplicate_upload_part_number
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_rejects_two_root_directories_for_one_project
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_version_is_seven
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_attempts_are_fenced_across_restart_retry_and_cancel
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_concurrent_claims_allow_only_one_running_task
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_concurrent_enqueue_cannot_overfill_queue
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_history_never_redirects_and_rechecks_access
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_missing_chunk_is_not_a_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_status_exposes_unparsed_version_without_fake_readiness
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_vector_applicability_follows_exact_version_approval
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_http_cannot_retry_superseded_or_deleted_versions
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_http_reuses_project_roles_and_same_origin
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_http_status_cancel_retry_are_persistent_and_idempotent
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_degrades_and_validates_query_vectors
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_rechecks_revocation_and_vector_attempt_before_returning
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_reports_partial_vector_coverage
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_scan_limit_discards_vector_lane_without_silent_partial_scan
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_old_failure_does_not_change_new_version_state
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_accepts_new_retry_but_never_the_old_token
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_checks_authoritative_source_hash_and_size
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_fault_rolls_back_chunks_index_and_status
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_is_atomic_immutable_and_keyword_indexed
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_rejects_stale_cancelled_and_restarted_attempts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_queue_capacity_preserves_file_and_reports_busy_failure
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_retry_obeys_capacity_and_completed_tasks_remain_terminal
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_enforces_roles_input_limits_and_same_origin
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_filters_current_deleted_unavailable_and_restored_versions
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_keyword_returns_exact_sources_and_explicit_limits
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_limits_project_directory_type_and_keyword_pages
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_metadata_discovers_unparsed_and_literal_names_with_pagination
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_revalidates_candidates_after_concurrent_state_changes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_stale_deleted_unavailable_jobs_are_not_claimed
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_cannot_read_or_publish_superseded_deleted_or_unavailable_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_reject_malformed_or_out_of_order_results_and_rollback_faults
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_require_approval_and_publish_all_batches_idempotently
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_revoke_reapprove_and_retry_fence_old_attempts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_routes_and_job_controls_reuse_authorization
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_share_queue_capacity_and_bound_version_window_count
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_worker_claim_exposes_only_bounded_metadata_and_fences_source
+RESULT 1 passed, 0 failed, 0 skipped
+smartdocs-m3-run-cpp-green.service: Service reached runtime time limit. Stopping.
+Terminated
+smartdocs-m3-run-cpp-green.service: State 'stop-sigterm' timed out. Killing.
+smartdocs-m3-run-cpp-green.service: Killing process 743956 (bash) with signal SIGKILL.
+smartdocs-m3-run-cpp-green.service: Killing process 745511 (rm) with signal SIGKILL.
+smartdocs-m3-run-cpp-green.service: Main process exited, code=killed, status=9/KILL
+smartdocs-m3-run-cpp-green.service: Failed with result 'timeout'.
+smartdocs-m3-run-cpp-green.service: Consumed 36.955s CPU time.

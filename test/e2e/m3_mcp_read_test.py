@@ -154,6 +154,81 @@ class McpReadE2E(support.WorkerE2E):
         asyncio.run(check())
         print("MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS",flush=True)
 
+    def test_mcp_agent_dynamic_read_and_persistent_result(self):
+        from smartdocs.agent_runner import run_task
+        selected=self.upload("deployment.txt",b"Public deploy: verify backup before restart.","text/plain")
+        self.assertEqual(worker.run_once(self.client),"completed"); self.policy(selected,True)
+        tasks=f'/api/v1/projects/{self.project["id"]}/agent-tasks'
+        task=data(self.user.request("POST",tasks,{"question":"Check public deployment procedure",
+            "confirm_remote_ai":True,"versions":[{"file_id":selected["file_id"],"version_id":selected["version_id"]}]}),201)
+        context={"backend_port":self.server.port,"origin":f"http://127.0.0.1:{self.server.port}",
+            "session_token":next(c.value for c in self.user.cookies if c.name=="smartdocs_session"),
+            "project_id":self.project["id"],"task_id":task["id"],"scope":"task_versions"}
+        path=self.root/"agent-context.json"; path.write_text(json.dumps(context)); path.chmod(0o600)
+        parameters=StdioServerParameters(command=sys.executable,args=["-B","-m","smartdocs.mcp_read","--context",str(path)],
+            env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(support.ROOT/"python")})
+        sent=[]
+        async def model(messages,**kwargs):
+            sent.append(json.dumps(messages)); index=len(sent)
+            if index==1: name,args="search_documents",{"mode":"metadata","query":"absent-xyz"}
+            else:
+                previous=json.loads(messages[-1]["content"])["data"]
+                if previous.get("items")==[]: name,args="search_documents",{"mode":"metadata","query":"deployment"}
+                elif "items" in previous:
+                    item=previous["items"][0]; name,args="read_document_version",{"file_id":item["file_id"],"version_id":item["version_id"],"range":{}}
+                else:
+                    chunk=previous["chunks"][0]
+                    return {"choices":[{"finish_reason":"stop","message":{"role":"assistant","content":json.dumps({
+                        "answer":"Verify backup before restart.","citations":[{k:chunk[k] for k in ("file_id","version_id","chunk_id")}]})}}]}
+            return {"choices":[{"finish_reason":"tool_calls","message":{"role":"assistant","content":None,
+                "tool_calls":[{"id":f"call_{index}","type":"function","function":{"name":name,"arguments":json.dumps(args)}}]}}]}
+        async def check():
+            async with stdio_client(parameters) as streams:
+                async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=30)) as client:
+                    await client.initialize(); return await run_task(context,client,model)
+        outcome=asyncio.run(check()); self.assertEqual(outcome["state"],"completed"); self.assertEqual(len(sent),4)
+        saved=data(self.user.request("GET",tasks+"/"+task["id"]+"/run/result"))
+        self.assertEqual(saved["result"]["answer"],"Verify backup before restart.")
+        self.assertEqual(saved["result"]["citations"][0]["version_id"],selected["version_id"])
+        self.server.stop(); self.server.start(environment_overrides={"SMARTDOCS_WORKER_TOKEN":self.token})
+        self.user=support.HttpClient(self.server.port); support.login(self.user,"worker-e2e-admin",self.password)
+        self.assertEqual(data(self.user.request("GET",tasks+"/"+task["id"]+"/run/result"))["result"],saved["result"])
+        self.policy(selected,False)
+        self.assertEqual(self.user.request("GET",tasks+"/"+task["id"]+"/run/result").status,409)
+        print("Agent local supplier: empty search -> changed query -> exact read -> persisted cited answer PASS",flush=True)
+
+    def test_mcp_agent_revocation_blocks_next_model_request(self):
+        from smartdocs.agent_runner import run_task
+        selected=self.upload("revocation.txt",b"WITHDRAWN-CONTEXT-MARKER","text/plain")
+        self.assertEqual(worker.run_once(self.client),"completed"); self.policy(selected,True)
+        tasks=f'/api/v1/projects/{self.project["id"]}/agent-tasks'
+        task=data(self.user.request("POST",tasks,{"question":"Check public fixture","confirm_remote_ai":True,
+            "versions":[{"file_id":selected["file_id"],"version_id":selected["version_id"]}]}),201)
+        context={"backend_port":self.server.port,"origin":f"http://127.0.0.1:{self.server.port}",
+            "session_token":next(c.value for c in self.user.cookies if c.name=="smartdocs_session"),
+            "project_id":self.project["id"],"task_id":task["id"],"scope":"task_versions"}
+        path=self.root/"agent-revoke-context.json"; path.write_text(json.dumps(context)); path.chmod(0o600)
+        parameters=StdioServerParameters(command=sys.executable,args=["-B","-m","smartdocs.mcp_read","--context",str(path)],
+            env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(support.ROOT/"python")})
+        sent=[]; owner=self
+        async def model(messages,**kwargs):
+            sent.append(json.dumps(messages))
+            return {"choices":[{"finish_reason":"tool_calls","message":{"role":"assistant","content":None,
+                "tool_calls":[{"id":"read_1","type":"function","function":{"name":"read_document_version",
+                    "arguments":json.dumps({"file_id":selected["file_id"],"version_id":selected["version_id"],"range":{}})}}]}}]}
+        async def check():
+            async with stdio_client(parameters) as streams:
+                async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=30)) as client:
+                    await client.initialize()
+                    class RevokeAfterRead:
+                        async def call_tool(self,name,args):
+                            result=await client.call_tool(name,args); owner.policy(selected,False); return result
+                    return await run_task(context,RevokeAfterRead(),model)
+        outcome=asyncio.run(check()); self.assertEqual(outcome["state"],"failed")
+        self.assertEqual(len(sent),1); self.assertNotIn("WITHDRAWN-CONTEXT-MARKER",sent[0])
+        self.assertIsNone(data(self.user.request("GET",tasks+"/"+task["id"]+"/run/result"))["result"])
+        print("Agent local supplier: revoked real MCP output never enters the next model request PASS",flush=True)
+
     def test_mcp_persistent_task_scope_cancel_and_restart(self):
         selected=self.upload("task-selected.txt",b"chosen source","text/plain")
         outside=self.upload("OUTSIDE-TASK.txt",b"outside task marker","text/plain")

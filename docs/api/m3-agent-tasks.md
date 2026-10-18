@@ -1,7 +1,8 @@
 # M3 持久任务范围接口
 
-这是M3任务基础，不是完整Agent执行器：没有模型请求、任务完成结果、自动续跑、
-完整调用/token预算或Agent网页。C++为身份、范围与取消状态的权威，Python不另建权限库。
+这是M3任务范围基础；后续[有界执行核心](m3-read-agent.md)增加领取、模型前复核、
+持久回答/失败终态。尚无真实模型接线、自动续跑、完整usage审计或Agent网页。
+C++为身份、范围与取消状态的权威，Python不另建权限库。
 
 ## 创建和状态
 
@@ -62,17 +63,17 @@ task_scope_changed，不悄悄缩小范围；恢复相同当前版本和批准�
 首个成功工具事务将pending变running；这表示工具工作已开始，不表示模型已运行。
 工具事务失败则回滚，不虚报开始。C++启动将全部running转interrupted；pending
 保持排队，cancelled保持取消；没有自动续跑。最多100个pending/running、同时
-最多2个running，超限429 agent_busy。本轮没有完成/失败接口，调试结束需主动取消
-释放名额；后续执行器负责终态、结果对象、调用记录、时间与费用预算。
+最多2个running，超限429 agent_busy。直接调试工具结束需主动取消释放名额；
+正式领取的执行核心通过run/finish保存completed/failed终态，见运行API说明。
 
 为当前小服务器保守串行任务读取事务（独立agent_queue_guard行）；不增加后台线程。
 这不是并发吞吐承诺。进程/系统资源仍按部署与运维限额配置。
 
-## schema 6 升级
+## schema 6 历史增量与当前升级
 
 新增agent_tasks、agent_task_versions、agent_queue_guard，复合外键把任务/文件
 限定同项目、版本限定所属文件。既有文件及索引无需回填，不凭空创建任务或确认。
-新C++拒绝schema5。生产升级必须先停C++/worker/网关并备份，再运行既有
-scripts/migrate.sh，确认schema_version=6后启动；本次只在隔离测试库验证，没有
+此增量原要求schema6；当前执行核心已要求schema7。生产升级必须先停C++/worker/网关并备份，再运行既有
+scripts/migrate.sh，确认schema_version=7后启动；本次只在隔离测试库验证，没有
 升级原业务库。MySQL DDL不是整批事务，失败勿盲目重放半完成迁移，恢复备份后重试。
 回退旧二进制也须恢复匹配的schema5备份，不能直接删schema版本记录。
