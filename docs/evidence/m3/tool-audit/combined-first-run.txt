@@ -1,0 +1,64 @@
+2026-10-18T23:56:30+0800 aliyun-lou systemd[1]: Started /bin/bash -c PYTHONPATH=python bash scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_tool_audit_test.py && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema_ && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_read_test.py && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p "test_*.py" -v && sha256sum bin/server bin/smartdocs_tests bin/smartdocs-admin'.
+2026-10-18T23:56:38+0800 aliyun-lou bash[764971]: 2026-10-18T15:56:38.084981Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 764971
+2026-10-18T23:56:38+0800 aliyun-lou bash[764971]: 2026-10-18T15:56:38.687386Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T23:56:54+0800 aliyun-lou bash[764971]: 2026-10-18T15:56:54.300696Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T23:57:04+0800 aliyun-lou bash[764971]: 2026-10-18T15:57:04.124163Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T23:57:46+0800 aliyun-lou bash[765445]: schema_version=8
+2026-10-18T23:58:07+0800 aliyun-lou bash[765491]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T23:58:07+0800 aliyun-lou bash[765491]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-18T23:58:07+0800 aliyun-lou bash[765491]: PASS m3_run_migration_does_not_invent_execution
+2026-10-18T23:58:07+0800 aliyun-lou bash[765491]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-18T23:58:13+0800 aliyun-lou bash[765546]: test_audit_capacity_concurrent_sequence_and_unknown_is_not_success (__main__.ToolAuditE2E) ... ok
+2026-10-18T23:58:14+0800 aliyun-lou bash[765546]: test_audit_owner_scope_membership_and_read_only_route (__main__.ToolAuditE2E) ... ok
+2026-10-18T23:58:15+0800 aliyun-lou bash[765546]: test_audit_persistence_failure_never_admits_or_returns_source (__main__.ToolAuditE2E) ... ok
+2026-10-18T23:58:16+0800 aliyun-lou bash[765546]: test_audit_real_calls_errors_and_restart_are_persistent_and_redacted (__main__.ToolAuditE2E) ... ok
+2026-10-18T23:58:16+0800 aliyun-lou bash[765546]: ----------------------------------------------------------------------
+2026-10-18T23:58:16+0800 aliyun-lou bash[765546]: Ran 4 tests in 8.130s
+2026-10-18T23:58:16+0800 aliyun-lou bash[765546]: OK
+2026-10-18T23:58:27+0800 aliyun-lou bash[765613]: PASS m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped
+2026-10-18T23:58:38+0800 aliyun-lou bash[765613]: PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+2026-10-18T23:58:51+0800 aliyun-lou bash[765613]: PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+2026-10-18T23:59:02+0800 aliyun-lou bash[765613]: PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+2026-10-18T23:59:14+0800 aliyun-lou bash[765613]: PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+2026-10-18T23:59:25+0800 aliyun-lou bash[765613]: PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+2026-10-18T23:59:40+0800 aliyun-lou bash[765613]: PASS m3_task_caps_active_work_and_restart_never_claims_completion
+2026-10-18T23:59:51+0800 aliyun-lou bash[765613]: PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+2026-10-19T00:00:02+0800 aliyun-lou bash[765613]: PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+2026-10-19T00:00:13+0800 aliyun-lou bash[765613]: PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+2026-10-19T00:00:25+0800 aliyun-lou bash[765613]: PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+2026-10-19T00:00:37+0800 aliyun-lou bash[765613]: PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+2026-10-19T00:00:48+0800 aliyun-lou bash[765613]: PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+2026-10-19T00:00:59+0800 aliyun-lou bash[765613]: PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+2026-10-19T00:01:11+0800 aliyun-lou bash[765613]: PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+2026-10-19T00:01:23+0800 aliyun-lou bash[765613]: PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+2026-10-19T00:01:34+0800 aliyun-lou bash[765613]: PASS m3_remote_search_rechecks_approval_after_candidate_selection
+2026-10-19T00:01:34+0800 aliyun-lou bash[765613]: RESULT 17 passed, 0 failed, 0 skipped
+2026-10-19T00:01:34+0800 aliyun-lou bash[765800]: PASS mysql_schema_version_is_eight
+2026-10-19T00:01:46+0800 aliyun-lou bash[765800]: PASS mysql_schema_rejects_two_root_directories_for_one_project
+2026-10-19T00:01:56+0800 aliyun-lou bash[765800]: PASS mysql_schema_rejects_duplicate_active_file_name
+2026-10-19T00:02:07+0800 aliyun-lou bash[765800]: PASS mysql_schema_rejects_duplicate_upload_part_number
+2026-10-19T00:02:18+0800 aliyun-lou bash[765800]: PASS mysql_schema_allows_zero_part_upload_tasks
+2026-10-19T00:02:29+0800 aliyun-lou bash[765800]: PASS mysql_schema_allows_zero_based_upload_parts
+2026-10-19T00:02:29+0800 aliyun-lou bash[765800]: RESULT 6 passed, 0 failed, 0 skipped
+2026-10-19T00:02:35+0800 aliyun-lou bash[765846]: test_mcp_agent_dynamic_read_and_persistent_result (__main__.McpReadE2E) ... Agent local supplier: empty search -> changed query -> exact read -> persisted cited answer PASS
+2026-10-19T00:02:35+0800 aliyun-lou bash[765846]: ok
+2026-10-19T00:02:36+0800 aliyun-lou bash[765846]: test_mcp_agent_revocation_blocks_next_model_request (__main__.McpReadE2E) ... Agent local supplier: revoked real MCP output never enters the next model request PASS
+2026-10-19T00:02:36+0800 aliyun-lou bash[765846]: ok
+2026-10-19T00:02:38+0800 aliyun-lou bash[765846]: test_mcp_persistent_task_scope_cancel_and_restart (__main__.McpReadE2E) ... MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS
+2026-10-19T00:02:38+0800 aliyun-lou bash[765846]: ok
+2026-10-19T00:02:39+0800 aliyun-lou bash[765846]: test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E) ... FAIL
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: test_mcp_stdio_authorization_and_exact_sources (__main__.McpReadE2E) ... MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: ok
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: ======================================================================
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: FAIL: test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E)
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: ----------------------------------------------------------------------
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: Traceback (most recent call last):
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_mcp_read_test.py", line 112, in test_mcp_range_reads_text_and_physical_pdf_pages
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]:     self.assertIn("worker: completed",parsed.stdout)
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: AssertionError: 'worker: completed' not found in 'worker: failed\n'
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: ----------------------------------------------------------------------
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: Ran 5 tests in 8.308s
+2026-10-19T00:02:41+0800 aliyun-lou bash[765846]: FAILED (failures=1)
+2026-10-19T00:02:44+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-green.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T00:02:44+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-green.service: Failed with result 'exit-code'.
+2026-10-19T00:02:44+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-green.service: Consumed 20.206s CPU time.

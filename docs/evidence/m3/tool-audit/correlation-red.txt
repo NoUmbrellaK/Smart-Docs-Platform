@@ -1,0 +1,26 @@
+2026-10-18T23:50:03+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest m3_tool_audit_test.ToolAuditE2E.test_audit_persistence_failure_never_admits_or_returns_source -v.
+2026-10-18T23:50:04+0800 aliyun-lou bash[764018]: 2026-10-18T15:50:04.548653Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 764018
+2026-10-18T23:50:04+0800 aliyun-lou bash[764018]: 2026-10-18T15:50:04.651315Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T23:50:20+0800 aliyun-lou bash[764018]: 2026-10-18T15:50:20.584671Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T23:50:29+0800 aliyun-lou bash[764018]: 2026-10-18T15:50:29.078662Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T23:51:12+0800 aliyun-lou bash[764274]: schema_version=8
+2026-10-18T23:51:35+0800 aliyun-lou bash[764428]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T23:51:35+0800 aliyun-lou bash[764428]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-18T23:51:35+0800 aliyun-lou bash[764428]: PASS m3_run_migration_does_not_invent_execution
+2026-10-18T23:51:35+0800 aliyun-lou bash[764428]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: test_audit_persistence_failure_never_admits_or_returns_source (m3_tool_audit_test.ToolAuditE2E) ... FAIL
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: ======================================================================
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: FAIL: test_audit_persistence_failure_never_admits_or_returns_source (m3_tool_audit_test.ToolAuditE2E)
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: ----------------------------------------------------------------------
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: Traceback (most recent call last):
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 112, in test_audit_persistence_failure_never_admits_or_returns_source
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]:     self.assertEqual(response.json()["request_id"], rows[0]["request_id"])
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: AssertionError: 'cc670164104e1e5774fe3b3d4f2d8c43' != '8adb8352f17212deb75fe6a4a877963a'
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: - cc670164104e1e5774fe3b3d4f2d8c43
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: + 8adb8352f17212deb75fe6a4a877963a
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: ----------------------------------------------------------------------
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: Ran 1 test in 1.835s
+2026-10-18T23:51:37+0800 aliyun-lou bash[764534]: FAILED (failures=1)
+2026-10-18T23:51:42+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-correlation-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-18T23:51:42+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-correlation-red.service: Failed with result 'exit-code'.
+2026-10-18T23:51:42+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-correlation-red.service: Consumed 6.735s CPU time.

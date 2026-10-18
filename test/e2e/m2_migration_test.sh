@@ -45,8 +45,8 @@ INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha
 INSERT INTO document_chunks(id,version_id,ordinal,char_start,char_end,line_start,line_end,body)
  VALUES (REPEAT('c',64),LPAD('1001',32,'0'),0,0,3,1,1,'abc');
 SQL
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=7' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=7' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=8' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=8' ]]
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -73,3 +73,5 @@ result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
 printf '%s\n' 'PASS m3_agent_migration_does_not_invent_tasks_or_consent'
 [[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT COUNT(*) FROM agent_runs;') == 0 ]]
 printf '%s\n' 'PASS m3_run_migration_does_not_invent_execution'
+[[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT COUNT(*) FROM agent_tool_calls;') == 0 ]]
+printf '%s\n' 'PASS m3_tool_audit_migration_does_not_invent_history'

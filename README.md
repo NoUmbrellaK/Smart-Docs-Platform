@@ -23,7 +23,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求schema 7；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 5/6数据库。
+当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema 8](./docs/api/m3-tool-audit.md#schema8和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 5/6/7数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -44,6 +44,8 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 新增[本人任务分页列表](./docs/api/m3-agent-tasks.md)：刷新后可按项目发现本人任务，固定20条、时间/ID游标分页，不返回问题、回答、文件名或正文，不领取任务；管理员也不能列出他人任务。复用既有表和权限，无迁移或新增依赖。[本轮验证](./docs/evidence/m3/task-list/README.md)：真实HTTP **3/3**、既有M3 C++ **17/17**、路由 **4/4**，覆盖分页稳定性、权限撤销、取消与重启恢复；无模型调用、无新增内存节流或OOM，临时测试已清理。列表不是创建重试协议，任务网页及M3整体仍未完成。
 
 新增[Agent任务工作区](./docs/api/m3-agent-workspace.md)：精确版本选择及显式外发确认、仅创建pending、本人任务分页/刷新/取消、纯文本回答草稿与固定出处。页面不会自动执行模型；仍需可信CLI。审查复现并修复页面失效可能绕过在途创建锁的问题，无自动重试，跨标签页/完全重载不保证创建幂等。[本轮证据](./docs/evidence/m3/task-ui/README.md)：前端 **45/45**、页面契约 **8/8**、静态白名单 **1/1**、真实Chrome/C++/隔离库业务场景 **1/1**（六屏宽）。首次Chrome启动失败保留记录；同配置复验通过，启动根因未确定。回答为显式脚本夹具，未调用DeepSeek；无新增内存节流或OOM、无生产部署。完整审计、生产执行入口与三个写工具仍待完成，M3未验收。
+
+新增[后端工具请求轨迹](./docs/api/m3-tool-audit.md)：C++持久记录搜索/读取的开始、状态、耗时及脱敏参数，服务端关联request_id，最多64条；查询重验本人任务和整个版本范围。记录失败不返回正文，unknown不冒充成功，无客户端写入接口。复用现有MySQL与权限，不增加依赖。[本轮证据](./docs/evidence/m3/tool-audit/README.md)：审计真实HTTP **4/4**、M3 C++ **17/17**、数据库约束 **6/6**、响应单元 **4/4**（另1项数据库测试跳过），MCP真实链路复验 **5/5**、单测 **43/43**。保留429缺失、关联ID及PDF测试环境配置失败证据；修正后复验通过。schema8仅在隔离库验证，生产库未迁移；无DeepSeek调用或OOM，新增249次内存节流。网页轨迹、完整模型审计、生产执行入口及三个写工具仍未完成，M3未验收。
 
 ### M2 实现与验证记录
 
@@ -240,7 +242,7 @@ set +a
 scripts/migrate.sh
 ```
 
-迁移成功输出 `schema_version=5`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=8`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema8说明](./docs/api/m3-tool-audit.md#schema8和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

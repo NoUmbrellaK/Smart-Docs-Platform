@@ -1,0 +1,75 @@
+2026-10-19T00:03:46+0800 aliyun-lou systemd[1]: Started /bin/bash -c PYTHONPATH=python SMARTDOCS_TEST_PARSER_PYTHON=/tmp/smartdocs-safe.h4SzvX/venv/bin/python bash scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_read_test.py && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p "test_*.py" -v && sha256sum bin/server bin/smartdocs_tests bin/smartdocs-admin'.
+2026-10-19T00:03:48+0800 aliyun-lou bash[765988]: 2026-10-18T16:03:48.293165Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 765988
+2026-10-19T00:03:48+0800 aliyun-lou bash[765988]: 2026-10-18T16:03:48.298451Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T00:04:03+0800 aliyun-lou bash[765988]: 2026-10-18T16:04:03.632687Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T00:04:11+0800 aliyun-lou bash[765988]: 2026-10-18T16:04:11.826004Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T00:04:52+0800 aliyun-lou bash[766238]: schema_version=8
+2026-10-19T00:05:14+0800 aliyun-lou bash[766288]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T00:05:14+0800 aliyun-lou bash[766288]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T00:05:14+0800 aliyun-lou bash[766288]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T00:05:14+0800 aliyun-lou bash[766288]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T00:05:17+0800 aliyun-lou bash[766362]: test_mcp_agent_dynamic_read_and_persistent_result (__main__.McpReadE2E) ... Agent local supplier: empty search -> changed query -> exact read -> persisted cited answer PASS
+2026-10-19T00:05:17+0800 aliyun-lou bash[766362]: ok
+2026-10-19T00:05:18+0800 aliyun-lou bash[766362]: test_mcp_agent_revocation_blocks_next_model_request (__main__.McpReadE2E) ... Agent local supplier: revoked real MCP output never enters the next model request PASS
+2026-10-19T00:05:18+0800 aliyun-lou bash[766362]: ok
+2026-10-19T00:05:20+0800 aliyun-lou bash[766362]: test_mcp_persistent_task_scope_cancel_and_restart (__main__.McpReadE2E) ... MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS
+2026-10-19T00:05:20+0800 aliyun-lou bash[766362]: ok
+2026-10-19T00:05:22+0800 aliyun-lou bash[766362]: test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E) ... MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS
+2026-10-19T00:05:22+0800 aliyun-lou bash[766362]: ok
+2026-10-19T00:05:24+0800 aliyun-lou bash[766362]: test_mcp_stdio_authorization_and_exact_sources (__main__.McpReadE2E) ... MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS
+2026-10-19T00:05:24+0800 aliyun-lou bash[766362]: ok
+2026-10-19T00:05:24+0800 aliyun-lou bash[766362]: ----------------------------------------------------------------------
+2026-10-19T00:05:24+0800 aliyun-lou bash[766362]: Ran 5 tests in 8.890s
+2026-10-19T00:05:24+0800 aliyun-lou bash[766362]: OK
+2026-10-19T00:05:25+0800 aliyun-lou bash[766405]: test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T00:05:26+0800 aliyun-lou bash[766405]: test_live_module_discovery_is_opt_in_and_never_starts_database (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T00:05:26+0800 aliyun-lou bash[766405]: test_outcome_summary_excludes_untrusted_extras_and_error_text (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T00:05:26+0800 aliyun-lou bash[766405]: test_authoritative_source_rejection_persists_failure_instead_of_stranding_run (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:27+0800 aliyun-lou bash[766405]: test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:27+0800 aliyun-lou bash[766405]: test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:28+0800 aliyun-lou bash[766405]: test_lost_completion_response_never_submits_opposite_terminal_outcome (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:28+0800 aliyun-lou bash[766405]: test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:29+0800 aliyun-lou bash[766405]: test_oversized_history_stops_before_next_model_call (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:29+0800 aliyun-lou bash[766405]: test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:30+0800 aliyun-lou bash[766405]: test_provider_entry_records_dynamic_tool_summary_without_content (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:30+0800 aliyun-lou bash[766405]: test_provider_tool_failure_has_attempt_and_terminal_summary (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:31+0800 aliyun-lou bash[766405]: test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:31+0800 aliyun-lou bash[766405]: test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:32+0800 aliyun-lou bash[766405]: test_twelve_tool_limit_stops_before_thirteenth_tool (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:33+0800 aliyun-lou bash[766405]: test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T00:05:49+0800 aliyun-lou bash[766405]: test_backend_socket_timeout_is_explicit_without_retry (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:00+0800 aliyun-lou bash[766405]: test_cli_hybrid_socket_deadline_rechecks_keyword_fallback (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:01+0800 aliyun-lou bash[766405]: test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:01+0800 aliyun-lou bash[766405]: test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:02+0800 aliyun-lou bash[766405]: test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:02+0800 aliyun-lou bash[766405]: test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:03+0800 aliyun-lou bash[766405]: test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:03+0800 aliyun-lou bash[766405]: test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:04+0800 aliyun-lou bash[766405]: test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:04+0800 aliyun-lou bash[766405]: test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:05+0800 aliyun-lou bash[766405]: test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:05+0800 aliyun-lou bash[766405]: test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:06+0800 aliyun-lou bash[766405]: test_range_read_uses_bounded_post_and_preserves_pagination (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:06+0800 aliyun-lou bash[766405]: test_range_rejects_mixed_selectors_and_invalid_bounds_before_http (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:07+0800 aliyun-lou bash[766405]: test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T00:06:07+0800 aliyun-lou bash[766405]: test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+2026-10-19T00:06:08+0800 aliyun-lou bash[766405]: ok
+2026-10-19T00:06:08+0800 aliyun-lou bash[766405]: ----------------------------------------------------------------------
+2026-10-19T00:06:08+0800 aliyun-lou bash[766405]: Ran 43 tests in 43.339s
+2026-10-19T00:06:08+0800 aliyun-lou bash[766405]: OK
+2026-10-19T00:06:13+0800 aliyun-lou bash[766361]: bc1502381a90cc48a549695b90fc8693c479a02821d927b75a3dd5c3b7305bcf  bin/server
+2026-10-19T00:06:14+0800 aliyun-lou bash[766361]: 677a56565451d3e15cbb4f0086ca92f4cad6ab2e6aa69902a4e86d9121710525  bin/smartdocs_tests
+2026-10-19T00:06:14+0800 aliyun-lou bash[766361]: a808af74185e6f3ceba3934b8a3e16b777e30c3a5214829b31147ee9199eaf67  bin/smartdocs-admin
+2026-10-19T00:06:16+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-mcp-recheck.service: Deactivated successfully.
+2026-10-19T00:06:16+0800 aliyun-lou systemd[1]: smartdocs-m3-tool-audit-mcp-recheck.service: Consumed 14.322s CPU time.

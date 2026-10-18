@@ -1,0 +1,56 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c bin/smartdocs_tests --filter=router_ && /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_tool_audit_test.py.
+2026-10-18T15:38:47.952524Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 761487
+2026-10-18T15:38:48.055717Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T15:39:03.367976Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T15:39:11.959012Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS router_matches_literals_and_decoded_parameters
+PASS router_does_not_treat_query_as_path
+PASS router_rejects_invalid_or_dangerous_path_segments
+PASS router_reports_method_and_route_misses
+RESULT 4 passed, 0 failed, 0 skipped
+test_audit_capacity_concurrent_sequence_and_unknown_is_not_success (__main__.ToolAuditE2E) ... FAIL
+test_audit_owner_scope_membership_and_read_only_route (__main__.ToolAuditE2E) ... FAIL
+test_audit_real_calls_errors_and_restart_are_persistent_and_redacted (__main__.ToolAuditE2E) ... FAIL
+======================================================================
+FAIL: test_audit_capacity_concurrent_sequence_and_unknown_is_not_success (__main__.ToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 84, in test_audit_capacity_concurrent_sequence_and_unknown_is_not_success
+    _, task, path = self.prepare()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 17, in prepare
+    self.assertEqual(data(self.user.request("GET", path+"/tool-calls")),
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'fa4e6e5df143716eaf8f6616ba588548'}
+======================================================================
+FAIL: test_audit_owner_scope_membership_and_read_only_route (__main__.ToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 60, in test_audit_owner_scope_membership_and_read_only_route
+    job, task, path = self.prepare()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 17, in prepare
+    self.assertEqual(data(self.user.request("GET", path+"/tool-calls")),
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '1193c00b3fd747e4805ea80d5c218e0c'}
+======================================================================
+FAIL: test_audit_real_calls_errors_and_restart_are_persistent_and_redacted (__main__.ToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 22, in test_audit_real_calls_errors_and_restart_are_persistent_and_redacted
+    job, task, path = self.prepare()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_audit_test.py", line 17, in prepare
+    self.assertEqual(data(self.user.request("GET", path+"/tool-calls")),
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'c7c3edea9b69477cd15bc74a60b3bc33'}
+----------------------------------------------------------------------
+Ran 3 tests in 2.815s
+FAILED (failures=3)
+smartdocs-m3-tool-audit-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-tool-audit-red.service: Failed with result 'exit-code'.
+smartdocs-m3-tool-audit-red.service: Consumed 6.368s CPU time.

@@ -10,6 +10,15 @@
 #include <utility>
 #include <vector>
 
+TEST_CASE(http_response_capacity_rejection_is_serializable) {
+    const nlohmann::json body={{"request_id","correlation"},{"error",{{"code","agent_audit_full"},{"retryable",false}}}};
+    auto response=HttpResponse::Json(429,body,false);
+    CHECK(response.status()==429);
+    CHECK(response.head_and_body().find("HTTP/1.1 429 Too Many Requests\r\n")==0);
+    CHECK(response.head_and_body().find("Connection: close\r\n")!=std::string::npos);
+    CHECK(response.head_and_body().find(body.dump())!=std::string::npos);
+}
+
 TEST_CASE(http_response_json_sets_required_headers_and_exact_length) {
     const nlohmann::json body = {{"status", "live"}};
     HttpResponse response = HttpResponse::Json(200, body, true);

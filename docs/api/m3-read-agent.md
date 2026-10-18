@@ -70,12 +70,13 @@ access_denied或cancelled，不接受供应商错误正文。模型检查/结果
 HTTP线程可能晚于等待超时才结束，取消等待不代表撤销已发请求；C++终态锁防止覆盖。
 Python协程被强制取消时不续跑；进程消失
 但C++未重启时running可由用户取消，C++重启会标记interrupted。无自动故障恢复。
-数据库目前仅持久化model_calls；可信CLI已增加本地脱敏工具/模型事件及usage记录，
-尚未接入可查询的完整任务审计API。
+数据库持久化model_calls及[后端工具请求轨迹](m3-tool-audit.md)；可信CLI保留本地脱敏
+工具/模型事件及usage记录，尚未接入可查询的完整模型/MCP任务审计API。
 
 ## schema7与验证边界
 
-新增agent_runs，扩展agent_tasks状态；不回填虚构运行。当前C++要求schema7。
+schema7新增agent_runs，扩展agent_tasks状态，不回填虚构运行；当前C++已要求
+[schema8](m3-tool-audit.md#schema8和部署)，不可用旧schema7直接启动。
 升级须停C++/worker/网关并备份后运行scripts/migrate.sh；MySQL DDL非整批原子事务，
 中途失败恢复备份，不盲目重放；回退需恢复匹配版本备份。只验证隔离测试库，
 原业务库未升级，不要直接替换旧库上的二进制。

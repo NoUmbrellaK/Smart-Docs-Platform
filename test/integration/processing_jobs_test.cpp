@@ -181,9 +181,14 @@ nlohmann::json AgentRequest(Application& app, Fixture& f, const std::string& met
     const auto bytes=body.is_null() ? std::string() : body.dump();
     head.content_length=bytes.size(); head.headers["content-type"]="application/json";
     auto handler=app.Prepare(head); if(!bytes.empty()) handler->OnData(bytes.data(),bytes.size());
-    auto response=handler->Finish(); CHECK(response.status()==200 || response.status()==201);
+    auto response=handler->Finish();
     const auto raw=response.head_and_body();
-    return nlohmann::json::parse(raw.substr(raw.find("\r\n\r\n")+4)).at("data");
+    const auto payload=nlohmann::json::parse(raw.substr(raw.find("\r\n\r\n")+4));
+    // Normalize serialized HTTP errors as well as errors thrown before response construction.
+    if(response.status()>=400) throw AppError(response.status(),payload.at("error").at("code"),
+        payload.at("error").at("message"),payload.at("error").at("retryable"));
+    CHECK(response.status()==200 || response.status()==201);
+    return payload.at("data");
 }
 nlohmann::json TaskBody(const JobFixture& job) {
     return {{"question","检查公开模拟资料"},{"confirm_remote_ai",true},
@@ -328,12 +333,15 @@ TEST_CASE(m3_task_rechecks_entire_scope_on_revocation_update_and_delete) {
     const auto prefix="/"+task.at("id").get<std::string>();
     { auto db=TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET remote_ai_approved=FALSE,remote_ai_approved_at=NULL,remote_ai_approved_by=NULL WHERE id=?",{SqlValue(b.version_id)}); }
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/read",{{"file_id",a.file_id},{"version_id",a.version_id}}),"task_scope_changed");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix+"/tool-calls"),"task_scope_changed");
     Approve(f,b);
     { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?",{SqlValue(b.file_id)}); }
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}}),"task_scope_changed");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix+"/tool-calls"),"task_scope_changed");
     { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=NULL WHERE id=?",{SqlValue(b.file_id)}); }
     f.AddJob(b.file_id);
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}}),"task_scope_changed");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix+"/tool-calls"),"task_scope_changed");
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST","",TaskBody(b)),"resource_not_found");
 }
 

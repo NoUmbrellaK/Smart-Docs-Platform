@@ -247,3 +247,49 @@ void RequireAgentTaskScope(MySqlConnection& db,const SessionContext& session,con
         db.Execute("UPDATE agent_tasks SET state='running' WHERE id=?",{SqlValue(task)});
     }
 }
+
+std::string AgentTaskService::BeginToolCall(const SessionContext& session,const std::string& project,
+    const std::string& task,bool search,const Json& body) {
+    Json parameters=Json::object();
+    if(search) {
+        if(body.is_object() && body.contains("mode") && body["mode"].is_string() &&
+            (body["mode"]=="metadata" || body["mode"]=="keyword" || body["mode"]=="hybrid"))
+            parameters["mode"]=body["mode"];
+        if(body.is_object() && body.contains("query") && body["query"].is_string())
+            parameters["query_bytes"]=body["query"].get_ref<const std::string&>().size();
+    } else parameters["selector"]=body.is_object() && body.contains("chunk_id") ? "chunk" :
+        body.is_object() && body.contains("range") ? "range" : "status";
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader);
+    const auto row=Task(db,session,project,task);
+    if(row.String(1)!="pending" && row.String(1)!="running")
+        throw AppError(409,"task_inactive","task is not active");
+    // The task row serializes admission. A hybrid MCP call may issue multiple backend requests.
+    const auto count=db.ScalarInt("SELECT COUNT(*) FROM agent_tool_calls WHERE task_id=?",{SqlValue(task)});
+    if(count>=64) throw AppError(429,"agent_audit_full","task backend call limit reached");
+    const auto request=GenerateId();
+    db.Execute("INSERT INTO agent_tool_calls(task_id,sequence,request_id,tool,parameters) VALUES (?,?,?,?,?)",
+        {SqlValue(task),SqlValue(count+1),SqlValue(request),
+         SqlValue(search ? "search_documents" : "read_document_version"),SqlValue(parameters.dump())});
+    transaction.Commit(); return request;
+}
+
+void AgentTaskService::FinishToolCall(const std::string& request,const std::string& status,uint64_t duration) {
+    auto db=pool_.Acquire();
+    if(db.Execute("UPDATE agent_tool_calls SET status=?,duration_ms=? WHERE request_id=? AND status='unknown'",
+        {SqlValue(status),SqlValue(duration),SqlValue(request)})!=1)
+        throw AppError(503,"agent_unavailable","tool outcome could not be recorded");
+}
+
+nlohmann::json AgentTaskService::ToolCalls(const SessionContext& session,const std::string& project,const std::string& task) {
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader);
+    Task(db,session,project,task); Scope(db,project,task);
+    Json items=Json::array();
+    for(const auto& row:db.Query("SELECT sequence,request_id,tool,parameters,status,started_at,duration_ms "
+        "FROM agent_tool_calls WHERE task_id=? ORDER BY sequence LIMIT 64",{SqlValue(task)}))
+        items.push_back({{"task_id",task},{"sequence",row.UInt64(0)},{"request_id",row.String(1)},
+            {"tool",row.String(2)},{"parameters",Json::parse(row.String(3))},{"status",row.String(4)},
+            {"started_at",row.String(5)},{"duration_ms",row.IsNull(6) ? Json(nullptr) : Json(row.UInt64(6))}});
+    transaction.Commit(); return {{"kind","backend_requests"},{"capacity",64},{"items",items}};
+}

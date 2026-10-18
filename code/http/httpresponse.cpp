@@ -61,6 +61,7 @@ const char* ReasonPhrase(int status) {
     case 414: return "URI Too Long";
     case 416: return "Range Not Satisfiable";
     case 422: return "Unprocessable Entity";
+    case 429: return "Too Many Requests";
     case 431: return "Request Header Fields Too Large";
     case 500: return "Internal Server Error";
     case 501: return "Not Implemented";

@@ -1,5 +1,8 @@
 # M2 持久处理任务（当前增量）
 
+> 下文schema5描述M2基线；当前M3开发分支要求[schema8](m3-tool-audit.md#schema8和部署)，
+> scripts/migrate.sh应输出schema_version=8。部署当前代码时须同时遵循M3迁移说明。
+
 当前提供任务状态、取消、人工重试、可信本地 Python 解析 worker 通道、C++ 向量分批发布及鉴权后的固定版本来源读取。单独启用解析 worker 后才会消费上传任务；pending 不代表已经解析。元数据/关键词搜索保持本地执行；混合检索通过独立编码服务及同源网关接入，见[搜索 API](m2-search-api.md)。部署见[本地 worker 手册](../deployment/m2-local-worker.md)和[向量 worker 手册](../deployment/m2-vector-worker.md)。
 
 ## 用户接口
