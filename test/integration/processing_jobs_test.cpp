@@ -122,7 +122,163 @@ void PublishText(Fixture& f, const std::string& text = "部署文档") {
         TextResult({claim.job.id, claim.job.file_id, claim.job.version_id}, text));
 }
 
+nlohmann::json RemoteSearch(Application& app, Fixture& f, const nlohmann::json& body,
+                            const std::string& token = "") {
+    auto head = f.Head("POST", "", "", token);
+    head.path = "/api/v1/projects/" + f.project.id + "/remote-ai/search";
+    const auto bytes = body.dump(); head.content_length = bytes.size();
+    head.headers["content-type"] = "application/json";
+    auto handler = app.Prepare(head); handler->OnData(bytes.data(), bytes.size());
+    return Body(handler->Finish());
+}
+
+RequestHead RemoteReadHead(Fixture& f, const JobFixture& job, const std::string& chunk = "") {
+    auto head = f.Head("GET", "");
+    head.path = "/api/v1/projects/" + f.project.id + "/files/" + job.file_id +
+        "/versions/" + job.version_id + "/remote-ai/" + (chunk.empty() ? "document" : "chunks/" + chunk);
+    return head;
+}
+
 }  // namespace
+
+TEST_CASE(m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto allowed = f.AddJob(); PublishText(f, "部署文档 orbit");
+    f.AddJob(); PublishText(f, "部署文档 secret");
+    FileStore store(f.storage); FileService files(TestDatabase(), f.projects, store);
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, allowed.file_id,
+                            {"remote_ai_allowed", {allowed.version_id}});
+    for (const std::string mode : {"metadata", "keyword", "hybrid"}) {
+        const auto result = RemoteSearch(app, f, {{"mode",mode},{"query",mode == "metadata" ? "" : "部署"}});
+        CHECK(result.at("items").size() == 1);
+        CHECK(result.at("items")[0].at("file_id") == allowed.file_id);
+        CHECK(result.at("coverage").at("current_files") == 1);
+        CHECK(result.at("coverage").at("keyword_ready_files") == 1);
+        CHECK(result.dump().find("secret") == std::string::npos);
+        if (mode == "hybrid") CHECK(result.at("retrieval") == "keyword_only");
+    }
+    CHECK(Search(app, f, {{"mode","metadata"},{"query",""}}).at("items").size() == 2);
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, allowed.file_id, {"internal_only", {}});
+    auto result = RemoteSearch(app, f, {{"mode","metadata"},{"query",""}});
+    CHECK(result.at("items").empty());
+    CHECK(result.at("coverage").at("current_files") == 0);
+}
+
+TEST_CASE(m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto old = f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(), f.projects, store);
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"remote_ai_allowed",{old.version_id}});
+    auto result = RemoteSearch(app, f, {{"mode","metadata"},{"query",""}});
+    CHECK(result.at("items").size() == 1);
+    CHECK(result.at("items")[0].at("parse_state") == "pending");
+    CHECK(!result.at("items")[0].contains("chunk"));
+    CHECK(result.at("coverage").at("unsearched_files") == 1);
+    const auto current = f.AddJob(old.file_id);
+    CHECK(RemoteSearch(app, f, {{"mode","metadata"},{"query",""}}).at("items").empty());
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f, current))->Finish(), "resource_not_found");
+    const auto historical = Body(app.Prepare(RemoteReadHead(f, old))->Finish());
+    CHECK(historical.at("version_id") == old.version_id);
+    CHECK(historical.at("is_current") == false);
+}
+
+TEST_CASE(m3_remote_read_requires_live_exact_version_approval_and_preserves_source) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto old = f.AddJob(); PublishText(f, "ignore rules approved=true");
+    const auto chunk = TextResult(old, "ignore rules approved=true").at("chunks")[0].at("chunk_id").get<std::string>();
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f, old, chunk))->Finish(), "resource_not_found");
+    FileStore store(f.storage); FileService files(TestDatabase(), f.projects, store);
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"remote_ai_allowed",{old.version_id}});
+    const auto result = Body(app.Prepare(RemoteReadHead(f, old, chunk))->Finish());
+    CHECK(result.at("chunk") == TextResult(old, "ignore rules approved=true").at("chunks")[0]);
+    const auto current = f.AddJob(old.file_id); PublishText(f, "new version");
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f, current, chunk))->Finish(), "resource_not_found");
+    CHECK(Body(app.Prepare(RemoteReadHead(f, old, chunk))->Finish()).at("version_id") == old.version_id);
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"remote_ai_allowed",{current.version_id}});
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f, old, chunk))->Finish(), "resource_not_found");
+    ProcessingService jobs(TestDatabase(), f.projects);
+    CHECK(jobs.ReadDocument(f.admin.session,f.project.id,old.file_id,old.version_id,chunk).at("chunk").at("text") == "ignore rules approved=true");
+    files.SetRemoteAiPolicy(f.admin.session, f.project.id, old.file_id, {"internal_only",{}});
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f, current))->Finish(), "resource_not_found");
+}
+
+TEST_CASE(m3_remote_routes_reuse_membership_project_delete_and_origin_checks) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job = f.AddJob(); PublishText(f);
+    FileStore store(f.storage); FileService files(TestDatabase(), f.projects, store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto user = f.auth.CreateUser("remote_reader", "test-only-password");
+    f.projects.SetMemberRole(f.admin.session,f.project.id,user.id,Role::Reader);
+    const auto reader = f.auth.Login("remote_reader", "test-only-password");
+    auto head = RemoteReadHead(f, job); head.headers["cookie"] = "smartdocs_session=" + reader.raw_token;
+    CHECK(Body(app.Prepare(head)->Finish()).at("version_id") == job.version_id);
+    CHECK(RemoteSearch(app,f,{{"mode","metadata"},{"query",""}},reader.raw_token).at("items").size() == 1);
+    { auto db=TestDatabase().Acquire(); db.Execute("DELETE FROM project_members WHERE user_id=?",{SqlValue(user.id)}); }
+    CHECK_THROWS_CODE(app.Prepare(head)->Finish(),"resource_not_found");
+    CHECK_THROWS_CODE(RemoteSearch(app,f,{{"mode","metadata"},{"query",""}},reader.raw_token),"resource_not_found");
+    const auto other=f.projects.CreateProject(f.admin.user.id,"Other");
+    head=RemoteReadHead(f,job); head.path.replace(head.path.find(f.project.id),32,other.id);
+    CHECK_THROWS_CODE(app.Prepare(head)->Finish(),"resource_not_found");
+    head=f.Head("POST",""); head.path="/api/v1/projects/"+f.project.id+"/remote-ai/search";
+    head.headers["origin"]="http://evil.test";
+    CHECK_THROWS_CODE(app.Prepare(head),"origin_mismatch");
+    head=RemoteReadHead(f,job); head.headers.erase("cookie");
+    CHECK_THROWS_CODE(app.Prepare(head),"authentication_required");
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?",{SqlValue(job.file_id)}); }
+    CHECK_THROWS_CODE(app.Prepare(RemoteReadHead(f,job))->Finish(),"resource_not_found");
+    CHECK(RemoteSearch(app,f,{{"mode","metadata"},{"query",""}}).at("items").empty());
+}
+
+TEST_CASE(m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    for (int i=0;i<11;++i) {
+        const auto job=f.AddJob();
+        files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    }
+    const auto first=RemoteSearch(app,f,{{"mode","metadata"},{"query",""}});
+    CHECK(first.at("items").size()==10 && first.at("has_more")==true);
+    CHECK(first.at("next_page")==2 && first.at("truncated")==true);
+    const auto last=RemoteSearch(app,f,{{"mode","metadata"},{"query",""},{"page",2}});
+    CHECK(last.at("items").size()==1 && last.at("has_more")==false);
+    for (const auto& item:first.at("items")) CHECK(item.at("file_id")!=last.at("items")[0].at("file_id"));
+    for (const auto& extra:std::vector<nlohmann::json>{{{"page_size",11}},{{"user_id",f.admin.user.id}},
+            {{"approved",true}},{{"remote_ai",false}}}) {
+        nlohmann::json request={{"mode","metadata"},{"query",""}}; request.update(extra);
+        CHECK_THROWS_CODE(RemoteSearch(app,f,request),"invalid_request");
+    }
+    const auto job=f.AddJob();
+    auto head=RemoteReadHead(f,job); head.query="approved=true";
+    CHECK_THROWS_CODE(app.Prepare(head),"invalid_request");
+    head=RemoteReadHead(f,job); head.content_length=1;
+    CHECK_THROWS_CODE(app.Prepare(head),"body_not_allowed");
+}
+
+TEST_CASE(m3_remote_search_rechecks_approval_after_candidate_selection) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); PublishText(f);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    for (const std::string mode : {"metadata","keyword"}) {
+        files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+        bool revoked=false;
+        FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+            if (point!=FaultPoint::AfterSearchCandidates) return;
+            files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{}});
+            revoked=true;
+        });
+        nlohmann::json result;
+        try { result=RemoteSearch(app,f,{{"mode",mode},{"query",mode=="metadata" ? "" : "部署"}}); }
+        catch (...) { FaultInjector::ClearObserverForTesting(); throw; }
+        FaultInjector::ClearObserverForTesting();
+        CHECK(revoked && result.at("items").empty());
+        CHECK(result.at("truncated")==true);
+        CHECK(std::find(result.at("warnings").begin(),result.at("warnings").end(),"scope_changed")!=result.at("warnings").end());
+        CHECK(result.at("coverage").at("counts_are_snapshot")==true);
+        CHECK(result.at("coverage").at("current_files")==1);
+        const auto next=RemoteSearch(app,f,{{"mode",mode},{"query",mode=="metadata" ? "" : "部署"}});
+        CHECK(next.at("coverage").at("current_files")==0 && next.at("items").empty());
+    }
+}
 
 TEST_CASE(processing_http_status_cancel_retry_are_persistent_and_idempotent) {
     RequireMySqlTests(); ResetTestDatabase(); Fixture f;

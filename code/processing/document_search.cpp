@@ -112,7 +112,8 @@ std::vector<Candidate> VectorCandidates(MySqlConnection& db, const std::string& 
 }
 }
 
-Json ProcessingService::Search(const SessionContext& session, const std::string& project, const Json& request) {
+Json ProcessingService::Search(const SessionContext& session, const std::string& project, const Json& request,
+                               bool remote_ai) {
     if (!IsEntityId(project) || !request.is_object()) Invalid();
     const std::set<std::string> keys{"mode","query","directory_id","media_type","page","page_size","query_embedding"};
     for (auto it = request.begin(); it != request.end(); ++it) if (!keys.count(it.key())) Invalid();
@@ -124,7 +125,7 @@ Json ProcessingService::Search(const SessionContext& session, const std::string&
     if (request.contains("directory_id") && !IsEntityId(directory)) Invalid();
     const auto raw_type = Text(request, "media_type", 255, true);
     const auto type = request.contains("media_type") ? ValidateUploadMediaType(raw_type) : "";
-    const auto page = Number(request, "page", 1, 1000), limit = Number(request, "page_size", 10, 20);
+    const auto page = Number(request, "page", 1, 1000), limit = Number(request, "page_size", 10, remote_ai ? 10 : 20);
     if (hybrid && (page-1)*limit>=candidate_limit) Invalid();
     if (request.contains("query_embedding")) {
         if (!hybrid || request.dump().size()>128*1024) Invalid();
@@ -140,7 +141,7 @@ Json ProcessingService::Search(const SessionContext& session, const std::string&
         {SqlValue(directory), SqlValue(project)}).empty())
         throw AppError(404, "resource_not_found", "resource was not found");
     std::string scope = "f.project_id=? AND f.deleted_at IS NULL";
-    if (hybrid) scope+=" AND f.remote_ai_policy='remote_ai_allowed' AND v.remote_ai_approved";
+    if (hybrid || remote_ai) scope+=" AND f.remote_ai_policy='remote_ai_allowed' AND v.remote_ai_approved";
     std::vector<SqlValue> scope_values{SqlValue(project)};
     if (!directory.empty()) { scope += " AND f.directory_id=?"; scope_values.emplace_back(directory); }
     if (!type.empty()) { scope += " AND v.media_type=?"; scope_values.emplace_back(type); }

@@ -1,0 +1,17 @@
+--- /tmp/smartdocs-safe.h4SzvX/repo/test/integration/processing_jobs_test.cpp	2026-10-18 19:17:55.512618453 +0800
++++ test/integration/processing_jobs_test.cpp	2026-10-18 19:32:41.732588889 +0800
+@@ -263,12 +263,8 @@
+         bool revoked=false;
+         FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+             if (point!=FaultPoint::AfterSearchCandidates) return;
+-            // Same file lock as a policy update, separate committed transaction.
+-            // Avoid recursively acquiring the membership lock already held by search.
+-            auto db=TestDatabase().Acquire(); MySqlTransaction transaction(db);
+-            db.Query("SELECT id FROM files WHERE id=? FOR UPDATE",{SqlValue(job.file_id)});
+-            db.Execute("UPDATE file_versions SET remote_ai_approved=0 WHERE id=?",{SqlValue(job.version_id)});
+-            transaction.Commit(); revoked=true;
++            files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{}});
++            revoked=true;
+         });
+         nlohmann::json result;
+         try { result=RemoteSearch(app,f,{{"mode",mode},{"query",mode=="metadata" ? "" : "部署"}}); }

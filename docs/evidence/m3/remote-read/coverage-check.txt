@@ -1,0 +1,11 @@
+source_test_cases=147
+group1_passed=74
+group2_fixed_passed=73
+unique_passed=147
+missing=0
+duplicated=0
+final_groups_failed=0
+final_groups_skipped=0
+selection_matches_actual_pass_names=true
+union_matches_source_test_names=true
+execution=individual filtered processes in two sequential isolated MySQL groups

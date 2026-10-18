@@ -445,20 +445,22 @@ std::string ProcessingService::PublishVectorBatch(const std::string& id, const s
 }
 
 nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, const std::string& project,
-    const std::string& file, const std::string& version, const std::string& chunk_id) {
+    const std::string& file, const std::string& version, const std::string& chunk_id, bool remote_ai) {
     using Json = nlohmann::json;
     RequireId(project); RequireId(file); RequireId(version);
     if (!chunk_id.empty() && (chunk_id.size() != 64 || chunk_id.find_first_not_of("0123456789abcdef") != std::string::npos))
         throw AppError(400, "invalid_request", "chunk ID is invalid");
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
-    const auto files = db.Query("SELECT current_version_id FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
+    const auto files = db.Query("SELECT current_version_id,remote_ai_policy FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
                                {SqlValue(file), SqlValue(project)});
     if (files.empty()) throw AppError(404, "resource_not_found", "resource was not found");
-    const auto versions = db.Query("SELECT parse_state,keyword_state,vector_state,sha256,availability_state FROM file_versions WHERE id=? AND file_id=? FOR SHARE",
+    const auto versions = db.Query("SELECT parse_state,keyword_state,vector_state,sha256,availability_state,remote_ai_approved FROM file_versions WHERE id=? AND file_id=? FOR SHARE",
                                   {SqlValue(version), SqlValue(file)});
     if (versions.empty()) throw AppError(404, "resource_not_found", "resource was not found");
     const auto& v = versions[0];
+    if (remote_ai && (files[0].String(1) != "remote_ai_allowed" || v.UInt64(5) != 1))
+        throw AppError(404, "resource_not_found", "resource was not found");
     if (v.String(4) != "available") throw AppError(409, "content_unavailable", "file content is unavailable");
     Json data = {{"file_id", file}, {"version_id", version}, {"is_current", files[0].String(0) == version},
         {"parse_state", v.String(0)}, {"keyword_state", v.String(1)}, {"vector_state", v.String(2)},

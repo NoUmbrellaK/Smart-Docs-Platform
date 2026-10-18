@@ -1,0 +1,95 @@
+2026-10-18T19:02:10+0800 aliyun-lou systemd[1]: Started /bin/bash -lc make -j1 bin/smartdocs_tests && bash scripts/test-with-mysql.sh -- bin/smartdocs_tests.
+2026-10-18T19:02:11+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/file/file_service.cpp -o build/obj/tests/code/file/file_service.o
+2026-10-18T19:02:15+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/upload/upload_repository.cpp -o build/obj/tests/code/upload/upload_repository.o
+2026-10-18T19:02:20+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/app/application.cpp -o build/obj/tests/code/app/application.o
+2026-10-18T19:02:25+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/processing/processing_routes.cpp -o build/obj/tests/code/processing/processing_routes.o
+2026-10-18T19:02:32+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/processing/processing_service.cpp -o build/obj/tests/code/processing/processing_service.o
+2026-10-18T19:02:44+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/processing/worker_routes.cpp -o build/obj/tests/code/processing/worker_routes.o
+2026-10-18T19:02:50+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c code/processing/document_search.cpp -o build/obj/tests/code/processing/document_search.o
+2026-10-18T19:03:03+0800 aliyun-lou bash[719939]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c test/integration/processing_jobs_test.cpp -o build/obj/tests/test/integration/processing_jobs_test.o
+2026-10-18T19:03:35+0800 aliyun-lou bash[719939]: g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/tests/code/core/crypto.o build/obj/tests/code/core/id.o build/obj/tests/code/core/fault_injector.o build/obj/tests/code/file/range.o build/obj/tests/code/file/file_store.o build/obj/tests/code/file/file_routes.o build/obj/tests/code/file/file_repository.o build/obj/tests/code/file/file_service.o build/obj/tests/code/upload/upload_repository.o build/obj/tests/code/upload/upload_reconciler.o build/obj/tests/code/upload/upload_routes.o build/obj/tests/code/upload/upload_service.o build/obj/tests/code/upload/chunk_body_handler.o build/obj/tests/code/app/application.o build/obj/tests/code/app/config.o build/obj/tests/code/http/router.o build/obj/tests/code/http/httprequest.o build/obj/tests/code/http/httpconn.o build/obj/tests/code/http/httpresponse.o build/obj/tests/code/http/jsonbody.o build/obj/tests/code/processing/processing_routes.o build/obj/tests/code/processing/processing_service.o build/obj/tests/code/processing/worker_routes.o build/obj/tests/code/processing/document_result.o build/obj/tests/code/processing/vector_result.o build/obj/tests/code/processing/document_search.o build/obj/tests/code/log/log.o build/obj/tests/code/buffer/buffer.o build/obj/tests/code/auth/auth_repository.o build/obj/tests/code/auth/auth_service.o build/obj/tests/code/auth/auth_routes.o build/obj/tests/code/timer/heaptimer.o build/obj/tests/code/project/project_service.o build/obj/tests/code/project/project_repository.o build/obj/tests/code/project/project_routes.o build/obj/tests/code/db/schema.o build/obj/tests/code/db/mysql.o build/obj/tests/code/server/webserver.o build/obj/tests/code/server/epoller.o build/obj/tests/test/test_main.o build/obj/tests/test/mysql_test_support.o build/obj/tests/test/unit/file_store_test.o build/obj/tests/test/unit/webserver_socket_test.o build/obj/tests/test/unit/config_test.o build/obj/tests/test/unit/vector_result_test.o build/obj/tests/test/unit/document_result_test.o build/obj/tests/test/unit/core_crypto_test.o build/obj/tests/test/unit/http_request_test.o build/obj/tests/test/unit/baseline_test.o build/obj/tests/test/unit/range_test.o build/obj/tests/test/unit/timer_test.o build/obj/tests/test/unit/router_test.o build/obj/tests/test/unit/authorization_test.o build/obj/tests/test/unit/upload_validation_test.o build/obj/tests/test/unit/http_response_test.o build/obj/tests/test/unit/threadpool_test.o build/obj/tests/test/integration/file_mutation_test.o build/obj/tests/test/integration/mysql_readiness_test.o build/obj/tests/test/integration/auth_project_test.o build/obj/tests/test/integration/upload_part_test.o build/obj/tests/test/integration/mysql_schema_test.o build/obj/tests/test/integration/file_metadata_test.o build/obj/tests/test/integration/processing_jobs_test.o build/obj/tests/test/integration/mysql_transaction_test.o build/obj/tests/test/integration/upload_recovery_test.o build/obj/tests/test/integration/upload_complete_test.o build/obj/tests/test/integration/file_download_test.o -o bin/smartdocs_tests -pthread -lmysqlclient -lcrypto
+2026-10-18T19:03:57+0800 aliyun-lou bash[720505]: 2026-10-18T11:03:57.453040Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 720505
+2026-10-18T19:04:08+0800 aliyun-lou bash[720505]: 2026-10-18T11:04:08.768760Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T19:04:28+0800 aliyun-lou bash[720505]: 2026-10-18T11:04:28.696703Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T19:04:37+0800 aliyun-lou bash[720505]: 2026-10-18T11:04:37.701339Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-18T19:05:14+0800 aliyun-lou bash[720701]: schema_version=5
+2026-10-18T19:05:34+0800 aliyun-lou bash[720741]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_store_streams_parts_into_an_immutable_object
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_store_rejects_untrusted_paths_and_removes_unfinished_writes
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_store_detects_part_order_size_and_digest_mismatches
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS webserver_sets_status_flags_nonblocking
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_connection_serves_live_health_over_socket
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_connection_reports_not_ready_before_database_bootstrap
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_connection_bounds_et_reads_and_rearms_queued_bytes
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_connection_rejects_pipeline_still_queued_in_socket
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_connection_streams_only_the_allowlisted_static_shell
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_rejects_missing_mysql_password
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_uses_documented_defaults
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_accepts_private_mysql_socket
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_rejects_invalid_numeric_values
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_rejects_relative_storage_root
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_worker_rejects_non_loopback_listener
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS config_worker_rejects_weak_or_malformed_credentials
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS vector_result_rejects_window_budgets_nonfinite_and_reordered_chunks
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS vector_result_counts_unicode_codepoints_not_bytes
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_accepts_python_identity_and_unicode_locations
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_rejects_forged_identity_types_counts_and_locations
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_rejects_controls_invalid_utf8_and_oversized_chunks
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_pdf_requires_complete_explicit_page_coverage
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_contiguous_chunks_preserve_newlines_and_four_byte_unicode
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_accepts_real_python_pdf_page_identities
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS document_result_enforces_aggregate_character_and_chunk_boundaries
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS ids_are_lower_hex_and_unique
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS tokens_have_requested_random_byte_length
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS sha256_matches_known_vector
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS password_verification_rejects_wrong_password
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS request_body_can_arrive_across_reads
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS binary_body_preserves_crlf_and_zero_bytes
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS duplicate_content_length_is_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS content_length_with_transfer_encoding_is_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS chunked_transfer_encoding_is_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS request_line_over_8192_bytes_is_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS headers_over_32768_bytes_are_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS pipelined_second_request_is_rejected
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS request_connection_close_token_is_honored
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS baseline_json_version
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS range_parses_closed_open_and_suffix_forms_with_clamping
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS range_rejects_empty_unsatisfiable_overflow_and_malformed_values
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS range_rejects_every_multi_range_with_not_supported
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS timer_first_insert_and_cancel_are_safe
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS timer_callback_can_reuse_its_identifier
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS router_matches_literals_and_decoded_parameters
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS router_does_not_treat_query_as_path
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS router_rejects_invalid_or_dangerous_path_segments
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS router_reports_method_and_route_misses
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS authorization_role_matrix_is_explicit
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_validation_calculates_zero_and_final_part_layout
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_validation_rejects_invalid_part_layout
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_validation_rejects_invalid_digests_and_media_types
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_response_json_sets_required_headers_and_exact_length
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_response_file_serializes_headers_without_buffering_file
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS http_response_move_assignment_closes_replaced_descriptor_once
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS threadpool_destruction_waits_for_accepted_tasks
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS file_mutation_http_routes_enforce_origin_json_limit_and_audit_request_id
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_application_is_ready_with_schema_and_secure_storage
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_application_rejects_missing_storage_directory_at_startup
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_application_rejects_symlink_storage_root_at_startup
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS auth_project_sessions_reject_invalid_expired_and_revoked_tokens
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS auth_project_membership_is_project_scoped_and_directories_are_checked
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS auth_project_http_routes_form_a_same_origin_vertical_slice
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_part_tasks_enforce_boundaries_ownership_and_cancellation
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_part_creation_rejects_name_and_version_conflicts
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_part_http_streams_and_replays_identical_content
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS upload_part_concurrent_identical_puts_create_one_confirmation
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_schema_version_is_five
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_schema_rejects_two_root_directories_for_one_project
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_schema_rejects_duplicate_active_file_name
+2026-10-18T19:07:45+0800 aliyun-lou bash[720806]: PASS mysql_schema_rejects_duplicate_upload_part_number
+2026-10-18T19:17:10+0800 aliyun-lou systemd[1]: smartdocs-m3-read-green.service: Service reached runtime time limit. Stopping.
+2026-10-18T19:17:10+0800 aliyun-lou bash[720806]: PASS mysq
+2026-10-18T19:17:10+0800 aliyun-lou bash[719937]: Terminated
+2026-10-18T19:17:15+0800 aliyun-lou systemd[1]: smartdocs-m3-read-green.service: Main process exited, code=exited, status=143/n/a
+2026-10-18T19:17:15+0800 aliyun-lou systemd[1]: smartdocs-m3-read-green.service: Failed with result 'timeout'.
+2026-10-18T19:17:15+0800 aliyun-lou systemd[1]: smartdocs-m3-read-green.service: Consumed 1min 25.833s CPU time.
