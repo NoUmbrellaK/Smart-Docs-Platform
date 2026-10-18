@@ -1,0 +1,19 @@
+2026-10-18 after stopping only smartdocs-m3-hybrid-encoder.service
+smartdocs-m3-hybrid-encoder.service: MainPID=0 Result=success ActiveState=inactive SubState=dead
+smartdocs-m3-hybrid-e2e.service: MainPID=0 Result=success ActiveState=inactive SubState=dead
+systemctl list-units 'smartdocs-m3-hybrid*' --state=running: 0 loaded units listed
+smartdocsvectorcheck.slice:
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+memory.events: low 0 high 80272 max 0 oom 0 oom_kill 0
+MemAvailable: 1731084 kB
+PID 975 mysqld /usr/sbin/mysqld
+find /tmp -maxdepth 1 -type d -name 'smartdocs-mysql.*': no entries
+/tmp/smartdocs-m3-hybrid.Mc0e5w: empty directory, nobody:nogroup, mode 0700

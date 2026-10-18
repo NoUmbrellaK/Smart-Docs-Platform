@@ -1,0 +1,20 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p test_vector_worker.py -k elapsed_connect -v.
+test_elapsed_connect_deadline_prevents_sending_query (test_vector_worker.VectorWorkerTests) ... FAIL
+======================================================================
+FAIL: test_elapsed_connect_deadline_prevents_sending_query (test_vector_worker.VectorWorkerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_vector_worker.py", line 203, in test_elapsed_connect_deadline_prevents_sending_query
+    self.assertEqual(received,[b""],"expired connection must not send query bytes")
+AssertionError: Lists differ: [b'[{"chunk_id":"000000000000000000000000000[87 chars]"}]'] != [b'']
+First differing element 0:
+b'[{"chunk_id":"000000000000000000000000000[86 chars]2"}]'
+b''
++ [b'']
+- [b'[{"chunk_id":"00000000000000000000000000000000000000000000000000000000000000'
+-  b'00","text":"\xe4\xb8\xad\xe6\x96\x87\xf0\x9f\x99\x82"}]'] : expired connection must not send query bytes
+----------------------------------------------------------------------
+Ran 1 test in 0.171s
+FAILED (failures=1)
+smartdocs-m3-hybrid-deadline-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-hybrid-deadline-red.service: Failed with result 'exit-code'.

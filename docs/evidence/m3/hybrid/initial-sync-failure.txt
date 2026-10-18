@@ -1,0 +1,17 @@
+Started /usr/bin/env PYTHONPATH=python /bin/bash -c /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_mcp_read.py -k hybrid -v; /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p test_vector_worker.py -k short_query -v.
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+OK
+test_short_query_deadline_closes_hung_socket_without_retry (test_vector_worker.VectorWorkerTests) ... FAIL
+======================================================================
+FAIL: test_short_query_deadline_closes_hung_socket_without_retry (test_vector_worker.VectorWorkerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_vector_worker.py", line 153, in test_short_query_deadline_closes_hung_socket_without_retry
+    self.assertIn("timeout",inspect.signature(self.m.request_encoding).parameters,
+AssertionError: 'timeout' not found in mappingproxy(OrderedDict([('path', <Parameter "path">), ('chunks', <Parameter "chunks">)])) : query encoding cannot use a shorter deadline
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+FAILED (failures=1)
+smartdocs-m3-hybrid-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-hybrid-red.service: Failed with result 'exit-code'.

@@ -62,13 +62,14 @@ def safe_outcome(outcome):
     return {"state":outcome["state"],"error_code":code}
 
 
-async def run_context(context_path, audit_path, api_key, max_calls=8):
+async def run_context(context_path, audit_path, api_key, max_calls=8, *, encoder_socket=None):
     context=load_context(context_path)
     if context["scope"]!="task_versions": raise ValueError("persistent task required")
     # Validate credentials before creating a trace or starting any child/claim.
     DeepSeekModel(api_key,lambda event:None,max_calls=max_calls)
-    parameters=StdioServerParameters(command=sys.executable,
-        args=["-B","-m","smartdocs.mcp_read","--context",str(context_path)],
+    child_args=["-B","-m","smartdocs.mcp_read","--context",str(context_path)]
+    if encoder_socket is not None: child_args.extend(["--encoder-socket",str(encoder_socket)])
+    parameters=StdioServerParameters(command=sys.executable, args=child_args,
         env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(Path(__file__).resolve().parents[1])})
     with open_audit(audit_path,context["task_id"]) as audit:
         model=DeepSeekModel(api_key,audit,max_calls=max_calls)
@@ -87,12 +88,13 @@ def main():
     parser.add_argument("--context",required=True)
     parser.add_argument("--audit",required=True)
     parser.add_argument("--max-model-calls",type=int,choices=range(1,9),default=8)
+    parser.add_argument("--encoder-socket",help="optional trusted local query encoder socket")
     args=parser.parse_args()
     logging.disable(logging.CRITICAL)
     # A secret must not be inherited by the MCP child. Never put it on the command line.
     key=os.environ.pop("DEEPSEEK_API_KEY","")
     try:
-        outcome=asyncio.run(run_context(args.context,args.audit,key,args.max_model_calls))
+        outcome=asyncio.run(run_context(args.context,args.audit,key,args.max_model_calls,encoder_socket=args.encoder_socket))
     except ValueError:
         print(json.dumps({"state":"not_started","error_code":"configuration_error"})); return 2
     except (Exception,KeyboardInterrupt):

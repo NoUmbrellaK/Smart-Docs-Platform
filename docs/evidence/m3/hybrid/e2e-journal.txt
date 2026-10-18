@@ -1,0 +1,16 @@
+Started /usr/bin/env PYTHONPATH=python SMARTDOCS_ENCODER_SOCKET=/tmp/smartdocs-m3-hybrid.Mc0e5w/encoder.sock /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_hybrid_test.py.
+2026-10-18T14:51:58.128315Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 753431
+2026-10-18T14:51:58.621219Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T14:52:13.924746Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T14:52:21.733351Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+test_mcp_hybrid_scope_fallback_and_agent_cli (__main__.HybridMcpE2E) ... MCP hybrid: real vector-only Chinese query; task scope; missing-socket fallback; CLI cited result; revocation PASS
+ok
+----------------------------------------------------------------------
+Ran 1 test in 12.891s
+OK
+smartdocs-m3-hybrid-e2e.service: Deactivated successfully.
+smartdocs-m3-hybrid-e2e.service: Consumed 8.470s CPU time.

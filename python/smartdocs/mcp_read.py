@@ -1,5 +1,6 @@
 """Private, parent-bound MCP read tools. No model calls or public listener."""
 import argparse
+from functools import partial
 import http.client
 import json
 import logging
@@ -17,6 +18,8 @@ from mcp.server.stdio import stdio_server
 from mcp.types import CallToolResult, TextContent, Tool, ToolAnnotations
 
 from .search_http import strict_json
+from .search import search_documents
+from .vector_worker import request_encoding
 
 
 ID = {"type": "string", "pattern": "^[0-9a-f]{32}$", "minLength": 32, "maxLength": 32}
@@ -145,7 +148,25 @@ def backend_read(context, name, arguments):
         connection.close()
 
 
-def create_server(context):
+class BackendFailure(Exception):
+    """Contains only the normalized backend status, never its response body."""
+
+
+def backend_tool(context, name, arguments, encoder):
+    if name != "search_documents" or arguments["mode"] != "hybrid" or encoder is None:
+        return backend_read(context, name, arguments)
+    def search(request):
+        status, data = backend_read(context, name, request)
+        if status != "success": raise BackendFailure(status)
+        return data
+    try:
+        # The coordinator discards preflight results and rechecks the same bound scope after encoding.
+        return "success", search_documents(search, encoder, {k:v for k,v in arguments.items() if k != "mode"})
+    except BackendFailure as error:
+        return str(error), None
+
+
+def create_server(context, encoder=None):
     context = validate_context(context)
     server = Server("smartdocs-read-tools")
     validators = {name: Draft202012Validator(schema) for name, schema in SCHEMAS.items()}
@@ -168,7 +189,7 @@ def create_server(context):
             if name in validators and validators[name].is_valid(arguments):
                 encoded = json.dumps(arguments, ensure_ascii=False, allow_nan=False).encode("utf-8")
                 if len(encoded) <= 32768:
-                    status, data = await anyio.to_thread.run_sync(backend_read, context, name, arguments, limiter=limiter)
+                    status, data = await anyio.to_thread.run_sync(backend_tool, context, name, arguments, encoder, limiter=limiter)
         except (ValueError, UnicodeError, RecursionError):
             pass
         except Exception:
@@ -183,8 +204,8 @@ def create_server(context):
     return server
 
 
-async def run(context):
-    server = create_server(context)
+async def run(context, encoder=None):
+    server = create_server(context, encoder)
     async with stdio_server() as (reader, writer):
         await server.run(reader, writer, server.create_initialization_options())
 
@@ -192,11 +213,13 @@ async def run(context):
 def main():
     parser = argparse.ArgumentParser(description="Private MCP read-only stdio debugger; never a public service.")
     parser.add_argument("--context", required=True, help="owner-only 0600 JSON context file; no token in argv")
+    parser.add_argument("--encoder-socket", help="optional trusted private local encoder socket; never a model argument")
     args = parser.parse_args()
     # SDK may log rejected tool names/transport data; stdout is protocol-only.
     logging.disable(logging.CRITICAL)
     try:
-        anyio.run(run, load_context(args.context))
+        encoder = partial(request_encoding, args.encoder_socket, timeout=10) if args.encoder_socket else None
+        anyio.run(run, load_context(args.context), encoder)
         return 0
     except Exception:
         print("mcp_read: configuration or transport failure", file=__import__("sys").stderr)

@@ -3,11 +3,13 @@ import hashlib
 import importlib
 import importlib.util
 import io
+import inspect
 import json
 import os
 import socket
 import tempfile
 import threading
+import time
 import unittest
 
 from smartdocs.embeddings import EMBEDDING_REVISION, EmbeddingError
@@ -146,6 +148,59 @@ class VectorWorkerTests(unittest.TestCase):
                     with self.assertRaises(EmbeddingError): self.m.request_encoding(target, CHUNKS[:1])
                 os.chmod(path, 0o600); os.symlink(path, tmp+"/link")
                 with self.assertRaises(EmbeddingError): self.m.request_encoding(tmp+"/link", CHUNKS[:1])
+
+    def test_short_query_deadline_closes_hung_socket_without_retry(self):
+        self.assertIn("timeout",inspect.signature(self.m.request_encoding).parameters,
+                      "query encoding cannot use a shorter deadline")
+        with tempfile.TemporaryDirectory() as tmp:
+            path=tmp+"/query.sock"
+            with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as server:
+                server.bind(path); os.chmod(path,0o600); server.listen(1)
+                received=[]; released=threading.Event()
+                def serve():
+                    with server.accept()[0] as conn:
+                        raw=bytearray()
+                        while part:=conn.recv(4096): raw.extend(part)
+                        received.append(json.loads(raw)); released.wait(2)
+                thread=threading.Thread(target=serve); thread.start()
+                start=time.monotonic()
+                try:
+                    with self.assertRaises(EmbeddingError) as caught:
+                        self.m.request_encoding(path,CHUNKS[:1],timeout=0.05)
+                    self.assertEqual(caught.exception.code,"embedding_timeout")
+                    self.assertLess(time.monotonic()-start,1)
+                finally: released.set(); thread.join(3)
+                self.assertFalse(thread.is_alive()); self.assertEqual(received,[CHUNKS[:1]])
+                for timeout in (0,-1,76,True,float("nan"),float("inf")):
+                    with self.assertRaises(EmbeddingError):
+                        self.m.request_encoding(path,CHUNKS[:1],timeout=timeout)
+
+    def test_elapsed_connect_deadline_prevents_sending_query(self):
+        from unittest.mock import patch
+        original=socket.socket
+        class DelayedConnect(original):
+            def connect(self,address):
+                super().connect(address)
+                time.sleep(0.08)  # OS connection succeeded, but caller resumed after the deadline.
+        with tempfile.TemporaryDirectory() as tmp:
+            path=tmp+"/query.sock"
+            with original(socket.AF_UNIX,socket.SOCK_STREAM) as server:
+                server.bind(path); os.chmod(path,0o600); server.listen(1)
+                received=[]
+                def serve():
+                    with server.accept()[0] as conn:
+                        raw=bytearray()
+                        while part:=conn.recv(4096): raw.extend(part)
+                        received.append(bytes(raw))
+                thread=threading.Thread(target=serve); thread.start()
+                try:
+                    with patch.object(self.m.socket,"socket",DelayedConnect):
+                        with self.assertRaises(EmbeddingError) as caught:
+                            self.m.request_encoding(path,CHUNKS[:1],timeout=0.05)
+                        self.assertEqual(caught.exception.code,"embedding_timeout")
+                finally: thread.join(3)
+                self.assertFalse(thread.is_alive())
+                self.assertEqual(received,[b""],"expired connection must not send query bytes")
 
 
 class EncodingServiceTests(unittest.TestCase):

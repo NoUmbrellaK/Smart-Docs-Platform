@@ -28,8 +28,10 @@ class VectorClient(Client):
         return result
 
 
-def request_encoding(path, chunks):
+def request_encoding(path, chunks, *, timeout=75):
     """One half-closed Unix stream per batch; never replay expensive encoding automatically."""
+    if type(timeout) not in (int, float) or not 0 < timeout <= 75:
+        raise EmbeddingError("embedding_invalid_input")
     validate_chunks(chunks)
     payload = json.dumps(chunks, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     if len(payload) > MAX_INPUT_BYTES:
@@ -41,16 +43,19 @@ def request_encoding(path, chunks):
         if not stat.S_ISSOCK(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o077:
             raise EmbeddingError("embedding_worker_failed")
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
-            deadline = time.monotonic() + 75
-            connection.settimeout(75)
+            deadline = time.monotonic() + timeout
+            def remaining_timeout():
+                remaining = deadline-time.monotonic()
+                if remaining <= 0: raise TimeoutError()
+                connection.settimeout(remaining)
+            remaining_timeout()
             connection.connect(path)
+            remaining_timeout()
             connection.sendall(payload)
             connection.shutdown(socket.SHUT_WR)
             raw = bytearray()
             while True:
-                remaining = deadline-time.monotonic()
-                if remaining <= 0: raise TimeoutError()
-                connection.settimeout(remaining)
+                remaining_timeout()
                 part = connection.recv(min(65536, MAX_OUTPUT_BYTES+1-len(raw)))
                 if not part: break
                 raw.extend(part)

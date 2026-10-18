@@ -1,0 +1,78 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_mcp_read.py -k hybrid -v.
+test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests) ... FAIL
+test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests) ... FAIL
+test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... FAIL
+test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests) ... FAIL
+======================================================================
+FAIL: test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 233, in test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode
+    result=await self.hybrid(encoder,{"mode":mode,"query":"部署"})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 173, in hybrid
+    self.assertIn("encoder", inspect.signature(self.module.create_server).parameters,
+AssertionError: 'encoder' not found in mappingproxy(OrderedDict([('context', <Parameter "context">)])) : MCP hybrid query encoder is not connected
+======================================================================
+FAIL: test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 207, in test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope
+    result=await self.hybrid(lambda _:self.fail("denied query reached encoder"))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 173, in hybrid
+    self.assertIn("encoder", inspect.signature(self.module.create_server).parameters,
+AssertionError: 'encoder' not found in mappingproxy(OrderedDict([('context', <Parameter "context">)])) : MCP hybrid query encoder is not connected
+======================================================================
+FAIL: test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 194, in test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result
+    result=await self.hybrid(encoder)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 173, in hybrid
+    self.assertIn("encoder", inspect.signature(self.module.create_server).parameters,
+AssertionError: 'encoder' not found in mappingproxy(OrderedDict([('context', <Parameter "context">)])) : MCP hybrid query encoder is not connected
+======================================================================
+FAIL: test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 223, in test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight
+    result=await self.hybrid(encoder)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 173, in hybrid
+    self.assertIn("encoder", inspect.signature(self.module.create_server).parameters,
+AssertionError: 'encoder' not found in mappingproxy(OrderedDict([('context', <Parameter "context">)])) : MCP hybrid query encoder is not connected
+----------------------------------------------------------------------
+Ran 4 tests in 2.020s
+FAILED (failures=4)
+smartdocs-m3-hybrid-protocol-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-hybrid-protocol-red.service: Failed with result 'exit-code'.

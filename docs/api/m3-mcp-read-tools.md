@@ -16,6 +16,9 @@ x86_64；升级或换平台重新验证锁。使用独立虚拟环境，不往 w
 python3 -m venv /path/to/mcp-venv
 /path/to/mcp-venv/bin/pip install --only-binary=:all: --require-hashes -r python/requirements-mcp.txt
 PYTHONPATH=python /path/to/mcp-venv/bin/python -B -m smartdocs.mcp_read --context /private/context.json
+# 可选：接入已部署且READY的本地查询编码器；省略时hybrid明确降级。
+PYTHONPATH=python /path/to/mcp-venv/bin/python -B -m smartdocs.mcp_read \
+  --context /private/context.json --encoder-socket /run/smartdocs-encoder/encoder.sock
 ```
 
 配置文件须为当前运行用户所有的普通文件、权限精确0600、最多4096字节；
@@ -51,8 +54,10 @@ scope支持两种模式：
 - search_documents：必需 mode（metadata/keyword/hybrid）、query；可选
   directory_id、media_type、page（1–1000）、page_size（1–10）。
   query 最多256字符，C++还执行原有字节限制；metadata允许空查询。
-  直接访问 remote-ai/search；本增量未接查询编码器，hybrid必须如实显示
-  keyword_only降级，不将其计为混合检索成功。
+  只访问绑定的 remote-ai/search 或任务 tools/search。配置私有编码器后，hybrid
+  复用现有查询协调器：先经相同C++入口校验，再编码查询，再经相同入口重新校验并搜索。
+  无编码器、编码失败或向量索引缺失时，保留C++的keyword_only和具体warnings，
+  不将降级结果计为混合检索成功；metadata/keyword不编码。
 - read_document_version：必需 file_id、version_id；可选64位小写十六进制chunk_id
   或 range 对象，两者互斥。都不提供时只返回处理状态/元数据，绝非完整正文；
   chunk_id 返回固定版本的一个精确片段；range（可为空对象）返回有界片段列表。
@@ -85,6 +90,26 @@ C++的pending/processing映为processing，其余未完成解析终态映为unav
 HTTP400/401/403/404/409/429分别映参数错误/访问拒绝/访问拒绝/访问拒绝/冲突/忙，
 其他非200（包括重定向）为依赖失败。后续写工具需要增加等待确认等状态。
 
+### 本地hybrid查询边界
+
+`--encoder-socket`只由可信本机操作者配置，不属于MCP参数或任务context。
+复用已有私有AF_UNIX客户端：绝对路径、同账号、无组/其他权限的socket，拒绝符号链接；
+不向编码器发送会话、项目或文件正文，只发送查询及其哈希。不加载新的模型、不连接
+远程向量服务、不启用缓存。调用方须按[本地编码部署说明](../deployment/m2-vector-worker.md)
+先启动受限服务；MCP不会自动启动、重启或安装模型。
+
+预检查失败时不编码。编码期间权限、批准、当前版本或任务状态变化，由第二次C++检查
+处理；拒绝则不返回预检查的旧结果，也不切到普通项目搜索。模型不能传入query_embedding、
+encoder_socket或身份字段，工具schema保持不变。
+
+查询socket传输使用单一10秒截止期，connect/send/recv共享剩余时间，超时不重试。
+原后台文档编码客户端默认75秒不变。编码失败后仍需成功重新鉴权才能返回关键词降级；
+C++前后两次HTTP各15秒socket超时不代表总计必定低于30秒。Agent的30秒工具预算与
+180秒总预算不变，慢后端可能使整步超时而非成功降级。同步线程等待不能撤销已发请求，
+本入口只读；服务端依赖复核及后续模型前检查仍是边界。
+客户端断开不保证立即终止服务端计算；现有编码监督服务有独立截止期，响应写入失败时
+可能退出，需要操作者检查并手动恢复，不能承诺超时后服务一直可用。
+
 分页示例：`{"file_id":"…","version_id":"…","range":{"page_start":1,"page_end":3,"limit":10,"offset":0}}`。
 data.chunks 最多10个原始片段，每项保留完整引用字段；data.read_range 包含
 scope（document/pages）、offset、limit、content_ready、has_more、next_offset、
@@ -109,6 +134,6 @@ Agent任务的墙钟预算。每进程后端调用串行；stdout只写MCP协议
 
 后续[只读执行核心](m3-read-agent.md)已增加任务终态、次数/字节/时间预算及模型调用前依赖复核；
 后续[受控供应商适配器](m3-deepseek.md)已增加可信本机CLI及本地脱敏持久日志，但真实API尚未验证。
-内部 Streamable HTTP 认证、完整任务审计API、用户确认范围的网页入口、查询向量接线、
+内部 Streamable HTTP 认证、完整任务审计API、用户确认范围的网页入口、
 三个写工具及M4事务仍待完成。一次工具读取成功不构成永久外发授权，
 不能复用已经撤销批准的旧结果进入后续模型请求。本增量没有生产部署。

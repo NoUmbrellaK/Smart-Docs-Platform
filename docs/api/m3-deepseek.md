@@ -31,6 +31,11 @@ PYTHONPATH=python /path/to/mcp-venv/bin/python -B -m smartdocs.agent_cli \
   --max-model-calls 6
 ```
 
+如需本地hybrid查询，可另加`--encoder-socket /run/smartdocs-encoder/encoder.sock`。
+该可信配置只传给MCP子进程，模型不能选择路径；服务须事先READY，详见
+[MCP查询边界](m3-mcp-read-tools.md#本地hybrid查询边界)。省略或不可用时明确关键词降级，
+不会改用其他远程向量供应商。
+
 context沿用[已有格式](m3-mcp-read-tools.md)，必须task_versions、当前运行用户所有、
 普通文件且精确0600，拒绝符号链接。audit必须尚不存在，父目录应受保护；
 文件独占创建0600，每条记录flush+fsync；拒绝覆盖与符号链接。不要把这些文件放进Git。

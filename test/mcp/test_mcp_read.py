@@ -1,6 +1,7 @@
 """SDK protocol + real loopback fault receiver; not a substitute for C++ authorization tests."""
 import importlib
 import importlib.util
+import inspect
 import json
 import os
 from pathlib import Path
@@ -168,6 +169,112 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.calls),3)
         self.assertTrue(all(f"/agent-tasks/{TASK}/tools/" in c[1] for c in self.calls))
 
+    async def hybrid(self, encoder, arguments=None):
+        self.assertIn("encoder", inspect.signature(self.module.create_server).parameters,
+                      "MCP hybrid query encoder is not connected")
+        async with create_connected_server_and_client_session(
+                self.module.create_server(self.context, encoder=encoder)) as client:
+            return await client.call_tool("search_documents", arguments or {"mode":"hybrid","query":"部署"})
+
+    async def test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result(self):
+        from smartdocs.embeddings import EMBEDDING_REVISION
+        for scope in ("task_versions", "project_approved_versions"):
+            self.context["scope"]=scope; self.calls.clear()
+            self.payload={"data":{"items":[],"retrieval":"keyword_only"}}
+            def encoder(chunks):
+                self.assertEqual(len(self.calls),1)
+                self.assertEqual(json.loads(self.calls[0][3]),{"mode":"hybrid","query":"部署"})
+                self.assertEqual([c["text"] for c in chunks],["部署"])
+                self.assertNotIn(TOKEN,json.dumps(chunks))
+                self.payload={"data":{"items":[{"file_id":FILE,"version_id":VERSION}],
+                                      "retrieval":"hybrid","coverage":{"current_files":1}}}
+                return {"embedding_revision":EMBEDDING_REVISION,"chunks":[{
+                    "chunk_id":chunks[0]["chunk_id"],"text_sha256":chunks[0]["chunk_id"],
+                    "windows":[{"char_start":0,"char_end":2,"vector":[1.0]+[0.0]*383}]}]}
+            result=await self.hybrid(encoder)
+            self.assertFalse(result.isError)
+            self.assertEqual(result.structuredContent["data"],self.payload["data"])
+            self.assertEqual(len(self.calls),2)
+            suffix=f"/agent-tasks/{TASK}/tools/search" if scope=="task_versions" else "/remote-ai/search"
+            self.assertTrue(all(c[1]==f"/api/v1/projects/{PROJECT}"+suffix for c in self.calls))
+            self.assertIn("query_embedding",json.loads(self.calls[1][3]))
+            self.assertNotIn("query_embedding",result.model_dump_json())
+
+    async def test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope(self):
+        self.context["scope"]="task_versions"
+        for status,expected in ((403,"access_denied"),(409,"conflict"),(503,"dependency_failed")):
+            self.calls.clear(); self.status=status
+            result=await self.hybrid(lambda _:self.fail("denied query reached encoder"))
+            self.assertEqual(result.structuredContent["status"],expected)
+            self.assertNotIn("data",result.structuredContent)
+            self.assertEqual(len(self.calls),1)
+
+    async def test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight(self):
+        from smartdocs.embeddings import EmbeddingError
+        self.context["scope"]="task_versions"
+        for revoked in (False,True):
+            self.calls.clear(); self.status=200
+            self.payload={"data":{"items":[{"secret":"stale-preflight"}]}}
+            def encoder(chunks):
+                self.status=409 if revoked else 200
+                self.payload={"data":{"items":[],"retrieval":"keyword_only",
+                                      "warnings":["query_embedding_unavailable"]}}
+                raise EmbeddingError("embedding_timeout")
+            result=await self.hybrid(encoder)
+            self.assertNotIn("stale-preflight",result.model_dump_json())
+            self.assertEqual(len(self.calls),2)
+            self.assertNotIn("query_embedding",json.loads(self.calls[-1][3]))
+            self.assertEqual(result.structuredContent["status"],"conflict" if revoked else "success")
+            if not revoked: self.assertEqual(result.structuredContent["data"],self.payload["data"])
+
+    async def test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode(self):
+        encoder=lambda _:self.fail("unexpected encoding")
+        for mode in ("metadata","keyword"):
+            result=await self.hybrid(encoder,{"mode":mode,"query":"部署"})
+            self.assertFalse(result.isError)
+        self.assertEqual(len(self.calls),2)
+        for extra in ({"encoder_socket":"/tmp/evil"},{"query_embedding":{}},{"user_id":FILE}):
+            result=await self.hybrid(encoder,{"mode":"hybrid","query":"部署",**extra})
+            self.assertEqual(result.structuredContent["status"],"invalid_request")
+        self.assertEqual(len(self.calls),2)
+
+    async def test_cli_hybrid_socket_deadline_rechecks_keyword_fallback(self):
+        import socket
+        import sys
+        from datetime import timedelta
+        from mcp import ClientSession, StdioServerParameters
+        from mcp.client.stdio import stdio_client
+        self.context["scope"]="task_versions"
+        self.payload={"data":{"items":[],"retrieval":"keyword_only",
+                              "warnings":["query_embedding_unavailable"]}}
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"context.json"; path.write_text(json.dumps(self.context)); path.chmod(0o600)
+            target=tmp+"/encoder.sock"; received=[]; released=threading.Event()
+            with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as server:
+                server.bind(target); os.chmod(target,0o600); server.listen(1); server.settimeout(20)
+                def serve():
+                    try:
+                        with server.accept()[0] as conn:
+                            raw=bytearray()
+                            while part:=conn.recv(4096): raw.extend(part)
+                            received.append(json.loads(raw)); released.wait(20)
+                    except TimeoutError: pass
+                thread=threading.Thread(target=serve); thread.start()
+                parameters=StdioServerParameters(command=sys.executable,
+                    args=["-B","-m","smartdocs.mcp_read","--context",str(path),"--encoder-socket",target],
+                    env={"PATH":"/usr/bin:/bin","PYTHONPATH":os.environ["PYTHONPATH"]})
+                try:
+                    async with stdio_client(parameters) as streams:
+                        async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=15)) as client:
+                            await client.initialize()
+                            result=await client.call_tool("search_documents",{"mode":"hybrid","query":"部署"})
+                finally: released.set(); thread.join(21)
+                self.assertFalse(thread.is_alive())
+            self.assertFalse(result.isError)
+            self.assertEqual(result.structuredContent["data"],self.payload["data"])
+            self.assertEqual(len(self.calls),2)
+            self.assertEqual(len(received),1)
+            self.assertEqual([chunk["text"] for chunk in received[0]],["部署"])
     async def test_range_rejects_mixed_selectors_and_invalid_bounds_before_http(self):
         base={"file_id":FILE,"version_id":VERSION}
         for selection in [None,[],{"limit":11},{"limit":0},{"offset":-1},{"offset":2001},
