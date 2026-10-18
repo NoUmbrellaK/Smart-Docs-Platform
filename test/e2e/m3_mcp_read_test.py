@@ -5,6 +5,7 @@ from datetime import timedelta
 import json
 import os
 import secrets
+import subprocess
 import sys
 import unittest
 
@@ -96,7 +97,64 @@ class McpReadE2E(support.WorkerE2E):
         print("MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS",
               flush=True)
 
+    def test_mcp_range_reads_text_and_physical_pdf_pages(self):
+        text="line\n"*3000
+        document=self.upload("long.md",text.encode(),"text/markdown")
+        self.assertEqual(worker.run_once(self.client),"completed")
+        self.policy(document,True)
+        pdf=self.upload("chinese.pdf",(support.ROOT/"test/fixtures/m2/chinese.pdf").read_bytes(),"application/pdf")
+        parser=os.environ.get("SMARTDOCS_TEST_PARSER_PYTHON",sys.executable)
+        parsed=subprocess.run([parser,"-B","-m","smartdocs.worker","--once"],capture_output=True,text=True,timeout=90,
+            env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(support.ROOT/"python"),
+                 "SMARTDOCS_WORKER_TOKEN":self.token,"SMARTDOCS_WORKER_PORT":str(self.server.port),
+                 "SMARTDOCS_WORKER_LOCK_PATH":str(self.root/"range-parser.lock")})
+        self.assertEqual(parsed.returncode,0,parsed.stdout+parsed.stderr)
+        self.assertIn("worker: completed",parsed.stdout)
+        self.policy(pdf,True)
+        context={"backend_port":self.server.port,"origin":f"http://127.0.0.1:{self.server.port}",
+                 "session_token":next(c.value for c in self.user.cookies if c.name=="smartdocs_session"),
+                 "project_id":self.project["id"],"task_id":secrets.token_hex(16),"scope":"project_approved_versions"}
+        path=self.root/"range-context.json"; path.write_text(json.dumps(context)); path.chmod(0o600)
+        parameters=StdioServerParameters(command=sys.executable,
+            args=["-B","-m","smartdocs.mcp_read","--context",str(path)],
+            env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(support.ROOT/"python")})
+        async def check():
+            async with stdio_client(parameters) as streams:
+                async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=30)) as client:
+                    await client.initialize()
+                    async def read(job,selection):
+                        result=await client.call_tool("read_document_version",{"file_id":job["file_id"],
+                            "version_id":job["version_id"],"range":selection})
+                        self.assertFalse(result.isError)
+                        self.assertEqual(result.structuredContent["status"],"success")
+                        return result.structuredContent["data"]
+                    chunks=[]; offset=0
+                    for _ in range(4):
+                        result=await read(document,{"offset":offset})
+                        self.assertLessEqual(len(result["chunks"]),10)
+                        chunks.extend(result["chunks"])
+                        if not result["read_range"]["has_more"]: break
+                        offset=result["read_range"]["next_offset"]
+                    else: self.fail("bounded document pagination did not finish")
+                    self.assertEqual(len(chunks),13)
+                    self.assertEqual(len({c["chunk_id"] for c in chunks}),13)
+                    self.assertEqual("".join(c["text"] for c in chunks),text)
+                    first=await read(pdf,{"page_start":1,"page_end":2,"limit":1})
+                    self.assertEqual(first["chunks"][0]["page"],1)
+                    self.assertEqual(first["read_range"]["next_offset"],1)
+                    second=await read(pdf,{"page_start":1,"page_end":2,"limit":1,"offset":1})
+                    self.assertEqual(second["chunks"][0]["page"],2)
+                    self.assertEqual(second["chunks"][0]["text"],"恢复步骤\n验证数据完整性")
+                    self.assertFalse(second["read_range"]["has_more"])
+                    self.policy(document,False)
+                    denied=await client.call_tool("read_document_version",{"file_id":document["file_id"],
+                        "version_id":document["version_id"],"range":{"offset":10}})
+                    self.assertEqual(denied.structuredContent["status"],"access_denied")
+                    self.assertNotIn("data",denied.structuredContent)
+        asyncio.run(check())
+        print("MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS",flush=True)
+
 
 if __name__ == "__main__":
-    suite=unittest.TestSuite([McpReadE2E("test_mcp_stdio_authorization_and_exact_sources")])
+    suite=unittest.TestSuite(McpReadE2E(name) for name in dir(McpReadE2E) if name.startswith("test_mcp_"))
     raise SystemExit(not unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful())

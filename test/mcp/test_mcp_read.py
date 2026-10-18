@@ -133,6 +133,35 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.structuredContent["status"], "invalid_request")
         self.assertFalse(self.calls)
 
+    async def test_range_read_uses_bounded_post_and_preserves_pagination(self):
+        self.payload={"data":{"file_id":FILE,"version_id":VERSION,"parse_state":"completed",
+            "chunks":[{"chunk_id":CHUNK,"text":"page three","page":3}],
+            "read_range":{"offset":1,"limit":1,"has_more":True,"next_offset":2,"truncated":True}}}
+        selection={"page_start":2,"page_end":3,"offset":1,"limit":1}
+        result=await self.call("read_document_version",{"file_id":FILE,"version_id":VERSION,"range":selection})
+        self.assertFalse(result.isError)
+        self.assertEqual(result.structuredContent["data"],self.payload["data"])
+        method,path,headers,body=self.calls[0]
+        self.assertEqual((method,path),("POST",f"/api/v1/projects/{PROJECT}/files/{FILE}/versions/{VERSION}/remote-ai/read"))
+        self.assertEqual(json.loads(body),selection)
+        self.assertEqual(headers["Cookie"],"smartdocs_session="+TOKEN)
+        self.assertEqual(headers["Origin"],"https://docs.test")
+        await self.call("read_document_version",{"file_id":FILE,"version_id":VERSION,"range":{}})
+        self.assertEqual(json.loads(self.calls[-1][3]),{})
+
+    async def test_range_rejects_mixed_selectors_and_invalid_bounds_before_http(self):
+        base={"file_id":FILE,"version_id":VERSION}
+        for selection in [None,[],{"limit":11},{"limit":0},{"offset":-1},{"offset":2001},
+                          {"offset":True},{"page_start":1},{"page_end":1},
+                          {"page_start":0,"page_end":1},{"page_start":1,"page_end":301},
+                          {"approved":True}]:
+            result=await self.call("read_document_version",{**base,"range":selection})
+            self.assertTrue(result.isError)
+            self.assertEqual(result.structuredContent["status"],"invalid_request")
+        result=await self.call("read_document_version",{**base,"chunk_id":CHUNK,"range":{}})
+        self.assertTrue(result.isError)
+        self.assertFalse(self.calls)
+
     async def test_backend_socket_timeout_is_explicit_without_retry(self):
         self.delay = 16
         result = await self.call("search_documents", {"mode":"metadata","query":""})

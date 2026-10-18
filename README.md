@@ -27,7 +27,9 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 首个门禁增量已实现，[C++ 分组验证 147/147](./docs/evidence/m3/remote-read/README.md)，包括 6 项新增 M3 回归。搜索、覆盖计数和固定版本读取均检查具体版本外发批准；普通内部搜索不变。首次整套超时及测试夹具失败均保留记录，最终分组无失败/跳过。原资源限额下无新增 OOM，无 DeepSeek 调用、无生产部署；下一步接 MCP 只读工具与可信任务身份，M3 尚未验收。
 
-随后已接入[官方 SDK 的两个 stdio 只读工具](./docs/api/m3-mcp-read-tools.md)：search_documents、read_document_version（状态或单片段）。[协议8/8、真实SDK→C++→隔离库链路1/1、既有Python104/104](./docs/evidence/m3/mcp-read/README.md)，覆盖身份绑定、内部资料/新版拒绝、固定出处、批准撤销及处理中状态；枚举映射缺陷已复现修正。SDK独立安装，不改worker环境，无模型调用/新增OOM。当前仅可信本机调试，生产内部HTTP、持久任务范围、页范围读取、模型出口和三个写工具仍待实现，不宣称完成M3。
+随后已接入[官方 SDK 的两个 stdio 只读工具](./docs/api/m3-mcp-read-tools.md)：search_documents、read_document_version（状态或单片段）。[协议8/8、真实SDK→C++→隔离库链路1/1、既有Python104/104](./docs/evidence/m3/mcp-read/README.md)，覆盖身份绑定、内部资料/新版拒绝、固定出处、批准撤销及处理中状态；枚举映射缺陷已复现修正。SDK独立安装，不改worker环境，无模型调用/新增OOM。当前仅可信本机调试，生产内部HTTP、持久任务范围、模型出口和三个写工具仍待实现，不宣称完成M3。
+
+固定版本读取现已扩展为连续片段分页及PDF物理页范围，每次最多10片段，保留原始引用，返回下一偏移与截断/未就绪状态；每次翻页重新校验权限和具体版本批准。[本轮验证](./docs/evidence/m3/read-range/README.md)：相关C++49/49、MCP协议10/10、既有Python104/104、真实链路2/2（13片段Markdown拼回、中文PDF物理页、撤销后拒绝）。不是全仓C++全量复验；空白/扫描页不等同已完整读取，历史版本不会跳转新版。没有新增依赖、模型调用或OOM事件，接口仍仅用于可信本机调试，M3尚未完成。
 
 ### M2 实现与验证记录
 

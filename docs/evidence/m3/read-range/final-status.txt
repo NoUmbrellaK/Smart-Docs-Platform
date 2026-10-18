@@ -1,0 +1,69 @@
+2026-10-18T20:42:34+08:00
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-m3-range-red.service
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-m3-range-mcp-red.service
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-range-mcp-green.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-range-build.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-range-cpp-green.service
+ActiveState=inactive
+SubState=dead
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-range-python-e2e.service
+ActiveState=inactive
+SubState=dead
+    PID COMMAND         ELAPSED
+    975 mysqld          2923593
+MemAvailable:    1821568 kB
+low 0
+high 80269
+max 0
+oom 0
+oom_kill 0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+code/processing/processing_service.h: OK
+code/processing/processing_service.cpp: OK
+code/processing/processing_routes.cpp: OK
+python/smartdocs/mcp_read.py: OK
+test/integration/processing_jobs_test.cpp: OK
+test/mcp/test_mcp_read.py: OK
+test/e2e/m3_mcp_read_test.py: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/server: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin: OK

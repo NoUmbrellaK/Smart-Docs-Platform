@@ -57,6 +57,19 @@ void RegisterProcessingRoutes(Router& router, std::shared_ptr<AuthService> auth,
             });
     }
     const std::string version = "/api/v1/projects/{project_id}/files/{file_id}/versions/{version_id}";
+    router.Add("POST", version + "/remote-ai/read",
+        [auth, jobs, secure_cookie, max_json_bytes](const RequestHead& head, const RouteParams& params) {
+            RequireSameOrigin(head, secure_cookie);
+            if (!head.query.empty()) throw AppError(400, "invalid_request", "read parameters belong in the JSON body");
+            const auto session = auth->Authenticate(RequireSessionCookie(head));
+            return PrepareJsonBody(head, std::min<uint64_t>(4096, max_json_bytes),
+                [jobs, session, params, keep_alive=head.keep_alive](const nlohmann::json& body) {
+                    if (!body.is_object()) throw AppError(400, "invalid_request", "read range must be an object");
+                    const auto data = jobs->ReadDocument(session, params.at("project_id"), params.at("file_id"),
+                        params.at("version_id"), "", true, body);
+                    return HttpResponse::Json(200, {{"request_id", GenerateId()}, {"data", data}}, keep_alive);
+                });
+        });
     for (const bool remote_ai : {false, true}) {
         for (const std::string suffix : {"/document", "/chunks/{chunk_id}"}) {
             router.Add("GET", version + (remote_ai ? "/remote-ai" : "") + suffix,

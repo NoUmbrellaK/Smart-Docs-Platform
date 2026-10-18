@@ -45,9 +45,13 @@ C++ 重新认证、校验项目权限和指定版本外发批准。模型无权�
   query 最多256字符，C++还执行原有字节限制；metadata允许空查询。
   直接访问 remote-ai/search；本增量未接查询编码器，hybrid必须如实显示
   keyword_only降级，不将其计为混合检索成功。
-- read_document_version：必需 file_id、version_id；可选64位小写十六进制chunk_id。
-  无chunk_id只返回版本处理状态/元数据，绝非完整正文；有chunk_id返回该固定
-  版本的一个精确片段。页范围、连续片段范围及整篇分页还未实现。
+- read_document_version：必需 file_id、version_id；可选64位小写十六进制chunk_id
+  或 range 对象，两者互斥。都不提供时只返回处理状态/元数据，绝非完整正文；
+  chunk_id 返回固定版本的一个精确片段；range（可为空对象）返回有界片段列表。
+  range 接受 offset（默认0，0–2000）、limit（默认10，1–10），以及成对出现的
+  page_start/page_end（1–300，含首尾的物理PDF页，start≤end）。页范围不能超过
+  解析出的实际页数；文本文件不能按页筛选。布尔、未知字段和非法边界均拒绝。
+  offset 是所选范围内按原始片段顺序跳过的片段数，不是页码或字符偏移。
 - ID均为32位小写十六进制；不接受额外字段、user_id、project_id、approved、
   query_embedding或任意URL。JSON schema公开，服务端也实际验证。
 - 文本中的指令仍是原文数据，不改变权限或开启写操作。仅列出上述两工具，
@@ -73,6 +77,21 @@ C++的pending/processing映为processing，其余未完成解析终态映为unav
 HTTP400/401/403/404/409/429分别映参数错误/访问拒绝/访问拒绝/访问拒绝/冲突/忙，
 其他非200（包括重定向）为依赖失败。后续写工具需要增加等待确认等状态。
 
+分页示例：`{"file_id":"…","version_id":"…","range":{"page_start":1,"page_end":3,"limit":10,"offset":0}}`。
+data.chunks 最多10个原始片段，每项保留完整引用字段；data.read_range 包含
+scope（document/pages）、offset、limit、content_ready、has_more、next_offset、
+truncated；pages 范围另回显 page_start/page_end。has_more=true 时保持同一版本和
+页范围，用 next_offset 继续；每次都重新鉴权，不缓存旧结果。chunk_count/char_count
+始终指整个文档，不是所选页范围。truncated 表示当前响应未覆盖整个所选范围
+（offset>0或还有下一批），不是整个对话已读内容的累计状态。
+
+尚未解析完时 content_ready=false、chunks=[]、has_more/next_offset=null、
+truncated=true，不能当作“没有内容”；此时只校验页范围语法，实际格式和页数
+待解析完成后验证，不只依赖上传MIME（通用MIME也可根据扩展名交给PDF解析器）。
+解析完成但结果缺失返回依赖失败。
+已解析PDF的无文本页可返回空列表且content_ready=true；仍须检查pages_without_text，
+它可能是空白页或未做OCR的扫描页，不能宣称资料已完整读取。
+
 仅连接127.0.0.1的固定配置端口，不使用代理、不追随重定向。HTTP套接字超时
 15秒，响应最多256KiB，不自动重试、不缓存工具结果；该socket超时不是整个
 Agent任务的墙钟预算。每进程后端调用串行；stdout只写MCP协议，CLI禁用SDK
@@ -81,6 +100,6 @@ Agent任务的墙钟预算。每进程后端调用串行；stdout只写MCP协议
 ## 后续门槛
 
 内部 Streamable HTTP 认证接线、持久任务/取消/预算、用户确认的允许版本范围、
-每次工具返回和模型出口的上下文依赖复核、页/片段范围读取、查询向量接线、
+每次工具返回和模型出口的上下文依赖复核、查询向量接线、
 三个写工具及M4事务仍待完成。一次工具读取成功不构成永久外发授权，
 不能复用已经撤销批准的旧结果进入后续模型请求。本增量没有生产部署。

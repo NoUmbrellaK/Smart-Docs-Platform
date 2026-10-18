@@ -139,7 +139,116 @@ RequestHead RemoteReadHead(Fixture& f, const JobFixture& job, const std::string&
     return head;
 }
 
+nlohmann::json RemoteRangeRead(Application& app, Fixture& f, const JobFixture& job,
+                                const nlohmann::json& range) {
+    auto head = RemoteReadHead(f, job); head.method = "POST";
+    head.path.replace(head.path.size()-8, 8, "read");
+    const auto bytes = range.dump(); head.content_length = bytes.size();
+    head.headers["content-type"] = "application/json";
+    auto handler = app.Prepare(head); handler->OnData(bytes.data(), bytes.size());
+    return Body(handler->Finish());
+}
+
+void PublishRangeFixture(Fixture& f, const JobFixture& job, bool pdf = false) {
+    using Json = nlohmann::json;
+    if (pdf) { auto db=TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET media_type='application/pdf' WHERE id=?",{SqlValue(job.version_id)}); }
+    auto result = TextResult(job,"A"); result["chunks"] = Json::array();
+    const std::string revision = pdf ? "pypdf-6.21.0-lines-v1" : "utf8-lines-v1";
+    result["parser_revision"] = revision;
+    if (pdf) { result["page_count"]=3; result["pages_without_text"]=Json::array({2}); }
+    for (uint64_t i=0;i<(pdf ? 2 : 13);++i) {
+        auto chunk=TextResult(job,"A").at("chunks")[0];
+        const uint64_t start=pdf ? 0 : i, page=pdf ? i*2+1 : 0;
+        chunk["parser_revision"]=revision; chunk["char_start"]=start; chunk["char_end"]=start+1;
+        chunk["text"]=std::string(1,static_cast<char>('A'+(pdf ? i*2 : i)));
+        Json identity=Json::array({revision,job.file_id,job.version_id,std::string(64,'a')});
+        if (pdf) { chunk["page"]=page; identity.push_back(page); }
+        identity.push_back(start); identity.push_back(start+1);
+        const auto raw=identity.dump(); chunk["chunk_id"]=Sha256Hex(raw.data(),raw.size());
+        result["chunks"].push_back(chunk);
+    }
+    ProcessingService service(TestDatabase(),f.projects); ProcessingClaim claim;
+    CHECK(service.ClaimNext(&claim) && claim.job.id==job.id);
+    service.Publish(claim.job.id,claim.attempt_token,result);
+}
+
 }  // namespace
+
+TEST_CASE(m3_range_text_paginates_exact_history_and_rechecks_approval) {
+    using Json=nlohmann::json;
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); PublishRangeFixture(f,job);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto first=RemoteRangeRead(app,f,job,Json::object());
+    CHECK(first.at("chunks").size()==10 && first.at("chunks")[0].at("text")=="A");
+    CHECK(first.at("chunks")[9].at("char_start")==9);
+    CHECK(first.at("read_range").at("has_more")==true && first.at("read_range").at("next_offset")==10);
+    CHECK(first.at("read_range").at("content_ready")==true && first.at("read_range").at("truncated")==true);
+    const auto last=RemoteRangeRead(app,f,job,{{"offset",10}});
+    CHECK(last.at("chunks").size()==3 && last.at("chunks")[0].at("text")=="K");
+    CHECK(last.at("chunks")[2].at("text")=="M" && last.at("chunks")[2].at("char_end")==13);
+    CHECK(last.at("read_range").at("has_more")==false && last.at("read_range").at("next_offset").is_null());
+    CHECK(last.at("read_range").at("truncated")==true);
+    std::set<std::string> ids;
+    for(const auto& group:{first,last}) for(const auto& chunk:group.at("chunks")) {
+        CHECK(chunk.at("file_id")==job.file_id && chunk.at("version_id")==job.version_id);
+        CHECK(ids.insert(chunk.at("chunk_id").get<std::string>()).second);
+    }
+    CHECK(ids.size()==13);
+    CHECK(RemoteRangeRead(app,f,job,{{"offset",2000}}).at("chunks").empty());
+    const auto newer=f.AddJob(job.file_id);
+    CHECK(RemoteRangeRead(app,f,job,{{"offset",10}}).at("is_current")==false);
+    CHECK_THROWS_CODE(RemoteRangeRead(app,f,newer,Json::object()),"resource_not_found");
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"internal_only",{}});
+    CHECK_THROWS_CODE(RemoteRangeRead(app,f,job,{{"offset",10}}),"resource_not_found");
+}
+
+TEST_CASE(m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); PublishRangeFixture(f,job,true);
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto empty=RemoteRangeRead(app,f,job,{{"page_start",2},{"page_end",2}});
+    CHECK(empty.at("chunks").empty() && empty.at("pages_without_text")==nlohmann::json::array({2}));
+    CHECK(empty.at("read_range").at("has_more")==false && empty.at("read_range").at("content_ready")==true);
+    const auto first=RemoteRangeRead(app,f,job,{{"page_start",1},{"page_end",3},{"limit",1}});
+    CHECK(first.at("chunks").size()==1 && first.at("chunks")[0].at("page")==1);
+    CHECK(first.at("read_range").at("next_offset")==1);
+    const auto second=RemoteRangeRead(app,f,job,{{"page_start",1},{"page_end",3},{"limit",1},{"offset",1}});
+    CHECK(second.at("chunks").size()==1 && second.at("chunks")[0].at("page")==3);
+    CHECK(second.at("chunks")[0].at("text")=="C" && second.at("chunks")[0].at("char_start")==0);
+    CHECK(second.at("read_range").at("has_more")==false);
+    CHECK_THROWS_CODE(RemoteRangeRead(app,f,job,{{"page_start",1},{"page_end",4}}),"invalid_request");
+}
+
+TEST_CASE(m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty) {
+    using Json=nlohmann::json;
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob();
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    CHECK_THROWS_CODE(RemoteRangeRead(app,f,job,Json::object()),"resource_not_found");
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+    const auto pending=RemoteRangeRead(app,f,job,Json::object());
+    CHECK(pending.at("parse_state")=="pending" && pending.at("chunks").empty());
+    CHECK(pending.at("read_range").at("content_ready")==false);
+    CHECK(pending.at("read_range").at("has_more").is_null() && pending.at("read_range").at("truncated")==true);
+    for(const auto& range:std::vector<Json>{nullptr,Json::array(),{{"limit",0}},{{"limit",11}},
+        {{"offset",-1}},{{"offset",2001}},{{"offset",true}},{{"limit",1.5}},{{"page_start",1}},
+        {{"page_end",1}},{{"page_start",0},{"page_end",1}},{{"page_start",3},{"page_end",2}},
+        {{"page_start",1},{"page_end",301}},{{"approved",true}},{{"chunk_id",std::string(64,'a')}}}) {
+        CHECK_THROWS_CODE(RemoteRangeRead(app,f,job,range),"invalid_request");
+    }
+    PublishRangeFixture(f,job);
+    CHECK_THROWS_CODE(RemoteRangeRead(app,f,job,{{"page_start",1},{"page_end",1}}),"invalid_request");
+    auto head=RemoteReadHead(f,job); head.method="POST"; head.path.replace(head.path.size()-8,8,"read");
+    head.headers["origin"]="http://evil.test";
+    CHECK_THROWS_CODE(app.Prepare(head),"origin_mismatch");
+    head.headers["origin"]="http://smartdocs.test"; head.query="offset=0";
+    CHECK_THROWS_CODE(app.Prepare(head),"invalid_request");
+    head.query.clear(); head.headers.erase("cookie");
+    CHECK_THROWS_CODE(app.Prepare(head),"authentication_required");
+}
 
 TEST_CASE(m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes) {
     RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));

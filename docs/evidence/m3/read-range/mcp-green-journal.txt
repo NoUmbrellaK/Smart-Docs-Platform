@@ -1,0 +1,16 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -v.
+test_backend_socket_timeout_is_explicit_without_retry (test_mcp_read.ReadToolsTests) ... ok
+test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... ok
+test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... ok
+test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... ok
+test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... ok
+test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... ok
+test_range_read_uses_bounded_post_and_preserves_pagination (test_mcp_read.ReadToolsTests) ... ok
+test_range_rejects_mixed_selectors_and_invalid_bounds_before_http (test_mcp_read.ReadToolsTests) ... ok
+test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... ok
+test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+ok
+----------------------------------------------------------------------
+Ran 10 tests in 20.791s
+OK
+smartdocs-m3-range-mcp-green.service: Deactivated successfully.

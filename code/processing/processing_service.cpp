@@ -445,11 +445,30 @@ std::string ProcessingService::PublishVectorBatch(const std::string& id, const s
 }
 
 nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, const std::string& project,
-    const std::string& file, const std::string& version, const std::string& chunk_id, bool remote_ai) {
+    const std::string& file, const std::string& version, const std::string& chunk_id, bool remote_ai,
+    const nlohmann::json& range) {
     using Json = nlohmann::json;
     RequireId(project); RequireId(file); RequireId(version);
     if (!chunk_id.empty() && (chunk_id.size() != 64 || chunk_id.find_first_not_of("0123456789abcdef") != std::string::npos))
         throw AppError(400, "invalid_request", "chunk ID is invalid");
+    const bool ranged = !range.is_null();
+    uint64_t offset = 0, limit = 10, page_start = 0, page_end = 0;
+    if (ranged) {
+        if (!remote_ai || !chunk_id.empty() || !range.is_object())
+            throw AppError(400, "invalid_request", "read range is invalid");
+        for (auto it = range.begin(); it != range.end(); ++it) {
+            const auto key = it.key();
+            const uint64_t maximum = key == "offset" ? 2000 : key == "limit" ? 10 : 300;
+            const uint64_t minimum = key == "offset" ? 0 : 1;
+            if ((key != "offset" && key != "limit" && key != "page_start" && key != "page_end") ||
+                !it->is_number_integer() || *it < minimum || *it > maximum)
+                throw AppError(400, "invalid_request", "read range is invalid");
+        }
+        offset = range.value("offset", uint64_t(0)); limit = range.value("limit", uint64_t(10));
+        page_start = range.value("page_start", uint64_t(0)); page_end = range.value("page_end", uint64_t(0));
+        if ((page_start == 0) != (page_end == 0) || page_start > page_end)
+            throw AppError(400, "invalid_request", "page range is invalid");
+    }
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
     const auto files = db.Query("SELECT current_version_id,remote_ai_policy FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
@@ -480,17 +499,48 @@ nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, co
         data["pages_without_text"] = Json::parse(r.String(2));
         data["chunk_count"] = r.UInt64(3); data["char_count"] = r.UInt64(4);
     }
+    const auto chunk_json = [&](const MySqlRow& c) {
+        Json chunk = {{"chunk_id", c.String(0)}, {"file_id", file}, {"version_id", version},
+            {"source_sha256", data["source_sha256"]}, {"parser_revision", data["parser_revision"]},
+            {"char_start", c.UInt64(2)}, {"char_end", c.UInt64(3)}, {"line_start", c.UInt64(4)},
+            {"line_end", c.UInt64(5)}, {"text", c.String(6)}};
+        if (!c.IsNull(1)) chunk["page"] = c.UInt64(1);
+        return chunk;
+    };
     if (!chunk_id.empty()) {
-        const auto chunks = db.Query("SELECT page,char_start,char_end,line_start,line_end,body FROM document_chunks WHERE id=? AND version_id=? FOR SHARE",
+        const auto chunks = db.Query("SELECT id,page,char_start,char_end,line_start,line_end,body FROM document_chunks WHERE id=? AND version_id=? FOR SHARE",
                                     {SqlValue(chunk_id), SqlValue(version)});
         if (results.empty() || chunks.empty() || v.String(0) != "completed")
             throw AppError(404, "resource_not_found", "resource was not found");
-        const auto& c = chunks[0];
-        data["chunk"] = {{"chunk_id", chunk_id}, {"file_id", file}, {"version_id", version},
-            {"source_sha256", data["source_sha256"]}, {"parser_revision", data["parser_revision"]},
-            {"char_start", c.UInt64(1)}, {"char_end", c.UInt64(2)}, {"line_start", c.UInt64(3)},
-            {"line_end", c.UInt64(4)}, {"text", c.String(5)}};
-        if (!c.IsNull(0)) data["chunk"]["page"] = c.UInt64(0);
+        data["chunk"] = chunk_json(chunks[0]);
+    }
+    if (ranged) {
+        const bool ready = v.String(0) == "completed" && !results.empty();
+        data["chunks"] = Json::array();
+        data["read_range"] = {{"offset", offset}, {"limit", limit}, {"scope", page_start ? "pages" : "document"},
+            {"content_ready", ready}, {"has_more", nullptr}, {"next_offset", nullptr}, {"truncated", true}};
+        if (page_start) {
+            data["read_range"]["page_start"] = page_start; data["read_range"]["page_end"] = page_end;
+        }
+        if (v.String(0) == "completed" && !ready)
+            throw AppError(503, "content_unavailable", "document result is unavailable");
+        if (ready) {
+            if (page_start && page_end > data["page_count"].get<uint64_t>())
+                throw AppError(400, "invalid_request", "page range exceeds document pages");
+            std::string sql = "SELECT id,page,char_start,char_end,line_start,line_end,body FROM document_chunks WHERE version_id=?";
+            std::vector<SqlValue> values{SqlValue(version)};
+            if (page_start) {
+                sql += " AND page BETWEEN ? AND ?";
+                values.emplace_back(page_start); values.emplace_back(page_end);
+            }
+            sql += " ORDER BY ordinal LIMIT " + std::to_string(limit + 1) + " OFFSET " + std::to_string(offset) + " FOR SHARE";
+            const auto chunks = db.Query(sql, values);
+            for (size_t i = 0; i < chunks.size() && i < limit; ++i) data["chunks"].push_back(chunk_json(chunks[i]));
+            const bool more = chunks.size() > limit;
+            data["read_range"]["has_more"] = more;
+            if (more) data["read_range"]["next_offset"] = offset + limit;
+            data["read_range"]["truncated"] = offset > 0 || more;
+        }
     }
     transaction.Commit(); return data;
 }
