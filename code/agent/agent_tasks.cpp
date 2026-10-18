@@ -131,6 +131,29 @@ nlohmann::json AgentTaskService::Create(const SessionContext& session,const std:
     auto result=Status(db,Task(db,session,project,id),project); transaction.Commit(); return result;
 }
 
+nlohmann::json AgentTaskService::List(const SessionContext& session,const std::string& project,const std::string& before) {
+    Id(project); if(!before.empty()) Id(before);
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader);
+    std::vector<SqlValue> values{SqlValue(project),SqlValue(session.user_id)};
+    std::string cursor_filter;
+    if(!before.empty()) {
+        const auto cursor=db.Query("SELECT created_at FROM agent_tasks WHERE id=? AND project_id=? AND owner_user_id=?",
+            {SqlValue(before),SqlValue(project),SqlValue(session.user_id)});
+        if(cursor.empty()) Missing();
+        cursor_filter=" AND (created_at<? OR (created_at=? AND id<?))";
+        values.emplace_back(cursor[0].String(0)); values.emplace_back(cursor[0].String(0)); values.emplace_back(before);
+    }
+    // ponytail: existing indexes plus a query deadline; add an owner/project/time index if history outgrows this P0 path.
+    const auto rows=db.Query("SELECT /*+ MAX_EXECUTION_TIME(1000) */ id,state,created_at,updated_at,confirmed_at "
+        "FROM agent_tasks WHERE project_id=? AND owner_user_id=?"+cursor_filter+" ORDER BY created_at DESC,id DESC LIMIT 21",values);
+    Json items=Json::array();
+    for(size_t i=0;i<std::min<size_t>(20,rows.size());++i) items.push_back(Status(db,rows[i],project));
+    const bool more=rows.size()>20;
+    Json result={{"items",items},{"page_size",20},{"has_more",more},{"next_before",more ? Json(rows[19].String(0)) : Json(nullptr)}};
+    transaction.Commit(); return result;
+}
+
 nlohmann::json AgentTaskService::Get(const SessionContext& session,const std::string& project,const std::string& task) {
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Reader);

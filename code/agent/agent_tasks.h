@@ -13,6 +13,7 @@ class AgentTaskService {
 public:
     AgentTaskService(MySqlPool& pool, ProjectService& projects) : pool_(pool), projects_(projects) {}
     nlohmann::json Create(const SessionContext&, const std::string& project, const nlohmann::json& body);
+    nlohmann::json List(const SessionContext&, const std::string& project, const std::string& before="");
     nlohmann::json Get(const SessionContext&, const std::string& project, const std::string& task);
     nlohmann::json Cancel(const SessionContext&, const std::string& project, const std::string& task);
     nlohmann::json StartRun(const SessionContext&, const std::string& project, const std::string& task);

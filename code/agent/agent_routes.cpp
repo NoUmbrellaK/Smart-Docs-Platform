@@ -18,6 +18,18 @@ HttpResponse Result(const nlohmann::json& data,bool keep_alive,int status=200) {
 void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::shared_ptr<AgentTaskService> tasks,
     std::shared_ptr<ProcessingService> processing,bool secure_cookie,uint64_t max_json_bytes) {
     const std::string path="/api/v1/projects/{project_id}/agent-tasks";
+    router.Add("GET",path,[=](const RequestHead& head,const RouteParams& params) {
+        if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
+        std::string before;
+        if(!head.query.empty()) {
+            if(head.query.size()!=39 || head.query.compare(0,7,"before=")!=0 ||
+                head.query.find_first_not_of("0123456789abcdef",7)!=std::string::npos)
+                throw AppError(400,"invalid_request","task cursor is invalid");
+            before=head.query.substr(7);
+        }
+        const auto session=auth->Authenticate(RequireSessionCookie(head));
+        return ReadyResponse(Result(tasks->List(session,params.at("project_id"),before),head.keep_alive));
+    });
     for(const std::string operation:{"start","check","result","finish"}) {
         router.Add(operation=="result" ? "GET" : "POST",path+"/{task_id}/run/"+operation,
             [=](const RequestHead& head,const RouteParams& params) {

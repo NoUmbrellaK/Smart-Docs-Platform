@@ -1,0 +1,40 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_task_list_test.py && stdbuf -oL bin/smartdocs_tests --filter=m3_ && bin/smartdocs_tests --filter=router_.
+2026-10-18T15:08:26.776780Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 756094
+2026-10-18T15:08:27.480074Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T15:08:49.407416Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T15:08:57.151248Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=7
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+test_task_list_owner_project_and_membership_isolation (__main__.TaskListE2E) ... ok
+test_task_list_rejects_ambiguous_queries_and_bodies (__main__.TaskListE2E) ... ok
+test_task_list_stable_pages_and_restart_without_content_or_claim (__main__.TaskListE2E) ... ok
+----------------------------------------------------------------------
+Ran 3 tests in 3.746s
+OK
+PASS m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped
+PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+PASS m3_task_caps_active_work_and_restart_never_claims_completion
+PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+PASS m3_remote_search_rechecks_approval_after_candidate_selection
+RESULT 17 passed, 0 failed, 0 skipped
+PASS router_matches_literals_and_decoded_parameters
+PASS router_does_not_treat_query_as_path
+PASS router_rejects_invalid_or_dangerous_path_segments
+PASS router_reports_method_and_route_misses
+RESULT 4 passed, 0 failed, 0 skipped
+smartdocs-m3-task-list-green.service: Deactivated successfully.
+smartdocs-m3-task-list-green.service: Consumed 13.486s CPU time.

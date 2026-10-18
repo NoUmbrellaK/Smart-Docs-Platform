@@ -1,0 +1,34 @@
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-m3-task-list-red.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-task-list-build.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-task-list-green.service
+ActiveState=inactive
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80272
+max 0
+oom 0
+oom_kill 0
+MemAvailable:    1715848 kB
+    PID COMMAND
+    975 mysqld
