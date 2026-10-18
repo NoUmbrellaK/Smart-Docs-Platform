@@ -1,0 +1,538 @@
+Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -v && make -j1 bin/server bin/smartdocs-admin.
+test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ERROR
+test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests) ... ERROR
+test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests) ... ERROR
+test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ERROR
+test_interrupt_during_either_stage_reaps_child_and_releases_lock (test_embeddings.EmbeddingTests) ... ERROR
+test_malformed_stage_output_is_rejected_before_inference (test_embeddings.EmbeddingTests) ... ERROR
+test_missing_stage_dependency_returns_safe_dependency_error (test_embeddings.EmbeddingTests) ... ERROR
+test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ERROR
+test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ERROR
+test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ERROR
+test_real_stages_run_serially_and_reap_after_second_stage_timeout (test_embeddings.EmbeddingTests) ... ERROR
+test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ERROR
+test_second_stage_overrun_cannot_return_success (test_embeddings.EmbeddingTests) ... ERROR
+test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests) ... ERROR
+test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests) ... ERROR
+test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ERROR
+test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ERROR
+test_pdf_parser (unittest.loader._FailedTest) ... ERROR
+test_failed_snapshot_does_not_leak_descriptors (test_resident_embeddings.ResidentSnapshotTests) ... ERROR
+test_snapshot_rejects_symlinks_nonregular_and_oversized_files (test_resident_embeddings.ResidentSnapshotTests) ... ERROR
+test_verified_snapshot_is_immutable_and_independent_of_source (test_resident_embeddings.ResidentSnapshotTests) ... ERROR
+test_resident_service (unittest.loader._FailedTest) ... ERROR
+test_search (unittest.loader._FailedTest) ... ERROR
+test_search_http (unittest.loader._FailedTest) ... ERROR
+test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest) ... FAIL
+test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest) ... FAIL
+test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest) ... FAIL
+test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest) ... FAIL
+test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest) ... FAIL
+test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest) ... FAIL
+test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest) ... FAIL
+test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest) ... FAIL
+test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest) ... FAIL
+test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest) ... FAIL
+test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest) ... FAIL
+test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest) ... FAIL
+test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest) ... FAIL
+test_transient_tokenizer (unittest.loader._FailedTest) ... ERROR
+test_vector_worker (unittest.loader._FailedTest) ... ERROR
+test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ERROR
+test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ERROR
+test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ERROR
+test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ERROR
+test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ERROR
+test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ERROR
+test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ERROR
+test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ERROR
+test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ERROR
+test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ERROR
+test_worker_entrypoint_exists (test_worker.WorkerTest) ... ERROR
+======================================================================
+ERROR: test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 185, in test_child_environment_does_not_inherit_credentials_or_proxy
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 194, in test_encoder_disables_native_arena_to_limit_retained_memory
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 62, in test_first_stage_timeout_never_starts_inference_and_releases_lock
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 137, in test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_interrupt_during_either_stage_reaps_child_and_releases_lock (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 284, in test_interrupt_during_either_stage_reaps_child_and_releases_lock
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_malformed_stage_output_is_rejected_before_inference (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 84, in test_malformed_stage_output_is_rejected_before_inference
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_missing_stage_dependency_returns_safe_dependency_error (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 318, in test_missing_stage_dependency_returns_safe_dependency_error
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 123, in test_nonmonotonic_counts_do_not_create_over_budget_windows
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 149, in test_output_validator_rejects_holes_wrong_digest_and_bad_vectors
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 347, in test_process_group_cleanup_also_terminates_descendants
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_real_stages_run_serially_and_reap_after_second_stage_timeout (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 221, in test_real_stages_run_serially_and_reap_after_second_stage_timeout
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 171, in test_real_subprocess_timeout_output_limit_and_errors_are_safe
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_second_stage_overrun_cannot_return_success (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 264, in test_second_stage_overrun_cannot_return_success
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 28, in test_stages_share_deadline_and_lock_until_validated_result
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 332, in test_tokenizer_stdout_is_bounded_before_json_parsing
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 131, in test_window_budget_and_unencodable_character_fail
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 112, in test_windows_cover_unicode_and_tail_without_truncation
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_embeddings.py", line 107, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_pdf_parser (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_pdf_parser
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_pdf_parser.py", line 15, in <module>
+    from smartdocs.text_parser import ParseError
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_failed_snapshot_does_not_leak_descriptors (test_resident_embeddings.ResidentSnapshotTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 57, in test_failed_snapshot_does_not_leak_descriptors
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 13, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_snapshot_rejects_symlinks_nonregular_and_oversized_files (test_resident_embeddings.ResidentSnapshotTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 40, in test_snapshot_rejects_symlinks_nonregular_and_oversized_files
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 13, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_verified_snapshot_is_immutable_and_independent_of_source (test_resident_embeddings.ResidentSnapshotTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 18, in test_verified_snapshot_is_immutable_and_independent_of_source
+    m = self.module()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_embeddings.py", line 13, in module
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.resident_embeddings"),
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_resident_service (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_resident_service
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_resident_service.py", line 14, in <module>
+    from smartdocs.embeddings import EmbeddingError
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_search (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_search
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_search.py", line 4, in <module>
+    from smartdocs.embeddings import EmbeddingError, EMBEDDING_REVISION
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_search_http (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_search_http
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_search_http.py", line 12, in <module>
+    from smartdocs.embeddings import EmbeddingError
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_transient_tokenizer (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_transient_tokenizer
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_transient_tokenizer.py", line 12, in <module>
+    from smartdocs import resident_embeddings as m
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_vector_worker (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_vector_worker
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_vector_worker.py", line 13, in <module>
+    from smartdocs.embeddings import EMBEDDING_REVISION, EmbeddingError
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+ERROR: test_worker_entrypoint_exists (test_worker.WorkerTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_worker.py", line 64, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.worker"), "local worker is missing")
+  File "/usr/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+ModuleNotFoundError: No module named 'smartdocs'
+======================================================================
+FAIL: test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+======================================================================
+FAIL: test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_text_parser.py", line 16, in setUp
+    self.assertIsNotNone(spec, "M2 text parser is not implemented")
+AssertionError: unexpectedly None : M2 text parser is not implemented
+----------------------------------------------------------------------
+Ran 50 tests in 0.009s
+FAILED (failures=13, errors=37)
+smartdocs-m3-mcp-build.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-mcp-build.service: Failed with result 'exit-code'.

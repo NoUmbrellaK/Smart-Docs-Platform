@@ -1,0 +1,76 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -v.
+test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... FAIL
+test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... FAIL
+test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... FAIL
+test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... FAIL
+test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... FAIL
+test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... FAIL
+test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... FAIL
+======================================================================
+FAIL: test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+======================================================================
+FAIL: test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 60, in _callSetUp
+    self.setUp()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 21, in setUp
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.mcp_read"),
+AssertionError: unexpectedly None : MCP read tools are not implemented
+----------------------------------------------------------------------
+Ran 7 tests in 0.071s
+FAILED (failures=7)
+smartdocs-m3-mcp-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-mcp-red.service: Failed with result 'exit-code'.

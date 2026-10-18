@@ -23,9 +23,11 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。MCP 协议、持久 Agent 任务、真实多步模型调用及五工具整体仍未完成，不将底层接口当作已完成 MCP 工具。
+已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。生产 MCP 接入、持久 Agent 任务、真实多步模型调用及五工具整体仍未完成。
 
 首个门禁增量已实现，[C++ 分组验证 147/147](./docs/evidence/m3/remote-read/README.md)，包括 6 项新增 M3 回归。搜索、覆盖计数和固定版本读取均检查具体版本外发批准；普通内部搜索不变。首次整套超时及测试夹具失败均保留记录，最终分组无失败/跳过。原资源限额下无新增 OOM，无 DeepSeek 调用、无生产部署；下一步接 MCP 只读工具与可信任务身份，M3 尚未验收。
+
+随后已接入[官方 SDK 的两个 stdio 只读工具](./docs/api/m3-mcp-read-tools.md)：search_documents、read_document_version（状态或单片段）。[协议8/8、真实SDK→C++→隔离库链路1/1、既有Python104/104](./docs/evidence/m3/mcp-read/README.md)，覆盖身份绑定、内部资料/新版拒绝、固定出处、批准撤销及处理中状态；枚举映射缺陷已复现修正。SDK独立安装，不改worker环境，无模型调用/新增OOM。当前仅可信本机调试，生产内部HTTP、持久任务范围、页范围读取、模型出口和三个写工具仍待实现，不宣称完成M3。
 
 ### M2 实现与验证记录
 
