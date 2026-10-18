@@ -1,0 +1,113 @@
+2026-10-19T00:09:39+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-concurrency=1 test/e2e/agent_ui_test.mjs.
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ creation requires explicit exact-version consent and never claims execution (8.458259ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.908933ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ task list uses cursor and fences late list responses and old buttons (0.885471ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.841854ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ completed answers and fixed sources are text only and rechecked on access (1.762612ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ cancel response loss requires refresh and cannot display stale results (1.649635ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✔ logout and data invalidation erase draft, answer and fence pending source (0.829837ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit uses an encoded same-origin GET and never submits a tool operation (2.346657ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (0.706178ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ empty audit never means the task succeeded or no model was called (0.660598ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit refresh clears old rows and latest response wins (0.427613ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit late responses and detached buttons cannot survive view or session invalidation (0.490186ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit denial clears answer, source and audit without automatic retries (0.47988ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ tests 13
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ suites 0
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ pass 7
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ fail 6
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ cancelled 0
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ skipped 0
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ todo 0
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ℹ duration_ms 117.516089
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ failing tests:
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:150:1
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit uses an encoded same-origin GET and never submits a tool operation (2.346657ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   + actual - expected
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   + 'undefined'
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   - 'function'
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:152:10)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     generatedMessage: true,
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     actual: 'undefined',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     expected: 'function',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     operator: 'strictEqual',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:165:1
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (0.706178ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: task needs an explicit tool-call summary action
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at auditButton (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:146:10)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:168:9)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     generatedMessage: false,
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     actual: undefined,
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     expected: true,
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     operator: '==',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:185:1
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]: ✖ empty audit never means the task succeeded or no model was called (0.660598ms)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: task needs an explicit tool-call summary action
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at auditButton (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:146:10)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:187:32)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     generatedMessage: false,
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:39+0800 aliyun-lou node[767273]:     actual: undefined,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     expected: true,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     operator: '==',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:193:1
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: ✖ audit refresh clears old rows and latest response wins (0.427613ms)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: task needs an explicit tool-call summary action
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at auditButton (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:146:10)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:195:14)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     generatedMessage: false,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     actual: undefined,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     expected: true,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     operator: '==',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:205:1
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: ✖ audit late responses and detached buttons cannot survive view or session invalidation (0.490186ms)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: task needs an explicit tool-call summary action
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at auditButton (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:146:10)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:207:72)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     generatedMessage: false,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     actual: undefined,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     expected: true,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     operator: '==',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: test at test/e2e/agent_ui_test.mjs:217:1
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]: ✖ audit denial clears answer, source and audit without automatic retries (0.47988ms)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   AssertionError [ERR_ASSERTION]: task needs an explicit tool-call summary action
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at auditButton (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:146:10)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:219:37)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     generatedMessage: false,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     code: 'ERR_ASSERTION',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     actual: undefined,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     expected: true,
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     operator: '==',
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:     diff: 'simple'
+2026-10-19T00:09:40+0800 aliyun-lou node[767273]:   }
+2026-10-19T00:09:40+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T00:09:40+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-red.service: Failed with result 'exit-code'.

@@ -58,6 +58,8 @@ class AgentBrowser(TaskListE2E):
                 self.assertEqual(first["state"], "pending")
                 browser.click("#agent-list button")
                 browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("Waiting for an executor")')
+                browser.click('//div[@id="agent-detail"]//button[text()="Load / refresh tool calls"]', using="xpath")
+                browser.wait('return document.querySelector("#agent-audit-status").textContent.includes("No recorded backend requests")')
                 browser.click('//div[@id="agent-detail"]//button[text()="Cancel task"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("Cancelled")')
                 self.assertEqual(data(self.user.request("GET", self.tasks_path()+"/"+first["id"]))["state"], "cancelled")
@@ -68,9 +70,13 @@ class AgentBrowser(TaskListE2E):
                 run = self.tasks_path()+"/"+second["id"]+"/run"
                 data(self.user.request("POST", run+"/start"))
                 data(self.user.request("POST", run+"/check"))
-                hits = data(self.user.request("POST", f'/api/v1/projects/{self.project["id"]}/search',
+                tools = self.tasks_path()+"/"+second["id"]+"/tools"
+                hits = data(self.user.request("POST", tools+"/search",
                                              {"mode": "keyword", "query": "SOURCE"}))
                 chunk = hits["items"][0]["chunk"]
+                data(self.user.request("POST", tools+"/read", {"file_id":job["file_id"],
+                    "version_id":job["version_id"], "chunk_id":chunk["chunk_id"]}))
+                self.assertEqual(self.user.request("POST", tools+"/read", {"secret":"DO-NOT-LOG"}).status,400)
                 answer = {"answer": "Scripted UI fixture <img onerror=bad> — not a real model answer.",
                           "citations": [{"file_id": job["file_id"], "version_id": job["version_id"], "chunk_id": chunk["chunk_id"]}]}
                 data(self.user.request("POST", run+"/finish", {"status": "completed", "result": answer, "error_code": None}))
@@ -83,26 +89,40 @@ class AgentBrowser(TaskListE2E):
                 browser.wait('return document.querySelector("#agent-source").textContent.includes("SOURCE-MARKER")')
                 href = browser.inspect('return document.querySelector("#agent-source a").getAttribute("href")')
                 self.assertIn(f'/files/{job["file_id"]}/versions/{job["version_id"]}/content', href)
+                browser.click('//div[@id="agent-detail"]//button[text()="Load / refresh tool calls"]', using="xpath")
+                browser.wait('return document.querySelectorAll("#agent-audit details").length === 3')
+                audit = browser.inspect('return document.querySelector("#agent-audit").textContent')
+                self.assertIn("Search documents", audit)
+                self.assertIn("Read document version", audit)
+                self.assertIn("Invalid request", audit)
+                self.assertIn("query bytes: 6", audit)
+                self.assertIn("selector: chunk", audit)
+                self.assertNotIn("SOURCE", audit)
+                self.assertNotIn("DO-NOT-LOG", audit)
+                browser.click("#agent-audit summary")
+                self.assertTrue(browser.inspect('return document.querySelector("#agent-audit details").open'))
 
                 for width in (360, 375, 390, 414, 768, 1280):
                     browser.command("POST", "/goog/cdp/execute", {"cmd": "Emulation.setDeviceMetricsOverride",
                         "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
                     geometry = browser.inspect('''const p=document.querySelector('#agent-workspace');
                         return {width:innerWidth, overflow:p.scrollWidth>p.clientWidth,
-                        small:[...p.querySelectorAll('button, textarea')].some(n=>n.getBoundingClientRect().height<44)};''')
+                        small:[...p.querySelectorAll('button, textarea, summary')].some(n=>n.getBoundingClientRect().height<44)};''')
                     self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
                     if width in (360, 1280):
                         raw = browser.command("GET", "/element/"+browser.find("#agent-workspace")+"/screenshot")
                         (output/f"agent-{width}.png").write_bytes(base64.b64decode(raw, validate=True))
+                        raw = browser.command("GET", "/element/"+browser.find("#agent-audit")+"/screenshot")
+                        (output/f"audit-{width}.png").write_bytes(base64.b64decode(raw, validate=True))
                 self.policy(job, False)
-                browser.click('//div[@id="agent-detail"]//button[text()="Refresh task"]', using="xpath")
+                browser.click('//div[@id="agent-detail"]//button[text()="Load / refresh tool calls"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("task_scope_changed")')
-                self.assertEqual(browser.inspect('return document.querySelector("#agent-detail").children.length + document.querySelector("#agent-source").children.length'), 0)
+                self.assertEqual(browser.inspect('return document.querySelector("#agent-detail").children.length + document.querySelector("#agent-source").children.length + document.querySelector("#agent-audit").children.length'), 0)
                 browser.click("#logout-button")
                 sign_in("agent-browser-reader")
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-list").children.length'), 0)
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-question").value'), "")
-                print("PASS Chrome/C++/MySQL: explicit scope/consent -> pending -> cancel -> reload; seeded answer/fixed citation; text safety; revocation; owner isolation; six viewports. No model call.", flush=True)
+                print("PASS Chrome/C++/MySQL: explicit scope/consent -> pending -> cancel -> reload; seeded answer/fixed citation; real backend search/read/rejection audit; expand details; redaction; revocation clears all; owner isolation; six viewports including 44px summaries. No model call.", flush=True)
             finally:
                 browser.stop()
 

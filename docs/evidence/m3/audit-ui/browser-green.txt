@@ -1,0 +1,17 @@
+2026-10-19T00:11:39+0800 aliyun-lou systemd[1]: Started /bin/bash -c PYTHONPATH=python SMARTDOCS_BROWSER_BIN=/tmp/smartdocs-safe.h4SzvX/chrome-linux64/chrome SMARTDOCS_WEBDRIVER_BIN=/tmp/smartdocs-safe.h4SzvX/chromedriver-linux64/chromedriver SMARTDOCS_AGENT_BROWSER_OUTPUT=/tmp/smartdocs-audit-ui.5KCeIk bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+2026-10-19T00:11:41+0800 aliyun-lou bash[767741]: 2026-10-18T16:11:41.145876Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 767741
+2026-10-19T00:11:41+0800 aliyun-lou bash[767741]: 2026-10-18T16:11:41.343462Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T00:11:58+0800 aliyun-lou bash[767741]: 2026-10-18T16:11:58.956696Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T00:12:07+0800 aliyun-lou bash[767741]: 2026-10-18T16:12:07.028809Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T00:12:49+0800 aliyun-lou bash[768191]: schema_version=8
+2026-10-19T00:13:11+0800 aliyun-lou bash[768274]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T00:13:11+0800 aliyun-lou bash[768274]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T00:13:11+0800 aliyun-lou bash[768274]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T00:13:11+0800 aliyun-lou bash[768274]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T00:15:17+0800 aliyun-lou bash[768326]: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... PASS Chrome/C++/MySQL: explicit scope/consent -> pending -> cancel -> reload; seeded answer/fixed citation; real backend search/read/rejection audit; expand details; redaction; revocation clears all; owner isolation; six viewports including 44px summaries. No model call.
+2026-10-19T00:15:18+0800 aliyun-lou bash[768326]: ok
+2026-10-19T00:15:18+0800 aliyun-lou bash[768326]: ----------------------------------------------------------------------
+2026-10-19T00:15:18+0800 aliyun-lou bash[768326]: Ran 1 test in 126.842s
+2026-10-19T00:15:18+0800 aliyun-lou bash[768326]: OK
+2026-10-19T00:15:21+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-browser.service: Deactivated successfully.
+2026-10-19T00:15:21+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-browser.service: Consumed 13.160s CPU time.

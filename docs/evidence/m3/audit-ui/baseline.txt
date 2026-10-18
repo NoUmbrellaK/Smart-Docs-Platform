@@ -1,0 +1,17 @@
+2026-10-19T00:08:51+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-concurrency=1 test/e2e/agent_ui_test.mjs.
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ creation requires explicit exact-version consent and never claims execution (5.523401ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.745518ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ task list uses cursor and fences late list responses and old buttons (0.614398ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.867237ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ completed answers and fixed sources are text only and rechecked on access (1.393045ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ cancel response loss requires refresh and cannot display stale results (0.823175ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ✔ logout and data invalidation erase draft, answer and fence pending source (2.037581ms)
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ tests 7
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ suites 0
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ pass 7
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ fail 0
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ cancelled 0
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ skipped 0
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ todo 0
+2026-10-19T00:09:06+0800 aliyun-lou node[767186]: ℹ duration_ms 590.478155
+2026-10-19T00:09:06+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-baseline.service: Deactivated successfully.

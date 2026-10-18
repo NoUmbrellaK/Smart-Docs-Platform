@@ -68,6 +68,7 @@ export const getAgentTask = (projectId, taskId) => metadata(`${agentPath(project
 export const cancelAgentTask = (projectId, taskId) =>
   metadata(`${agentPath(projectId)}/${id(taskId)}/cancel`, { method: "POST" });
 export const getAgentResult = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/run/result`);
+export const getAgentToolCalls = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/tool-calls`);
 export const createProject = (name) =>
   metadata("/projects", { method: "POST", body: { name } });
 

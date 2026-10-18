@@ -62,7 +62,8 @@ export class AgentPanel {
       this.uncertain ? "An earlier creation outcome may be unknown. Check your tasks before explicitly starting a new draft." :
       "Select approved current versions in File detail.");
     this.controls();
-    for (const id of ["list", "detail", "source"]) this.get(`agent-${id}`).replaceChildren();
+    for (const id of ["list", "detail", "source", "audit"]) this.get(`agent-${id}`).replaceChildren();
+    this.status("audit", "Select a task to load its tool calls.");
     this.status("list", "Refresh to load your tasks.");
     this.status("detail", "Select a task to check its current state.");
   }
@@ -123,6 +124,8 @@ export class AgentPanel {
   clearDetail() {
     this.detailGeneration += 1;
     this.get("agent-detail").replaceChildren(); this.get("agent-source").replaceChildren();
+    this.get("agent-audit").replaceChildren();
+    this.status("audit", "Select a task and load its tool calls; no automatic polling.");
     this.status("detail", "Select a task to check its current state.");
   }
   async refresh(before = "") {
@@ -174,8 +177,9 @@ export class AgentPanel {
     box.replaceChildren(this.node("p", `Created ${task.created_at} UTC · Updated ${task.updated_at} UTC`));
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
     box.append(this.button("Refresh task", () => { if (token === this.detailGeneration) return this.view(task.id); }));
+    box.append(this.button("Load / refresh tool calls", () => this.audit(project, task.id, token)));
     if (["pending", "running", "interrupted"].includes(state)) box.append(this.button("Cancel task", () => this.cancel(task.id, token)));
-    if (outcome) box.append(this.node("p", `Admitted model requests: ${outcome.model_calls} · Reason: ${outcome.error_code || "none"}. Tool-call audit is not available in this page yet.`));
+    if (outcome) box.append(this.node("p", `Admitted model requests: ${outcome.model_calls} · Reason: ${outcome.error_code || "none"}. These are not confirmed provider usage or cost.`));
     if (state !== "completed" || !outcome.result) return;
     box.append(this.node("pre", outcome.result.answer));
     if (!outcome.result.citations.length) box.append(this.node("p", "No citations supplied; do not treat this as verified evidence."));
@@ -184,6 +188,43 @@ export class AgentPanel {
       card.append(this.node("p", `File ${ref.file_id} · Version ${ref.version_id} · Chunk ${ref.chunk_id}`),
         this.button("Read cited source", () => this.source(project, task.id, ref, token)));
       box.append(card);
+    }
+  }
+  async audit(project, id, token) {
+    if (token !== this.detailGeneration || this.busy || this.creating) return;
+    const request = (this.auditGeneration || 0) + 1; this.auditGeneration = request;
+    const current = () => token === this.detailGeneration && request === this.auditGeneration;
+    const box = this.get("agent-audit"); box.replaceChildren();
+    this.status("audit", "Checking access and loading backend requests…");
+    try {
+      const trace = await this.api.getAgentToolCalls(project, id);
+      if (!current()) return;
+      if (trace.kind !== "backend_requests" || trace.capacity !== 64 || !Array.isArray(trace.items) || trace.items.length > 64)
+        throw new Error("Tool-call summary is unavailable.");
+      const states = {success:"Request succeeded", processing:"Processing; content not ready", unavailable:"Content unavailable",
+        invalid_request:"Invalid request", access_denied:"Access denied", conflict:"Conflict", busy:"Busy", timeout:"Timed out",
+        dependency_failed:"Dependency failed", unknown:"Outcome unknown (not confirmed)"};
+      for (const item of trace.items) {
+        const card = this.node("details"); card.className = "task-card";
+        const name = item.tool === "search_documents" ? "Search documents" :
+          item.tool === "read_document_version" ? "Read document version" : "Unknown tool";
+        const duration = Number.isSafeInteger(item.duration_ms) && item.duration_ms >= 0 ? `${item.duration_ms} ms` : "not recorded";
+        const parameters = item.parameters || {}, summary = [];
+        if (item.tool === "search_documents") {
+          if (["metadata", "keyword", "hybrid"].includes(parameters.mode)) summary.push(`mode: ${parameters.mode}`);
+          if (Number.isSafeInteger(parameters.query_bytes) && parameters.query_bytes >= 0) summary.push(`query bytes: ${parameters.query_bytes}`);
+        } else if (item.tool === "read_document_version" && ["status", "chunk", "range"].includes(parameters.selector))
+          summary.push(`selector: ${parameters.selector}`);
+        card.append(this.node("summary", `${item.sequence}. ${name} · ${states[item.status] || states.unknown} · ${duration}`),
+          this.node("p", `Tool: ${item.tool} · Request: ${item.request_id}`),
+          this.node("p", `Started ${item.started_at} UTC · Backend duration: ${duration}`),
+          this.node("p", `Parameters (redacted): ${summary.join(" · ") || "not recorded"}`));
+        box.append(card);
+      }
+      this.status("audit", `${trace.items.length ? `${trace.items.length} backend requests / 64 capacity.` : "No recorded backend requests; this does not prove task completion or absence of model calls."} ` +
+        "Snapshot only; these are backend requests, not MCP or model call counts. Duration excludes model generation; no token usage or cost is available here.");
+    } catch (error) {
+      if (current()) { this.clearDetail(); this.status("detail", `${this.errorText(error)} Refresh task to recheck access.`); }
     }
   }
   async cancel(id, token) {

@@ -37,6 +37,6 @@ busy、timeout、dependency_failed和unknown。search成功仅说明请求成功
 MySQL DDL非整批原子，失败应按备份恢复，不盲目重放半套DDL；回退恢复匹配备份。
 只在隔离测试库验证，未迁移当前业务库，也未部署生产服务。
 
-本轮尚未接入网页摘要展示；模型usage、Python验证失败及完整MCP耗时仍在可信CLI
+现已接入[任务网页的手动摘要展示](m3-agent-workspace.md)；模型usage、Python验证失败及完整MCP耗时仍在可信CLI
 本地脱敏轨迹中。当前只有search_documents/read_document_version两个工具，不能
 将本接口宣称为五工具或完整任务审计已交付。

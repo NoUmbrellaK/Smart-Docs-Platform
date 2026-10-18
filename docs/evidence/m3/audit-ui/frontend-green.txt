@@ -1,0 +1,65 @@
+2026-10-19T00:10:24+0800 aliyun-lou systemd[1]: Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-concurrency=1 test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/search_ui_test.mjs test/e2e/processing_ui_test.mjs test/e2e/processing_lifecycle_test.mjs && /usr/bin/python3 -B test/e2e/ui_contract_test.py.
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ creation requires explicit exact-version consent and never claims execution (8.832227ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.797453ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ task list uses cursor and fences late list responses and old buttons (0.708887ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.815746ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ completed answers and fixed sources are text only and rechecked on access (1.608152ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ cancel response loss requires refresh and cannot display stale results (2.714215ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ logout and data invalidation erase draft, answer and fence pending source (0.820943ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ audit uses an encoded same-origin GET and never submits a tool operation (29.50419ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.574129ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ empty audit never means the task succeeded or no model was called (0.677831ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ audit refresh clears old rows and latest response wins (0.571598ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ audit late responses and detached buttons cannot survive view or session invalidation (1.658472ms)
+2026-10-19T00:10:24+0800 aliyun-lou bash[767464]: ✔ audit denial clears answer, source and audit without automatic retries (0.551543ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ logout fences a delayed version load before it can enter the processing panel (52.913766ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ reload obtains persisted job identity and independent states, not upload memory (7.443894ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.960299ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ vector failure remains independent and cancel targets the exact selected job (0.680145ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ reader and historical versions never offer writes; role changes fence already rendered buttons (2.710138ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ project/file reset fences late status and old buttons (1.022082ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ late mutation clears search for original project but cannot overwrite new selection (0.701916ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.697423ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ null jobs are explicit and safe text remains text (0.911901ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ task API uses same-origin exact job and empty POST bodies (30.213226ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ search submits bounded exact filters, paginates and shows truthful coverage (3.816524ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ project changes and changed filters fence late responses and old source buttons (0.588116ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.544318ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ text sources keep line ranges without misleading PDF page guidance (0.560321ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ failed source reads clear old content; logout fences a pending source (0.472013ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.598515ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ newer searches and source selections win over late successes and errors (0.554291ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ API sends same-origin search POST and exact encoded version/chunk GETs (30.554845ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ hybrid mode uses session-bound gateway without client-supplied mode (0.895978ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.924534ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.582624ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ API response parser accepts 204 and maps the unified error (30.83611ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ logout API rejects an unexpected successful status (0.999312ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ all upload tasks share four actual PUT slots (36.369585ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ invalidated slot waiters do not PUT or leak capacity (3.246472ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ duplicate resume is single-flight and completes only once (0.859196ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ pause after part hashing starts schedules no later PUT (1.254559ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ project refresh during hashing invalidates the old upload (2.032008ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ cancel remains final when in-flight PUTs finish or fail late (3.191815ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ pending cancel is single-flight and blocks pause and resume (2.422105ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ failed cancel clears pending state and can be retried (0.637209ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ confirmed parts are keyed and confirmed bytes never exceed size (0.518069ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ resume read failure clears the file and returns to actionable state (0.463355ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ zero-byte upload resumes and calls complete exactly once (0.425666ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ project generation drops A after B and project actions retain scope (3.379433ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ logout only clears UI after 204-equivalent success or explicit 401 (0.381225ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ permission state hides writes synchronously on admin to reader switch (0.293877ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ✔ confirmed self-demotion synchronizes identity, project, and visibility (1.001578ms)
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ tests 51
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ suites 0
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ pass 51
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ fail 0
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ cancelled 0
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ skipped 0
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ todo 0
+2026-10-19T00:10:25+0800 aliyun-lou bash[767464]: ℹ duration_ms 721.915613
+2026-10-19T00:10:25+0800 aliyun-lou bash[767463]: ........
+2026-10-19T00:10:25+0800 aliyun-lou bash[767463]: ----------------------------------------------------------------------
+2026-10-19T00:10:25+0800 aliyun-lou bash[767463]: Ran 8 tests in 0.011s
+2026-10-19T00:10:25+0800 aliyun-lou bash[767463]: OK
+2026-10-19T00:10:25+0800 aliyun-lou systemd[1]: smartdocs-m3-audit-ui-green.service: Deactivated successfully.
