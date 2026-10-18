@@ -91,4 +91,5 @@ private:
     friend class FileService;
     friend class UploadService;
     friend class ProcessingService;
+    friend class AgentTaskService;
 };

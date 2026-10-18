@@ -1,4 +1,5 @@
 #include "processing_service.h"
+#include "agent/agent_tasks.h"
 #include "document_result.h"
 #include "vector_result.h"
 
@@ -446,11 +447,12 @@ std::string ProcessingService::PublishVectorBatch(const std::string& id, const s
 
 nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, const std::string& project,
     const std::string& file, const std::string& version, const std::string& chunk_id, bool remote_ai,
-    const nlohmann::json& range) {
+    const nlohmann::json& range, const std::string& task_id) {
     using Json = nlohmann::json;
     RequireId(project); RequireId(file); RequireId(version);
     if (!chunk_id.empty() && (chunk_id.size() != 64 || chunk_id.find_first_not_of("0123456789abcdef") != std::string::npos))
         throw AppError(400, "invalid_request", "chunk ID is invalid");
+    if (!task_id.empty() && !remote_ai) throw AppError(400,"invalid_request","task reads require remote AI checks");
     const bool ranged = !range.is_null();
     uint64_t offset = 0, limit = 10, page_start = 0, page_end = 0;
     if (ranged) {
@@ -471,6 +473,7 @@ nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, co
     }
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
+    if (!task_id.empty()) RequireAgentTaskScope(db,session,project,task_id,file,version);
     const auto files = db.Query("SELECT current_version_id,remote_ai_policy FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
                                {SqlValue(file), SqlValue(project)});
     if (files.empty()) throw AppError(404, "resource_not_found", "resource was not found");

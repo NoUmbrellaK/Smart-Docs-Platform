@@ -75,7 +75,7 @@ def validate_context(context):
         parsed = urlsplit(origin)
         if ((parsed.scheme != "https" and parsed.hostname != "127.0.0.1")
                 or (parsed.port is not None and not 1 <= parsed.port <= 65535)
-                or context["scope"] != "project_approved_versions"):
+                or context["scope"] not in {"project_approved_versions", "task_versions"}):
             raise ValueError()
         return dict(context)
     except (ValueError, TypeError):
@@ -99,7 +99,11 @@ def load_context(path):
 
 def backend_read(context, name, arguments):
     prefix = "/api/v1/projects/" + context["project_id"]
-    if name == "search_documents":
+    if context["scope"] == "task_versions":
+        method = "POST"
+        path = prefix + "/agent-tasks/" + context["task_id"] + "/tools/" + ("search" if name == "search_documents" else "read")
+        body = json.dumps(arguments, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    elif name == "search_documents":
         method, path = "POST", prefix + "/remote-ai/search"
         body = json.dumps(arguments, ensure_ascii=False, allow_nan=False).encode("utf-8")
     else:

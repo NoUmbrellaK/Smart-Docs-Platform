@@ -86,7 +86,7 @@ export SMARTDOCS_MYSQL_SOCKET=$socket_path
 "$repo_root/scripts/migrate.sh"
 
 replay_output=$("$repo_root/scripts/migrate.sh")
-if [[ $replay_output != 'schema_version=5' ]]; then
+if [[ $replay_output != 'schema_version=6' ]]; then
     printf 'migration_replay_failed: unexpected result %s\n' "$replay_output" >&2
     exit 1
 fi

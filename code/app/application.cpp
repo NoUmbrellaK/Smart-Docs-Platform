@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include "config.h"
+#include "agent/agent_tasks.h"
 #include "auth/auth_routes.h"
 #include "auth/auth_service.h"
 #include "core/app_error.h"
@@ -177,7 +178,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     {
         MySqlConnection connection = database->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 5);
+        Schema::RequireVersion(connection, 6);
     }
     if (!StorageReady(config.storage_root)) {
         throw AppError(503, "storage_unavailable",
@@ -198,6 +199,9 @@ Application::Application(const AppConfig& config, std::string static_root)
     processing_service_.reset(new ProcessingService(*database_, *project_service_));
     processing_service_->RecoverInterrupted();
     processing_service_->RecoverInterrupted("vectorize");
+    auto agent_tasks=std::make_shared<AgentTaskService>(*database_,*project_service_);
+    agent_tasks->RecoverInterrupted();
+    RegisterAgentRoutes(router_,auth_service_,agent_tasks,processing_service_,config.secure_cookie,config.max_json_bytes);
     RegisterAuthRoutes(router_, auth_service_, project_service_,
                        config.max_json_bytes, config.secure_cookie,
                        config.session_seconds);
@@ -236,7 +240,7 @@ bool Application::Ready() const {
     try {
         MySqlConnection connection = database_->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 5);
+        Schema::RequireVersion(connection, 6);
         return StorageReady(storage_root_);
     } catch (...) {
         return false;

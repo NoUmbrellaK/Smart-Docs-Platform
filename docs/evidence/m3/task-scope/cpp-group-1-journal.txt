@@ -1,0 +1,172 @@
+Started /usr/bin/bash -c make -j1 bin/smartdocs_tests && bash scripts/test-with-mysql.sh -- bash -c 'for test_case in m3_task_cancel_waits_for_inflight_read_then_blocks_next_call m3_task_caps_active_work_and_restart_never_claims_completion m3_task_rechecks_entire_scope_on_revocation_update_and_delete m3_task_requires_real_confirmation_exact_scope_and_owner m3_task_scopes_search_counts_and_reads_before_returning_data auth_project_http_routes_form_a_same_origin_vertical_slice auth_project_sessions_reject_invalid_expired_and_revoked_tokens baseline_json_version chunked_transfer_encoding_is_rejected config_rejects_invalid_numeric_values config_rejects_relative_storage_root config_worker_rejects_non_loopback_listener content_length_with_transfer_encoding_is_rejected document_result_accepts_real_python_pdf_page_identities document_result_enforces_aggregate_character_and_chunk_boundaries document_result_rejects_controls_invalid_utf8_and_oversized_chunks duplicate_content_length_is_rejected file_download_current_binds_one_immutable_version_and_history_is_exact file_metadata_constraints_and_name_validation_prevent_aliasing file_metadata_listing_is_scoped_paginated_and_deletion_explicit file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only file_store_rejects_untrusted_paths_and_removes_unfinished_writes headers_over_32768_bytes_are_rejected http_connection_rejects_pipeline_still_queued_in_socket http_connection_serves_live_health_over_socket http_response_file_serializes_headers_without_buffering_file http_response_move_assignment_closes_replaced_descriptor_once m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order m3_range_text_paginates_exact_history_and_rechecks_approval m3_remote_read_requires_live_exact_version_approval_and_preserves_source m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes m3_remote_search_rechecks_approval_after_candidate_selection mysql_application_rejects_missing_storage_directory_at_startup mysql_connection_returns_to_pool_exactly_once_after_move mysql_schema_allows_zero_based_upload_parts mysql_schema_rejects_duplicate_active_file_name mysql_schema_rejects_two_root_directories_for_one_project mysql_transaction_commit_persists_changes mysql_typed_values_and_rows_round_trip pipelined_second_request_is_rejected processing_concurrent_claims_allow_only_one_running_task processing_document_history_never_redirects_and_rechecks_access processing_document_status_exposes_unparsed_version_without_fake_readiness processing_http_cannot_retry_superseded_or_deleted_versions processing_http_status_cancel_retry_are_persistent_and_idempotent processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files processing_hybrid_reports_partial_vector_coverage processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not processing_publication_accepts_new_retry_but_never_the_old_token processing_publication_fault_rolls_back_chunks_index_and_status processing_publication_rejects_stale_cancelled_and_restarted_attempts processing_retry_obeys_capacity_and_completed_tasks_remain_terminal processing_search_filters_current_deleted_unavailable_and_restored_versions processing_search_limits_project_directory_type_and_keyword_pages processing_search_revalidates_candidates_after_concurrent_state_changes processing_vectors_cannot_read_or_publish_superseded_deleted_or_unavailable_source processing_vectors_require_approval_and_publish_all_batches_idempotently processing_vectors_routes_and_job_controls_reuse_authorization processing_worker_claim_exposes_only_bounded_metadata_and_fences_source processing_worker_routes_are_disabled_by_default_and_require_service_auth range_rejects_empty_unsatisfiable_overflow_and_malformed_values request_body_can_arrive_across_reads request_line_over_8192_bytes_is_rejected router_matches_literals_and_decoded_parameters router_reports_method_and_route_misses threadpool_destruction_waits_for_accepted_tasks timer_first_insert_and_cancel_are_safe upload_complete_concurrent_calls_return_one_committed_graph upload_complete_is_idempotent_and_supports_zero_byte_objects upload_complete_validates_parts_and_whole_file_before_publication upload_part_creation_rejects_name_and_version_conflicts upload_part_tasks_enforce_boundaries_ownership_and_cancellation upload_recovery_interrupts_inflight_tasks_and_only_removes_server_temps upload_recovery_keeps_old_content_referenced_by_soft_deleted_file upload_recovery_locks_upload_rows_before_destructive_cleanup upload_recovery_removes_only_old_unreferenced_objects upload_validation_calculates_zero_and_final_part_layout upload_validation_rejects_invalid_part_layout vector_result_rejects_window_budgets_nonfinite_and_reordered_chunks; do stdbuf -oL -eL bin/smartdocs_tests --filter="$test_case" || exit $?; done'.
+g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c test/integration/processing_jobs_test.cpp -o build/obj/tests/test/integration/processing_jobs_test.o
+g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/tests/code/core/crypto.o build/obj/tests/code/core/id.o build/obj/tests/code/core/fault_injector.o build/obj/tests/code/file/range.o build/obj/tests/code/file/file_store.o build/obj/tests/code/file/file_routes.o build/obj/tests/code/file/file_repository.o build/obj/tests/code/file/file_service.o build/obj/tests/code/upload/upload_repository.o build/obj/tests/code/upload/upload_reconciler.o build/obj/tests/code/upload/upload_routes.o build/obj/tests/code/upload/upload_service.o build/obj/tests/code/upload/chunk_body_handler.o build/obj/tests/code/app/application.o build/obj/tests/code/app/config.o build/obj/tests/code/http/router.o build/obj/tests/code/http/httprequest.o build/obj/tests/code/http/httpconn.o build/obj/tests/code/http/httpresponse.o build/obj/tests/code/http/jsonbody.o build/obj/tests/code/processing/processing_routes.o build/obj/tests/code/processing/processing_service.o build/obj/tests/code/processing/worker_routes.o build/obj/tests/code/processing/document_result.o build/obj/tests/code/processing/vector_result.o build/obj/tests/code/processing/document_search.o build/obj/tests/code/log/log.o build/obj/tests/code/buffer/buffer.o build/obj/tests/code/auth/auth_repository.o build/obj/tests/code/auth/auth_service.o build/obj/tests/code/auth/auth_routes.o build/obj/tests/code/timer/heaptimer.o build/obj/tests/code/project/project_service.o build/obj/tests/code/project/project_repository.o build/obj/tests/code/project/project_routes.o build/obj/tests/code/db/schema.o build/obj/tests/code/db/mysql.o build/obj/tests/code/agent/agent_tasks.o build/obj/tests/code/agent/agent_routes.o build/obj/tests/code/server/webserver.o build/obj/tests/code/server/epoller.o build/obj/tests/test/test_main.o build/obj/tests/test/mysql_test_support.o build/obj/tests/test/unit/file_store_test.o build/obj/tests/test/unit/webserver_socket_test.o build/obj/tests/test/unit/config_test.o build/obj/tests/test/unit/vector_result_test.o build/obj/tests/test/unit/document_result_test.o build/obj/tests/test/unit/core_crypto_test.o build/obj/tests/test/unit/http_request_test.o build/obj/tests/test/unit/baseline_test.o build/obj/tests/test/unit/range_test.o build/obj/tests/test/unit/timer_test.o build/obj/tests/test/unit/router_test.o build/obj/tests/test/unit/authorization_test.o build/obj/tests/test/unit/upload_validation_test.o build/obj/tests/test/unit/http_response_test.o build/obj/tests/test/unit/threadpool_test.o build/obj/tests/test/integration/file_mutation_test.o build/obj/tests/test/integration/mysql_readiness_test.o build/obj/tests/test/integration/auth_project_test.o build/obj/tests/test/integration/upload_part_test.o build/obj/tests/test/integration/mysql_schema_test.o build/obj/tests/test/integration/file_metadata_test.o build/obj/tests/test/integration/processing_jobs_test.o build/obj/tests/test/integration/mysql_transaction_test.o build/obj/tests/test/integration/upload_recovery_test.o build/obj/tests/test/integration/upload_complete_test.o build/obj/tests/test/integration/file_download_test.o -o bin/smartdocs_tests -pthread -lmysqlclient -lcrypto
+2026-10-18T13:06:35.516423Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 736971
+2026-10-18T13:06:48.328896Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T13:07:03.930792Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T13:07:12.150617Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=6
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_caps_active_work_and_restart_never_claims_completion
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+RESULT 1 passed, 0 failed, 0 skipped
+PASS auth_project_http_routes_form_a_same_origin_vertical_slice
+RESULT 1 passed, 0 failed, 0 skipped
+PASS auth_project_sessions_reject_invalid_expired_and_revoked_tokens
+RESULT 1 passed, 0 failed, 0 skipped
+PASS baseline_json_version
+RESULT 1 passed, 0 failed, 0 skipped
+PASS chunked_transfer_encoding_is_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS config_rejects_invalid_numeric_values
+RESULT 1 passed, 0 failed, 0 skipped
+PASS config_rejects_relative_storage_root
+RESULT 1 passed, 0 failed, 0 skipped
+PASS config_worker_rejects_non_loopback_listener
+RESULT 1 passed, 0 failed, 0 skipped
+PASS content_length_with_transfer_encoding_is_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS document_result_accepts_real_python_pdf_page_identities
+RESULT 1 passed, 0 failed, 0 skipped
+PASS document_result_enforces_aggregate_character_and_chunk_boundaries
+RESULT 1 passed, 0 failed, 0 skipped
+PASS document_result_rejects_controls_invalid_utf8_and_oversized_chunks
+RESULT 1 passed, 0 failed, 0 skipped
+PASS duplicate_content_length_is_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_download_current_binds_one_immutable_version_and_history_is_exact
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_metadata_constraints_and_name_validation_prevent_aliasing
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_metadata_listing_is_scoped_paginated_and_deletion_explicit
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only
+RESULT 1 passed, 0 failed, 0 skipped
+PASS file_store_rejects_untrusted_paths_and_removes_unfinished_writes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS headers_over_32768_bytes_are_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS http_connection_rejects_pipeline_still_queued_in_socket
+RESULT 1 passed, 0 failed, 0 skipped
+PASS http_connection_serves_live_health_over_socket
+RESULT 1 passed, 0 failed, 0 skipped
+PASS http_response_file_serializes_headers_without_buffering_file
+RESULT 1 passed, 0 failed, 0 skipped
+PASS http_response_move_assignment_closes_replaced_descriptor_once
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS m3_remote_search_rechecks_approval_after_candidate_selection
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_application_rejects_missing_storage_directory_at_startup
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_connection_returns_to_pool_exactly_once_after_move
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_allows_zero_based_upload_parts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_rejects_duplicate_active_file_name
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_schema_rejects_two_root_directories_for_one_project
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_transaction_commit_persists_changes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS mysql_typed_values_and_rows_round_trip
+RESULT 1 passed, 0 failed, 0 skipped
+PASS pipelined_second_request_is_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_concurrent_claims_allow_only_one_running_task
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_history_never_redirects_and_rechecks_access
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_document_status_exposes_unparsed_version_without_fake_readiness
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_http_cannot_retry_superseded_or_deleted_versions
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_http_status_cancel_retry_are_persistent_and_idempotent
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_fuses_distinct_lanes_and_excludes_unapproved_files
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_reports_partial_vector_coverage
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_hybrid_statement_timeout_degrades_but_hard_database_errors_do_not
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_accepts_new_retry_but_never_the_old_token
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_fault_rolls_back_chunks_index_and_status
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_publication_rejects_stale_cancelled_and_restarted_attempts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_retry_obeys_capacity_and_completed_tasks_remain_terminal
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_filters_current_deleted_unavailable_and_restored_versions
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_limits_project_directory_type_and_keyword_pages
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_search_revalidates_candidates_after_concurrent_state_changes
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_cannot_read_or_publish_superseded_deleted_or_unavailable_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_require_approval_and_publish_all_batches_idempotently
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_vectors_routes_and_job_controls_reuse_authorization
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_worker_claim_exposes_only_bounded_metadata_and_fences_source
+RESULT 1 passed, 0 failed, 0 skipped
+PASS processing_worker_routes_are_disabled_by_default_and_require_service_auth
+RESULT 1 passed, 0 failed, 0 skipped
+PASS range_rejects_empty_unsatisfiable_overflow_and_malformed_values
+RESULT 1 passed, 0 failed, 0 skipped
+PASS request_body_can_arrive_across_reads
+RESULT 1 passed, 0 failed, 0 skipped
+PASS request_line_over_8192_bytes_is_rejected
+RESULT 1 passed, 0 failed, 0 skipped
+PASS router_matches_literals_and_decoded_parameters
+RESULT 1 passed, 0 failed, 0 skipped
+PASS router_reports_method_and_route_misses
+RESULT 1 passed, 0 failed, 0 skipped
+PASS threadpool_destruction_waits_for_accepted_tasks
+RESULT 1 passed, 0 failed, 0 skipped
+PASS timer_first_insert_and_cancel_are_safe
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_complete_concurrent_calls_return_one_committed_graph
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_complete_is_idempotent_and_supports_zero_byte_objects
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_complete_validates_parts_and_whole_file_before_publication
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_part_creation_rejects_name_and_version_conflicts
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_part_tasks_enforce_boundaries_ownership_and_cancellation
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_recovery_interrupts_inflight_tasks_and_only_removes_server_temps
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_recovery_keeps_old_content_referenced_by_soft_deleted_file
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_recovery_locks_upload_rows_before_destructive_cleanup
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_recovery_removes_only_old_unreferenced_objects
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_validation_calculates_zero_and_final_part_layout
+RESULT 1 passed, 0 failed, 0 skipped
+PASS upload_validation_rejects_invalid_part_layout
+RESULT 1 passed, 0 failed, 0 skipped
+PASS vector_result_rejects_window_budgets_nonfinite_and_reordered_chunks
+RESULT 1 passed, 0 failed, 0 skipped
+smartdocs-m3-task-group1.service: Deactivated successfully.
+smartdocs-m3-task-group1.service: Consumed 53.282s CPU time.

@@ -56,9 +56,9 @@ public:
     nlohmann::json ReadDocument(const SessionContext&, const std::string& project_id,
         const std::string& file_id, const std::string& version_id,
         const std::string& chunk_id = "", bool remote_ai = false,
-        const nlohmann::json& range = nullptr);
+        const nlohmann::json& range = nullptr, const std::string& task_id = "");
     nlohmann::json Search(const SessionContext&, const std::string& project_id,
-                          const nlohmann::json& request, bool remote_ai = false);
+                          const nlohmann::json& request, bool remote_ai = false, const std::string& task_id = "");
 
 private:
     MySqlPool& pool_;

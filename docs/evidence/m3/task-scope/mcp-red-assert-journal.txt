@@ -1,0 +1,29 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -k persistent -v.
+test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests) ... FAIL
+======================================================================
+FAIL: test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 154, in test_persistent_task_scope_uses_only_bound_routes_without_fallback
+    try: self.module.validate_context(self.context)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/mcp_read.py", line 82, in validate_context
+    raise ValueError("invalid MCP context") from None
+ValueError: invalid MCP context
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 155, in test_persistent_task_scope_uses_only_bound_routes_without_fallback
+    except ValueError: self.fail("persistent task scope is not supported")
+AssertionError: persistent task scope is not supported
+----------------------------------------------------------------------
+Ran 1 test in 0.519s
+FAILED (failures=1)
+smartdocs-m3-task-mcp-red-assert.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-task-mcp-red-assert.service: Failed with result 'exit-code'.

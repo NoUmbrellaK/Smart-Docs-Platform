@@ -18,6 +18,8 @@
 #include <string>
 #include <set>
 #include <thread>
+#include <future>
+#include <chrono>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -172,7 +174,155 @@ void PublishRangeFixture(Fixture& f, const JobFixture& job, bool pdf = false) {
     service.Publish(claim.job.id,claim.attempt_token,result);
 }
 
+nlohmann::json AgentRequest(Application& app, Fixture& f, const std::string& method,
+    const std::string& suffix, const nlohmann::json& body=nullptr, const std::string& token="") {
+    auto head=f.Head(method,"","",token);
+    head.path="/api/v1/projects/"+f.project.id+"/agent-tasks"+suffix;
+    const auto bytes=body.is_null() ? std::string() : body.dump();
+    head.content_length=bytes.size(); head.headers["content-type"]="application/json";
+    auto handler=app.Prepare(head); if(!bytes.empty()) handler->OnData(bytes.data(),bytes.size());
+    auto response=handler->Finish(); CHECK(response.status()==200 || response.status()==201);
+    const auto raw=response.head_and_body();
+    return nlohmann::json::parse(raw.substr(raw.find("\r\n\r\n")+4)).at("data");
+}
+nlohmann::json TaskBody(const JobFixture& job) {
+    return {{"question","检查公开模拟资料"},{"confirm_remote_ai",true},
+        {"versions",nlohmann::json::array({{{"file_id",job.file_id},{"version_id",job.version_id}}})}};
+}
+void Approve(Fixture& f,const JobFixture& job) {
+    FileStore store(f.storage); FileService files(TestDatabase(),f.projects,store);
+    files.SetRemoteAiPolicy(f.admin.session,f.project.id,job.file_id,{"remote_ai_allowed",{job.version_id}});
+}
 }  // namespace
+
+TEST_CASE(m3_task_scopes_search_counts_and_reads_before_returning_data) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto selected=f.AddJob(); PublishText(f); Approve(f,selected);
+    const auto outside=f.AddJob(); PublishText(f); Approve(f,outside);
+    const auto task=AgentRequest(app,f,"POST","",TaskBody(selected));
+    CHECK(task.at("state")=="pending" && task.at("versions").size()==1);
+    const auto prefix="/"+task.at("id").get<std::string>();
+    for(const auto& mode:{"metadata","keyword","hybrid"}) {
+        const auto found=AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode",mode},{"query",std::string(mode)=="metadata" ? "" : "部署"}});
+        CHECK(found.at("coverage").at("current_files")==1 && found.at("items").size()==1);
+        CHECK(found.at("items")[0].at("file_id")==selected.file_id);
+    }
+    CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="running");
+    const auto read=AgentRequest(app,f,"POST",prefix+"/tools/read",{{"file_id",selected.file_id},
+        {"version_id",selected.version_id},{"range",nlohmann::json::object()}});
+    CHECK(read.at("chunks")[0].at("text")=="部署文档");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/read",{{"file_id",outside.file_id},{"version_id",outside.version_id}}),"resource_not_found");
+    CHECK(AgentRequest(app,f,"POST",prefix+"/cancel").at("state")=="cancelled");
+    CHECK(AgentRequest(app,f,"POST",prefix+"/cancel").at("state")=="cancelled");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}}),"task_inactive");
+}
+
+TEST_CASE(m3_task_requires_real_confirmation_exact_scope_and_owner) {
+    using Json=nlohmann::json;
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto selected=f.AddJob();
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST","",TaskBody(selected)),"resource_not_found");
+    Approve(f,selected);
+    for(const auto& bad:std::vector<Json>{{{"confirm_remote_ai",false}},{{"confirm_remote_ai","true"}},
+        {{"versions",Json::array()}},{{"question"," "}},{{"user_id",f.admin.user.id}},{{"question",std::string(4001,'x')}}}) {
+        auto body=TaskBody(selected); body.update(bad);
+        try { AgentRequest(app,f,"POST","",body); CHECK(false); }
+        catch(const AppError& e) { CHECK(e.http_status==400 || e.http_status==413); }
+    }
+    auto duplicate=TaskBody(selected); duplicate["versions"].push_back(duplicate["versions"][0]);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST","",duplicate),"invalid_request");
+    const auto other=f.AddJob(); auto mixed=TaskBody(selected); mixed["versions"].push_back(TaskBody(other)["versions"][0]);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST","",mixed),"resource_not_found");
+    { auto db=TestDatabase().Acquire(); CHECK(db.ScalarInt("SELECT COUNT(*) FROM agent_tasks")==0); }
+    const auto user=f.auth.CreateUser("task_reader","test-only-password");
+    f.projects.SetMemberRole(f.admin.session,f.project.id,user.id,Role::Reader);
+    const auto reader=f.auth.Login("task_reader","test-only-password");
+    const auto task=AgentRequest(app,f,"POST","",TaskBody(selected),reader.raw_token);
+    const auto prefix="/"+task.at("id").get<std::string>();
+    CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix),"resource_not_found");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/cancel"),"resource_not_found");
+    CHECK(AgentRequest(app,f,"GET",prefix,nullptr,reader.raw_token).at("versions").size()==1);
+    { auto db=TestDatabase().Acquire(); db.Execute("DELETE FROM project_members WHERE user_id=?",{SqlValue(user.id)}); }
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}},reader.raw_token),"resource_not_found");
+    auto head=f.Head("POST",""); head.path="/api/v1/projects/"+f.project.id+"/agent-tasks";
+    head.headers["origin"]="http://evil.test";
+    CHECK_THROWS_CODE(app.Prepare(head),"origin_mismatch");
+}
+
+TEST_CASE(m3_task_rechecks_entire_scope_on_revocation_update_and_delete) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto a=f.AddJob(), b=f.AddJob(); Approve(f,a); Approve(f,b);
+    auto body=TaskBody(a); body["versions"].push_back(TaskBody(b)["versions"][0]);
+    const auto task=AgentRequest(app,f,"POST","",body);
+    const auto prefix="/"+task.at("id").get<std::string>();
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE file_versions SET remote_ai_approved=FALSE,remote_ai_approved_at=NULL,remote_ai_approved_by=NULL WHERE id=?",{SqlValue(b.version_id)}); }
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/read",{{"file_id",a.file_id},{"version_id",a.version_id}}),"task_scope_changed");
+    Approve(f,b);
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=UTC_TIMESTAMP(6) WHERE id=?",{SqlValue(b.file_id)}); }
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}}),"task_scope_changed");
+    { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=NULL WHERE id=?",{SqlValue(b.file_id)}); }
+    f.AddJob(b.file_id);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",{{"mode","metadata"},{"query",""}}),"task_scope_changed");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST","",TaskBody(b)),"resource_not_found");
+}
+
+TEST_CASE(m3_task_caps_active_work_and_restart_never_claims_completion) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); Approve(f,job);
+    std::vector<std::string> ids;
+    for(int i=0;i<3;++i) ids.push_back(AgentRequest(app,f,"POST","",TaskBody(job)).at("id"));
+    const nlohmann::json query={{"mode","metadata"},{"query",""}};
+    for(int i=0;i<2;++i) AgentRequest(app,f,"POST","/"+ids[i]+"/tools/search",query);
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST","/"+ids[2]+"/tools/search",query),"agent_busy");
+    CHECK(AgentRequest(app,f,"GET","/"+ids[2]).at("state")=="pending");
+    AgentRequest(app,f,"POST","/"+ids[0]+"/cancel");
+    AgentRequest(app,f,"POST","/"+ids[2]+"/tools/search",query);
+    Application restarted(TestAppConfig(f.storage));
+    CHECK(AgentRequest(restarted,f,"GET","/"+ids[0]).at("state")=="cancelled");
+    for(int i=1;i<3;++i) {
+        CHECK(AgentRequest(restarted,f,"GET","/"+ids[i]).at("state")=="interrupted");
+        CHECK_THROWS_CODE(AgentRequest(restarted,f,"POST","/"+ids[i]+"/tools/search",query),"task_inactive");
+    }
+    { auto db=TestDatabase().Acquire(); for(int i=0;i<100;++i) {
+        db.Execute("INSERT INTO agent_tasks(id,owner_user_id,project_id,question) VALUES (?,?,?,?)",
+            {SqlValue(GenerateId()),SqlValue(f.admin.user.id),SqlValue(f.project.id),SqlValue("capacity fixture")});
+    } }
+    CHECK_THROWS_CODE(AgentRequest(restarted,f,"POST","",TaskBody(job)),"agent_busy");
+}
+
+TEST_CASE(m3_task_cancel_waits_for_inflight_read_then_blocks_next_call) {
+    RequireMySqlTests(); ResetTestDatabase(); Fixture f; Application app(TestAppConfig(f.storage));
+    const auto job=f.AddJob(); Approve(f,job);
+    const auto task=AgentRequest(app,f,"POST","",TaskBody(job));
+    const auto prefix="/"+task.at("id").get<std::string>();
+    const nlohmann::json query={{"mode","metadata"},{"query",""}};
+    std::promise<void> entered, release, cancelling;
+    const auto released=release.get_future().share();
+    FaultInjector::SetObserverForTesting([&](FaultPoint point) {
+        if(point==FaultPoint::AfterSearchCandidates) { entered.set_value(); released.wait(); }
+    });
+    std::future<nlohmann::json> read, cancel;
+    bool waited=false;
+    nlohmann::json found, stopped;
+    try {
+        read=std::async(std::launch::async,[&] { return AgentRequest(app,f,"POST",prefix+"/tools/search",query); });
+        CHECK(entered.get_future().wait_for(std::chrono::seconds(5))==std::future_status::ready);
+        cancel=std::async(std::launch::async,[&] {
+            cancelling.set_value(); return AgentRequest(app,f,"POST",prefix+"/cancel");
+        });
+        cancelling.get_future().wait();
+        waited=cancel.wait_for(std::chrono::milliseconds(200))==std::future_status::timeout;
+        release.set_value(); found=read.get(); stopped=cancel.get();
+    } catch(...) {
+        try { release.set_value(); } catch(const std::future_error&) {}
+        if(read.valid()) read.wait();
+        if(cancel.valid()) cancel.wait();
+        FaultInjector::ClearObserverForTesting(); throw;
+    }
+    FaultInjector::ClearObserverForTesting();
+    CHECK(waited && found.at("items").size()==1 && stopped.at("state")=="cancelled");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/tools/search",query),"task_inactive");
+}
 
 TEST_CASE(m3_range_text_paginates_exact_history_and_rechecks_approval) {
     using Json=nlohmann::json;

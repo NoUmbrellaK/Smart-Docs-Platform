@@ -1,0 +1,126 @@
+Started /usr/bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -v && bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_read_test.py.
+test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ok
+test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests) ... ok
+test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests) ... ok
+test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ok
+test_interrupt_during_either_stage_reaps_child_and_releases_lock (test_embeddings.EmbeddingTests) ... ok
+test_malformed_stage_output_is_rejected_before_inference (test_embeddings.EmbeddingTests) ... ok
+test_missing_stage_dependency_returns_safe_dependency_error (test_embeddings.EmbeddingTests) ... ok
+test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ok
+test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ok
+test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ok
+test_real_stages_run_serially_and_reap_after_second_stage_timeout (test_embeddings.EmbeddingTests) ... ok
+test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ok
+test_second_stage_overrun_cannot_return_success (test_embeddings.EmbeddingTests) ... ok
+test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests) ... ok
+test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests) ... ok
+test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ok
+test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ok
+test_child_receives_no_secret_environment_and_ignores_python_injection (test_pdf_parser.PdfParserTest) ... ok
+test_chinese_pdf_preserves_text_physical_pages_and_unicode_offsets (test_pdf_parser.PdfParserTest) ... ok
+test_empty_pages_preserve_physical_page_numbers_and_coverage (test_pdf_parser.PdfParserTest) ... ok
+test_encrypted_unreadable_pdf_fails_but_empty_password_is_readable (test_pdf_parser.PdfParserTest) ... ok
+test_file_page_text_chunk_and_stream_limits_are_enforced (test_pdf_parser.PdfParserTest) ... ok
+test_image_only_pdf_is_not_misreported_as_parsed_text (test_pdf_parser.PdfParserTest) ... ok
+test_invalid_extracted_unicode_has_a_safe_error_not_raw_text (test_pdf_parser.PdfParserTest) ... ok
+test_kernel_memory_limit_blocks_allocation_in_real_child (test_pdf_parser.PdfParserTest) ... ok
+test_library_warning_about_missing_or_cyclic_form_cannot_publish_partial_text (test_pdf_parser.PdfParserTest) ... ok
+test_malformed_pdf_never_returns_success_or_content_in_error (test_pdf_parser.PdfParserTest) ... ok
+test_missing_pdf_dependency_is_explicit_without_skipping_test (test_pdf_parser.PdfParserTest) ... ok
+test_nested_compressed_form_streams_are_included_in_page_limit (test_pdf_parser.PdfParserTest) ... ok
+test_real_child_crash_and_bad_response_are_safe_failures (test_pdf_parser.PdfParserTest) ... ok
+test_real_timeout_kills_and_reaps_child (test_pdf_parser.PdfParserTest) ... ok
+test_real_two_page_pdf_uses_physical_pages_and_page_local_offsets (test_pdf_parser.PdfParserTest) ... ok
+test_resource_and_processing_limits_cannot_be_disabled_or_increased (test_pdf_parser.PdfParserTest) ... ok
+test_stable_citations_bind_pdf_file_version_content_and_page (test_pdf_parser.PdfParserTest) ... ok
+test_failed_snapshot_does_not_leak_descriptors (test_resident_embeddings.ResidentSnapshotTests) ... ok
+test_snapshot_rejects_symlinks_nonregular_and_oversized_files (test_resident_embeddings.ResidentSnapshotTests) ... ok
+test_verified_snapshot_is_immutable_and_independent_of_source (test_resident_embeddings.ResidentSnapshotTests) ... ok
+test_child_crash_returns_safe_failure_and_removes_listener (test_resident_service.ResidentServiceTests) ... ok
+test_entrypoint_refuses_unrestricted_network_before_loading (test_resident_service.ResidentServiceTests) ... ok
+test_existing_path_unsafe_directory_and_shared_lock_refused (test_resident_service.ResidentServiceTests) ... ok
+test_oversized_or_invalid_child_reply_retires_instance (test_resident_service.ResidentServiceTests) ... ok
+test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests) ... ok
+test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests) ... ok
+test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests) ... ok
+test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... ok
+test_systemd_ready_notification_follows_model_initialization (test_resident_service.ResidentServiceTests) ... ok
+test_total_deadline_kills_model_and_stopped_transient_tokenizer (test_resident_service.ResidentServiceTests) ... ok
+test_denied_preflight_never_encodes (test_search.SearchTests) ... ok
+test_encodes_query_only_after_backend_authorization (test_search.SearchTests) ... ok
+test_encoding_failure_rechecks_backend_instead_of_returning_stale_preflight (test_search.SearchTests) ... ok
+test_model_arguments_cannot_supply_mode_vector_or_identity (test_search.SearchTests) ... ok
+test_permission_revoked_during_encoding_is_not_hidden_by_preflight (test_search.SearchTests) ... ok
+test_bad_origin_host_cookie_never_reaches_backend_or_encoder (test_search_http.SearchHttpTests) ... ok
+test_config_disallows_remote_plaintext_and_untrusted_origin_components (test_search_http.SearchHttpTests) ... ok
+test_degraded_query_forwards_only_session_and_fixed_origin_and_rechecks (test_search_http.SearchHttpTests) ... ok
+test_denied_backend_never_encodes_and_does_not_leak_error (test_search_http.SearchHttpTests) ... ok
+test_limits_body_route_and_media_type (test_search_http.SearchHttpTests) ... ok
+test_malformed_oversized_or_redirected_backend_is_sanitized_unavailable (test_search_http.SearchHttpTests) ... ok
+test_rejects_ambiguous_http_framing_and_duplicate_origin (test_search_http.SearchHttpTests) ... ok
+test_rejects_invalid_body_identity_mode_vectors_and_duplicate_keys (test_search_http.SearchHttpTests) ... ok
+test_revocation_after_encoding_returns_error_not_stale_preflight (test_search_http.SearchHttpTests) ... ok
+test_two_slow_connections_bound_threads_and_third_is_rejected (test_search_http.SearchHttpTests) ... ok
+test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest) ... ok
+test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest) ... ok
+test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest) ... ok
+test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest) ... ok
+test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest) ... ok
+test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest) ... ok
+test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest) ... ok
+test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest) ... ok
+test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest) ... ok
+test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest) ... ok
+test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest) ... ok
+test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest) ... ok
+test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest) ... ok
+test_bad_oversized_crash_and_safe_errors_never_return_partial_tokens (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_constructor_retains_only_sealed_fds_and_close_is_idempotent (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_invalid_input_does_not_spawn (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_native_stop_times_out_and_is_reaped (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_real_child_rejects_non_model_sealed_bytes (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_sealed_descriptors_only_environment_and_reaping_before_result (test_transient_tokenizer.TransientTokenizerTests) ... ok
+test_entrypoint_refuses_missing_kernel_network_restriction (test_vector_worker.EncodingServiceTests) ... ok
+test_stdio_service_bounds_input_and_sanitizes_errors (test_vector_worker.EncodingServiceTests) ... ok
+test_bad_batch_fails_before_encoding_or_publication (test_vector_worker.VectorWorkerTests) ... ok
+test_changed_batch_total_fails_before_more_encoding (test_vector_worker.VectorWorkerTests) ... ok
+test_encoder_failure_and_invalid_result_do_not_publish (test_vector_worker.VectorWorkerTests) ... ok
+test_idle_and_malformed_claim_never_encode_or_fetch (test_vector_worker.VectorWorkerTests) ... ok
+test_invalid_failure_ack_also_exits (test_vector_worker.VectorWorkerTests) ... ok
+test_misleading_ack_exits_without_overwriting_uncertain_publication (test_vector_worker.VectorWorkerTests) ... ok
+test_revoked_attempt_stops_before_next_batch_and_transport_uncertainty_exits (test_vector_worker.VectorWorkerTests) ... ok
+test_socket_exchange_validates_results_limits_and_safe_errors (test_vector_worker.VectorWorkerTests) ... ok
+test_two_batches_replay_same_publication_then_finish_only_on_final_ack (test_vector_worker.VectorWorkerTests) ... ok
+test_unsafe_socket_path_refused_without_connection (test_vector_worker.VectorWorkerTests) ... ok
+test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ok
+test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ok
+test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ok
+test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ok
+test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ok
+test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ok
+test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ok
+test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ok
+test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ok
+test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+----------------------------------------------------------------------
+Ran 104 tests in 21.986s
+OK
+2026-10-18T13:29:48.599092Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 739265
+2026-10-18T13:29:48.603627Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-18T13:30:03.832948Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-18T13:30:11.343659Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=6
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+test_mcp_persistent_task_scope_cancel_and_restart (__main__.McpReadE2E) ... MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS
+ok
+test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E) ... MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS
+ok
+test_mcp_stdio_authorization_and_exact_sources (__main__.McpReadE2E) ... MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS
+ok
+----------------------------------------------------------------------
+Ran 3 tests in 6.453s
+OK
+smartdocs-m3-task-python-e2e.service: Deactivated successfully.
+smartdocs-m3-task-python-e2e.service: Consumed 14.682s CPU time.

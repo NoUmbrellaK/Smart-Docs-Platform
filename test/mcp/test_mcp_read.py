@@ -149,6 +149,25 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         await self.call("read_document_version",{"file_id":FILE,"version_id":VERSION,"range":{}})
         self.assertEqual(json.loads(self.calls[-1][3]),{})
 
+    async def test_persistent_task_scope_uses_only_bound_routes_without_fallback(self):
+        self.context["scope"]="task_versions"
+        try: self.module.validate_context(self.context)
+        except ValueError: self.fail("persistent task scope is not supported")
+        search={"mode":"metadata","query":""}
+        self.assertFalse((await self.call("search_documents",search)).isError)
+        self.assertEqual(self.calls[-1][0:2],("POST",f"/api/v1/projects/{PROJECT}/agent-tasks/{TASK}/tools/search"))
+        self.assertEqual(json.loads(self.calls[-1][3]),search)
+        self.payload={"data":{"parse_state":"completed","chunks":[]}}
+        read={"file_id":FILE,"version_id":VERSION,"range":{}}
+        self.assertFalse((await self.call("read_document_version",read)).isError)
+        self.assertEqual(self.calls[-1][0:2],("POST",f"/api/v1/projects/{PROJECT}/agent-tasks/{TASK}/tools/read"))
+        self.assertEqual(json.loads(self.calls[-1][3]),read)
+        self.status=409
+        denied=await self.call("read_document_version",read)
+        self.assertEqual(denied.structuredContent["status"],"conflict")
+        self.assertEqual(len(self.calls),3)
+        self.assertTrue(all(f"/agent-tasks/{TASK}/tools/" in c[1] for c in self.calls))
+
     async def test_range_rejects_mixed_selectors_and_invalid_bounds_before_http(self):
         base={"file_id":FILE,"version_id":VERSION}
         for selection in [None,[],{"limit":11},{"limit":0},{"offset":-1},{"offset":2001},

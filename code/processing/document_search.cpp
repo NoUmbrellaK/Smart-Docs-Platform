@@ -1,4 +1,5 @@
 #include "processing_service.h"
+#include "agent/agent_tasks.h"
 #include "core/app_error.h"
 #include "core/fault_injector.h"
 #include "db/mysql.h"
@@ -113,8 +114,9 @@ std::vector<Candidate> VectorCandidates(MySqlConnection& db, const std::string& 
 }
 
 Json ProcessingService::Search(const SessionContext& session, const std::string& project, const Json& request,
-                               bool remote_ai) {
+                               bool remote_ai, const std::string& task_id) {
     if (!IsEntityId(project) || !request.is_object()) Invalid();
+    if (!task_id.empty() && !remote_ai) Invalid();
     const std::set<std::string> keys{"mode","query","directory_id","media_type","page","page_size","query_embedding"};
     for (auto it = request.begin(); it != request.end(); ++it) if (!keys.count(it.key())) Invalid();
     const auto mode = Text(request, "mode", 16), query = Text(request, "query", 256);
@@ -137,12 +139,17 @@ Json ProcessingService::Search(const SessionContext& session, const std::string&
 
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
+    if (!task_id.empty()) RequireAgentTaskScope(db,session,project,task_id);
     if (!directory.empty() && db.Query("SELECT id FROM directories WHERE id=? AND project_id=?",
         {SqlValue(directory), SqlValue(project)}).empty())
         throw AppError(404, "resource_not_found", "resource was not found");
     std::string scope = "f.project_id=? AND f.deleted_at IS NULL";
     if (hybrid || remote_ai) scope+=" AND f.remote_ai_policy='remote_ai_allowed' AND v.remote_ai_approved";
     std::vector<SqlValue> scope_values{SqlValue(project)};
+    if (!task_id.empty()) {
+        scope += " AND EXISTS(SELECT 1 FROM agent_task_versions a WHERE a.task_id=? AND a.file_id=f.id AND a.version_id=v.id)";
+        scope_values.emplace_back(task_id);
+    }
     if (!directory.empty()) { scope += " AND f.directory_id=?"; scope_values.emplace_back(directory); }
     if (!type.empty()) { scope += " AND v.media_type=?"; scope_values.emplace_back(type); }
     const auto count = db.Query("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*),COALESCE(SUM(" + ready + "),0),"+

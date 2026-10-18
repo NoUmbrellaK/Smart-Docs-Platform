@@ -154,6 +154,53 @@ class McpReadE2E(support.WorkerE2E):
         asyncio.run(check())
         print("MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS",flush=True)
 
+    def test_mcp_persistent_task_scope_cancel_and_restart(self):
+        selected=self.upload("task-selected.txt",b"chosen source","text/plain")
+        outside=self.upload("OUTSIDE-TASK.txt",b"outside task marker","text/plain")
+        self.assertEqual(worker.run_once(self.client),"completed")
+        self.assertEqual(worker.run_once(self.client),"completed")
+        self.policy(selected,True); self.policy(outside,True)
+        tasks=f'/api/v1/projects/{self.project["id"]}/agent-tasks'
+        body={"question":"check public fixture","confirm_remote_ai":True,
+              "versions":[{"file_id":selected["file_id"],"version_id":selected["version_id"]}]}
+        task=data(self.user.request("POST",tasks,body),201)
+        self.assertEqual(task["state"],"pending")
+        context={"backend_port":self.server.port,"origin":f"http://127.0.0.1:{self.server.port}",
+                 "session_token":next(c.value for c in self.user.cookies if c.name=="smartdocs_session"),
+                 "project_id":self.project["id"],"task_id":task["id"],"scope":"task_versions"}
+        path=self.root/"task-context.json"; path.write_text(json.dumps(context)); path.chmod(0o600)
+        parameters=StdioServerParameters(command=sys.executable,
+            args=["-B","-m","smartdocs.mcp_read","--context",str(path)],
+            env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(support.ROOT/"python")})
+        async def check():
+            async with stdio_client(parameters) as streams:
+                async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=30)) as client:
+                    await client.initialize()
+                    found=await client.call_tool("search_documents",{"mode":"metadata","query":""})
+                    self.assertFalse(found.isError)
+                    self.assertEqual(found.structuredContent["data"]["coverage"]["current_files"],1)
+                    self.assertEqual([x["file_id"] for x in found.structuredContent["data"]["items"]],[selected["file_id"]])
+                    self.assertNotIn("OUTSIDE-TASK",found.model_dump_json())
+                    denied=await client.call_tool("read_document_version",{"file_id":outside["file_id"],"version_id":outside["version_id"]})
+                    self.assertEqual(denied.structuredContent["status"],"access_denied")
+                    args={"file_id":selected["file_id"],"version_id":selected["version_id"],"range":{}}
+                    read=await client.call_tool("read_document_version",args)
+                    self.assertEqual(read.structuredContent["data"]["chunks"][0]["text"],"chosen source")
+                    self.assertEqual(data(self.user.request("GET",tasks+"/"+task["id"]))["state"],"running")
+                    self.assertEqual(data(self.user.request("POST",tasks+"/"+task["id"]+"/cancel"))["state"],"cancelled")
+                    cancelled=await client.call_tool("read_document_version",args)
+                    self.assertEqual(cancelled.structuredContent["status"],"conflict")
+                    self.assertNotIn("data",cancelled.structuredContent)
+        asyncio.run(check())
+        second=data(self.user.request("POST",tasks,body),201)
+        data(self.user.request("POST",tasks+"/"+second["id"]+"/tools/search",{"mode":"metadata","query":""}))
+        self.server.stop(); self.server.start(environment_overrides={"SMARTDOCS_WORKER_TOKEN":self.token})
+        self.user=support.HttpClient(self.server.port)
+        support.login(self.user,"worker-e2e-admin",self.password)
+        self.assertEqual(data(self.user.request("GET",tasks+"/"+second["id"]))["state"],"interrupted")
+        self.assertEqual(data(self.user.request("GET",tasks+"/"+task["id"]))["state"],"cancelled")
+        print("MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS",flush=True)
+
 
 if __name__ == "__main__":
     suite=unittest.TestSuite(McpReadE2E(name) for name in dir(McpReadE2E) if name.startswith("test_mcp_"))

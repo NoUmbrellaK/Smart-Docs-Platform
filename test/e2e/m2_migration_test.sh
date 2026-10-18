@@ -45,8 +45,8 @@ INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha
 INSERT INTO document_chunks(id,version_id,ordinal,char_start,char_end,line_start,line_end,body)
  VALUES (REPEAT('c',64),LPAD('1001',32,'0'),0,0,3,1,1,'abc');
 SQL
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=5' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=5' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=6' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=6' ]]
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -66,3 +66,8 @@ result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM document_embeddings),'/',(SELECT COUNT(*) FROM embedding_batches));")
 [[ $result == '1/0/0' ]] || { printf 'migration_vector_state_failed: %s\n' "$result" >&2; exit 1; }
 printf '%s\n' 'PASS m2_migration_preserves_103_files_without_fabricating_results'
+result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
+ (SELECT COUNT(*) FROM agent_tasks),'/',(SELECT COUNT(*) FROM agent_task_versions),'/',
+ (SELECT COUNT(*) FROM agent_queue_guard WHERE id=1));")
+[[ $result == '0/0/1' ]] || { printf 'migration_agent_state_failed: %s\n' "$result" >&2; exit 1; }
+printf '%s\n' 'PASS m3_agent_migration_does_not_invent_tasks_or_consent'
