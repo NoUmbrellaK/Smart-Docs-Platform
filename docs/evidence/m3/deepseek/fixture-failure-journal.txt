@@ -1,0 +1,131 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_deepseek.py -v.
+test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ERROR
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ERROR
+test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ERROR
+test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ERROR
+test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ERROR
+test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+======================================================================
+ERROR: test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 36, in test_fixed_destination_limits_hidden_reasoning_and_safe_usage
+    model=self.model(); result=await model(**ARGS)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 75, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 109, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+======================================================================
+ERROR: test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 107, in test_malformed_response_is_safe_and_audit_failure_prevents_send
+    with self.assertRaises(RunError): await self.model(malformed)(**ARGS)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 75, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 109, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+======================================================================
+ERROR: test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 120, in test_private_audit_is_exclusive_durable_and_task_bound
+    await model(**ARGS)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 75, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 109, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+======================================================================
+ERROR: test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 91, in test_request_and_call_caps_block_before_network
+    await model(**ARGS)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 75, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 109, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+======================================================================
+ERROR: test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 102, in test_unknown_or_invalid_usage_never_becomes_zero_cost
+    await self.model(missing)(**ARGS)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 75, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/deepseek.py", line 109, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+----------------------------------------------------------------------
+Ran 10 tests in 0.057s
+FAILED (errors=5)
+smartdocs-m3-provider-green.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-provider-green.service: Failed with result 'exit-code'.

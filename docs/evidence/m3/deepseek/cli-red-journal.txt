@@ -1,0 +1,14 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_cli.py -v.
+test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests) ... FAIL
+======================================================================
+FAIL: test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 13, in test_invalid_context_and_missing_key_fail_without_traceback_or_echo
+    self.assertIsNotNone(importlib.util.find_spec("smartdocs.agent_cli"),"trusted Agent entry missing")
+AssertionError: unexpectedly None : trusted Agent entry missing
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+FAILED (failures=1)
+smartdocs-m3-provider-cli-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-provider-cli-red.service: Failed with result 'exit-code'.

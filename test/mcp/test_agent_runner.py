@@ -186,3 +186,34 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         outcome=await self.run_model(model)
         self.assertEqual(outcome["error_code"],"budget_exhausted")
         self.assertEqual(self.calls,1); self.assertIsNone(self.result)
+
+    async def test_provider_entry_records_dynamic_tool_summary_without_content(self):
+        from smartdocs import agent_cli
+        self.assertTrue(hasattr(agent_cli,"run_session"),"audited session missing")
+        events=[]; count=0
+        async def model(messages,**kwargs):
+            nonlocal count
+            count+=1
+            if count==1: return reply(calls=[call(arguments={"mode":"metadata","query":"missing"})])
+            if count==2: return reply(calls=[call(arguments={"mode":"keyword","query":"deployment"},ident="call_2")])
+            return reply(json.dumps({"answer":"Run documented checks.","citations":[CITATION]}))
+        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+            result=await agent_cli.run_session(self.context,client,model,events.append)
+        self.assertEqual(result["state"],"completed")
+        results=[e for e in events if e["event"]=="tool_result"]
+        self.assertEqual([e["item_count"] for e in results],[0,1])
+        self.assertFalse(results[0]["query_changed"]); self.assertTrue(results[1]["query_changed"])
+        self.assertNotIn("deployment",json.dumps(events)); self.assertNotIn("Public",json.dumps(events))
+        self.assertNotIn(self.context["session_token"],json.dumps(events))
+
+    async def test_provider_tool_failure_has_attempt_and_terminal_summary(self):
+        from smartdocs.agent_cli import run_session
+        events=[]
+        class Broken:
+            async def call_tool(self,name,args): raise RuntimeError("private-protocol-error")
+        async def model(**kwargs): return reply(calls=[call()])
+        outcome=await run_session(self.context,Broken(),model,events.append)
+        self.assertEqual(outcome,{"state":"failed","error_code":"dependency_failed"})
+        self.assertEqual([e["event"] for e in events],["tool_attempt","tool_result"])
+        self.assertEqual(events[-1]["status"],"dependency_failed")
+        self.assertNotIn("private-protocol-error",json.dumps(events))

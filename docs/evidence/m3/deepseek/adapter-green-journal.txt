@@ -1,0 +1,15 @@
+Started /usr/bin/env PYTHONPATH=python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_deepseek.py -v.
+test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+----------------------------------------------------------------------
+Ran 10 tests in 0.059s
+OK
+smartdocs-m3-provider-green2.service: Deactivated successfully.

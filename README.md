@@ -25,7 +25,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求schema 7；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 5/6数据库。
 
-已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已推进到有界只读执行核心；生产 MCP 接入、真实供应商调用、逐调用持久审计及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
+已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
 首个门禁增量已实现，[C++ 分组验证 147/147](./docs/evidence/m3/remote-read/README.md)，包括 6 项新增 M3 回归。搜索、覆盖计数和固定版本读取均检查具体版本外发批准；普通内部搜索不变。首次整套超时及测试夹具失败均保留记录，最终分组无失败/跳过。原资源限额下无新增 OOM，无 DeepSeek 调用、无生产部署；下一步接 MCP 只读工具与可信任务身份，M3 尚未验收。
 
@@ -36,6 +36,8 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 新增[持久任务版本范围](./docs/api/m3-agent-tasks.md)：本人任务保存用户外发确认及固定版本集合；每次读取重验整个范围，范围外获批文件也不参与搜索或计数。支持取消、重启标记interrupted及队列/运行容量限制，MCP任务模式失败不降级到全项目。[验证](./docs/evidence/m3/task-scope/README.md)：全部C++分组155/155、MCP协议11/11、Python104/104、真实链路3/3。无DeepSeek调用、无新增OOM；发生3次内存节流，限额未放宽。只有任务范围基础，模型出口、执行循环、完整预算/日志/结果和三个写工具仍待实现，M3尚未验收。
 
 新增[有界只读 Agent 执行核心](./docs/api/m3-read-agent.md)：持久领取、每次模型请求前重验任务依赖、有限多步搜索/读取、固定引用和幂等结果；完成响应丢失只重放同一结果，明确来源拒绝则失败收敛。[本轮证据](./docs/evidence/m3/read-agent/README.md)：相关 C++ 累计69项通过（首次单元67项后900秒超时，剩余2项新单元通过），MCP/执行器23/23、Python104/104、真实SDK/C++/数据库链路5/5。不是全仓C++全量复验；模型为本地替身，无DeepSeek调用、无新增内存节流/OOM，原业务库未迁移。下一步接受控供应商传输与审计，M3仍未验收。
+
+新增[受控 DeepSeek 适配器与可信本机 CLI](./docs/api/m3-deepseek.md)：固定 HTTPS 出口、禁代理/重定向/重试、请求及响应上限、完整异步截止期、每次最多512输出token，以及0600独占创建的脱敏工具/模型审计。[验证](./docs/evidence/m3/deepseek/README.md)：MCP/执行器 **38/38**、既有 Python **104/104**，供应商使用 HTTPX 本地替身；真实 API 测试被安全审核拦截且未启动，待对公开合成资料的限定外发明确批准。没有新增依赖、数据库迁移、生产部署或 OOM；真实模型质量、完整审计 API、网页及三个写工具仍待完成，M3未验收。
 
 ### M2 实现与验证记录
 
