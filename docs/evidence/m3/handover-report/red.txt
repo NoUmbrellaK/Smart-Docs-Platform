@@ -1,0 +1,100 @@
+2026-10-19T15:45:27+0800 aliyun-lou systemd[1]: Started /bin/bash -c scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_handover_report_test.py.
+2026-10-19T15:45:27+0800 aliyun-lou bash[812328]: 2026-10-19T07:45:27.989761Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 812328
+2026-10-19T15:45:27+0800 aliyun-lou bash[812328]: 2026-10-19T07:45:27.994303Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T15:45:43+0800 aliyun-lou bash[812328]: 2026-10-19T07:45:43.208102Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T15:45:54+0800 aliyun-lou bash[812328]: 2026-10-19T07:45:54.116430Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T15:46:38+0800 aliyun-lou bash[812513]: schema_version=13
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T15:47:04+0800 aliyun-lou bash[812573]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T15:47:06+0800 aliyun-lou bash[812664]: test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:08+0800 aliyun-lou bash[812664]: test_report_checklist_and_membership_changes_restrict_content (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:09+0800 aliyun-lou bash[812664]: test_report_concurrent_replay_and_changed_body_do_not_duplicate (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:10+0800 aliyun-lou bash[812664]: test_report_invalid_shape_operation_and_cancel_do_not_create_draft (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:11+0800 aliyun-lou bash[812664]: test_report_lost_body_restart_and_expired_run_replays_original (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:12+0800 aliyun-lou bash[812664]: test_report_reader_save_exact_replay_private_read_and_safe_markdown (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:14+0800 aliyun-lou bash[812664]: test_report_unadmitted_or_forged_citation_cannot_save (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: test_report_uncited_dependency_revocation_blocks_all_content_and_replay (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 117, in test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,task,path,body,actor=self.prepared_report(); url=path+'/handover-report'
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_checklist_and_membership_changes_restrict_content (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 88, in test_report_checklist_and_membership_changes_restrict_content
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,_,path,body,actor=self.prepared_report()
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_concurrent_replay_and_changed_body_do_not_duplicate (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 127, in test_report_concurrent_replay_and_changed_body_do_not_duplicate
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,task,path,body,actor=self.prepared_report(); url=path+'/handover-report'
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_invalid_shape_operation_and_cancel_do_not_create_draft (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 100, in test_report_invalid_shape_operation_and_cancel_do_not_create_draft
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,task,path,body,actor=self.prepared_report(); url=path+'/handover-report'
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_lost_body_restart_and_expired_run_replays_original (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 138, in test_report_lost_body_restart_and_expired_run_replays_original
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,task,path,body,actor=self.prepared_report(); url=path+'/handover-report'
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_reader_save_exact_replay_private_read_and_safe_markdown (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 42, in test_report_reader_save_exact_replay_private_read_and_safe_markdown
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     jobs,task,path,body,actor=self.prepared_report(reader=True)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_unadmitted_or_forged_citation_cannot_save (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 68, in test_report_unadmitted_or_forged_citation_cannot_save
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     _,task,path,body,actor=self.prepared_report(admit=False)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ======================================================================
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAIL: test_report_uncited_dependency_revocation_blocks_all_content_and_replay (__main__.HandoverReportE2E)
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Traceback (most recent call last):
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 76, in test_report_uncited_dependency_revocation_blocks_all_content_and_replay
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     jobs,task,path,body,actor=self.prepared_report()
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 25, in prepared_report
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]:     self.assertRegex(started.get('report_operation_id',''),r'^[0-9a-f]{32}$')
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: AssertionError: Regex didn't match: '^[0-9a-f]{32}$' not found in ''
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: ----------------------------------------------------------------------
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: Ran 8 tests in 10.797s
+2026-10-19T15:47:15+0800 aliyun-lou bash[812664]: FAILED (failures=8)
+2026-10-19T15:47:20+0800 aliyun-lou systemd[1]: smartdocs-report-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T15:47:20+0800 aliyun-lou systemd[1]: smartdocs-report-red.service: Failed with result 'exit-code'.
+2026-10-19T15:47:20+0800 aliyun-lou systemd[1]: smartdocs-report-red.service: Consumed 8.038s CPU time.

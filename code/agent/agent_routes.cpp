@@ -13,7 +13,7 @@ void NoQuery(const RequestHead& head) {
     if(!head.query.empty()) throw AppError(400,"invalid_request","query parameters are not supported");
 }
 HttpResponse Result(const nlohmann::json& data,bool keep_alive,int status=200) {
-    return HttpResponse::Json(status,{{"request_id",GenerateId()},{"data",data}},keep_alive);
+    return HttpResponse::Json(status,{{"request_id",GenerateId()},{"data",data}},keep_alive,{{"Cache-Control","no-store"}});
 }
 std::string ToolError(int status) {
     if(status==400 || status==413) return "invalid_request";
@@ -27,6 +27,25 @@ std::string ToolError(int status) {
 void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::shared_ptr<AgentTaskService> tasks,
     std::shared_ptr<ProcessingService> processing,bool secure_cookie,uint64_t max_json_bytes) {
     const std::string path="/api/v1/projects/{project_id}/agent-tasks";
+    for(const std::string operation:{"save","read","markdown"}) {
+        router.Add(operation=="save" ? "PUT" : "GET",path+"/{task_id}/handover-report"+(operation=="markdown" ? "/markdown" : ""),
+            [=](const RequestHead& head,const RouteParams& params) {
+            NoQuery(head); if(operation=="save") RequireSameOrigin(head,secure_cookie);
+            const auto session=auth->Authenticate(RequireSessionCookie(head));
+            const auto project=params.at("project_id"),task=params.at("task_id");
+            if(operation=="save") return PrepareJsonBody(head,std::min<uint64_t>(65536,max_json_bytes),[=](const nlohmann::json& body) {
+                const auto request=GenerateId();
+                return HttpResponse::Json(200,{{"request_id",request},{"data",tasks->SaveHandoverReport(session,project,task,body,request)}},
+                    head.keep_alive,{{"Cache-Control","no-store"}});
+            });
+            if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
+            const auto report=tasks->GetHandoverReport(session,project,task);
+            if(operation=="markdown") return ReadyResponse(HttpResponse::Text(200,RenderHandoverMarkdown(report),
+                {{"Content-Type","text/markdown; charset=utf-8"},{"Cache-Control","no-store"},
+                 {"Content-Disposition","attachment; filename=\"handover-"+report["id"].get<std::string>()+".md\""}},head.keep_alive));
+            return ReadyResponse(HttpResponse::Json(200,{{"request_id",GenerateId()},{"data",report}},head.keep_alive,{{"Cache-Control","no-store"}}));
+        });
+    }
     for(const std::string operation:{"decision","execute","result"}) {
         router.Add(operation=="result" ? "GET" : "POST",path+"/{task_id}/archive-plan/"+operation,
             [=](const RequestHead& head,const RouteParams& params) {

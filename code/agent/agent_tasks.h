@@ -32,6 +32,9 @@ public:
     nlohmann::json DecideArchivePlan(const SessionContext&, const std::string&, const std::string&, const nlohmann::json&, const std::string&);
     nlohmann::json ExecuteArchivePlan(const SessionContext&, const std::string&, const std::string&, const nlohmann::json&, const std::string&);
     nlohmann::json ArchiveResult(const SessionContext&, const std::string&, const std::string&);
+    nlohmann::json SaveHandoverReport(const SessionContext&, const std::string&, const std::string&,
+        const nlohmann::json&, const std::string& request_id);
+    nlohmann::json GetHandoverReport(const SessionContext&, const std::string&, const std::string&);
     void RecoverInterrupted();
 private:
     MySqlPool& pool_;
@@ -46,5 +49,11 @@ std::string RequireArchiveTaskScope(MySqlConnection&, const SessionContext&, con
     const std::string& task, bool writing, bool exclusive=false);
 std::string LockArchiveTask(MySqlConnection&, const SessionContext&, const std::string&, const std::string&);
 nlohmann::json CommittedArchiveReceipt(MySqlConnection&, const std::string& task);
+// Callers hold membership and owner task locks throughout content construction.
+void RequireReportDependencies(MySqlConnection&, const std::string& project,
+    const nlohmann::json& sources, const nlohmann::json& checklist);
+nlohmann::json ReadHandoverReport(MySqlConnection&, const std::string& project, const std::string& task);
+nlohmann::json HandoverReportReceipt(const nlohmann::json& report);
+std::string RenderHandoverMarkdown(const nlohmann::json& report);
 void RegisterAgentRoutes(Router&, std::shared_ptr<AuthService>, std::shared_ptr<AgentTaskService>,
     std::shared_ptr<ProcessingService>, bool secure_cookie, uint64_t max_json_bytes);

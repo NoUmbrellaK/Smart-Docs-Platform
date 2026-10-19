@@ -210,7 +210,12 @@ nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const st
     const auto question=db.Query("SELECT question FROM agent_tasks WHERE id=?",{SqlValue(task)})[0].String(0);
     Json result={{"state","running"},{"question",question}};
     const auto checklist=TaskChecklist(db,task);
-    if(!checklist.is_null()) result["handover_checklist"]=checklist;
+    if(!checklist.is_null()) {
+        result["handover_checklist"]=checklist;
+        const auto operation=GenerateId();
+        db.Execute("UPDATE agent_runs SET report_operation_id=? WHERE task_id=?",{SqlValue(operation),SqlValue(task)});
+        result["report_operation_id"]=operation;
+    }
     if(result.dump().size()>64000) {
         FailRun(db,task,"budget_exhausted"); transaction.Commit();
         throw AppError(409,"budget_exhausted","task context exceeds the response budget");
@@ -295,6 +300,13 @@ nlohmann::json AgentTaskService::GetResult(const SessionContext& session,const s
     projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
     const auto row=Task(db,session,project,task);
     if(row.String(1)=="completed") {
+        const auto report=ReadHandoverReport(db,project,task);
+        if(!report.is_null()) {
+            const auto run=Run(db,task);
+            Json result={{"state","completed"},{"kind","handover_report"},{"result",nullptr},{"error_code",nullptr},
+                {"model_calls",run.UInt64(0)},{"handover_report",HandoverReportReceipt(report)}};
+            transaction.Commit(); return result;
+        }
         const auto receipt=CommittedArchiveReceipt(db,task);
         if(!receipt.is_null()) {
             const auto runs=db.Query("SELECT model_calls FROM agent_runs WHERE task_id=? FOR SHARE",{SqlValue(task)});
@@ -313,6 +325,13 @@ nlohmann::json AgentTaskService::GetResult(const SessionContext& session,const s
 
 std::string LockArchiveTask(MySqlConnection& db,const SessionContext& session,const std::string& project,const std::string& task) {
     LockQueue(db); return Task(db,session,project,task).String(1);
+}
+void RequireReportDependencies(MySqlConnection& db,const std::string& project,const Json& sources,const Json& checklist) {
+    if(checklist.is_null() || Checklist(db,project,checklist.at("revision").get<uint64_t>())!=checklist)
+        throw AppError(409,"task_scope_changed","report checklist is unavailable");
+    for(const auto& item:sources.at("versions"))
+        if(!Allowed(db,project,item.at("file_id"),item.at("version_id")))
+            throw AppError(409,"task_scope_changed","report sources are unavailable");
 }
 std::string RequireArchiveTaskScope(MySqlConnection& db,const SessionContext& session,const std::string& project,
     const std::string& task,bool writing,bool exclusive) {

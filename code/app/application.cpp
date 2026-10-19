@@ -179,7 +179,7 @@ Application::Application(const AppConfig& config, std::string static_root)
     {
         MySqlConnection connection = database->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 13);
+        Schema::RequireVersion(connection, 14);
     }
     if (!StorageReady(config.storage_root)) {
         throw AppError(503, "storage_unavailable",
@@ -241,7 +241,7 @@ bool Application::Ready() const {
     try {
         MySqlConnection connection = database_->Acquire();
         connection.Ping();
-        Schema::RequireVersion(connection, 13);
+        Schema::RequireVersion(connection, 14);
         return StorageReady(storage_root_);
     } catch (...) {
         return false;

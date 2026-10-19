@@ -145,6 +145,10 @@ HttpResponse HttpResponse::Empty(int status, bool keep_alive,
     return Build(status, 0, keep_alive, std::move(headers), std::string(),
                  FileRegion());
 }
+HttpResponse HttpResponse::Text(int status, std::string body, Headers headers, bool keep_alive) {
+    const uint64_t length=body.size();
+    return Build(status,length,keep_alive,std::move(headers),std::move(body),FileRegion());
+}
 
 HttpResponse HttpResponse::File(int status, FileRegion region, Headers headers,
                                 bool keep_alive) {

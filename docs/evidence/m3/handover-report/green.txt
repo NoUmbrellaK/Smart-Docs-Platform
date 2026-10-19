@@ -1,0 +1,77 @@
+2026-10-19T16:10:44+0800 aliyun-lou systemd[1]: Started /bin/bash -c scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_handover_report_test.py && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema && stdbuf -oL bin/smartdocs_tests --filter=auth_project && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=file_mutation && stdbuf -oL bin/smartdocs_tests --filter=authorization && stdbuf -oL bin/smartdocs_tests --filter=http_response'.
+2026-10-19T16:10:44+0800 aliyun-lou bash[815824]: 2026-10-19T08:10:44.892952Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 815824
+2026-10-19T16:10:44+0800 aliyun-lou bash[815824]: 2026-10-19T08:10:44.897804Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T16:11:00+0800 aliyun-lou bash[815824]: 2026-10-19T08:11:00.215235Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T16:11:07+0800 aliyun-lou bash[815824]: 2026-10-19T08:11:07.834527Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T16:11:52+0800 aliyun-lou bash[816047]: schema_version=14
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T16:12:18+0800 aliyun-lou bash[816128]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T16:12:21+0800 aliyun-lou bash[816233]: test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:22+0800 aliyun-lou bash[816233]: test_report_checklist_and_membership_changes_restrict_content (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:24+0800 aliyun-lou bash[816233]: test_report_concurrent_replay_and_changed_body_do_not_duplicate (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:25+0800 aliyun-lou bash[816233]: test_report_dependency_change_before_save_and_soft_delete_after_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:27+0800 aliyun-lou bash[816233]: test_report_empty_evidence_is_explicitly_uncertain_not_found (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:28+0800 aliyun-lou bash[816233]: test_report_interrupted_task_cannot_first_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:29+0800 aliyun-lou bash[816233]: test_report_invalid_shape_operation_and_cancel_do_not_create_draft (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:31+0800 aliyun-lou bash[816233]: test_report_lost_body_restart_and_expired_run_replays_original (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:33+0800 aliyun-lou bash[816233]: test_report_missing_fixed_chunk_blocks_saved_content (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:35+0800 aliyun-lou bash[816233]: test_report_new_version_does_not_silently_replace_fixed_source (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:36+0800 aliyun-lou bash[816233]: test_report_no_model_admission_and_expired_execution_cannot_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:38+0800 aliyun-lou bash[816233]: test_report_reader_save_exact_replay_private_read_and_safe_markdown (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:39+0800 aliyun-lou bash[816233]: test_report_unadmitted_or_forged_citation_cannot_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:41+0800 aliyun-lou bash[816233]: test_report_uncited_dependency_revocation_blocks_all_content_and_replay (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:12:41+0800 aliyun-lou bash[816233]: ----------------------------------------------------------------------
+2026-10-19T16:12:41+0800 aliyun-lou bash[816233]: Ran 14 tests in 22.823s
+2026-10-19T16:12:41+0800 aliyun-lou bash[816233]: OK
+2026-10-19T16:12:41+0800 aliyun-lou bash[816290]: PASS mysql_schema_version_is_fourteen
+2026-10-19T16:12:54+0800 aliyun-lou bash[816290]: PASS mysql_schema_rejects_two_root_directories_for_one_project
+2026-10-19T16:13:08+0800 aliyun-lou bash[816290]: PASS mysql_schema_rejects_duplicate_active_file_name
+2026-10-19T16:13:21+0800 aliyun-lou bash[816290]: PASS mysql_schema_rejects_duplicate_upload_part_number
+2026-10-19T16:13:34+0800 aliyun-lou bash[816290]: PASS mysql_schema_allows_zero_part_upload_tasks
+2026-10-19T16:13:47+0800 aliyun-lou bash[816290]: PASS mysql_schema_allows_zero_based_upload_parts
+2026-10-19T16:13:47+0800 aliyun-lou bash[816290]: RESULT 6 passed, 0 failed, 0 skipped
+2026-10-19T16:14:01+0800 aliyun-lou bash[816326]: PASS auth_project_sessions_reject_invalid_expired_and_revoked_tokens
+2026-10-19T16:14:15+0800 aliyun-lou bash[816326]: PASS auth_project_membership_is_project_scoped_and_directories_are_checked
+2026-10-19T16:14:28+0800 aliyun-lou bash[816326]: PASS auth_project_http_routes_form_a_same_origin_vertical_slice
+2026-10-19T16:14:28+0800 aliyun-lou bash[816326]: RESULT 3 passed, 0 failed, 0 skipped
+2026-10-19T16:14:42+0800 aliyun-lou bash[816446]: PASS m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped
+2026-10-19T16:14:56+0800 aliyun-lou bash[816446]: PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+2026-10-19T16:15:10+0800 aliyun-lou bash[816446]: PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+2026-10-19T16:15:24+0800 aliyun-lou bash[816446]: PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+2026-10-19T16:15:38+0800 aliyun-lou bash[816446]: PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+2026-10-19T16:15:52+0800 aliyun-lou bash[816446]: PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+2026-10-19T16:16:09+0800 aliyun-lou bash[816446]: PASS m3_task_caps_active_work_and_restart_never_claims_completion
+2026-10-19T16:16:22+0800 aliyun-lou bash[816446]: PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+2026-10-19T16:16:36+0800 aliyun-lou bash[816446]: PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+2026-10-19T16:16:49+0800 aliyun-lou bash[816446]: PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+2026-10-19T16:17:02+0800 aliyun-lou bash[816446]: PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+2026-10-19T16:17:16+0800 aliyun-lou bash[816446]: PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+2026-10-19T16:17:29+0800 aliyun-lou bash[816446]: PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+2026-10-19T16:17:43+0800 aliyun-lou bash[816446]: PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+2026-10-19T16:17:57+0800 aliyun-lou bash[816446]: PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+2026-10-19T16:18:11+0800 aliyun-lou bash[816446]: PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+2026-10-19T16:18:25+0800 aliyun-lou bash[816446]: PASS m3_remote_search_rechecks_approval_after_candidate_selection
+2026-10-19T16:18:25+0800 aliyun-lou bash[816446]: RESULT 17 passed, 0 failed, 0 skipped
+2026-10-19T16:18:40+0800 aliyun-lou bash[816623]: PASS file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids
+2026-10-19T16:18:53+0800 aliyun-lou bash[816623]: PASS file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only
+2026-10-19T16:19:06+0800 aliyun-lou bash[816623]: PASS file_mutation_http_routes_enforce_origin_json_limit_and_audit_request_id
+2026-10-19T16:19:06+0800 aliyun-lou bash[816623]: RESULT 3 passed, 0 failed, 0 skipped
+2026-10-19T16:19:06+0800 aliyun-lou bash[816659]: PASS authorization_role_matrix_is_explicit
+2026-10-19T16:19:20+0800 aliyun-lou bash[816659]: PASS processing_vectors_routes_and_job_controls_reuse_authorization
+2026-10-19T16:19:20+0800 aliyun-lou bash[816659]: RESULT 2 passed, 0 failed, 0 skipped
+2026-10-19T16:19:20+0800 aliyun-lou bash[816232]: PASS http_response_capacity_rejection_is_serializable
+2026-10-19T16:19:20+0800 aliyun-lou bash[816232]: PASS http_response_text_keeps_utf8_bytes_and_download_headers
+2026-10-19T16:19:20+0800 aliyun-lou bash[816232]: PASS http_response_json_sets_required_headers_and_exact_length
+2026-10-19T16:19:20+0800 aliyun-lou bash[816232]: PASS http_response_file_serializes_headers_without_buffering_file
+2026-10-19T16:19:20+0800 aliyun-lou bash[816232]: PASS http_response_move_assignment_closes_replaced_descriptor_once
+2026-10-19T16:19:36+0800 aliyun-lou bash[816232]: PASS upload_complete_http_response_replays_stable_result_ids
+2026-10-19T16:19:36+0800 aliyun-lou bash[816232]: RESULT 6 passed, 0 failed, 0 skipped
+2026-10-19T16:19:40+0800 aliyun-lou systemd[1]: smartdocs-report-verified.service: Deactivated successfully.
+2026-10-19T16:19:40+0800 aliyun-lou systemd[1]: smartdocs-report-verified.service: Consumed 24.262s CPU time.

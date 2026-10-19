@@ -45,8 +45,8 @@ INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha
 INSERT INTO document_chunks(id,version_id,ordinal,char_start,char_end,line_start,line_end,body)
  VALUES (REPEAT('c',64),LPAD('1001',32,'0'),0,0,3,1,1,'abc');
 SQL
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=13' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=13' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=14' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=14' ]]
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -83,3 +83,5 @@ printf '%s\n' 'PASS m3_handover_migration_does_not_invent_checklist_or_approval'
 printf '%s\n' 'PASS m3_source_migration_does_not_invent_model_context'
 [[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT COUNT(*) FROM agent_tasks WHERE handover_context IS NOT NULL;') == 0 ]]
 printf '%s\n' 'PASS m3_checklist_context_migration_does_not_invent_selection'
+[[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT (SELECT COUNT(*) FROM handover_reports)+(SELECT COUNT(*) FROM agent_runs WHERE report_operation_id IS NOT NULL);') == 0 ]]
+printf '%s\n' 'PASS m3_report_migration_does_not_invent_reports_or_operations'

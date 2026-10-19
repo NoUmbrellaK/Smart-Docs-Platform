@@ -34,6 +34,7 @@ public:
                              Headers headers = Headers());
     static HttpResponse Empty(int status, bool keep_alive = false,
                               Headers headers = Headers());
+    static HttpResponse Text(int status, std::string body, Headers headers, bool keep_alive = false);
     static HttpResponse File(int status, FileRegion region, Headers headers,
                              bool keep_alive = false);
 

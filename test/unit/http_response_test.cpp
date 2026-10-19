@@ -19,6 +19,19 @@ TEST_CASE(http_response_capacity_rejection_is_serializable) {
     CHECK(response.head_and_body().find(body.dump())!=std::string::npos);
 }
 
+TEST_CASE(http_response_text_keeps_utf8_bytes_and_download_headers) {
+    const std::string body="# 个人报告\n\n固定来源\n";
+    const auto response=HttpResponse::Text(200,body,{{"Content-Type","text/markdown; charset=utf-8"},
+        {"Content-Disposition","attachment; filename=\"handover.md\""},{"Cache-Control","no-store"}},true);
+    const auto& serialized=response.head_and_body();
+    CHECK(serialized.find("Content-Length: "+std::to_string(body.size())+"\r\n")!=std::string::npos);
+    CHECK(serialized.find("X-Content-Type-Options: nosniff\r\n")!=std::string::npos);
+    CHECK(serialized.find("Content-Type: text/markdown; charset=utf-8\r\n")!=std::string::npos);
+    CHECK(serialized.find("Cache-Control: no-store\r\n")!=std::string::npos);
+    CHECK(serialized.find("Content-Disposition: attachment; filename=\"handover.md\"\r\n")!=std::string::npos);
+    CHECK(serialized.substr(serialized.size()-body.size())==body);
+}
+
 TEST_CASE(http_response_json_sets_required_headers_and_exact_length) {
     const nlohmann::json body = {{"status", "live"}};
     HttpResponse response = HttpResponse::Json(200, body, true);

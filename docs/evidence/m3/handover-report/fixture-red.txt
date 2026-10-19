@@ -1,0 +1,68 @@
+2026-10-19T16:07:21+0800 aliyun-lou systemd[1]: Started /bin/bash -c scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_handover_report_test.py && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema && stdbuf -oL bin/smartdocs_tests --filter=auth_project && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=file_mutation && stdbuf -oL bin/smartdocs_tests --filter=authorization && stdbuf -oL bin/smartdocs_tests --filter=http_response'.
+2026-10-19T16:07:33+0800 aliyun-lou bash[815245]: 2026-10-19T08:07:33.797490Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 815245
+2026-10-19T16:07:33+0800 aliyun-lou bash[815245]: 2026-10-19T08:07:33.937826Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T16:07:49+0800 aliyun-lou bash[815245]: 2026-10-19T08:07:49.251216Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T16:07:56+0800 aliyun-lou bash[815245]: 2026-10-19T08:07:56.993242Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T16:08:45+0800 aliyun-lou bash[815458]: schema_version=14
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T16:09:12+0800 aliyun-lou bash[815521]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T16:09:17+0800 aliyun-lou bash[815620]: test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:19+0800 aliyun-lou bash[815620]: test_report_checklist_and_membership_changes_restrict_content (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:20+0800 aliyun-lou bash[815620]: test_report_concurrent_replay_and_changed_body_do_not_duplicate (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:21+0800 aliyun-lou bash[815620]: test_report_dependency_change_before_save_and_soft_delete_after_save (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T16:09:22+0800 aliyun-lou bash[815620]: test_report_empty_evidence_is_explicitly_uncertain_not_found (__main__.HandoverReportE2E) ... FAIL
+2026-10-19T16:09:24+0800 aliyun-lou bash[815620]: test_report_interrupted_task_cannot_first_save (__main__.HandoverReportE2E) ... ERROR
+2026-10-19T16:09:26+0800 aliyun-lou bash[815620]: test_report_invalid_shape_operation_and_cancel_do_not_create_draft (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:28+0800 aliyun-lou bash[815620]: test_report_lost_body_restart_and_expired_run_replays_original (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:30+0800 aliyun-lou bash[815620]: test_report_missing_fixed_chunk_blocks_saved_content (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:32+0800 aliyun-lou bash[815620]: test_report_new_version_does_not_silently_replace_fixed_source (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:34+0800 aliyun-lou bash[815620]: test_report_no_model_admission_and_expired_execution_cannot_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:36+0800 aliyun-lou bash[815620]: test_report_reader_save_exact_replay_private_read_and_safe_markdown (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:38+0800 aliyun-lou bash[815620]: test_report_unadmitted_or_forged_citation_cannot_save (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: test_report_uncited_dependency_revocation_blocks_all_content_and_replay (__main__.HandoverReportE2E) ... ok
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ======================================================================
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ERROR: test_report_interrupted_task_cannot_first_save (__main__.HandoverReportE2E)
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ----------------------------------------------------------------------
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: Traceback (most recent call last):
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 184, in test_report_interrupted_task_cannot_first_save
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     _,task,path,body,_=self.prepared_report()
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 27, in prepared_report
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     chunk=data(read)['chunks'][0]
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: IndexError: list index out of range
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ======================================================================
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: FAIL: test_report_dependency_change_before_save_and_soft_delete_after_save (__main__.HandoverReportE2E)
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ----------------------------------------------------------------------
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: Traceback (most recent call last):
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 15, in tearDown
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     super().tearDown()
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 74, in tearDown
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     state = self.state(job)
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 80, in state
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     def state(self, job): return data(self.user.request("GET", self.job_path(job)))
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'resource_not_found', 'message': 'resource was not found', 'retryable': False}, 'request_id': '2818466d5845ccb5f44c464fede0a906'}
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ======================================================================
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: FAIL: test_report_empty_evidence_is_explicitly_uncertain_not_found (__main__.HandoverReportE2E)
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ----------------------------------------------------------------------
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: Traceback (most recent call last):
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 155, in test_report_empty_evidence_is_explicitly_uncertain_not_found
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     _,_,path,body,actor=self.prepared_report(admit=False)
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_report_test.py", line 19, in prepared_report
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]:     self.assertEqual(worker.run_once(self.client),'completed')
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: AssertionError: 'idle' != 'completed'
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: - idle
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: + completed
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: ----------------------------------------------------------------------
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: Ran 14 tests in 26.889s
+2026-10-19T16:09:39+0800 aliyun-lou bash[815620]: FAILED (failures=2, errors=1)
+2026-10-19T16:09:43+0800 aliyun-lou systemd[1]: smartdocs-report-green.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T16:09:43+0800 aliyun-lou systemd[1]: smartdocs-report-green.service: Failed with result 'exit-code'.
+2026-10-19T16:09:43+0800 aliyun-lou systemd[1]: smartdocs-report-green.service: Consumed 9.542s CPU time.

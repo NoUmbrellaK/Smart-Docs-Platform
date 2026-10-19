@@ -23,7 +23,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema13](./docs/api/m3-handover-context.md#schema13和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 12及更早数据库。
+当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)及[个人报告后端](./docs/api/m3-handover-report.md)，C++要求[schema14](./docs/api/m3-handover-report.md#schema14和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 13及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -62,6 +62,10 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 方案A第五个增量新增[模型来源回执台账](./docs/api/m3-model-sources.md)：C++记录真实工具输出的版本/片段ID，MCP只转发最终响应回执，执行器每次模型请求前累计准入；未显式引用的资料也保留依赖，伪造、跨任务及删除历史回执拒绝。[本轮证据](./docs/evidence/m3/model-sources/README.md)：来源HTTP/SQL **8/8**、相关C++ **32/32**、真实MCP **5/5**、工具审计 **4/4**、MCP单测 **45/45**、Python **106/106**。保留RED及重启夹具失败，修正后通过。按最小实现原则复用审计表与既有依赖；schema12仅在隔离库验证，无真实模型调用、生产迁移或新增节流/OOM。台账表示获准尝试发送而非供应商收件证明；报告消费、清单上下文绑定及MCP写工具仍待实现，M3未验收。
 
 方案A第六个增量新增[可信清单上下文](./docs/api/m3-handover-context.md)：任务显式绑定获批修订快照，工具/模型调用及回答读取持续重验；普通问答不自动附加。旧执行器缺少修订确认时拒绝准入，超大启动上下文原子失败，不遗留运行任务。[本轮证据](./docs/evidence/m3/handover-context/README.md)：新增真实链路 **8/8**、相关C++ **31/31**、既有清单 **8/8**、来源台账 **8/8**、MCP单测 **46/46**、Python **106/106**。保留初始及边界RED，修正后通过；脱敏归档回执仍可反映已经执行的操作。复用任务表与既有门禁，无新增依赖、真实模型调用、生产迁移或新增节流/OOM。schema13仅在隔离库验证；清单网页选择、个人报告及三个MCP写工具仍待完成，M3未验收。
+
+方案A第七个增量新增[个人交接报告后端](./docs/api/m3-handover-report.md)：Reader可保存本人不可变草稿，服务端操作ID精确重放；报告、审计与任务完成同事务。完整依赖取已准入来源台账，未引用资料失效也阻断全文；受保护JSON和Markdown下载持续重验权限、清单及固定版本。[本轮证据](./docs/evidence/m3/handover-report/README.md)：报告HTTP/SQL **14/14**、相关C++ **37/37**，保留初始RED及测试清理失败记录。导出区分所选范围和实际来源，明确引用校验不代表结论语义验收。schema14只在隔离库验证；无新依赖、付费模型调用或生产迁移。个人报告网页、清单网页选择、三个MCP写工具及编排仍待完成，M3未验收。
+
+报告后端兼容回归：清单上下文 **8/8**、来源台账 **8/8**、清单API **8/8**、MCP **46/46**、Python **106/106**。所有本轮测试进程已退出，业务MySQL仍运行，无新增节流/OOM；详细日志见上述证据。
 
 ### M2 实现与验证记录
 
@@ -258,7 +262,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=13`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema13说明](./docs/api/m3-handover-context.md#schema13和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=14`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema14说明](./docs/api/m3-handover-report.md#schema14和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

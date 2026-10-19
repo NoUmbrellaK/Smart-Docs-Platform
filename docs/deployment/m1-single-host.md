@@ -1,6 +1,6 @@
 # M1 单机部署手册
 
-> 本文保留 M1/schema 2 的部署基线。当前 M3 开发分支要求 [schema13](../api/m3-handover-context.md#schema13和部署)；升级前同时阅读 [M2 任务迁移说明](../api/m2-processing-api.md)，不要仅替换二进制或使用下文旧 schema 预期。混合检索还需配置[同源网关路由](m2-hybrid-search.md)。
+> 本文保留 M1/schema 2 的部署基线。当前 M3 开发分支要求 [schema14](../api/m3-handover-report.md#schema14和部署)；升级前同时阅读 [M2 任务迁移说明](../api/m2-processing-api.md)，不要仅替换二进制或使用下文旧 schema 预期。混合检索还需配置[同源网关路由](m2-hybrid-search.md)。
 
 本文说明 M1 C++ 文件服务的单机部署。M1 包含登录会话、项目与成员角色、逻辑目录、分片上传、不可变版本、软删除/还原、远程 AI 授权标记和受保护下载；不包含 M2 解析/检索、M3 Agent/MCP 或 M4 归档报告。
 

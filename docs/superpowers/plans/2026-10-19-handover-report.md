@@ -22,7 +22,7 @@ ReadHandoverReport(db,project,task)返回完整报告或null，调用者必须�
 RequireReportDependencies(db,project,sources,checklist)复用已有Allowed/Checklist门禁。
 RenderHandoverMarkdown(report)返回安全文本；HttpResponse::Text(status,body,headers,keep_alive)。
 
-- [ ] 写真实HTTP/SQL失败测试，验证旧版无operation ID/报告路由，保留RED。
+- [x] 写真实HTTP/SQL失败测试，验证旧版无operation ID/报告路由，保留RED。
 
 ```python
 started = data(user.request('POST', path+'/run/start'))
@@ -30,7 +30,7 @@ receipt = data(user.request('PUT', path+'/handover-report', {'operation_id':star
 assert data(user.request('PUT', path+'/handover-report', body)) == receipt
 ```
 
-- [ ] 实现迁移、start操作ID、报告校验和同事务保存；来源取已准入回执并验证片段存在。
+- [x] 实现迁移、start操作ID、报告校验和同事务保存；来源取已准入回执并验证片段存在。
 
 ```sql
 SELECT source_json FROM agent_tool_calls WHERE task_id=? AND model_call IS NOT NULL ORDER BY sequence FOR SHARE;
@@ -38,8 +38,10 @@ INSERT INTO handover_reports(id,task_id,operation_id,request_json,content_json,s
 UPDATE agent_tasks SET state='completed' WHERE id=?;
 ```
 
-- [ ] 实现受保护GET、Markdown和run/result分类；所有全文出口重验实际依赖和清单，不读旧缓存。
-- [ ] 同步schema14、受限构建及真实HTTP/相关C++、清单上下文和来源回归，检查资源终态。
-- [ ] 独立只读审查并修复/复验，记录源码指纹和真实输出、更新文档、正常提交推送。
+- [x] 实现受保护GET、Markdown和run/result分类；所有全文出口重验实际依赖和清单，不读旧缓存。
+- [x] 同步schema14、受限构建及真实HTTP/相关C++、清单上下文和来源回归，检查资源终态。
+- [x] 独立只读审查并修复/复验，记录源码指纹和真实输出、更新文档。
+
+提交发布：本实现随当前分支正常提交推送；最终结果以Git远端核对为准。
 
 自审：这是报告后端实际交付，不把引用格式当语义准确率；UI与MCP生产编排仍需随后完成。
