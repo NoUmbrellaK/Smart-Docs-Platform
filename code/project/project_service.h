@@ -84,6 +84,9 @@ public:
     nlohmann::json ArchivePolicy(const SessionContext&, const std::string& project);
     nlohmann::json SetArchivePolicy(const SessionContext&, const std::string& project,
         const nlohmann::json& body, const std::string& request_id);
+    nlohmann::json HandoverChecklist(const SessionContext&, const std::string& project);
+    nlohmann::json SetHandoverChecklist(const SessionContext&, const std::string& project,
+        const nlohmann::json& body, const std::string& request_id);
     // Internal callers hold membership and transaction locks through result construction.
     static nlohmann::json ApprovedArchivePolicy(MySqlConnection&, const std::string& project,
         uint64_t revision);

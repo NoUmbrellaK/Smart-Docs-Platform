@@ -27,7 +27,7 @@ test/e2e/m2_migration_test.sh；更新README/API/证据文档。
 SetHandoverChecklist(const SessionContext&, const std::string&, const nlohmann::json&, const std::string& request_id)返回JSON。
 复用RequireRole、repository_->InsertAudit、MySqlTransaction和PrepareJsonBody，不新增抽象接口。
 
-- [ ] 写真实HTTP测试，复用TaskListE2E的隔离服务器/项目；独立断言如下，并扩展权限、边界、竞争和回滚：
+- [x] 写真实HTTP测试，复用TaskListE2E的隔离服务器/项目；独立断言如下，并扩展权限、边界、竞争和回滚：
 
 ```python
 self.assertEqual(data(self.user.request("GET", path)),
@@ -38,8 +38,8 @@ self.assertEqual(data(self.user.request("PUT", path, body)), saved)
 self.assertEqual(count_audit(), 1)
 ```
 
-- [ ] 在原schema10副本用test-with-mysql.sh运行新测试，确认因404而失败；记录RED。
-- [ ] 实现schema11和两条路由。写事务顺序：RequireRole(Admin)→项目FOR UPDATE→读取当前行→
+- [x] 在原schema10副本用test-with-mysql.sh运行新测试，确认因404而失败；记录RED。
+- [x] 实现schema11和两条路由。写事务顺序：RequireRole(Admin)→项目FOR UPDATE→读取当前行→
   校验CAS/精确重放→upsert→InsertAudit→Commit。GET在Reader检查后项目FOR SHARE，读取同一快照。
   SQL核心约束为：
 
@@ -50,8 +50,8 @@ CHECK ((remote_ai_approved=TRUE AND approved_by IS NOT NULL AND approved_at IS N
     OR (remote_ai_approved=FALSE AND approved_by IS NULL AND approved_at IS NULL))
 ```
 
-- [ ] 同步副本后受限make -j1构建server/smartdocs_tests/smartdocs-admin；不得并行重型测试。
-- [ ] 新临时库运行清单真实HTTP、相关C++，再独立临时库运行既有22项归档HTTP；迁移检查schema11、
+- [x] 同步副本后受限make -j1构建server/smartdocs_tests/smartdocs-admin；不得并行重型测试。
+- [x] 新临时库运行清单真实HTTP、相关C++，再独立临时库运行既有22项归档HTTP；迁移检查schema11、
   重放、部分schema拒绝及旧文件升级后清单行数为0。命令：
 
 ```bash
@@ -62,8 +62,8 @@ bin/smartdocs_tests --filter=auth_project
 bin/smartdocs_tests --filter=authorization
 ```
 
-- [ ] 独立只读审查；修复发现，保存源码指纹、实际输出和资源清理证据；更新README和部署版本要求。
-- [ ] 验证git diff --check、源文件与受限副本一致、所有临时进程退出；正常提交推送现有分支，目标保持活动。
+- [x] 独立只读审查；修复发现，保存源码指纹、实际输出和资源清理证据；更新README和部署版本要求。
+- [x] 验证git diff --check、源文件与受限副本一致、所有临时进程退出；交付使用正常提交推送现有分支，目标保持活动。
 
 自审：本计划仅一条事务/API链路，没有并行实现任务；schema/路由/测试版本统一11。
 清单不自动变成报告，不将普通GET当作模型可用接口；页面和MCP接入保持明确未交付。

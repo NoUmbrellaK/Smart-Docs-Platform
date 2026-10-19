@@ -79,7 +79,7 @@ schema10起另返回摘要、决定、操作ID和任务状态；只有当前已�
 ## schema9和部署
 
 009_archive_previews.sql只新增archive_policies和archive_plans，不回填授权或方案。
-此为schema9历史迁移；当前C++要求[schema10](m3-archive-execution.md#schema10和部署)。部署前停应用/worker/网关并备份数据库和
+此为schema9历史迁移；当前C++要求[schema11](m3-handover-checklist.md#schema11和部署)。部署前停应用/worker/网关并备份数据库和
 文件，运行scripts/migrate.sh后再启用匹配二进制。MySQL DDL不是整批原子操作；失败按匹配备份恢复，
 不能盲目重放半套DDL。本轮只允许在独立临时数据库验证，不自动迁移业务库或部署生产服务。
 

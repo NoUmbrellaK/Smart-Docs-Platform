@@ -23,7 +23,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema 10](./docs/api/m3-archive-execution.md#schema10和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 9及更早数据库。
+当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema 11](./docs/api/m3-handover-checklist.md#schema11和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 10及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -56,6 +56,8 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 方案A第二个增量新增[确认/拒绝、整批事务与持久回执](./docs/api/m3-archive-execution.md)：确认绑定用户/方案修订/内容摘要，服务器生成操作ID；等待释放运行槽，确认本身不移动。执行前全范围及快照重验，所有移动、结果、审计和完成状态同事务提交，支持重复请求与丢失响应后的安全恢复；任务页区分等待状态和归档回执。[本轮证据](./docs/evidence/m3/archive-execution/README.md)：HTTP/SQL **22/22**、相关C++ **31/31**、JS **53/53**、页面契约 **8/8**通过；真实Chrome同配置复验 **1/1**（两轮合计 **1/2**，首次会话启动失败，根因未确定）。schema10仅用于临时库，无模型调用或生产迁移。该增量尚未包含确认网页，后续进展见下一段。
 
 方案A第三个增量接入[真实归档确认网页](./docs/api/m3-archive-execution.md#网页确认与恢复)：逐项显示固定版本/源目标/理由，默认不勾选，确认、拒绝和执行独立操作；失败清旧方案、只读查询历史回执，不自动重试。修复取消锁被页面失效提前释放的问题。[本轮证据](./docs/evidence/m3/archive-ui/README.md)：前端 **64/64**、页面契约 **8/8**，真实Chrome复验 **1/1**（两轮合计 **1/2**，首轮测试误用查询路由405，已修正）。六屏宽和44px控件通过；复用原生JS/schema10，无新增依赖、模型调用、生产迁移或新增节流/OOM。提案仍为夹具，MCP写工具、模型等待/继续、报告及五工具联调尚未完成，M3未验收。
+
+方案A第四个增量新增[项目交接清单API](./docs/api/m3-handover-checklist.md)：成员读取、管理员同源维护必需/可选项，修订冲突保护、精确重放、明确外发批准和审计同事务。批准不继承，尚未接入模型。[本轮验证](./docs/evidence/m3/handover-checklist/README.md)：真实HTTP/SQL **8/8**、相关C++ **31/31**、既有归档回归 **22/22**；首轮触发器夹具错误保留记录，修正分隔符后通过。schema11仅在临时库验证，无新依赖、模型调用、生产迁移或新增节流/OOM。项目设置网页、个人报告及MCP写工具编排仍待实现，M3未验收。
 
 ### M2 实现与验证记录
 
@@ -252,7 +254,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=10`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema10说明](./docs/api/m3-archive-execution.md#schema10和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=11`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema11说明](./docs/api/m3-handover-checklist.md#schema11和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

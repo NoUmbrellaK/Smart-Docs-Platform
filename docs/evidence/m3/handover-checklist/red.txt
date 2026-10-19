@@ -1,0 +1,276 @@
+2026-10-19T14:03:19+0800 aliyun-lou systemd[1]: Started /bin/bash -c bin/smartdocs_tests --filter=authorization && /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_handover_checklist_test.py.
+2026-10-19T14:03:21+0800 aliyun-lou bash[793746]: PASS authorization_role_matrix_is_explicit
+2026-10-19T14:03:21+0800 aliyun-lou bash[793746]: SKIP processing_vectors_routes_and_job_controls_reuse_authorization: set SMARTDOCS_TEST_MYSQL=1 via scripts/test-with-mysql.sh
+2026-10-19T14:03:21+0800 aliyun-lou bash[793746]: RESULT 1 passed, 0 failed, 1 skipped
+2026-10-19T14:03:23+0800 aliyun-lou bash[793761]: 2026-10-19T06:03:23.343894Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 793761
+2026-10-19T14:03:23+0800 aliyun-lou bash[793761]: 2026-10-19T06:03:23.349289Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T14:03:38+0800 aliyun-lou bash[793761]: 2026-10-19T06:03:38.680588Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T14:03:49+0800 aliyun-lou bash[793761]: 2026-10-19T06:03:49.121959Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T14:04:29+0800 aliyun-lou bash[793979]: schema_version=10
+2026-10-19T14:04:53+0800 aliyun-lou bash[794030]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T14:04:53+0800 aliyun-lou bash[794030]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T14:04:53+0800 aliyun-lou bash[794030]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T14:04:53+0800 aliyun-lou bash[794030]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T14:04:53+0800 aliyun-lou bash[794030]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T14:04:55+0800 aliyun-lou bash[794131]: test_handover_audit_failure_rolls_back_entire_checklist_update (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:55+0800 aliyun-lou bash[794131]: test_handover_competing_revision_has_one_winner (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:55+0800 aliyun-lou bash[794131]: test_handover_concurrent_replay_is_one_revision_and_audit (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: test_handover_default_persistence_and_exact_replay (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: test_handover_new_revision_does_not_inherit_approval_or_accept_old_replay (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: test_handover_role_project_and_origin_are_rechecked_on_replay (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) ... FAIL
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_audit_failure_rolls_back_entire_checklist_update (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 135, in test_handover_audit_failure_rolls_back_entire_checklist_update
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     original = data(self.user.request("PUT", self.path(), body))
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '2d81f1b5ddea87d7dfcb9d97c0ac960a'}
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_competing_revision_has_one_winner (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 120, in test_handover_competing_revision_has_one_winner
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(sorted(response.status for response in responses), [200, 409])
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: Lists differ: [404, 404] != [200, 409]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: First differing element 0:
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: 404
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: 200
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: - [404, 404]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: + [200, 409]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_concurrent_replay_is_one_revision_and_audit (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 128, in test_handover_concurrent_replay_is_one_revision_and_audit
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual([response.status for response in responses], [200, 200])
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: Lists differ: [404, 404] != [200, 200]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: First differing element 0:
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: 404
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: 200
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: - [404, 404]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: + [200, 200]
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_default_persistence_and_exact_replay (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 26, in test_handover_default_persistence_and_exact_replay
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(data(self.user.request("GET", self.path())),
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'a527e8364a9b6e820ca5b074d5ec14d2'}
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_new_revision_does_not_inherit_approval_or_accept_old_replay (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 43, in test_handover_new_revision_does_not_inherit_approval_or_accept_old_replay
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     data(self.user.request("PUT", self.path(), body))
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'a554f67609831a73e8de6c188ec88742'}
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_role_project_and_origin_are_rechecked_on_replay (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 59, in test_handover_role_project_and_origin_are_rechecked_on_replay
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     saved = data(self.user.request("PUT", self.path(), body))
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '1ffd928b1ead4e8e2eed100e5596fea3'}
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}], 'user_id': '00000000000000000000000000000000'})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}], 'approved': True})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': 'true', 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': {}})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}, {'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': True, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': -1, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0.5, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': '0', 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 4294967295, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': '', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'A', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': '../../other', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': '部署', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '   ', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文文', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': 1}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': 'bad\x00text', 'description': '配置、步骤与回滚', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': 'bad\ntext', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': 'bad\x7ftext', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'required': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E) (body={'expected_revision': 0, 'confirm_remote_ai': False, 'items': [{'key': 'deployment', 'title': '部署说明', 'description': '配置、步骤与回滚', 'required': True, 'approved': True}, {'key': 'open_issues', 'title': '待办问题', 'description': '', 'required': False}]})
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 95, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("PUT", self.path(), bad).status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ======================================================================
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAIL: test_handover_strict_shape_text_and_transport_limits (__main__.HandoverChecklistE2E)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Traceback (most recent call last):
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_checklist_test.py", line 96, in test_handover_strict_shape_text_and_transport_limits
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]:     self.assertEqual(self.user.request("GET", self.path()+"?user_id=x").status, 400)
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: AssertionError: 404 != 400
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: ----------------------------------------------------------------------
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: Ran 7 tests in 2.315s
+2026-10-19T14:04:56+0800 aliyun-lou bash[794131]: FAILED (failures=33)
+2026-10-19T14:05:01+0800 aliyun-lou systemd[1]: smartdocs-checklist-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T14:05:01+0800 aliyun-lou systemd[1]: smartdocs-checklist-red.service: Failed with result 'exit-code'.
+2026-10-19T14:05:01+0800 aliyun-lou systemd[1]: smartdocs-checklist-red.service: Consumed 6.506s CPU time.

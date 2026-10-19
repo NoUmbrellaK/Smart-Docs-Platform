@@ -32,7 +32,7 @@ busy、timeout、dependency_failed和unknown。search成功仅说明请求成功
 
 ## schema8和部署
 
-schema8新增agent_tool_calls，旧任务不回填历史。当前C++已要求[schema10](m3-archive-execution.md#schema10和部署)，升级前停止应用/worker/
+schema8新增agent_tool_calls，旧任务不回填历史。当前C++已要求[schema11](m3-handover-checklist.md#schema11和部署)，升级前停止应用/worker/
 网关并备份数据库与文件，再运行scripts/migrate.sh；先升级库再换匹配二进制。
 MySQL DDL非整批原子，失败应按备份恢复，不盲目重放半套DDL；回退恢复匹配备份。
 只在隔离测试库验证，未迁移当前业务库，也未部署生产服务。
