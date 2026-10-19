@@ -1,0 +1,179 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/directory_ui_test.mjs.
+✖ directory create binds selected parent and refreshes authority without replaying the write (2.080675ms)
+✖ root is immutable and directory names remain text; rename uses the exact directory (1.402942ms)
+✖ invalid names and unknown parents cannot create directories (0.344415ms)
+✖ non-admin and stale project reads cannot install or mutate a directory snapshot (0.300401ms)
+✖ newest directory refresh wins and denied or cross-project snapshots clear editors (0.42023ms)
+✖ directory mutation lock survives navigation and late settlement cannot refill another view (0.335964ms)
+✖ lost directory write response performs only read recovery and discards the old draft (0.317065ms)
+✔ directory HTTP adapters encode identity and use only the existing create and rename commands (48.707061ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 1
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 134.347793
+✖ failing tests:
+test at test/e2e/directory_ui_test.mjs:33:1
+✖ directory create binds selected parent and refreshes authority without replaying the write (2.080675ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:34:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:42:1
+✖ root is immutable and directory names remain text; rename uses the exact directory (1.402942ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:43:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:54:1
+✖ invalid names and unknown parents cannot create directories (0.344415ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:56:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:62:1
+✖ non-admin and stale project reads cannot install or mutate a directory snapshot (0.300401ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:64:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:74:1
+✖ newest directory refresh wins and denied or cross-project snapshots clear editors (0.42023ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:75:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:83:1
+✖ directory mutation lock survives navigation and late settlement cannot refill another view (0.335964ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:84:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/directory_ui_test.mjs:92:1
+✖ lost directory write response performs only read recovery and discards the old draft (0.317065ms)
+  AssertionError [ERR_ASSERTION]: directory administration UI is missing
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:19:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_ui_test.mjs:93:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-directory-ui-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-directory-ui-red.service: Failed with result 'exit-code'.

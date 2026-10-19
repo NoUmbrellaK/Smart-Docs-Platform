@@ -1,4 +1,96 @@
 // Local administration only. Approval never starts a model or confirms a move.
+export class DirectoryPanel {
+  constructor(get, api, errorText, changed, loaded) {
+    Object.assign(this, {get, api, errorText, changed, loaded});
+    this.sequence = 0; this.writing = false;
+    this.control("refresh").addEventListener("click", () => this.load());
+    this.control("form").addEventListener("submit", event => {
+      event.preventDefault(); return this.write(null, this.control("name"), this.sequence);
+    });
+    this.setProject(null);
+  }
+  control(part) { return this.get(`settings-directory-${part}`); }
+  node(tag, text) {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = String(text);
+    return node;
+  }
+  controls() {
+    const admin = Boolean(this.project && this.role === "admin"), disabled = !admin || !this.ready || this.writing;
+    this.control("form").hidden = !admin;
+    this.control("refresh").disabled = !admin || this.writing;
+    this.control("editor").disabled = disabled;
+    for (const row of this.rows) { row.input.disabled = disabled; row.button.disabled = disabled; }
+  }
+  clear() {
+    this.sequence += 1; this.ready = false; this.directories = []; this.rows = [];
+    this.control("rows").replaceChildren(); this.control("parent").replaceChildren();
+    this.control("name").value = ""; this.controls();
+  }
+  setProject(project, role = null) {
+    this.project = project; this.role = role; this.clear(); // Only settled writes release the lock.
+    this.control("status").textContent = this.writing ? "An earlier directory write is in flight. Wait, then refresh." :
+      "Load / refresh directories before editing. Refresh discards unsaved names.";
+  }
+  async load(message = "") {
+    if (!this.project || this.role !== "admin" || this.writing) return;
+    this.clear(); const sequence = this.sequence, project = this.project;
+    this.changed(project); this.control("status").textContent = `${message} Loading directories…`;
+    try {
+      const {items} = await this.api.listDirectories(project);
+      if (sequence !== this.sequence) return;
+      if (!Array.isArray(items) || items.some(d => !d || typeof d.id !== "string" || d.project_id !== project ||
+          typeof d.name !== "string" || (d.parent_id !== null && typeof d.parent_id !== "string")) ||
+          new Set(items.map(d => d.id)).size !== items.length || items.filter(d => d.parent_id === null).length !== 1 ||
+          items.some(d => d.parent_id !== null && !items.some(parent => parent.id === d.parent_id)))
+        throw new Error("Directory snapshot is unavailable. Refresh to recheck access.");
+      this.directories = items;
+      for (const directory of items) {
+        const option = this.node("option", `${directory.name} · ${directory.id}`); option.value = directory.id;
+        this.control("parent").append(option);
+        const card = this.node("div"); card.className = "task-card";
+        card.append(this.node("p", `${directory.name} · ${directory.id} · Parent: ${directory.parent_id ?? "none"}`));
+        if (directory.parent_id === null) card.append(this.node("p", "Project root cannot be renamed."));
+        else {
+          const form = this.node("form"), label = this.node("label"), input = this.node("input");
+          input.type = "text"; input.value = directory.name; input.required = true; input.maxLength = 255;
+          label.append(this.node("span", "New name (up to 255 UTF-8 bytes)"), input);
+          const button = this.node("button", "Rename directory"); button.type = "submit";
+          form.addEventListener("submit", event => { event.preventDefault(); return this.write(directory, input, sequence); });
+          form.append(label, button); card.append(form); this.rows.push({input, button});
+        }
+        this.control("rows").append(card);
+      }
+      this.control("parent").value = items.find(d => d.parent_id === null).id;
+      this.loaded(project, items); this.ready = true;
+      this.control("status").textContent = `${message} ${items.length} directories loaded. Review the current list before any new action. Renaming an approved target revokes its archive approval.`;
+    } catch (error) {
+      if (sequence === this.sequence) { this.clear(); this.control("status").textContent = `${message} ${this.errorText(error)}`; }
+    } finally { this.controls(); }
+  }
+  async write(directory, input, sequence) {
+    if (sequence !== this.sequence || !this.project || this.role !== "admin" || !this.ready || this.writing) return;
+    const name = input.value.trim(), parent = this.control("parent").value;
+    if (!name || new TextEncoder().encode(name).length > 255 || /[\x00-\x1f\x7f/]/.test(name) ||
+        (directory ? directory.parent_id === null || !this.directories.includes(directory) : !this.directories.some(d => d.id === parent))) {
+      this.control("status").textContent = "Choose an existing parent and a nonblank name of at most 255 UTF-8 bytes, without slashes or control characters.";
+      return;
+    }
+    const project = this.project;
+    this.writing = true; this.controls(); this.changed(project);
+    this.control("status").textContent = "Saving directory metadata…";
+    let message;
+    try {
+      if (directory) await this.api.renameDirectory(project, directory.id, name);
+      else await this.api.createDirectory(project, parent, name);
+      message = directory ? "Directory renamed." : "Directory created.";
+    } catch (error) {
+      message = `${this.errorText(error)} Outcome may be unknown; no automatic retry. Inspect the refreshed list before a new action.`;
+    } finally { this.changed(project); this.writing = false; this.controls(); }
+    if (sequence === this.sequence) await this.load(message); // Only read recovery, never replay a write.
+  }
+}
+
 export class ProjectSettingsPanel {
   constructor(get, api, errorText, changed) {
     Object.assign(this, {get, api, errorText, changed});

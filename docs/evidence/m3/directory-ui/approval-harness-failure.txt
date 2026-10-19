@@ -1,0 +1,23 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/directory_lifecycle_test.mjs.
+✖ directory rename clears stale approval text and preserves file and directory selections (24.914873ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117.09802
+✖ failing tests:
+test at test/e2e/directory_lifecycle_test.mjs:16:1
+✖ directory rename clears stale approval text and preserves file and directory selections (24.914873ms)
+  TypeError: byId(...).dispatchEvent is not a function
+      at bootstrap (file:///tmp/smartdocs-safe.h4SzvX/repo/resources/js/app.js:710:21)
+      at file:///tmp/smartdocs-safe.h4SzvX/repo/resources/js/app.js:876:38
+      at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+      at async node:internal/modules/esm/loader:643:26
+      at async TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_lifecycle_test.mjs:30:5)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+smartdocs-directory-approval-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-directory-approval-red.service: Failed with result 'exit-code'.

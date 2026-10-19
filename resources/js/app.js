@@ -3,7 +3,7 @@ import { UploadController } from "./uploads.js";
 import { SearchPanel } from "./search.js";
 import { ProcessingPanel } from "./processing.js";
 import { AgentPanel } from "./agent.js";
-import { ProjectSettingsPanel } from "./project-settings.js";
+import { ProjectSettingsPanel, DirectoryPanel } from "./project-settings.js";
 
 export class ProjectGeneration {
   constructor() {
@@ -120,6 +120,7 @@ let searchPanel = null;
 let processingPanel = null;
 let agentPanel = null;
 let projectSettings = null;
+let directoryPanel = null;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -173,6 +174,7 @@ function applyWriteVisibility() {
 }
 
 function resetProjectView(project) {
+  directoryPanel.setProject(null);
   projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.setProject(null, []);
@@ -226,6 +228,16 @@ function directoryName(directoryId) {
   return directory ? directory.name : directoryId;
 }
 
+function installDirectories(items) {
+  state.directories = items;
+  for (const selectId of ["directory-filter", "upload-directory", "file-directory"]) {
+    const selected = byId(selectId).value;
+    replaceOptions(selectId, items, directory => directory.id, directory => directory.name, selectId === "directory-filter");
+    if (items.some(directory => directory.id === selected) || (selectId === "directory-filter" && selected === ""))
+      byId(selectId).value = selected;
+  }
+}
+
 function renderIdentity(identity) {
   state.identity = identity;
   byId("login-form").hidden = true;
@@ -248,6 +260,7 @@ function renderIdentity(identity) {
 }
 
 function signedOut() {
+  directoryPanel.setProject(null);
   projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.setProject(null, []);
@@ -451,6 +464,7 @@ function renderMembers(members, token) {
           state.selectedFileReady ? state.selectedFile : null
         );
         if (synchronized.changed) {
+          directoryPanel.setProject(synchronized.project.id, synchronized.project.role);
           projectSettings.setProject(synchronized.project.id, synchronized.project.role);
           agentPanel.setProject(synchronized.project.id, synchronized.project.role);
           searchPanel.invalidate();
@@ -493,13 +507,7 @@ async function loadProject(project) {
     );
     const directoryResult = await api.listDirectories(token.projectId);
     if (!projectLoads.current(token)) return;
-    state.directories = directoryResult.items;
-    for (const selectId of ["directory-filter", "upload-directory",
-                            "file-directory"]) {
-      replaceOptions(selectId, state.directories, (directory) => directory.id,
-                     (directory) => directory.name,
-                     selectId === "directory-filter");
-    }
+    installDirectories(directoryResult.items);
     if (!await loadFiles(token)) return;
     if (!projectLoads.current(token)) return;
     const uploadError = await uploadRefresh;
@@ -513,6 +521,7 @@ async function loadProject(project) {
       byId("member-list").replaceChildren();
     }
     state.projectReady = true;
+    directoryPanel.setProject(project.id, project.role);
     projectSettings.setProject(project.id, project.role);
     searchPanel.setProject(project.id, state.directories);
     agentPanel.setProject(project.id, project.role);
@@ -619,6 +628,21 @@ processingPanel = new ProcessingPanel(byId, api, errorText,
 agentPanel = new AgentPanel(byId, api, errorText);
 projectSettings = new ProjectSettingsPanel(byId, api, errorText,
   project => { if (state.project && state.project.id === project) agentPanel.invalidate(); });
+directoryPanel = new DirectoryPanel(byId, api, errorText,
+  project => {
+    if (state.project?.id !== project) return;
+    projectSettings.clear("archive");
+    projectSettings.status("archive", "Directory metadata may have changed. Load / refresh archive directories to recheck approval.");
+    agentPanel.invalidate(); searchPanel.invalidate();
+  },
+  (project, items) => {
+    if (state.project?.id !== project) return;
+    installDirectories(items);
+    const selectedUpload = byId("upload-file-target").value;
+    renderFiles(state.projectToken);
+    byId("upload-file-target").value = selectedUpload;
+    searchPanel.setProject(project, items);
+  });
 
 byId("login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -634,6 +658,7 @@ byId("login-form").addEventListener("submit", async (event) => {
 });
 
 byId("logout-button").addEventListener("click", async () => {
+  directoryPanel.setProject(null);
   projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.invalidate();
@@ -644,6 +669,7 @@ byId("logout-button").addEventListener("click", async () => {
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
+    directoryPanel.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     projectSettings.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     agentPanel.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     setStatus("session-error", message);

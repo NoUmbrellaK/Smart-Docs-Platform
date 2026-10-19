@@ -1,0 +1,9 @@
+First attempt: smartdocs-directory-browser, MainPID=0, Result=exit-code, ExecMainStatus=1.
+Test failed in Browser.start() before navigating to the application.
+Private ChromeDriver log: launch timestamp 1792412492.269; failed connection timestamp 1792412554.019.
+InitSession diagnostic: session not created: DevToolsActivePort file doesn't exist.
+Full private driver log is not committed (it may contain transient browser session data).
+Resource group memory.events: high=80521, max=0, oom=0, oom_kill=0 (unchanged).
+After cleanup: TasksCurrent=0; original mysql=active; sampled MemAvailable=1243 MiB.
+Root cause is not established. This is not evidence that memory expansion is required.
+Recheck retains the same code, binaries, sandbox and CPU/memory/disk caps; fresh isolated DB/profile/output only.

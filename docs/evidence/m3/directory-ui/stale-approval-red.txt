@@ -1,0 +1,29 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/directory_lifecycle_test.mjs.
+✖ directory rename clears stale approval text and preserves file and directory selections (53.558347ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 484.515735
+✖ failing tests:
+test at test/e2e/directory_lifecycle_test.mjs:17:1
+✖ directory rename clears stale approval text and preserves file and directory selections (53.558347ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /Currently approved/. Input:
+
+  'Revision 1 · Currently approved for remote AI. Saving replaces the complete set and requires fresh approval; unchecked revokes approval. Current directory names are shown. Existing bound tasks may become unavailable.'
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/directory_lifecycle_test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Revision 1 · Currently approved for remote AI. Saving replaces the complete set and requires fresh approval; unchecked revokes approval. Current directory names are shown. Existing bound tasks may become unavailable.',
+    expected: /Currently approved/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+smartdocs-directory-approval-red2.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-directory-approval-red2.service: Failed with result 'exit-code'.

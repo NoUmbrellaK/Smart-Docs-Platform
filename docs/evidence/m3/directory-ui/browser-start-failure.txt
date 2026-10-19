@@ -1,0 +1,36 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_directory_browser_test.py.
+2026-10-19T12:19:12.608755Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 866516
+2026-10-19T12:19:13.111559Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:19:28.419743Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:19:38.006458Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_directory_create_rename_revokes_approval_without_moving_files (__main__.DirectoryBrowser) ... ERROR
+======================================================================
+ERROR: test_directory_create_rename_revokes_approval_without_moving_files (__main__.DirectoryBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_directory_browser_test.py", line 25, in test_directory_create_rename_revokes_approval_without_moving_files
+    browser.start()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+----------------------------------------------------------------------
+Ran 1 test in 126.299s
+FAILED (errors=1)
+smartdocs-directory-browser.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-directory-browser.service: Failed with result 'exit-code'.
+smartdocs-directory-browser.service: Consumed 10.058s CPU time.

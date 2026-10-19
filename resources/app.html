@@ -218,6 +218,23 @@
       <p>Only project administrators can view and edit member roles.</p>
       <div id="member-list" hidden></div>
       <p id="members-status" role="status" aria-live="polite">idle</p>
+      <div id="directory-manager">
+        <h3>Logical directories</h3>
+        <p>Administrators can create child directories and rename non-root directories. Renaming an approved archive target revokes its approval and can invalidate bound tasks; review and approve the new policy separately. No file is moved or sent to a model here.</p>
+        <button id="settings-directory-refresh" type="button" disabled>Load / refresh directories</button>
+        <p id="settings-directory-status" role="status" aria-live="polite"></p>
+        <form id="settings-directory-form" hidden>
+          <fieldset id="settings-directory-editor" disabled>
+            <legend>Create a child directory</legend>
+            <label for="settings-directory-parent">Parent directory</label>
+            <select id="settings-directory-parent" required></select>
+            <label for="settings-directory-name">Name (up to 255 UTF-8 bytes)</label>
+            <input id="settings-directory-name" required maxlength="255">
+            <button type="submit">Create child directory</button>
+          </fieldset>
+        </form>
+        <div id="settings-directory-rows" class="task-list"></div>
+      </div>
       <h3>Handover checklist</h3>
       <button id="settings-checklist-refresh" type="button" disabled>Load / refresh checklist</button>
       <p id="settings-checklist-status" role="status" aria-live="polite"></p>
