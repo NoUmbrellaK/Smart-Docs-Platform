@@ -1,0 +1,47 @@
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-mcp-matrix-baseline.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-mcp-contract-matrix.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-mcp-contract-matrix-final.service
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2008         289           3        1196        1219
+Swap:              0           0           0
+active
+code/agent/agent_routes.cpp: OK
+code/agent/agent_tasks.cpp: OK
+code/agent/agent_tasks.h: OK
+code/app/application.cpp: OK
+db/migrations/016_write_tool_audit.sql: OK
+resources/js/agent.js: OK
+scripts/test-with-mysql.sh: OK
+test/e2e/agent_ui_test.mjs: OK
+test/e2e/m2_migration_test.sh: OK
+test/integration/mysql_schema_test.cpp: OK
+test/e2e/m3_write_tool_audit_test.py: OK
+test/e2e/m3_write_audit_browser_test.py: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/server: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests: OK
