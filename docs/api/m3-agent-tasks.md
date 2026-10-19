@@ -26,6 +26,8 @@ POST前缀，JSON最大min(32768,配置max_json_bytes)，示意：
 精确file_id/version_id对，同文件不能重复。confirm_remote_ai必须为JSON布尔true，
 表示用户在受控AI入口确认问题和选中文件版本可用于远程AI，不是具体归档方案确认。
 任务网页提供人工范围确认；该普通业务接口不作为模型工具开放。
+schema13允许额外选择handover_checklist_revision，绑定获批清单快照；普通任务不自动附加。
+绑定任务状态/列表增加修订号，start返回快照、check要求同修订确认；详见[清单上下文](m3-handover-context.md)。
 
 创建在事务中逐一检查版本为当前、available、文件未删除、策略remote_ai_allowed、
 精确版本获批准；任何一项无效整批404 resource_not_found，不泄露名称。可以选择

@@ -66,8 +66,8 @@ archive_operation=上述最小回执、原model_calls（未调用则0）。不�
 010_archive_execution.sql扩大任务状态字段并新增archive_decisions；不回填历史确认、操作ID或回执。
 复合外键将确认的task_id/plan_id绑定同一方案，数据库也拒绝跨任务错配记录。
 schema9旧预览仍可查看并显式确认，不能因升级自动执行。此为schema10历史增量；当前二进制要求
-[schema12](m3-model-sources.md#schema12和部署)。部署前停应用/worker/网关，备份数据库及文件，
-再执行scripts/migrate.sh；当前分支预期schema_version=12。
+[schema13](m3-handover-context.md#schema13和部署)。部署前停应用/worker/网关，备份数据库及文件，
+再执行scripts/migrate.sh；当前分支预期schema_version=13。
 MySQL DDL并非整批原子：失败应按匹配备份恢复，不盲目重放半套DDL。
 本轮仅迁移独立临时测试库，没有授权或执行生产迁移/部署，也没有远程模型调用。
 

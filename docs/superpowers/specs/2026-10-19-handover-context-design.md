@@ -18,11 +18,17 @@ items为1..50项。旧任务NULL。快照只能在创建时由C++从本项目获
 状态/列表仅对绑定任务增加handover_checklist_revision，不返回快照正文。
 run/start在既有输出增加handover_checklist快照，仅绑定任务有该键。创建不等同模型已读取；
 只有后续check增加model_calls后才是获准发送，与文件台账相同保守语义。
+绑定任务check必须额外带与快照一致的handover_checklist_revision，否则400且不扣预算；
+普通任务仍只接受tool_request_ids。阻止旧执行器忽略start快照后继续调用模型。
+start数据JSON超过64000字节时在同一事务持久failed/budget_exhausted/model_calls=0并返回409，
+预留HTTP envelope空间，不返回超大内容也不遗留running任务。
 
 所有Scope调用重验绑定清单的当前修订、批准和完整items；不切换最新版。
 覆盖start、工具搜索/读取、check、finish、结果及归档范围检查。更新/撤销/清空使旧绑定失效，
 错误复用task_scope_changed，模型入口按scope_changed终止。修改再恢复也不能复活旧修订。
 普通任务不依赖清单，不受清单变化影响；状态/取消不返回敏感快照，仍可操作。
+已提交归档的脱敏回执（操作ID/数量/状态，无资料或清单正文）沿用原有可查询规则；
+不因范围撤销隐藏已发生的移动。归档预览和新执行仍重验完整范围。
 
 Python仅接收可信start字段，以独立user数据消息JSON加入上下文；system明确清单是资料而非权限或指令。
 没有快照的旧任务不注入；畸形快照在调用模型前dependency_failed。

@@ -36,6 +36,7 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.delay_completion=False; self.release_completion=threading.Event()
         self.reject_source=False
         self.receipt=True
+        self.start_context=None
         owner=self
         class Receiver(BaseHTTPRequestHandler):
             def log_message(self,*args): pass
@@ -48,6 +49,7 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                 status=200; payload={}
                 if self.path.endswith("/run/start"):
                     owner.state="running"; payload={"question":"find public deployment instructions","state":"running"}
+                    if owner.start_context is not None: payload['handover_checklist']=owner.start_context
                 elif self.path.endswith("/run/check"):
                     if owner.denied:
                         status=409; payload={"code":"task_scope_changed"}; owner.state="failed"
@@ -90,6 +92,16 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
     async def run_model(self,model):
         async with create_connected_server_and_client_session(create_server(self.context)) as client:
             return await self.agent.run_task(self.context,client,model)
+
+    async def test_malformed_checklist_stops_before_model_and_budget_admission(self):
+        self.start_context={'revision':True,'items':[]}
+        calls=[]
+        async def model(**kwargs):
+            calls.append(kwargs)
+            return reply(json.dumps({'answer':'Unexpected','citations':[]}))
+        self.assertEqual(await self.run_model(model),{'state':'failed','error_code':'dependency_failed'})
+        self.assertEqual(calls,[])
+        self.assertEqual(self.calls,0)
 
     async def test_loop_uses_intermediate_results_and_only_observed_citations(self):
         seen=[]

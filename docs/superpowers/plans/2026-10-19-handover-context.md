@@ -19,8 +19,10 @@ db/migrations/013_agent_handover_context.sql、code/app/application.cpp及schema
 新增test/e2e/m3_handover_context_test.py，扩展test/mcp/test_agent_runner.py；文档及证据。
 **Interfaces:** Create可选handover_checklist_revision；start可选handover_checklist={revision,items}；
 Scope重验快照。失败task_scope_changed，Python映射scope_changed。
+审查补强：绑定任务check需匹配handover_checklist_revision，缺失/错误400不扣预算；
+start数据超过64000字节同事务failed/budget_exhausted/model_calls0，预留响应envelope空间。
 
-- [ ] 写真实端到端失败测试及Python畸形快照测试，先在schema12二进制运行。
+- [x] 写真实端到端失败测试及Python畸形快照测试，先在schema12二进制运行。
 
 ```python
 task = data(user.request('POST', tasks_path, dict(body, handover_checklist_revision=1)), 201)
@@ -28,20 +30,20 @@ started = data(user.request('POST', tasks_path+'/'+task['id']+'/run/start'))
 assert started['handover_checklist']['revision'] == 1
 ```
 
-- [ ] 创建时校验可选精确字段，从handover_checklists读取并插入快照；Scope比对当前修订及批准。
+- [x] 创建时校验可选精确字段，从handover_checklists读取并插入快照；Scope比对当前修订及批准。
 
 ```sql
 ALTER TABLE agent_tasks ADD COLUMN handover_context JSON NULL;
 SELECT revision,items_json,remote_ai_approved FROM handover_checklists WHERE project_id=? FOR SHARE;
 ```
 
-- [ ] start返回快照，Python检验结构并作为user JSON数据消息追加；system声明内容无授权效力。
+- [x] start返回快照，Python检验结构并作为user JSON数据消息追加；system声明内容无授权效力。
 
 ```python
 messages.append({'role':'user','content':encoded({'handover_checklist':checklist}).decode('utf-8')})
 ```
 
-- [ ] 同步schema13断言并串行构建server/tests/admin；新增HTTP+schema/M3分组、既有清单与来源链路、MCP/Python回归。
-- [ ] 独立只读审查、保存真实输出与源码指纹、更新README/API/部署要求、正常提交推送。
+- [x] 同步schema13断言并串行构建server/tests/admin；新增HTTP+schema/M3分组、既有清单与来源链路、MCP/Python回归。
+- [x] 独立只读审查、保存真实输出与源码指纹、更新README/API/部署要求、正常提交推送。
 
 自审：清单绑定是报告必需前置，不用快照选择冒充模型收件；后续仍需报告保存/下载/页面与5工具编排。

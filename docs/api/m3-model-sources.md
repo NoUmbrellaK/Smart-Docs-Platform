@@ -13,6 +13,7 @@
 ```
 
 数组最多64个互异的小写hex32后端request_id，无额外字段。首次无工具历史时传空数组。
+schema13中显式绑定清单的任务还必须提交handover_checklist_revision；[扩展协议](m3-handover-context.md)不改变文件来源回执语义。
 已有来源时，每次传累计集合，含所有之前准入回执；后续不能删除历史依赖。旧的无body请求拒绝。
 只接受本任务实际记录且状态为success/processing/unavailable、source_json非NULL的回执。
 跨任务、未知、错误、unknown或schema12之前没有来源记录的回执均400 invalid_source_receipt，
@@ -41,13 +42,14 @@ source_request_id不进入模型消息，普通MCP调用request_id仍保留用�
 
 012_agent_tool_sources.sql仅给agent_tool_calls增加source_json和model_call及约束。
 旧行NULL保持未知，不从参数、引用、全任务范围反推或伪造来源。
-当前二进制要求schema12；停应用/worker/网关，备份数据库及文件后迁移，成功输出schema_version=12。
+此为schema12历史增量；当前二进制要求[schema13](m3-handover-context.md#schema13和部署)。停应用/worker/网关，备份数据库及文件后迁移，成功输出schema_version=13。
 C++、MCP、执行器必须同步更新，旧客户端的无body check和缺回执响应不兼容。
 MySQL DDL不是整批原子事务；中途失败应恢复匹配备份，不盲目重放；本轮只迁移隔离库。
 
 ## 尚未交付
 
-个人报告存储/引用校验/Markdown下载、清单与目录上下文批准绑定、第五工具和完整写工具编排仍待实现。
+个人报告存储/引用校验/Markdown下载、目录上下文批准绑定、第五工具和完整写工具编排仍待实现。
+清单上下文已有[后续增量](m3-handover-context.md)，尚无报告消费者。
 后续报告必须使用已准入来源的全集，包含未被显式引用的版本，并在保存/展示/下载重新校验；
 当前普通回答草稿仍按整个任务范围重验，不能将它当作报告。固定引用存在也不证明原文支持结论。
 实际验证见[本轮证据](../evidence/m3/model-sources/README.md)。

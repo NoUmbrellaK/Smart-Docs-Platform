@@ -1,0 +1,128 @@
+2026-10-19T15:11:46+0800 aliyun-lou systemd[1]: Started /bin/bash -c scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_handover_context_test.py; http_status=$?; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k malformed_checklist -v; python_status=$?; test "$http_status" -eq 0 && test "$python_status" -eq 0.
+2026-10-19T15:11:46+0800 aliyun-lou bash[806513]: 2026-10-19T07:11:46.949019Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 806513
+2026-10-19T15:11:46+0800 aliyun-lou bash[806513]: 2026-10-19T07:11:46.956218Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T15:12:02+0800 aliyun-lou bash[806513]: 2026-10-19T07:12:02.275984Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T15:12:10+0800 aliyun-lou bash[806513]: 2026-10-19T07:12:10.049640Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T15:12:54+0800 aliyun-lou bash[806717]: schema_version=12
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T15:13:19+0800 aliyun-lou bash[806776]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T15:13:20+0800 aliyun-lou bash[806867]: test_context_reader_snapshot_is_private_persistent_and_not_an_implicit_opt_in (__main__.HandoverContextE2E) ... FAIL
+2026-10-19T15:13:21+0800 aliyun-lou bash[806867]: test_context_real_runner_sends_snapshot_as_data_and_stops_after_revocation (__main__.HandoverContextE2E) ... FAIL
+2026-10-19T15:13:22+0800 aliyun-lou bash[806867]: test_context_rejects_unapproved_missing_empty_stale_and_forged_input (__main__.HandoverContextE2E) ... FAIL
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) ...
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_reader_snapshot_is_private_persistent_and_not_an_implicit_opt_in (__main__.HandoverContextE2E)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 49, in test_context_reader_snapshot_is_private_persistent_and_not_an_implicit_opt_in
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,user=reader)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '7d82334ef1d84b20caa7d0cd1599d610'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_real_runner_sends_snapshot_as_data_and_stops_after_revocation (__main__.HandoverContextE2E)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 90, in test_context_real_runner_sends_snapshot_as_data_and_stops_after_revocation
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     job=self.approved_file(); saved=self.checklist(); task,path=self.task(job)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '8792ae33e7547af927f7c800e419c50e'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_rejects_unapproved_missing_empty_stale_and_forged_input (__main__.HandoverContextE2E)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 34, in test_context_rejects_unapproved_missing_empty_stale_and_forged_input
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     self.assertEqual(self.user.request('POST',self.tasks_path(),self.body(job)).status,409)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: 400 != 409
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) (action='start')
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 72, in test_context_revision_changes_block_each_content_exit
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,revision)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '86bbfe6c636405559ad64512c2c4ef58'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) (action='check')
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 72, in test_context_revision_changes_block_each_content_exit
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,revision)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': 'a2251658dfe95f65ec31413aa16c9df8'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) (action='search')
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 72, in test_context_revision_changes_block_each_content_exit
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,revision)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '03292fc3ea45df1770e19203310bafa9'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) (action='finish')
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 72, in test_context_revision_changes_block_each_content_exit
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,revision)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': 'bf032b8e03b1917a44775afc97690ddc'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ======================================================================
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAIL: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) (action='result')
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Traceback (most recent call last):
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 72, in test_context_revision_changes_block_each_content_exit
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task,path=self.task(job,revision)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_handover_context_test.py", line 29, in task
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     task=data(user.request('POST', self.tasks_path(), self.body(job, revision)),201)
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '416d5f4f16b8fe714c54e770720071ac'}
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: ----------------------------------------------------------------------
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: Ran 4 tests in 3.776s
+2026-10-19T15:13:23+0800 aliyun-lou bash[806867]: FAILED (failures=8)
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: test_malformed_checklist_stops_before_model_and_budget_admission (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: ======================================================================
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: FAIL: test_malformed_checklist_stops_before_model_and_budget_admission (test_agent_runner.AgentRunnerTests)
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: ----------------------------------------------------------------------
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: Traceback (most recent call last):
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:     self._callMaybeAsync(method)
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:     return future.result()
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:     ret = await awaitable
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 102, in test_malformed_checklist_stops_before_model_and_budget_admission
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]:     self.assertEqual(await self.run_model(model),{'state':'failed','error_code':'dependency_failed'})
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: AssertionError: {'state': 'completed'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: - {'state': 'completed'}
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: + {'error_code': 'dependency_failed', 'state': 'failed'}
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: ----------------------------------------------------------------------
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: Ran 1 test in 0.714s
+2026-10-19T15:13:29+0800 aliyun-lou bash[806883]: FAILED (failures=1)
+2026-10-19T15:13:29+0800 aliyun-lou systemd[1]: smartdocs-handover-context-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T15:13:29+0800 aliyun-lou systemd[1]: smartdocs-handover-context-red.service: Failed with result 'exit-code'.
+2026-10-19T15:13:29+0800 aliyun-lou systemd[1]: smartdocs-handover-context-red.service: Consumed 7.337s CPU time.

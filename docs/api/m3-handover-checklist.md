@@ -28,7 +28,7 @@ expected_revision为0–4294967294整数，布尔/负数/浮点/字符串非法�
 每次写入必须明确传递confirm_remote_ai，false清除审批者/时间，不继承旧批准；
 true是管理员对本次完整清单的重新批准，身份取自认证会话而非请求字段。
 普通成员读取未经批准清单仅用于本地管理，不能据此发送给远程模型。
-本增量尚无模型上下文消费接口；后续接入必须再次校验修订及外发批准。
+后续已接入[显式任务清单绑定](m3-handover-context.md)，仅选择具体修订的任务会使用快照，持续重验外发批准。
 
 ## 并发与恢复
 
@@ -44,13 +44,13 @@ true是管理员对本次完整清单的重新批准，身份取自认证会话�
 
 011_handover_checklists.sql新增一表，每项目保存当前修订、items JSON、审批状态和最近请求。
 数据库约束修订大于0、items数组不超过50、批准状态与审批者/时间一致；项目和审批者是外键。
-升级不填造清单、批准、任务或报告。此为schema11历史增量，当前C++要求[schema12](m3-model-sources.md#schema12和部署)。
-先停止应用/worker/网关并备份数据库及文件，再执行scripts/migrate.sh，成功输出schema_version=12。
+升级不填造清单、批准、任务或报告。此为schema11历史增量，当前C++要求[schema13](m3-handover-context.md#schema13和部署)。
+先停止应用/worker/网关并备份数据库及文件，再执行scripts/migrate.sh，成功输出schema_version=13。
 MySQL DDL不是整批原子；失败须恢复匹配备份，不能盲目重放半套DDL。
 本轮只在临时隔离库验证，不执行生产升级。
 
 ## 未交付
 
-项目设置网页、清单版本绑定到任务/个人报告、可信模型出口来源依赖、报告展示/Markdown下载、
+项目设置网页、个人报告保存、报告展示/Markdown下载、
 save_handover_report及其他写工具编排仍待实现。清单API通过不等于交接报告或M3验收完成。
 实际结果见[本轮证据](../evidence/m3/handover-checklist/README.md)。
