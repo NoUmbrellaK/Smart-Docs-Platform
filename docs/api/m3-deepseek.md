@@ -50,6 +50,9 @@ stdout只输出简短任务状态，不输出回答或原文；回答和报告�
 已有真实确认的归档可用[独立 `--resume-archive` 模式](m3-archive-resume.md)显式继续：
 不需要密钥、不调用模型、不自动确认或重试写入，仍需可信任务context及新的审计路径。
 
+已有 pending 任务也可使用[受控同源 HTTP 入口](m3-agent-http.md)，由当前会话临时
+绑定 context 并复用同一执行器；不增加自动队列、不接收模型参数，需独立部署。
+
 ## 受控轨迹
 
 每条绑定task_id及时间。model_attempt在网络发送前落盘，包含请求关联ID、模型、

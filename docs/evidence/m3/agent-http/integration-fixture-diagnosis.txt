@@ -1,0 +1,42 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_http_test.py.
+2026-10-19T11:30:01.537017Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 856536
+2026-10-19T11:30:01.542235Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T11:30:16.837838Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T11:30:25.217486Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_http_dynamic_search_private_owner_and_revocation (__main__.AgentHttpE2E) ... FAIL
+test_http_running_duplicate_and_cancellation_stop_next_step (__main__.AgentHttpE2E) ... ok
+test_http_trusted_report_and_archive_contexts_stop_before_confirmation (__main__.AgentHttpE2E) ... ok
+======================================================================
+FAIL: test_http_dynamic_search_private_owner_and_revocation (__main__.AgentHttpE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 90, in test_http_dynamic_search_private_owner_and_revocation
+    self.assertEqual(self.execute(task, reader), (200, {'data': {'state': 'completed'}}),
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'model_invalid'}}) != (200, {'data': {'state': 'completed'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'model_invalid'}}
+{'data': {'state': 'completed'}}
+- (200, {'data': {'error_code': 'model_invalid', 'state': 'failed'}})
++ (200, {'data': {'state': 'completed'}}) : {'provider_calls': 2, 'fixture_errors': ["AssertionError: Lists differ: [{'availability_state': 'available', 'chun[752 chars]d9'}] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n{'availability_state': 'available', 'chunk': {'char_end': 33, 'char_start': 0, 'chunk_id': '840cc783f1edfca13412b59478e7eceb5ea510db5722355c0b82f1f90ce3f330', 'file_id': '2a19afdc6ece887a8f349c65dece0b53', 'line_end': 1, 'line_start': 1, 'parser_revision': 'utf8-lines-v1', 'source_sha256': '4229bf172304d02c90ccfbf5088e2e12358194fde298aa3a6e5040ef52d2ab00', 'text': 'SOURCE-MARKER restore the backup.', 'version_id': 'd001ca31d4790f3a9139213657de17d9'}, 'coverage': {'page_count': 0, 'pages_without_text': []}, 'directory_id': '05bdf7482b557019d85c3b3521790318', 'file_id': '2a19afdc6ece887a8f349c65dece0b53', 'keyword_state': 'completed', 'media_type': 'text/plain', 'name': 'recovery.txt', 'parse_state': 'completed', 'vector_state': 'pending', 'version_id': 'd001ca31d4790f3a9139213657de17d9'}\n\nDiff is 973 characters long. Set self.maxDiff to None to see it."]}
+----------------------------------------------------------------------
+Ran 3 tests in 6.021s
+FAILED (failures=1)
+smartdocs-agent-http-e2e-probe.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-agent-http-e2e-probe.service: Failed with result 'exit-code'.
+smartdocs-agent-http-e2e-probe.service: Consumed 10.348s CPU time.
+MainPID=0
+Result=exit-code
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1948         408           3        1138        1280
+Swap:              0           0           0

@@ -1,0 +1,72 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_http.py -v.
+test_access_is_rechecked_after_execution_before_reporting_outcome (test_agent_http.AgentHttpTests) ... FAIL
+test_body_cannot_supply_identity_model_budget_or_approval (test_agent_http.AgentHttpTests) ... FAIL
+test_bound_context_is_private_cleaned_and_only_status_is_returned (test_agent_http.AgentHttpTests) ... FAIL
+test_denied_nonpending_or_malformed_task_never_runs (test_agent_http.AgentHttpTests) ... FAIL
+test_execution_error_is_sanitized_and_private_context_is_removed (test_agent_http.AgentHttpTests) ... FAIL
+test_insecure_state_directories_or_empty_key_rejected_before_listening (test_agent_http.AgentHttpTests) ... FAIL
+test_origin_cookie_and_framing_fail_before_any_backend_or_execution (test_agent_http.AgentHttpTests) ... FAIL
+test_third_connection_is_busy_without_new_execution (test_agent_http.AgentHttpTests) ... FAIL
+======================================================================
+FAIL: test_access_is_rechecked_after_execution_before_reporting_outcome (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_body_cannot_supply_identity_model_budget_or_approval (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_bound_context_is_private_cleaned_and_only_status_is_returned (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_denied_nonpending_or_malformed_task_never_runs (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_execution_error_is_sanitized_and_private_context_is_removed (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_insecure_state_directories_or_empty_key_rejected_before_listening (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_origin_cookie_and_framing_fail_before_any_backend_or_execution (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+======================================================================
+FAIL: test_third_connection_is_busy_without_new_execution (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 31, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.agent_http'), 'controlled Agent HTTP entry missing')
+AssertionError: unexpectedly None : controlled Agent HTTP entry missing
+----------------------------------------------------------------------
+Ran 8 tests in 0.007s
+FAILED (failures=8)
+smartdocs-agent-http-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-agent-http-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code

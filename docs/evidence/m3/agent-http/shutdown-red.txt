@@ -1,0 +1,34 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_http.py -v.
+test_access_is_rechecked_after_execution_before_reporting_outcome (test_agent_http.AgentHttpTests) ... ok
+test_body_cannot_supply_identity_model_budget_or_approval (test_agent_http.AgentHttpTests) ... ok
+test_bound_context_is_private_cleaned_and_only_status_is_returned (test_agent_http.AgentHttpTests) ... ok
+test_denied_nonpending_or_malformed_task_never_runs (test_agent_http.AgentHttpTests) ... ok
+test_execution_error_is_sanitized_and_private_context_is_removed (test_agent_http.AgentHttpTests) ... ok
+test_insecure_state_directories_or_empty_key_rejected_before_listening (test_agent_http.AgentHttpTests) ... ok
+test_origin_cookie_and_framing_fail_before_any_backend_or_execution (test_agent_http.AgentHttpTests) ... ok
+test_server_close_waits_for_admitted_execution_and_context_cleanup (test_agent_http.AgentHttpTests) ... FAIL
+test_service_sigterm_exits_cleanly_without_logging_credentials (test_agent_http.AgentHttpTests) ... FAIL
+test_third_connection_is_busy_without_new_execution (test_agent_http.AgentHttpTests) ... ok
+======================================================================
+FAIL: test_server_close_waits_for_admitted_execution_and_context_cleanup (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 177, in test_server_close_waits_for_admitted_execution_and_context_cleanup
+    self.assertFalse(closed.wait(0.1), 'close must drain admitted handlers')
+AssertionError: True is not false : close must drain admitted handlers
+======================================================================
+FAIL: test_service_sigterm_exits_cleanly_without_logging_credentials (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 205, in test_service_sigterm_exits_cleanly_without_logging_credentials
+    self.assertEqual(process.returncode, 0)
+AssertionError: -15 != 0
+----------------------------------------------------------------------
+Ran 10 tests in 10.991s
+FAILED (failures=2)
+smartdocs-agent-http-shutdown-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-agent-http-shutdown-red.service: Failed with result 'exit-code'.
+smartdocs-agent-http-shutdown-red.service: Consumed 1.068s CPU time.
+MainPID=0
+Result=exit-code
+Running as unit: smartdocs-agent-http-green.service

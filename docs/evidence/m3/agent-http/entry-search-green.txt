@@ -1,0 +1,31 @@
+Started /bin/bash -c set -e; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_http.py -v; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/python -p test_search_http.py -v.
+test_access_is_rechecked_after_execution_before_reporting_outcome (test_agent_http.AgentHttpTests) ... ok
+test_body_cannot_supply_identity_model_budget_or_approval (test_agent_http.AgentHttpTests) ... ok
+test_bound_context_is_private_cleaned_and_only_status_is_returned (test_agent_http.AgentHttpTests) ... ok
+test_denied_nonpending_or_malformed_task_never_runs (test_agent_http.AgentHttpTests) ... ok
+test_execution_error_is_sanitized_and_private_context_is_removed (test_agent_http.AgentHttpTests) ... ok
+test_insecure_state_directories_or_empty_key_rejected_before_listening (test_agent_http.AgentHttpTests) ... ok
+test_origin_cookie_and_framing_fail_before_any_backend_or_execution (test_agent_http.AgentHttpTests) ... ok
+test_server_close_waits_for_admitted_execution_and_context_cleanup (test_agent_http.AgentHttpTests) ... ok
+test_service_sigterm_exits_cleanly_without_logging_credentials (test_agent_http.AgentHttpTests) ... ok
+test_third_connection_is_busy_without_new_execution (test_agent_http.AgentHttpTests) ... ok
+----------------------------------------------------------------------
+Ran 10 tests in 9.762s
+OK
+test_bad_origin_host_cookie_never_reaches_backend_or_encoder (test_search_http.SearchHttpTests) ... ok
+test_config_disallows_remote_plaintext_and_untrusted_origin_components (test_search_http.SearchHttpTests) ... ok
+test_degraded_query_forwards_only_session_and_fixed_origin_and_rechecks (test_search_http.SearchHttpTests) ... ok
+test_denied_backend_never_encodes_and_does_not_leak_error (test_search_http.SearchHttpTests) ... ok
+test_limits_body_route_and_media_type (test_search_http.SearchHttpTests) ... ok
+test_malformed_oversized_or_redirected_backend_is_sanitized_unavailable (test_search_http.SearchHttpTests) ... ok
+test_rejects_ambiguous_http_framing_and_duplicate_origin (test_search_http.SearchHttpTests) ... ok
+test_rejects_invalid_body_identity_mode_vectors_and_duplicate_keys (test_search_http.SearchHttpTests) ... ok
+test_revocation_after_encoding_returns_error_not_stale_preflight (test_search_http.SearchHttpTests) ... ok
+test_two_slow_connections_bound_threads_and_third_is_rejected (test_search_http.SearchHttpTests) ... ok
+----------------------------------------------------------------------
+Ran 10 tests in 8.059s
+OK
+smartdocs-agent-http-green.service: Deactivated successfully.
+smartdocs-agent-http-green.service: Consumed 1.282s CPU time.
+MainPID=0
+Result=success
