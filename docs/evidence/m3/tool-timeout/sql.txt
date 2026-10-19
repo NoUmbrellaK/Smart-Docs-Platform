@@ -1,0 +1,34 @@
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+2026-10-19T21:58:37+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_tool_timeout_test.py.
+2026-10-19T21:58:42+0800 aliyun-lou test-with-mysql.sh[889514]: 2026-10-19T13:58:41.701262Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 889514
+2026-10-19T21:58:42+0800 aliyun-lou test-with-mysql.sh[889514]: 2026-10-19T13:58:42.204325Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T21:58:57+0800 aliyun-lou test-with-mysql.sh[889514]: 2026-10-19T13:58:57.536605Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T21:59:10+0800 aliyun-lou test-with-mysql.sh[889514]: 2026-10-19T13:59:10.803812Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T21:59:59+0800 aliyun-lou test-with-mysql.sh[890066]: schema_version=16
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T22:00:27+0800 aliyun-lou test-with-mysql.sh[890181]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T22:00:30+0800 aliyun-lou test-with-mysql.sh[890266]: test_timeout_plan_committed (__main__.ToolTimeoutE2E) ... TOOL_TIMEOUT create_archive_plan observed=waiting_confirmation; one dispatch, no write retry
+2026-10-19T22:00:30+0800 aliyun-lou test-with-mysql.sh[890266]: ok
+2026-10-19T22:00:31+0800 aliyun-lou test-with-mysql.sh[890266]: test_timeout_read (__main__.ToolTimeoutE2E) ... TOOL_TIMEOUT read_document_version observed=failed; one dispatch, no write retry
+2026-10-19T22:00:31+0800 aliyun-lou test-with-mysql.sh[890266]: ok
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: test_timeout_report_committed (__main__.ToolTimeoutE2E) ... TOOL_TIMEOUT save_handover_report observed=completed; one dispatch, no write retry
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: ok
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: test_timeout_search (__main__.ToolTimeoutE2E) ... TOOL_TIMEOUT search_documents observed=failed; one dispatch, no write retry
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: ok
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: ----------------------------------------------------------------------
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: Ran 4 tests in 3.486s
+2026-10-19T22:00:32+0800 aliyun-lou test-with-mysql.sh[890266]: OK
+2026-10-19T22:00:38+0800 aliyun-lou systemd[1]: smartdocs-tool-timeout-sql.service: Deactivated successfully.
+2026-10-19T22:00:38+0800 aliyun-lou systemd[1]: smartdocs-tool-timeout-sql.service: Consumed 8.321s CPU time.

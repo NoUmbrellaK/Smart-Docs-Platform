@@ -1,0 +1,61 @@
+Mon Oct 19 14:01:44 UTC 2026
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-tool-timeout-red.service
+ActiveState=failed
+
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-tool-timeout-red-verified.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-tool-timeout-green.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-tool-timeout-sql.service
+ActiveState=inactive
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1979         349           3        1166        1248
+Swap:              0           0           0
+active
+1534fc7c4ca1952187677b8e9f89aa7e3b84ab17f0a52dd8c167fc447d647d88  python/smartdocs/agent_runner.py
+fca69131aa6af3e26f167b7a51d507f484b3da036a8f9a4fd2d8b644b4dd3b3d  test/mcp/test_agent_runner.py
+1bf35647e5a749b4f772d48e81280a36d5e5b636e0be49b0be3bf3272e3cd6cf  test/e2e/m3_tool_timeout_test.py
+1534fc7c4ca1952187677b8e9f89aa7e3b84ab17f0a52dd8c167fc447d647d88  /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/agent_runner.py
+fca69131aa6af3e26f167b7a51d507f484b3da036a8f9a4fd2d8b644b4dd3b3d  /tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py
+1bf35647e5a749b4f772d48e81280a36d5e5b636e0be49b0be3bf3272e3cd6cf  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_tool_timeout_test.py
+code/agent/agent_tasks.cpp: OK
+python/smartdocs/deepseek.py: OK
+python/smartdocs/agent_cli.py: OK
+resources/js/agent.js: OK
+test/e2e/m3_agent_http_test.py: OK
+test/e2e/agent_ui_test.mjs: OK
+test/mcp/test_deepseek.py: OK
+test/mcp/test_agent_cli.py: OK
+test/e2e/m3_mcp_contract_matrix_test.py: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/server: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests: OK

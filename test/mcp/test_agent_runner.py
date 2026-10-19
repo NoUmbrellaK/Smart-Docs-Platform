@@ -1,12 +1,14 @@
 """Real loop and MCP SDK; only the external model and authority are local receivers."""
 import asyncio
 import copy
+import http.client
 import importlib
 import importlib.util
 import json
 import socket
 import threading
 import unittest
+from unittest.mock import patch
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from mcp.shared.memory import create_connected_server_and_client_session
@@ -344,6 +346,69 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         outcome=await self.run_model(timeout); self.assertEqual(outcome["error_code"],"timeout")
         async def truncated(messages,**kwargs): return reply("unfinished",finish="length")
         outcome=await self.run_model(truncated); self.assertEqual(outcome["error_code"],"model_invalid")
+
+    async def tool_response_timeout(self, name, arguments):
+        """Lose a local receiver's reply after handling, keeping real MCP timeout normalization."""
+        from smartdocs.agent_cli import run_session
+        suffix={'search_documents':'/tools/search', 'read_document_version':'/tools/read',
+                'save_handover_report':'/handover-report', 'create_archive_plan':'/archive-plan'}[name]
+        events=[]
+        class TimeoutResponse(http.client.HTTPConnection):
+            def request(self, method, url, *args, **kwargs):
+                self.lose_reply=method!='GET' and url.endswith(suffix)
+                return super().request(method, url, *args, **kwargs)
+            def getresponse(self):
+                response=super().getresponse()
+                if self.lose_reply: raise TimeoutError('private-socket-detail')
+                return response
+        async def model(**kwargs): return reply(calls=[call(name, arguments)])
+        with patch('http.client.HTTPConnection', TimeoutResponse):
+            async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                outcome=await run_session(self.context,client,model,events.append)
+        self.assertEqual(self.calls,1)
+        self.assertEqual(sum(p.endswith(suffix) and b is not None for p,b in self.requests),1)
+        self.assertEqual([e['event'] for e in events],['tool_attempt','tool_result'])
+        self.assertEqual(events[-1]['status'],'timeout')
+        self.assertNotIn('private-socket-detail',json.dumps([outcome,events]))
+        if name in {'save_handover_report','create_archive_plan'}:
+            self.assertFalse(any(p.endswith('/run/finish') for p,_ in self.requests))
+        else:
+            self.assertEqual([b for p,b in self.requests if p.endswith('/run/finish')],
+                             [{'status':'failed','result':None,'error_code':'timeout'}])
+        return outcome
+
+    async def test_mcp_search_timeout_preserves_failure_reason(self):
+        outcome=await self.tool_response_timeout('search_documents',{'mode':'metadata','query':''})
+        self.assertEqual(outcome,{'state':'failed','error_code':'timeout'})
+
+    async def test_mcp_read_timeout_preserves_failure_reason(self):
+        outcome=await self.tool_response_timeout('read_document_version',
+                                                {'file_id':FILE,'version_id':VERSION,'range':{}})
+        self.assertEqual(outcome,{'state':'failed','error_code':'timeout'})
+
+    async def test_mcp_report_timeout_without_receipt_stays_unknown(self):
+        self.commit_report=False
+        outcome=await self.tool_response_timeout('save_handover_report',self.report_fixture())
+        self.assertEqual(outcome,{'state':'unknown','error_code':'timeout'})
+        self.assertEqual(self.state,'running'); self.assertIsNone(self.report_receipt)
+
+    async def test_mcp_archive_timeout_without_receipt_stays_unknown(self):
+        self.commit_archive=False
+        outcome=await self.tool_response_timeout('create_archive_plan',self.archive_fixture())
+        self.assertEqual(outcome,{'state':'unknown','error_code':'timeout'})
+        self.assertEqual(self.state,'running'); self.assertIsNone(self.archive_preview)
+
+    async def test_mcp_report_timeout_after_commit_returns_authoritative_receipt(self):
+        outcome=await self.tool_response_timeout('save_handover_report',self.report_fixture())
+        self.assertEqual((outcome['state'],outcome['kind']),('completed','handover_report'))
+        self.assertEqual(outcome['handover_report'],self.report_receipt)
+        self.assertIsNone(outcome['error_code'])
+
+    async def test_mcp_archive_timeout_after_commit_returns_authoritative_preview(self):
+        outcome=await self.tool_response_timeout('create_archive_plan',self.archive_fixture())
+        self.assertEqual((outcome['state'],outcome['kind']),('waiting_confirmation','archive_plan'))
+        self.assertEqual(outcome['archive_plan']['id'],self.archive_preview['id'])
+        self.assertNotIn('error_code',outcome)
 
     async def test_project_debug_scope_never_reaches_runtime_or_model(self):
         self.context["scope"]="project_approved_versions"

@@ -1,0 +1,98 @@
+2026-10-19T21:56:34+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k test_mcp_ -v.
+2026-10-19T21:56:35+0800 aliyun-lou python[888554]: test_mcp_archive_timeout_after_commit_returns_authoritative_preview (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T21:56:35+0800 aliyun-lou python[888554]: test_mcp_archive_timeout_without_receipt_stays_unknown (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T21:56:36+0800 aliyun-lou python[888554]: test_mcp_read_timeout_preserves_failure_reason (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T21:56:36+0800 aliyun-lou python[888554]: test_mcp_report_timeout_after_commit_returns_authoritative_receipt (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: test_mcp_report_timeout_without_receipt_stays_unknown (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: test_mcp_search_timeout_preserves_failure_reason (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ======================================================================
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: FAIL: test_mcp_archive_timeout_without_receipt_stays_unknown (test_agent_runner.AgentRunnerTests)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ----------------------------------------------------------------------
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: Traceback (most recent call last):
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self._callMaybeAsync(method)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return future.result()
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     ret = await awaitable
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 398, in test_mcp_archive_timeout_without_receipt_stays_unknown
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self.assertEqual(outcome,{'state':'unknown','error_code':'timeout'})
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: AssertionError: {'state': 'unknown', 'error_code': 'dependency_failed'} != {'state': 'unknown', 'error_code': 'timeout'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: - {'error_code': 'dependency_failed', 'state': 'unknown'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                 ^ ^^^^^^^^^^^^^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: + {'error_code': 'timeout', 'state': 'unknown'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                 ^^^ ^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ======================================================================
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: FAIL: test_mcp_read_timeout_preserves_failure_reason (test_agent_runner.AgentRunnerTests)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ----------------------------------------------------------------------
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: Traceback (most recent call last):
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self._callMaybeAsync(method)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return future.result()
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     ret = await awaitable
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 385, in test_mcp_read_timeout_preserves_failure_reason
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     outcome=await self.tool_response_timeout('read_document_version',
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 376, in tool_response_timeout
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self.assertEqual([b for p,b in self.requests if p.endswith('/run/finish')],
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: AssertionError: Lists differ: [{'status': 'failed', 'result': None, 'error_code': 'dependency_failed'}] != [{'status': 'failed', 'result': None, 'error_code': 'timeout'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: First differing element 0:
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: {'status': 'failed', 'result': None, 'error_code': 'dependency_failed'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: {'status': 'failed', 'result': None, 'error_code': 'timeout'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: - [{'error_code': 'dependency_failed', 'result': None, 'status': 'failed'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                  ^ ^^^^^^^^^^^^^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: + [{'error_code': 'timeout', 'result': None, 'status': 'failed'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                  ^^^ ^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ======================================================================
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: FAIL: test_mcp_report_timeout_without_receipt_stays_unknown (test_agent_runner.AgentRunnerTests)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ----------------------------------------------------------------------
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: Traceback (most recent call last):
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self._callMaybeAsync(method)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return future.result()
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     ret = await awaitable
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 392, in test_mcp_report_timeout_without_receipt_stays_unknown
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self.assertEqual(outcome,{'state':'unknown','error_code':'timeout'})
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: AssertionError: {'state': 'unknown', 'error_code': 'dependency_failed'} != {'state': 'unknown', 'error_code': 'timeout'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: - {'error_code': 'dependency_failed', 'state': 'unknown'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                 ^ ^^^^^^^^^^^^^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: + {'error_code': 'timeout', 'state': 'unknown'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                 ^^^ ^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ======================================================================
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: FAIL: test_mcp_search_timeout_preserves_failure_reason (test_agent_runner.AgentRunnerTests)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ----------------------------------------------------------------------
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: Traceback (most recent call last):
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self._callMaybeAsync(method)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     return future.result()
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     ret = await awaitable
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 381, in test_mcp_search_timeout_preserves_failure_reason
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     outcome=await self.tool_response_timeout('search_documents',{'mode':'metadata','query':''})
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 376, in tool_response_timeout
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]:     self.assertEqual([b for p,b in self.requests if p.endswith('/run/finish')],
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: AssertionError: Lists differ: [{'status': 'failed', 'result': None, 'error_code': 'dependency_failed'}] != [{'status': 'failed', 'result': None, 'error_code': 'timeout'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: First differing element 0:
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: {'status': 'failed', 'result': None, 'error_code': 'dependency_failed'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: {'status': 'failed', 'result': None, 'error_code': 'timeout'}
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: - [{'error_code': 'dependency_failed', 'result': None, 'status': 'failed'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                  ^ ^^^^^^^^^^^^^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: + [{'error_code': 'timeout', 'result': None, 'status': 'failed'}]
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ?                  ^^^ ^^^
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: ----------------------------------------------------------------------
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: Ran 6 tests in 3.234s
+2026-10-19T21:56:37+0800 aliyun-lou python[888554]: FAILED (failures=4)
+2026-10-19T21:56:38+0800 aliyun-lou systemd[1]: smartdocs-tool-timeout-red-verified.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T21:56:38+0800 aliyun-lou systemd[1]: smartdocs-tool-timeout-red-verified.service: Failed with result 'exit-code'.

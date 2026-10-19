@@ -349,7 +349,7 @@ async def run_task(context, client, model):
                             archive_attempted=False
                         elif payload.get('status') in {'success','waiting_confirmation'}:
                             return await archive_outcome()
-                        else: raise RunError('dependency_failed')
+                        else: raise RunError('timeout' if payload.get('status')=='timeout' else 'dependency_failed')
                     if name==REPORT_TOOL:
                         if payload.get('status') in {'invalid_request','access_denied','conflict','busy'}:
                             save_attempted=False  # authoritative rejection; no uncertain HTTP request remains
@@ -359,9 +359,10 @@ async def run_task(context, client, model):
                             if (outcome.get('state')!='completed' or outcome.get('kind')!='handover_report'
                                     or outcome.get('handover_report')!=payload['data']): raise RunError('dependency_failed')
                             return outcome
-                        else: raise RunError('dependency_failed')
+                        else: raise RunError('timeout' if payload.get('status')=='timeout' else 'dependency_failed')
                     if payload.get("status") in {"access_denied", "conflict"}: raise RunError("scope_changed")
-                    if payload.get("status") in {"timeout", "dependency_failed", "busy"}: raise RunError("dependency_failed")
+                    if payload.get("status") == "timeout": raise RunError("timeout")
+                    if payload.get("status") in {"dependency_failed", "busy"}: raise RunError("dependency_failed")
                     if payload.get("status") not in {"success", "processing", "unavailable", "invalid_request"}: raise RunError("dependency_failed")
                     if "data" in payload:
                         receipt = payload.get("source_request_id")
