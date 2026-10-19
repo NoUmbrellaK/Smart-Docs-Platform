@@ -1,0 +1,104 @@
+2026-10-19T18:08:53+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report displays private draft, all statuses, distinct scope and untrusted content as text (4.357421ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report citation rechecks whole report dependencies and clears all old content on denial (5.435124ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ report stale loads cannot survive logout, project, role or task changes (1.785957ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report download uses fresh authenticated blob, discards late data and clears denial (0.81223ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (1.968512ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (2.411434ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive reject cannot execute and unresolved targets cannot be confirmed (1.069509ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive readers and terminal tasks have no write controls (1.146861ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (2.281255ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.78535ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ cancellation remains locked across invalidation until the real request settles (1.007639ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (1.202787ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.598963ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.602501ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.504512ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (31.56139ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ creation requires explicit exact-version consent and never claims execution (1.095857ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.505003ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ task list uses cursor and fences late list responses and old buttons (0.353228ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.509241ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ completed answers and fixed sources are text only and rechecked on access (1.026365ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ cancel response loss requires refresh and cannot display stale results (0.532587ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ logout and data invalidation erase draft, answer and fence pending source (0.543254ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ waiting archive tasks remain cancellable without automatic execution (0.71849ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ completed archive receipt is not described as a model answer or rendered as citations (0.868069ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ audit uses an encoded same-origin GET and never submits a tool operation (0.528093ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (0.945156ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ empty audit never means the task succeeded or no model was called (0.405577ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ audit refresh clears old rows and latest response wins (0.350696ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ audit late responses and detached buttons cannot survive view or session invalidation (2.574826ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✔ audit denial clears answer, source and audit without automatic retries (0.447382ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ tests 31
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ suites 0
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ pass 27
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ fail 4
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ cancelled 0
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ skipped 0
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ todo 0
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ℹ duration_ms 723.380734
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ failing tests:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: test at test/e2e/agent_ui_test.mjs:66:1
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report displays private draft, all statuses, distinct scope and untrusted content as text (4.357421ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   AssertionError [ERR_ASSERTION]: <script>report</script>
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:72:12)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     generatedMessage: false,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     code: 'ERR_ASSERTION',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     actual: false,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     expected: true,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     operator: '==',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     diff: 'simple'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   }
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: test at test/e2e/agent_ui_test.mjs:78:1
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report citation rechecks whole report dependencies and clears all old content on denial (5.435124ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     assert.ok(source)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:82:102)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     generatedMessage: true,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     code: 'ERR_ASSERTION',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     actual: undefined,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     expected: true,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     operator: '==',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     diff: 'simple'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   }
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: test at test/e2e/agent_ui_test.mjs:99:1
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report download uses fresh authenticated blob, discards late data and clears denial (0.81223ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   AssertionError [ERR_ASSERTION]: missing visible action: Download report Markdown
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:144:10)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:105:38)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     generatedMessage: false,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     code: 'ERR_ASSERTION',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     actual: undefined,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     expected: true,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     operator: '==',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     diff: 'simple'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   }
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: test at test/e2e/agent_ui_test.mjs:117:1
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]: ✖ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (1.968512ms)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   + actual - expected
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   + 'undefined'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   - 'function'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:119:10)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     generatedMessage: true,
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     code: 'ERR_ASSERTION',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     actual: 'undefined',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     expected: 'function',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     operator: 'strictEqual',
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:     diff: 'simple'
+2026-10-19T18:09:08+0800 aliyun-lou node[841093]:   }
+2026-10-19T18:09:08+0800 aliyun-lou systemd[1]: smartdocs-report-ui-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T18:09:08+0800 aliyun-lou systemd[1]: smartdocs-report-ui-red.service: Failed with result 'exit-code'.

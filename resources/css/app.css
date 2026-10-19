@@ -141,6 +141,7 @@ td { overflow-wrap: anywhere; }
 .search-card h3 { overflow-wrap: anywhere; }
 #document-search-source pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 #agent-workspace pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+#agent-workspace h3 { overflow-wrap: anywhere; }
 #agent-workspace .action-row { margin-block: 0.75rem; }
 #agent-audit summary { min-height: 44px; padding-block: 0.5rem; cursor: pointer; overflow-wrap: anywhere; }
 #document-search .action-row { margin-block: 0.75rem; }

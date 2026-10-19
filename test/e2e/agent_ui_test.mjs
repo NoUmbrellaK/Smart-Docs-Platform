@@ -44,6 +44,106 @@ function draft(view) {
   view.get("agent-consent").checked=true;
 }
 
+const reportRecord={id:"r",version:1,project_id:"p",task_id:"t",state:"draft",
+  verification:"citations_validated_not_semantically_reviewed",created_at:"2026-10-19",
+  checklist:{revision:2,items:[{key:"a",title:"Deployment",required:true},{key:"b",title:"Tests",required:true},{key:"c",title:"Notes",required:false}]},
+  selected_versions:[{file_id:"f",version_id:"v"},{file_id:"unseen",version_id:"u"}],
+  source_versions:[{file_id:"f",version_id:"v"},{file_id:"uncited",version_id:"x"}],
+  url:"javascript:bad",markdown_url:"https://untrusted.invalid/report",
+  report:{summary:"<script>report</script>",limitations:"Only searched selected scope",recommendations:"Manual review required",
+    items:[{key:"a",title:"Deployment",required:true,status:"found",notes:"Not accepted",citations:[{
+      file_id:"f",version_id:"v",chunk_id:"c",file_name:"<img onerror=bad>",page:2,line_start:1,line_end:3,
+      text:"Evidence snippet",source_url:"javascript:evil"}]},
+    {key:"b",title:"Tests",required:true,status:"missing",notes:"No evidence within scope",citations:[]},
+    {key:"c",title:"Notes",required:false,status:"uncertain",notes:"Needs checking",citations:[]}]}};
+async function reportSetup(overrides={}) {
+  return setup({getAgentTask:async()=>({...task,state:"completed"}),
+    getAgentResult:async()=>({state:"completed",kind:"handover_report",result:null,error_code:null,model_calls:3,
+      handover_report:{id:"r",version:1,url:"javascript:bad",markdown_url:"https://untrusted.invalid/report"}}),
+    getHandoverReport:async()=>structuredClone(reportRecord),...overrides});
+}
+
+test("report displays private draft, all statuses, distinct scope and untrusted content as text",async()=>{
+  const view=await reportSetup();await view.panel.view("t");
+  const content=text(view.get("agent-detail"));
+  assert.match(text(view.get("agent-detail-status")),/handover report/i);
+  for(const marker of ["<script>report</script>","Evidence snippet","Only searched selected scope","Manual review required",
+    "Deployment","Required","Optional","Found","Missing within searched scope","Uncertain","unseen","uncited","revision 2","not semantically reviewed"])
+    assert.ok(content.includes(marker),marker);
+  assert.equal(descendants(view.get("agent-detail")).filter(n=>["SCRIPT","IMG"].includes(n.tagName)).length,0);
+  assert.equal(descendants(view.get("agent-detail")).filter(n=>n.href).length,0,"no unchecked model URLs");
+  assert.ok(buttons(view.get("agent-detail")).some(b=>b.textContent==="Download report Markdown"));
+});
+
+test("report citation rechecks whole report dependencies and clears all old content on denial",async()=>{
+  let checks=0;
+  const view=await reportSetup({getHandoverReport:async()=>{checks++;if(checks>2)throw new Error("task_scope_changed");return reportRecord;}});
+  await view.panel.view("t");
+  const source=buttons(view.get("agent-detail")).find(b=>b.textContent==="Read cited source");assert.ok(source);
+  await source.fire();assert.equal(checks,2);
+  assert.deepEqual(view.calls.filter(c=>c[0]==="source"),[["source","p","f","v","c"]]);
+  assert.equal(view.get("agent-source").children.at(-1).href,"/api/p/f/v/content#page=2");
+  await source.fire();await source.fire();assert.equal(checks,3);
+  for(const part of ["detail","source","audit"])assert.equal(view.get("agent-"+part).children.length,0);
+});
+
+test("report stale loads cannot survive logout, project, role or task changes",async()=>{
+  for(const change of [p=>p.setProject(null),p=>p.setProject("other"),p=>p.setProject("p","editor"),p=>p.clearDetail()]) {
+    let reads=0;const late=deferred();const view=await reportSetup({getHandoverReport:()=>{reads++;return late.promise;}});
+    const pending=view.panel.view("t");await Promise.resolve();await Promise.resolve();assert.equal(reads,1);change(view.panel);
+    late.resolve(reportRecord);await pending;
+    assert.doesNotMatch(text(view.get("agent-detail")),/Evidence snippet|<script>report/);
+  }
+});
+
+test("report identity mismatch and removed citation never expose mismatched content",async()=>{
+  for(const patch of [{id:"other"},{project_id:"other"},{task_id:"other"},{version:2},{state:"published"}]) {
+    const view=await reportSetup({getHandoverReport:async()=>({...reportRecord,...patch})});await view.panel.view("t");
+    assert.equal(view.get("agent-detail").children.length,0);
+  }
+  const view=await reportSetup();await view.panel.view("t");
+  const source=buttons(view.get("agent-detail")).find(b=>b.textContent==="Read cited source");
+  view.panel.api.getHandoverReport=async()=>({...reportRecord,report:{...reportRecord.report,items:[]}});
+  await source.fire();assert.equal(view.calls.filter(c=>c[0]==="source").length,0);
+  assert.equal(view.get("agent-detail").children.length,0);
+});
+
+test("report download uses fresh authenticated blob, discards late data and clears denial",async()=>{
+  const downloads=[],revoked=[];const create=URL.createObjectURL,revoke=URL.revokeObjectURL,click=Node.prototype.click;
+  URL.createObjectURL=blob=>{assert.ok(blob instanceof Blob);return "blob:fixture";};
+  URL.revokeObjectURL=url=>revoked.push(url);Node.prototype.click=function(){downloads.push([this.href,this.download]);};
+  try {
+    let reads=0;const view=await reportSetup({downloadHandoverReport:async(p,t)=>{assert.deepEqual([p,t],["p","t"]);reads++;return new Blob(["safe markdown"]);}});
+    await view.panel.view("t");await clickNamed(view,"agent-detail","Download report Markdown");
+    assert.equal(reads,1);assert.deepEqual(downloads,[["blob:fixture","handover-report.md"]]);assert.deepEqual(revoked,["blob:fixture"]);
+    const late=deferred();view.panel.api.downloadHandoverReport=()=>late.promise;
+    const pending=clickNamed(view,"agent-detail","Download report Markdown");view.panel.setProject(null);
+    late.resolve(new Blob(["private"]));await pending;assert.equal(downloads.length,1);
+    view.panel.setProject("p");await view.panel.view("t");
+    view.panel.api.downloadHandoverReport=async()=>{throw new Error("task_scope_changed");};
+    await clickNamed(view,"agent-detail","Download report Markdown");
+    assert.equal(view.get("agent-detail").children.length,0);assert.equal(downloads.length,1);
+  } finally {URL.createObjectURL=create;URL.revokeObjectURL=revoke;Node.prototype.click=click;}
+});
+
+test("report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  assert.equal(typeof api.getHandoverReport,"function");assert.equal(typeof api.downloadHandoverReport,"function");
+  const original=globalThis.fetch,calls=[];
+  globalThis.fetch=async(...args)=>{calls.push(args);return args[0].endsWith("/markdown")?
+    new Response("# Safe",{headers:{"Content-Type":"text/markdown; charset=utf-8"}}):new Response(JSON.stringify({data:reportRecord}));};
+  try {
+    assert.deepEqual(await api.getHandoverReport("p/x","t?x"),reportRecord);
+    assert.equal(await (await api.downloadHandoverReport("p/x","t?x")).text(),"# Safe");
+    assert.deepEqual(calls.map(c=>c[0]),["/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/handover-report","/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/handover-report/markdown"]);
+    assert.equal(calls[1][1].credentials,"same-origin");assert.equal(calls[1][1].cache,"no-store");
+    globalThis.fetch=async()=>new Response(JSON.stringify({error:{code:"task_scope_changed"}}),{status:409});
+    await assert.rejects(api.downloadHandoverReport("p","t"),e=>e.code==="task_scope_changed");
+    globalThis.fetch=async()=>new Response("<html>login</html>",{headers:{"Content-Type":"text/html"}});
+    await assert.rejects(api.downloadHandoverReport("p","t"));
+  } finally {globalThis.fetch=original;}
+});
+
 const archivePlan={id:"a".repeat(32),task_id:"t",project_id:"p",revision:3,policy_revision:2,
   content_sha256:"b".repeat(64),state:"preview",task_state:"waiting_confirmation",decision:null,
   operation_id:null,executable:false,has_unresolved:false,

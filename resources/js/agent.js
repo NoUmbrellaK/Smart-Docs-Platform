@@ -167,9 +167,18 @@ export class AgentPanel {
       let outcome = null;
       if (["completed", "failed"].includes(task.state)) outcome = await this.api.getAgentResult(project, id);
       if (token !== this.detailGeneration) return;
+      let report = null;
+      if (outcome?.state === "completed" && outcome.kind === "handover_report") {
+        report = await this.api.getHandoverReport(project, id);
+        if (token !== this.detailGeneration) return;
+        if (report.id !== outcome.handover_report.id || report.project_id !== project || report.task_id !== id ||
+            report.version !== 1 || report.state !== "draft" || report.verification !== "citations_validated_not_semantically_reviewed")
+          throw new Error("Report is no longer available.");
+      }
       this.renderTask(task, outcome, token);
+      if (report) this.renderReport(report, project, id, token);
     } catch (error) {
-      if (token === this.detailGeneration) this.status("detail", this.errorText(error));
+      if (token === this.detailGeneration) { this.clearDetail(); this.status("detail", this.errorText(error)); }
     }
   }
   renderTask(task, outcome, token) {
@@ -180,7 +189,8 @@ export class AgentPanel {
       interrupted:"Interrupted; no automatic continuation.", cancelled:"Cancelled; already committed work is not undone.",
       completed:"Completed answer draft; not a saved handover report.", failed:"Failed; no automatic retry."};
     const archive = state === "completed" && outcome?.kind === "archive_operation";
-    this.status("detail", `Task ${task.id} · ${state}. ${archive ? "Archive operation committed; this is not a model answer or a handover report." : labels[state] || "Unknown state; refresh."}`);
+    const report = state === "completed" && outcome?.kind === "handover_report";
+    this.status("detail", `Task ${task.id} · ${state}. ${report ? "Personal handover report draft; not business acceptance." : archive ? "Archive operation committed; this is not a model answer or a handover report." : labels[state] || "Unknown state; refresh."}`);
     const box = this.get("agent-detail");
     box.replaceChildren(this.node("p", `Created ${task.created_at} UTC · Updated ${task.updated_at} UTC`));
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
@@ -204,6 +214,44 @@ export class AgentPanel {
         this.button("Read cited source", () => this.source(project, task.id, ref, token)));
       box.append(card);
     }
+  }
+  renderReport(saved, project, id, token) {
+    const box = this.get("agent-detail"), report = saved.report;
+    box.append(this.node("h3", "Personal handover report"),
+      this.node("p", `Report ${saved.id} · Version ${saved.version} · Created ${saved.created_at} UTC · Project ${project} · Checklist revision ${saved.checklist.revision}`),
+      this.node("p", "Private draft. Citations validated, not semantically reviewed. Found materials do not prove completeness or business acceptance."));
+    for (const [title, versions] of [["Selected scope", saved.selected_versions], ["Actual admitted sources (including uncited material)", saved.source_versions]]) {
+      box.append(this.node("h3", title));
+      if (!versions.length) box.append(this.node("p", "None recorded; this does not prove materials are complete."));
+      for (const ref of versions) box.append(this.node("p", `File ${ref.file_id} · Version ${ref.version_id}`));
+    }
+    for (const [key, title] of [["summary", "Summary"], ["limitations", "Search and coverage limitations"], ["recommendations", "Handover recommendations"]])
+      box.append(this.node("h3", title), this.node("pre", report[key]));
+    const labels = {found: "Found", missing: "Missing within searched scope", uncertain: "Uncertain"};
+    for (const item of report.items) {
+      const card = this.node("article"); card.className = "task-card";
+      card.append(this.node("h3", `${item.title} · ${item.required ? "Required" : "Optional"} · ${labels[item.status] || "Unknown"}`), this.node("pre", item.notes));
+      for (const ref of item.citations) card.append(
+        this.node("p", `${ref.file_name} · File ${ref.file_id} · Version ${ref.version_id} · Chunk ${ref.chunk_id} · ${ref.page ? `PDF physical page ${ref.page} · ` : ""}Lines ${ref.line_start}–${ref.line_end}`),
+        this.node("pre", ref.text), this.button("Read cited source", () => this.source(project, id, ref, token, saved.id)));
+      box.append(card);
+    }
+    box.append(this.button("Download report Markdown", () => this.downloadReport(project, id, token)));
+  }
+  async downloadReport(project, id, token) {
+    if (token !== this.detailGeneration || this.reportDownloading) return;
+    this.reportDownloading = true;
+    try {
+      // Fetch the protected attachment afresh; never use report-provided URLs or cached content.
+      const blob = await this.api.downloadHandoverReport(project, id);
+      if (token !== this.detailGeneration) return;
+      const url = URL.createObjectURL(blob);
+      try {
+        const link = this.node("a"); link.href = url; link.download = "handover-report.md"; link.click();
+      } finally { URL.revokeObjectURL(url); }
+    } catch (error) {
+      if (token === this.detailGeneration) { this.clearDetail(); this.status("detail", `${this.errorText(error)} Refresh task to recheck access.`); }
+    } finally { this.reportDownloading = false; }
   }
   clearArchive() {
     this.archiveGeneration += 1;
@@ -345,17 +393,27 @@ export class AgentPanel {
       this.busy = false; this.controls();
     }
   }
-  async source(project, id, ref, token) {
+  async source(project, id, ref, token, reportId = null) {
     if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;
     const sourceToken = (this.sourceGeneration || 0) + 1; this.sourceGeneration = sourceToken;
     const current = () => token === this.detailGeneration && sourceToken === this.sourceGeneration;
     const box = this.get("agent-source"); box.replaceChildren();
     try {
-      // Recheck the whole answer dependency set, not just this citation.
-      const outcome = await this.api.getAgentResult(project, id);
-      if (!current()) return;
-      if (outcome.state !== "completed" || !outcome.result.citations.some(item =>
-        item.file_id === ref.file_id && item.version_id === ref.version_id && item.chunk_id === ref.chunk_id)) throw new Error("Answer is no longer available.");
+      // Recheck the whole report/answer dependency set, including uncited sources.
+      let citations;
+      if (reportId) {
+        const saved = await this.api.getHandoverReport(project, id);
+        if (!current()) return;
+        if (saved.id !== reportId || saved.project_id !== project || saved.task_id !== id) throw new Error("Report is no longer available.");
+        citations = saved.report.items.flatMap(item => item.citations);
+      } else {
+        const outcome = await this.api.getAgentResult(project, id);
+        if (!current()) return;
+        if (outcome.state !== "completed" || !outcome.result) throw new Error("Answer is no longer available.");
+        citations = outcome.result.citations;
+      }
+      if (!citations.some(item => item.file_id === ref.file_id && item.version_id === ref.version_id && item.chunk_id === ref.chunk_id))
+        throw new Error("Citation is no longer available.");
       const source = await this.api.readDocument(project, ref.file_id, ref.version_id, ref.chunk_id);
       if (!current()) return;
       const chunk = source.chunk;

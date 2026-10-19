@@ -68,6 +68,16 @@ export const getAgentTask = (projectId, taskId) => metadata(`${agentPath(project
 export const cancelAgentTask = (projectId, taskId) =>
   metadata(`${agentPath(projectId)}/${id(taskId)}/cancel`, { method: "POST" });
 export const getAgentResult = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/run/result`);
+const reportPath = (projectId, taskId) => `${agentPath(projectId)}/${id(taskId)}/handover-report`;
+export const getHandoverReport = (projectId, taskId) => metadata(reportPath(projectId, taskId));
+export async function downloadHandoverReport(projectId, taskId) {
+  const response = await fetch(API_ROOT + reportPath(projectId, taskId) + "/markdown",
+    {method: "GET", credentials: "same-origin", cache: "no-store", redirect: "error"});
+  if (!response.ok) await parseApiResponse(response);
+  if (response.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase() !== "text/markdown")
+    throw new Error("Report download is unavailable.");
+  return response.blob();
+}
 export const getAgentToolCalls = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/tool-calls`);
 const archivePath = (projectId, taskId) => `${agentPath(projectId)}/${id(taskId)}/archive-plan`;
 export const getArchivePlan = (projectId, taskId) => metadata(archivePath(projectId, taskId));
