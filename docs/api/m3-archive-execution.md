@@ -1,6 +1,6 @@
 # M3 归档确认、整批执行与回执
 
-方案A的归档业务基础。C++是权限和写状态权威；尚未发布MCP写工具。
+方案A的归档业务基础。C++是权限和写状态权威；后续已接入[归档MCP工具](m3-archive-mcp.md)。
 Agent页面现支持查看具体修订、真实确认/拒绝及独立执行，不会自动确认、执行或调用模型。
 
 所有路径前缀为 `/api/v1/projects/{project_id}/agent-tasks/{task_id}/archive-plan`。
@@ -66,8 +66,8 @@ archive_operation=上述最小回执、原model_calls（未调用则0）。不�
 010_archive_execution.sql扩大任务状态字段并新增archive_decisions；不回填历史确认、操作ID或回执。
 复合外键将确认的task_id/plan_id绑定同一方案，数据库也拒绝跨任务错配记录。
 schema9旧预览仍可查看并显式确认，不能因升级自动执行。此为schema10历史增量；当前二进制要求
-[schema13](m3-handover-context.md#schema13和部署)。部署前停应用/worker/网关，备份数据库及文件，
-再执行scripts/migrate.sh；当前分支预期schema_version=13。
+[schema14](m3-handover-report.md#schema14和部署)。部署前停应用/worker/网关，备份数据库及文件，
+再执行scripts/migrate.sh；当前分支预期schema_version=14。
 MySQL DDL并非整批原子：失败应按匹配备份恢复，不盲目重放半套DDL。
 本轮仅迁移独立临时测试库，没有授权或执行生产迁移/部署，也没有远程模型调用。
 
@@ -95,6 +95,6 @@ confirmed且waiting_execution、executable为真时才显示 **Execute confirmed
 
 ## 剩余边界
 
-MCP写工具及模型等待/继续编排、个人交接报告和五工具联调尚未交付。
+归档MCP接线及个人报告后端已交付；归档模型等待/继续编排、个人报告网页和五工具整体验收尚未交付。
 网页验证的提案是夹具，不代表模型分类质量；见[确认网页证据](../evidence/m3/archive-ui/README.md)。
 完整目标和M3/M4均未关闭。

@@ -1,12 +1,13 @@
 # M3 报告保存工具与 Agent 接入
 
 在既有只读工具上增加 `save_handover_report`，复用[schema14报告后端](m3-handover-report.md)。
-无新数据库迁移、依赖或公共服务。当前实际接通3个工具，归档的2个MCP工具及等待继续编排仍未完成。
+无新数据库迁移、依赖或公共服务。报告增量接通3个工具；后续[归档MCP接线](m3-archive-mcp.md)
+已补齐调试器的五工具，归档模型上下文及等待继续编排仍未完成。
 
 ## MCP 契约
 
 可信 context 格式、0600文件及 stdio 启动方法沿用[原入口](m3-mcp-read-tools.md)。
-`project_approved_versions` 仍仅列出两个只读工具；`task_versions` 增加报告保存工具。
+`project_approved_versions` 仍仅列出两个只读工具；`task_versions` 含报告保存及归档工具。
 工具参数严格为 `{operation_id,report}`，report 的条目、固定引用、文本限制见后端接口。
 整个工具参数 UTF-8 JSON 最多32768字节；客户端不接受身份、项目、任务、批准或URL字段。
 C++再次校验清单、引用和全实际来源，Python不复制权限表或自行写数据库。

@@ -226,7 +226,7 @@ class ArchiveExecutionE2E(ArchivePreviewE2E):
         job, target, task, path, body = self.fixture()
         run = self.tasks_path()+"/"+task["id"]+"/run"
         data(self.user.request("POST", run+"/start"))
-        data(self.user.request("POST", run+"/check"))
+        data(self.user.request("POST", run+"/check", {"tool_request_ids": []}))
         plan = data(self.user.request("PUT", path, body))
         others = [self.create_task(job) for _ in range(3)]
         try:
@@ -244,7 +244,7 @@ class ArchiveExecutionE2E(ArchivePreviewE2E):
         self.assertEqual(data(self.user.request("GET", path)), confirmed)
         self.assertEqual(self.count("SELECT model_calls FROM agent_runs WHERE task_id='"+task["id"]+"'"), 1)
         self.assertEqual(self.user.request("POST", run+"/start").status, 409)
-        self.assertEqual(self.user.request("POST", run+"/check").status, 409)
+        self.assertEqual(self.user.request("POST", run+"/check", {"tool_request_ids": []}).status, 409)
         data(self.user.request("POST", path+"/execute", self.execution(confirmed)))
 
     def test_execution_new_destination_conflict_after_confirmation_blocks_whole_batch(self):

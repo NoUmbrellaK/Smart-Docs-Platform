@@ -1,0 +1,86 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_mcp_read.py -k test_archive -v.
+test_archive_backend_failures_are_sanitized_without_write_retries (test_mcp_read.ReadToolsTests) ... Tool 'create_archive_plan' not listed, no validation will be performed
+FAIL
+test_archive_discovery_and_preview_use_bound_task_without_confirmation (test_mcp_read.ReadToolsTests) ... Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+FAIL
+test_archive_execute_forwards_only_server_operation_and_never_calls_decision (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+FAIL
+test_archive_invalid_fields_and_limits_never_reach_backend (test_mcp_read.ReadToolsTests) ... Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'create_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+Tool 'execute_archive_plan' not listed, no validation will be performed
+ok
+======================================================================
+FAIL: test_archive_backend_failures_are_sanitized_without_write_retries (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 213, in test_archive_backend_failures_are_sanitized_without_write_retries
+    self.assertEqual(result.structuredContent['status'],want)
+AssertionError: 'invalid_request' != 'access_denied'
+- invalid_request
++ access_denied
+======================================================================
+FAIL: test_archive_discovery_and_preview_use_bound_task_without_confirmation (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 157, in test_archive_discovery_and_preview_use_bound_task_without_confirmation
+    self.assertEqual(set(tools),{'search_documents','read_document_version','save_handover_report',
+AssertionError: Items in the second set but not the first:
+'execute_archive_plan'
+'create_archive_plan'
+======================================================================
+FAIL: test_archive_execute_forwards_only_server_operation_and_never_calls_decision (test_mcp_read.ReadToolsTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 180, in test_archive_execute_forwards_only_server_operation_and_never_calls_decision
+    self.assertEqual(result.structuredContent['status'],'success')
+AssertionError: 'invalid_request' != 'success'
+- invalid_request
++ success
+----------------------------------------------------------------------
+Ran 4 tests in 2.025s
+FAILED (failures=3)
+smartdocs-archive-mcp-red-final.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-archive-mcp-red-final.service: Failed with result 'exit-code'.

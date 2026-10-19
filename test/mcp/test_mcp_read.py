@@ -25,7 +25,7 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         self.module = importlib.import_module("smartdocs.mcp_read")
         self.calls, self.status = [], 200
         self.payload = {"data": {"items": [], "retrieval": "keyword_only", "has_more": False}}
-        self.raw, self.delay = None, 0
+        self.raw, self.delay, self.drop = None, 0, False
         owner = self
 
         class Receiver(BaseHTTPRequestHandler):
@@ -36,6 +36,9 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
             def respond(self):
                 body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
                 owner.calls.append((self.command, self.path, dict(self.headers), body))
+                if owner.drop:
+                    self.close_connection=True
+                    return
                 time.sleep(owner.delay)
                 raw = owner.raw if owner.raw is not None else json.dumps(
                     {"request_id":f'{len(owner.calls):032x}', **owner.payload}).encode()
@@ -135,6 +138,96 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(result.isError)
         self.assertEqual(result.structuredContent["status"], "invalid_request")
         self.assertFalse(self.calls)
+
+    def archive_arguments(self):
+        return {'expected_revision':0,'policy_revision':1,'items':[{
+            'file_id':FILE,'version_id':VERSION,'source_directory_id':'1'*32,
+            'target_directory_id':'2'*32,'reason':'Review deployment material'}]}
+
+    async def test_archive_discovery_and_preview_use_bound_task_without_confirmation(self):
+        args=self.archive_arguments()
+        self.assertEqual((await self.call('create_archive_plan',args)).structuredContent['status'],'invalid_request')
+        self.assertFalse(self.calls)
+        self.context['scope']='task_versions'
+        self.payload={'data':{'id':'3'*32,'task_id':TASK,'project_id':PROJECT,'revision':1,
+            'policy_revision':1,'state':'preview','executable':False,'has_unresolved':False,
+            'items':[{**args['items'][0],'name':'deployment.txt','target_name':'Deployment','state':'proposed'}],
+            'content_sha256':'4'*64,'decision':None,'operation_id':None,'task_state':'waiting_confirmation'}}
+        async with create_connected_server_and_client_session(self.module.create_server(self.context)) as client:
+            tools={t.name:t for t in (await client.list_tools()).tools}
+            first=await client.call_tool('create_archive_plan',args)
+            second=await client.call_tool('create_archive_plan',args)
+        self.assertEqual(set(tools),{'search_documents','read_document_version','save_handover_report',
+            'create_archive_plan','execute_archive_plan'})
+        self.assertFalse(tools['create_archive_plan'].annotations.readOnlyHint)
+        self.assertTrue(tools['execute_archive_plan'].annotations.destructiveHint)
+        self.assertTrue(tools['execute_archive_plan'].annotations.idempotentHint)
+        self.assertFalse(first.isError)
+        self.assertEqual(first.structuredContent['status'],'waiting_confirmation')
+        self.assertEqual(first.structuredContent['data'],second.structuredContent['data'])
+        self.assertIsNone(first.structuredContent['data']['operation_id'])
+        self.assertNotIn('source_request_id',first.structuredContent)
+        self.assertEqual(len(self.calls),2)
+        for method,path,headers,body in self.calls:
+            self.assertEqual((method,path),('PUT',f'/api/v1/projects/{PROJECT}/agent-tasks/{TASK}/archive-plan'))
+            self.assertEqual(json.loads(body),args)
+            self.assertEqual(headers['Cookie'],'smartdocs_session='+TOKEN)
+
+    async def test_archive_execute_forwards_only_server_operation_and_never_calls_decision(self):
+        self.context['scope']='task_versions'
+        args={'plan_id':'3'*32,'revision':1,'operation_id':'5'*32}
+        self.payload={'data':{**args,'status':'executed','moved_count':1,'audit_id':'6'*32,
+            'items':[{'file_id':FILE,'version_id':VERSION,'source_directory_id':'1'*32,
+                      'target_directory_id':'2'*32,'state':'moved'}]}}
+        result=await self.call('execute_archive_plan',args)
+        self.assertEqual(result.structuredContent['status'],'success')
+        self.assertEqual(result.structuredContent['data'],self.payload['data'])
+        self.assertNotIn('source_request_id',result.structuredContent)
+        self.assertEqual(self.calls[0][:2],('POST',f'/api/v1/projects/{PROJECT}/agent-tasks/{TASK}/archive-plan/execute'))
+        self.assertEqual(json.loads(self.calls[0][3]),args)
+        self.assertEqual(len(self.calls),1)
+
+    async def test_archive_invalid_fields_and_limits_never_reach_backend(self):
+        self.context['scope']='task_versions'
+        create=self.archive_arguments(); execute={'plan_id':'3'*32,'revision':1,'operation_id':'5'*32}
+        invalid=[('create_archive_plan',{**create,**extra}) for extra in (
+            {'approved':True},{'user_id':FILE},{'project_id':PROJECT},{'task_id':TASK},
+            {'expected_revision':True},{'policy_revision':-1},{'expected_revision':4294967295},
+            {'items':[]},{'items':create['items']*101})]
+        invalid += [('create_archive_plan',{**create,'items':[{**create['items'][0],**extra}]}) for extra in (
+            {'reason':'x'*1001},{'reason':''},{'target_directory_id':'../secret'}, {'approved':True})]
+        invalid += [('execute_archive_plan',{**execute,**extra}) for extra in (
+            {'approved':True},{'revision':True},{'revision':0},{'revision':4294967296},
+            {'operation_id':None},{'operation_id':'made-up'},{'decision':'confirm'})]
+        for name,args in invalid:
+            result=await self.call(name,args)
+            self.assertEqual(result.structuredContent['status'],'invalid_request')
+            self.assertNotIn('secret',result.model_dump_json())
+        self.assertFalse(self.calls)
+
+    async def test_archive_backend_failures_are_sanitized_without_write_retries(self):
+        self.context['scope']='task_versions'
+        for tool,args in [('create_archive_plan',self.archive_arguments()),
+                          ('execute_archive_plan',{'plan_id':'3'*32,'revision':1,'operation_id':'5'*32})]:
+            for code,want in [(403,'access_denied'),(404,'access_denied'),(409,'conflict'),
+                              (429,'busy'),(503,'dependency_failed'),(302,'dependency_failed')]:
+                self.calls.clear(); self.status=code; self.payload={'error':{'message':'PRIVATE path'}}
+                result=await self.call(tool,args)
+                self.assertEqual(result.structuredContent['status'],want)
+                self.assertNotIn('PRIVATE',result.model_dump_json())
+                self.assertEqual(len(self.calls),1)
+
+    async def test_archive_lost_or_malformed_response_never_retries_or_claims_success(self):
+        self.context['scope']='task_versions'
+        for tool,args in [('create_archive_plan',self.archive_arguments()),
+                          ('execute_archive_plan',{'plan_id':'3'*32,'revision':1,'operation_id':'5'*32})]:
+            for drop,raw in [(True,None),(False,b'not-json PRIVATE'),(False,b'x'*262145)]:
+                self.calls.clear(); self.drop=drop; self.raw=raw
+                result=await self.call(tool,args)
+                self.assertEqual(result.structuredContent['status'],'dependency_failed')
+                self.assertNotIn('data',result.structuredContent)
+                self.assertNotIn('PRIVATE',result.model_dump_json())
+                self.assertEqual(len(self.calls),1)
 
     async def test_report_tool_is_task_only_and_forwards_exact_operation(self):
         arguments={'operation_id':'1'*32,'report':{'summary':'Uncertain','limitations':'No material read',

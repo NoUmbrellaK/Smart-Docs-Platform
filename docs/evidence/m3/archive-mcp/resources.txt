@@ -1,0 +1,28 @@
+2026-10-19 resource envelope, unchanged from baseline
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+
+memory.events before and after (identical):
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+
+Final free -m:
+Mem total=3495 used=1861 free=350 shared=3 buff/cache=1283 available=1362
+Swap total=0 used=0 free=0
+Observed MemAvailable remained above 512 MiB stop threshold.
+Business mysql: active
+
+smartdocs-archive-mcp-e2e.service: inactive, MainPID=0, ExecMainStatus=0
+smartdocs-archive-mcp-final.service: failed, MainPID=0, ExecMainStatus=1 (preserved old fixture failure)
+smartdocs-archive-mcp-regression.service: inactive, MainPID=0, ExecMainStatus=0
+No production migration, deployment, dependency installation or paid model request.

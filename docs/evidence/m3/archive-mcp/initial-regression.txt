@@ -1,0 +1,119 @@
+test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests) ... ok
+test_live_module_discovery_is_opt_in_and_never_starts_database (test_agent_cli.AgentCliTests) ... ok
+test_outcome_summary_excludes_untrusted_extras_and_error_text (test_agent_cli.AgentCliTests) ... ok
+test_authoritative_source_rejection_persists_failure_instead_of_stranding_run (test_agent_runner.AgentRunnerTests) ... ok
+test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests) ... ok
+test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests) ... ok
+test_lost_completion_response_never_submits_opposite_terminal_outcome (test_agent_runner.AgentRunnerTests) ... ok
+test_malformed_checklist_stops_before_model_and_budget_admission (test_agent_runner.AgentRunnerTests) ... ok
+test_missing_backend_receipt_prevents_next_model_send (test_agent_runner.AgentRunnerTests) ... ok
+test_model_admission_cumulates_receipts_even_without_final_citations (test_agent_runner.AgentRunnerTests) ... ok
+test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests) ... ok
+test_oversized_history_stops_before_next_model_call (test_agent_runner.AgentRunnerTests) ... ok
+test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests) ... ok
+test_provider_entry_records_dynamic_tool_summary_without_content (test_agent_runner.AgentRunnerTests) ... ok
+test_provider_tool_failure_has_attempt_and_terminal_summary (test_agent_runner.AgentRunnerTests) ... ok
+test_report_cannot_share_batch_with_reads_or_more_writes (test_agent_runner.AgentRunnerTests) ... ok
+test_report_late_commit_after_unknown_is_not_overwritten (test_agent_runner.AgentRunnerTests) ... ok
+test_report_lost_ack_queries_authority_without_retrying_write (test_agent_runner.AgentRunnerTests) ... ok
+test_report_missing_operation_and_plain_answer_cannot_claim_report_saved (test_agent_runner.AgentRunnerTests) ... ok
+test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... ok
+test_report_result_unavailable_is_unknown_not_false_failure (test_agent_runner.AgentRunnerTests) ... ok
+test_report_tool_is_terminal_and_never_finishes_with_plain_answer (test_agent_runner.AgentRunnerTests) ... ok
+test_report_uncertain_write_never_races_failure_or_claims_completion (test_agent_runner.AgentRunnerTests) ... ok
+test_report_wrong_operation_is_not_dispatched (test_agent_runner.AgentRunnerTests) ... ok
+test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests) ... ok
+test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests) ... ok
+test_twelve_tool_limit_stops_before_thirteenth_tool (test_agent_runner.AgentRunnerTests) ... ok
+test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests) ... ok
+test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests) ... ok
+test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+test_archive_backend_failures_are_sanitized_without_write_retries (test_mcp_read.ReadToolsTests) ... ok
+test_archive_discovery_and_preview_use_bound_task_without_confirmation (test_mcp_read.ReadToolsTests) ... Tool 'create_archive_plan' not listed, no validation will be performed
+ok
+test_archive_execute_forwards_only_server_operation_and_never_calls_decision (test_mcp_read.ReadToolsTests) ... ok
+test_archive_invalid_fields_and_limits_never_reach_backend (test_mcp_read.ReadToolsTests) ... ok
+test_archive_lost_or_malformed_response_never_retries_or_claims_success (test_mcp_read.ReadToolsTests) ... ok
+test_backend_socket_timeout_is_explicit_without_retry (test_mcp_read.ReadToolsTests) ... ok
+test_cli_hybrid_socket_deadline_rechecks_keyword_fallback (test_mcp_read.ReadToolsTests) ... ok
+test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... ok
+test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... ok
+test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests) ... ok
+test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... ok
+test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... ok
+test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests) ... ok
+test_range_read_uses_bounded_post_and_preserves_pagination (test_mcp_read.ReadToolsTests) ... ok
+test_range_rejects_mixed_selectors_and_invalid_bounds_before_http (test_mcp_read.ReadToolsTests) ... ok
+test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... ok
+test_report_rejects_forged_receipt_links_and_oversized_input (test_mcp_read.ReadToolsTests) ... ok
+test_report_tool_is_task_only_and_forwards_exact_operation (test_mcp_read.ReadToolsTests) ... Tool 'save_handover_report' not listed, no validation will be performed
+ok
+test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+ok
+----------------------------------------------------------------------
+Ran 62 tests in 53.425s
+OK
+2026-10-19T09:00:27.690527Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 825803
+2026-10-19T09:00:27.695942Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T09:00:43.004815Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T09:00:50.861109Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=14
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchiveExecutionE2E) ... ok
+test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_concurrent_cas_publishes_only_one_proposal (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_owner_role_project_and_same_origin (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchiveExecutionE2E) ... ok
+test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchiveExecutionE2E) ... ok
+test_execution_checks_owner_role_origin_and_cancel_before_commit (__main__.ArchiveExecutionE2E) ... ok
+test_execution_concurrent_identical_requests_have_one_commit_and_receipt (__main__.ArchiveExecutionE2E) ... ok
+test_execution_confirmation_is_separate_and_batch_commit_replays_once (__main__.ArchiveExecutionE2E) ... ok
+test_execution_database_failure_after_first_move_rolls_back_all_business_state (__main__.ArchiveExecutionE2E) ... ok
+test_execution_expired_model_run_cannot_publish_new_plan (__main__.ArchiveExecutionE2E) ... ok
+test_execution_lost_body_restart_and_later_move_do_not_repeat_operation (__main__.ArchiveExecutionE2E) ... ok
+test_execution_new_destination_conflict_after_confirmation_blocks_whole_batch (__main__.ArchiveExecutionE2E) ... ok
+test_execution_rechecks_location_and_target_policy_after_confirmation (__main__.ArchiveExecutionE2E) ... ok
+test_execution_reject_old_digest_revision_and_unresolved_targets (__main__.ArchiveExecutionE2E) ... ok
+test_execution_schema_rejects_cross_task_plan_decision (__main__.ArchiveExecutionE2E) ... ok
+test_execution_waiting_releases_running_slot_and_preserves_budget_on_restart (__main__.ArchiveExecutionE2E) ... FAIL
+test_execution_waiting_releases_slot_and_never_accepts_model_approval (__main__.ArchiveExecutionE2E) ... ok
+test_execution_whole_scope_revocation_and_new_version_block_moves (__main__.ArchiveExecutionE2E) ... ok
+======================================================================
+FAIL: test_execution_waiting_releases_running_slot_and_preserves_budget_on_restart (__main__.ArchiveExecutionE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 229, in test_execution_waiting_releases_running_slot_and_preserves_budget_on_restart
+    data(self.user.request("POST", run+"/check"))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 400: {'error': {'code': 'invalid_request', 'message': 'Content-Type must be application/json', 'retryable': False}, 'request_id': '0ae257ab2d1d01fc0cfcc599219db4e5'}
+----------------------------------------------------------------------
+Ran 22 tests in 19.684s
+FAILED (failures=1)
+smartdocs-archive-mcp-final.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-archive-mcp-final.service: Failed with result 'exit-code'.
+smartdocs-archive-mcp-final.service: Consumed 13.198s CPU time.

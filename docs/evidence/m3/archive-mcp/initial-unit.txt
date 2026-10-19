@@ -1,0 +1,70 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -v.
+test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests) ... ok
+test_live_module_discovery_is_opt_in_and_never_starts_database (test_agent_cli.AgentCliTests) ... ok
+test_outcome_summary_excludes_untrusted_extras_and_error_text (test_agent_cli.AgentCliTests) ... ok
+test_authoritative_source_rejection_persists_failure_instead_of_stranding_run (test_agent_runner.AgentRunnerTests) ... ok
+test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests) ... ok
+test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests) ... ok
+test_lost_completion_response_never_submits_opposite_terminal_outcome (test_agent_runner.AgentRunnerTests) ... ok
+test_malformed_checklist_stops_before_model_and_budget_admission (test_agent_runner.AgentRunnerTests) ... ok
+test_missing_backend_receipt_prevents_next_model_send (test_agent_runner.AgentRunnerTests) ... ok
+test_model_admission_cumulates_receipts_even_without_final_citations (test_agent_runner.AgentRunnerTests) ... ok
+test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests) ... ok
+test_oversized_history_stops_before_next_model_call (test_agent_runner.AgentRunnerTests) ... ok
+test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests) ... ok
+test_provider_entry_records_dynamic_tool_summary_without_content (test_agent_runner.AgentRunnerTests) ... ok
+test_provider_tool_failure_has_attempt_and_terminal_summary (test_agent_runner.AgentRunnerTests) ... ok
+test_report_cannot_share_batch_with_reads_or_more_writes (test_agent_runner.AgentRunnerTests) ... ok
+test_report_late_commit_after_unknown_is_not_overwritten (test_agent_runner.AgentRunnerTests) ... ok
+test_report_lost_ack_queries_authority_without_retrying_write (test_agent_runner.AgentRunnerTests) ... ok
+test_report_missing_operation_and_plain_answer_cannot_claim_report_saved (test_agent_runner.AgentRunnerTests) ... ok
+test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... ok
+test_report_result_unavailable_is_unknown_not_false_failure (test_agent_runner.AgentRunnerTests) ... ok
+test_report_tool_is_terminal_and_never_finishes_with_plain_answer (test_agent_runner.AgentRunnerTests) ... ok
+test_report_uncertain_write_never_races_failure_or_claims_completion (test_agent_runner.AgentRunnerTests) ... ok
+test_report_wrong_operation_is_not_dispatched (test_agent_runner.AgentRunnerTests) ... ok
+test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests) ... ok
+test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests) ... ok
+test_twelve_tool_limit_stops_before_thirteenth_tool (test_agent_runner.AgentRunnerTests) ... ok
+test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests) ... ok
+test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests) ... ok
+test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+test_archive_backend_failures_are_sanitized_without_write_retries (test_mcp_read.ReadToolsTests) ... ok
+test_archive_discovery_and_preview_use_bound_task_without_confirmation (test_mcp_read.ReadToolsTests) ... Tool 'create_archive_plan' not listed, no validation will be performed
+ok
+test_archive_execute_forwards_only_server_operation_and_never_calls_decision (test_mcp_read.ReadToolsTests) ... ok
+test_archive_invalid_fields_and_limits_never_reach_backend (test_mcp_read.ReadToolsTests) ... ok
+test_backend_socket_timeout_is_explicit_without_retry (test_mcp_read.ReadToolsTests) ... ok
+test_cli_hybrid_socket_deadline_rechecks_keyword_fallback (test_mcp_read.ReadToolsTests) ... ok
+test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... ok
+test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... ok
+test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... ok
+test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests) ... ok
+test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... ok
+test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... ok
+test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests) ... ok
+test_range_read_uses_bounded_post_and_preserves_pagination (test_mcp_read.ReadToolsTests) ... ok
+test_range_rejects_mixed_selectors_and_invalid_bounds_before_http (test_mcp_read.ReadToolsTests) ... ok
+test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... ok
+test_report_rejects_forged_receipt_links_and_oversized_input (test_mcp_read.ReadToolsTests) ... ok
+test_report_tool_is_task_only_and_forwards_exact_operation (test_mcp_read.ReadToolsTests) ... Tool 'save_handover_report' not listed, no validation will be performed
+ok
+test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+ok
+----------------------------------------------------------------------
+Ran 61 tests in 52.789s
+OK
+smartdocs-archive-mcp-unit.service: Deactivated successfully.
+smartdocs-archive-mcp-unit.service: Consumed 4.099s CPU time.

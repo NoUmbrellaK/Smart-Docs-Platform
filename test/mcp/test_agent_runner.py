@@ -156,10 +156,11 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(outcome["error_code"],"budget_exhausted"); self.assertIsNone(self.result)
 
     async def test_invalid_tool_is_not_executed_and_repeated_error_stops(self):
-        async def model(messages,**kwargs): return reply(calls=[call("execute_archive_plan",{"approved":True},ident="call_"+str(len(messages)))])
+        async def model(messages,**kwargs): return reply(calls=[call("execute_archive_plan",
+            {'plan_id':'1'*32,'revision':1,'operation_id':'2'*32},ident="call_"+str(len(messages)))])
         outcome=await self.run_model(model)
         self.assertEqual(outcome["error_code"],"repeated_tool_error")
-        self.assertFalse(any("/tools/" in path for path,_ in self.requests))
+        self.assertFalse(any("/tools/" in path or '/archive-plan' in path for path,_ in self.requests))
 
     async def test_unknown_citation_is_rejected_before_result_submission(self):
         async def model(messages,**kwargs): return reply(json.dumps({"answer":"invented","citations":[CITATION]}))
@@ -285,7 +286,8 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         arguments=self.report_fixture(); seen=[]
         async def model(messages,tools,**kwargs):
             seen.append(copy.deepcopy(messages))
-            self.assertIn('save_handover_report',{t['function']['name'] for t in tools})
+            self.assertEqual({t['function']['name'] for t in tools},
+                {'search_documents','read_document_version','save_handover_report'})
             return reply(calls=[call('save_handover_report',arguments)])
         outcome=await self.run_model(model)
         self.assertEqual(outcome.get('kind'),'handover_report')

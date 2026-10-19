@@ -1,0 +1,24 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_mcp_test.py.
+2026-10-19T08:56:55.225285Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 824595
+2026-10-19T08:56:55.651581Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T08:57:10.888821Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T08:57:19.812590Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=14
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+test_mcp_archive_lost_reply_preserves_minimal_receipt_after_revocation (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_owner_reader_cancel_and_revised_confirmation_are_enforced (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_policy_and_whole_scope_revocation_block_writes (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_preview_replay_waits_for_real_confirmation_then_executes_once (__main__.ArchiveMcpE2E) ... ok
+----------------------------------------------------------------------
+Ran 4 tests in 8.283s
+OK
+smartdocs-archive-mcp-e2e.service: Deactivated successfully.
+smartdocs-archive-mcp-e2e.service: Consumed 8.039s CPU time.

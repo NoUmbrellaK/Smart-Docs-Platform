@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
-from .mcp_read import SCHEMAS, DESCRIPTIONS, REPORT_TOOL, valid_report_receipt, validate_context
+from .mcp_read import SCHEMAS, DESCRIPTIONS, READ_TOOLS, REPORT_TOOL, valid_report_receipt, validate_context
 from .search_http import strict_json
 
 
@@ -153,7 +153,9 @@ async def run_task(context, client, model):
             messages.append({'role':'user','content':encoded({'report_operation_id':report_operation}).decode('utf-8')})
             check_context = {'handover_checklist_revision': checklist['revision']}
             messages.append({'role':'user','content':encoded({'handover_checklist':checklist}).decode('utf-8')})
-        schemas = {name:schema for name,schema in SCHEMAS.items() if name!=REPORT_TOOL or report_operation is not None}
+        # Archive context and waiting/resume orchestration are not yet part of this runner.
+        schemas = {name:schema for name,schema in SCHEMAS.items()
+                   if name in READ_TOOLS or (name==REPORT_TOOL and report_operation is not None)}
         tools = [{'type':'function','function':{'name':name,'description':DESCRIPTIONS[name],'parameters':schema}}
                  for name,schema in schemas.items()]
         validators = {name:Draft202012Validator(schema) for name,schema in schemas.items()}
