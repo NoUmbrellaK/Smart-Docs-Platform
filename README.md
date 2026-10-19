@@ -23,7 +23,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)及[个人报告后端](./docs/api/m3-handover-report.md)，C++要求[schema14](./docs/api/m3-handover-report.md#schema14和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 13及更早数据库。
+当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema15](./docs/api/m3-archive-agent.md#schema15和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema14及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -70,6 +70,10 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 方案A第八个增量接通[报告MCP与执行器](./docs/api/m3-report-mcp.md)：绑定清单任务可动态搜索/读取并调用`save_handover_report`，C++仍是权限、来源和幂等权威；保存必须单独调用并终止任务。不确定写入仅查真实结果，不自动重写或抢写失败。当前接通3个工具，普通问答仍只用两个只读工具。[本轮证据](./docs/evidence/m3/report-mcp/README.md)：MCP/执行器 **57/57**、真实报告SDK/stdio/C++/SQL **4/4**、清单上下文 **8/8**、来源台账 **8/8**、Python **106/106**。独立审查修正了生产512输出token对多项报告的限制：报告按项数分配有界额度，普通问答仍512；保留RED和实际请求预算测试。复用现有入口与schema14，无新增依赖、付费模型、生产迁移或新增节流/OOM。两项归档MCP、报告网页和完整评测仍待完成，M3未验收。
 
 方案A第九个增量接通[两个归档MCP工具](./docs/api/m3-archive-mcp.md)：任务调试范围可枚举五工具，项目调试仍只读；提案返回等待确认，执行仅转发服务端操作ID，不确认、不自动重试，C++仍负责授权和整批事务。按最小实现原则复用现有传输，执行器显式白名单避免把归档工具意外开放给问答/交接任务。[本轮证据](./docs/evidence/m3/archive-mcp/README.md)：MCP/Agent **62/62**、新归档SDK/stdio/C++/SQL **4/4**、既有归档 **22/22**、报告链路 **4/4**、Python **106/106**。保留RED及旧归档夹具漏传来源回执JSON导致的失败记录，修正夹具后复验通过。无新增依赖、C++/SQL修改、付费模型调用或生产部署；测试限额未放宽，无新增节流/OOM。归档可信模型上下文及等待/继续编排、报告网页和完整评测仍待完成，五工具可调试不代表M3验收完成。
+
+方案A第十个增量接通[可信归档上下文与提案 Agent](./docs/api/m3-archive-agent.md)：任务显式绑定获批策略修订，C++仅提供批准目标名称及固定源ID，持续重验权限和批准。归档模式可动态搜索/读取后单独保存方案并退出等待真实确认，不自动移动；普通问答和交接任务不增加归档工具。未知写入仅查询实际结果，不重写或抢写失败。[本轮证据](./docs/evidence/m3/archive-agent/README.md)保留初始RED、大预览协调和等待状态审计的失败及修复记录。按最小实现原则复用任务快照和既有门禁，无新增依赖；schema15仅在隔离库验证，无付费模型调用或生产部署。确认后继续编排、网页任务选择、报告网页及完整评测仍待完成，M3与P0尚未验收。
+
+本轮验证：MCP/执行器 **69/69**、Python **106/106**、归档Agent真实链路 **8/8**、既有归档 **22/22**、交接上下文 **8/8**、报告 **4/4**、相关C++ **31/31**。所有测试进程已退出，原资源限额下无新增内存节流/OOM；不是全仓C++或真实模型质量验收。
 
 ### M2 实现与验证记录
 
@@ -266,7 +270,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=14`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema14说明](./docs/api/m3-handover-report.md#schema14和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=15`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema15说明](./docs/api/m3-archive-agent.md#schema15和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

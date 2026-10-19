@@ -1,0 +1,43 @@
+2026-10-19T17:21:14+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_agent_test.py.
+2026-10-19T17:21:23+0800 aliyun-lou test-with-mysql.sh[830104]: 2026-10-19T09:21:22.821332Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 830104
+2026-10-19T17:21:23+0800 aliyun-lou test-with-mysql.sh[830104]: 2026-10-19T09:21:23.012221Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:21:40+0800 aliyun-lou test-with-mysql.sh[830104]: 2026-10-19T09:21:40.108685Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:21:49+0800 aliyun-lou test-with-mysql.sh[830104]: 2026-10-19T09:21:49.978693Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:22:40+0800 aliyun-lou test-with-mysql.sh[830528]: schema_version=15
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:23:08+0800 aliyun-lou test-with-mysql.sh[830634]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:23:16+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_binding_rejects_unapproved_empty_stale_mixed_and_reader (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:17+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_cancel_prevents_proposal (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:18+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_context_is_opt_in_bound_and_requires_acknowledgment (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:19+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:23:20+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_lost_plan_reply_queries_without_rewrite_or_false_failure (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_policy_changes_block_start_read_and_saved_plan (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: test_archive_agent_revocation_stops_future_model_calls (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: ======================================================================
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: FAIL: test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait (__main__.ArchiveAgentE2E)
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: ----------------------------------------------------------------------
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: Traceback (most recent call last):
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 131, in test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]:     job,target,task,path,outcome,turns=self.propose()
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 126, in propose
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]:     self.assertEqual([e['status'] for e in events if e['event']=='tool_result'
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: AssertionError: Lists differ: ['dependency_failed'] != ['waiting_confirmation']
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: First differing element 0:
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: 'dependency_failed'
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: 'waiting_confirmation'
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: - ['dependency_failed']
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: + ['waiting_confirmation']
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: ----------------------------------------------------------------------
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: Ran 7 tests in 9.050s
+2026-10-19T17:23:21+0800 aliyun-lou test-with-mysql.sh[830753]: FAILED (failures=1)
+2026-10-19T17:23:25+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-e2e-first.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:23:25+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-e2e-first.service: Failed with result 'exit-code'.
+2026-10-19T17:23:25+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-e2e-first.service: Consumed 8.629s CPU time.

@@ -1,0 +1,63 @@
+Mon Oct 19 09:43:04 UTC 2026
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1845         377           3        1271        1379
+Swap:              0           0           0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+MainPID=0
+Result=exit-code
+Id=smartdocs-archive-agent-red.service
+ActiveState=failed
+
+MainPID=0
+Result=exit-code
+Id=smartdocs-archive-agent-unit-red.service
+ActiveState=failed
+
+MainPID=0
+Result=exit-code
+Id=smartdocs-archive-agent-boundary-red.service
+ActiveState=failed
+
+MainPID=0
+Result=exit-code
+Id=smartdocs-archive-agent-e2e-first.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+Id=smartdocs-archive-agent-build.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+Id=smartdocs-archive-agent-rebuild.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+Id=smartdocs-archive-agent-unit-green.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+Id=smartdocs-archive-agent-http-green.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+Id=smartdocs-archive-agent-cpp-green.service
+ActiveState=inactive
+active

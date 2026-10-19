@@ -1,0 +1,34 @@
+2026-10-19T17:20:43+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k archive -v.
+2026-10-19T17:20:47+0800 aliyun-lou python[829981]: test_archive_large_authoritative_preview_is_reconciled (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:20:47+0800 aliyun-lou python[829981]: test_archive_malformed_or_mixed_context_never_reaches_model (test_agent_runner.AgentRunnerTests) ... /usr/lib/python3.10/traceback.py:376: ResourceWarning: unclosed <socket.socket [closed] fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+2026-10-19T17:20:47+0800 aliyun-lou python[829981]:   result.append(FrameSummary(
+2026-10-19T17:20:47+0800 aliyun-lou python[829981]: ResourceWarning: Enable tracemalloc to get the object allocation traceback
+2026-10-19T17:20:47+0800 aliyun-lou python[829981]: Executing <Task pending name='Task-10' coro=<IsolatedAsyncioTestCase._asyncioLoopRunner() running at /usr/lib/python3.10/unittest/async_case.py:101> wait_for=<Future pending cb=[Task.task_wakeup()] created at /usr/lib/python3.10/asyncio/base_events.py:429> created at /usr/lib/python3.10/unittest/async_case.py:117> took 0.105 seconds
+2026-10-19T17:20:48+0800 aliyun-lou python[829981]: ok
+2026-10-19T17:20:48+0800 aliyun-lou python[829981]: test_archive_mixed_batch_never_dispatches_proposal (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:20:49+0800 aliyun-lou python[829981]: test_archive_output_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:20:49+0800 aliyun-lou python[829981]: test_archive_proposal_is_terminal_wait_not_completion (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: test_archive_uncertain_uncommitted_write_is_unknown_and_not_overwritten (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: test_archive_wrong_policy_never_dispatches_proposal (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: ======================================================================
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: FAIL: test_archive_large_authoritative_preview_is_reconciled (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: ----------------------------------------------------------------------
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: Traceback (most recent call last):
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:     self._callMaybeAsync(method)
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:     return future.result()
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:     ret = await awaitable
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 181, in test_archive_large_authoritative_preview_is_reconciled
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]:     self.assertEqual(outcome['state'],'waiting_confirmation')
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: AssertionError: 'unknown' != 'waiting_confirmation'
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: - unknown
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: + waiting_confirmation
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: ----------------------------------------------------------------------
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: Ran 7 tests in 4.026s
+2026-10-19T17:20:50+0800 aliyun-lou python[829981]: FAILED (failures=1)
+2026-10-19T17:20:50+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-boundary-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:20:50+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-boundary-red.service: Failed with result 'exit-code'.

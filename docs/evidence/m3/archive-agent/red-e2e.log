@@ -1,0 +1,95 @@
+2026-10-19T17:12:12+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_agent_test.py.
+2026-10-19T17:12:13+0800 aliyun-lou test-with-mysql.sh[828279]: 2026-10-19T09:12:13.499975Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 828279
+2026-10-19T17:12:13+0800 aliyun-lou test-with-mysql.sh[828279]: 2026-10-19T09:12:13.506533Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:12:28+0800 aliyun-lou test-with-mysql.sh[828279]: 2026-10-19T09:12:28.809080Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:12:36+0800 aliyun-lou test-with-mysql.sh[828279]: 2026-10-19T09:12:36.459054Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:13:23+0800 aliyun-lou test-with-mysql.sh[828493]: schema_version=14
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:13:49+0800 aliyun-lou test-with-mysql.sh[828641]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:13:50+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_binding_rejects_unapproved_empty_stale_mixed_and_reader (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:52+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_context_is_opt_in_bound_and_requires_acknowledgment (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:52+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:52+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_lost_plan_reply_queries_without_rewrite_or_false_failure (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_policy_changes_block_start_read_and_saved_plan (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: test_archive_agent_revocation_stops_future_model_calls_and_cancel_prevents_proposal (__main__.ArchiveAgentE2E) ... FAIL
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_binding_rejects_unapproved_empty_stale_mixed_and_reader (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 32, in test_archive_agent_binding_rejects_unapproved_empty_stale_mixed_and_reader
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     self.assertEqual(self.user.request('POST',self.tasks_path(),self.task_body(job)).status,409)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: 400 != 409
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_context_is_opt_in_bound_and_requires_acknowledgment (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 49, in test_archive_agent_context_is_opt_in_bound_and_requires_acknowledgment
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path=self.bound()
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 26, in bound
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     task=data(self.user.request('POST',self.tasks_path(),self.task_body(job)),201)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '9c76895cd57bf028be704826c85fed62'}
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 128, in test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path,outcome,turns=self.propose()
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 91, in propose
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path=self.bound(); turns=[]; events=[]
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 26, in bound
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     task=data(self.user.request('POST',self.tasks_path(),self.task_body(job)),201)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': 'ea166496c5dd772e718e45aa1b59cf2e'}
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_lost_plan_reply_queries_without_rewrite_or_false_failure (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 143, in test_archive_agent_lost_plan_reply_queries_without_rewrite_or_false_failure
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     _,_,task,_,outcome,turns=self.propose(lost=True)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 91, in propose
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path=self.bound(); turns=[]; events=[]
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 26, in bound
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     task=data(self.user.request('POST',self.tasks_path(),self.task_body(job)),201)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '8b830e560e1a8a60e001c9e4529fef83'}
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_policy_changes_block_start_read_and_saved_plan (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 73, in test_archive_agent_policy_changes_block_start_read_and_saved_plan
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path=self.bound()
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 26, in bound
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     task=data(self.user.request('POST',self.tasks_path(),self.task_body(job)),201)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': 'e69e6b50915dbdbfe67da90bf5c7b4cc'}
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ======================================================================
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAIL: test_archive_agent_revocation_stops_future_model_calls_and_cancel_prevents_proposal (__main__.ArchiveAgentE2E)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Traceback (most recent call last):
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 150, in test_archive_agent_revocation_stops_future_model_calls_and_cancel_prevents_proposal
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     _,_,task,_,outcome,turns=self.propose(revoke=True)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 91, in propose
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     job,target,task,path=self.bound(); turns=[]; events=[]
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_agent_test.py", line 26, in bound
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     task=data(self.user.request('POST',self.tasks_path(),self.task_body(job)),201)
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: AssertionError: expected HTTP 201, got 400: {'error': {'code': 'invalid_request', 'message': 'request body contains missing or unknown fields', 'retryable': False}, 'request_id': '5d7d78acf0845ed1648a0f0e1e82b6c3'}
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: ----------------------------------------------------------------------
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: Ran 6 tests in 3.619s
+2026-10-19T17:13:53+0800 aliyun-lou test-with-mysql.sh[828718]: FAILED (failures=6)
+2026-10-19T17:13:59+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:13:59+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-red.service: Failed with result 'exit-code'.
+2026-10-19T17:13:59+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-red.service: Consumed 6.866s CPU time.

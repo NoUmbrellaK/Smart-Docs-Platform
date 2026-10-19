@@ -35,11 +35,11 @@ void InsertProjectFixture(MySqlConnection& connection) {
 
 }  // namespace
 
-TEST_CASE(mysql_schema_version_is_fourteen) {
+TEST_CASE(mysql_schema_version_is_fifteen) {
     RequireMySqlTests();
     MySqlConnection connection = TestDatabase().Acquire();
-    CHECK(Schema::CurrentVersion(connection) == 14);
-    Schema::RequireVersion(connection, 14);
+    CHECK(Schema::CurrentVersion(connection) == 15);
+    Schema::RequireVersion(connection, 15);
 }
 
 TEST_CASE(mysql_schema_rejects_two_root_directories_for_one_project) {

@@ -8,7 +8,7 @@ import uuid
 
 import httpx
 from .agent_runner import RunError, encoded
-from .mcp_read import REPORT_TOOL
+from .mcp_read import REPORT_TOOL, CREATE_ARCHIVE_TOOL
 from .search_http import strict_json
 
 
@@ -64,9 +64,9 @@ class DeepSeekModel:
         if (type(max_tokens) is not int or not 1<=max_tokens<=8192 or not isinstance(tools,list)
                 or type(timeout) not in (int,float) or not 0<timeout<=60):
             raise RunError("model_invalid")
-        report = any(isinstance(tool,dict) and isinstance(tool.get('function'),dict)
-                     and tool['function'].get('name')==REPORT_TOOL for tool in tools)
-        output_tokens = max_tokens if report else min(max_tokens,512)
+        structured_write = any(isinstance(tool,dict) and isinstance(tool.get('function'),dict)
+                     and tool['function'].get('name') in {REPORT_TOOL,CREATE_ARCHIVE_TOOL} for tool in tools)
+        output_tokens = max_tokens if structured_write else min(max_tokens,512)
         body=encoded({"model":MODEL,"messages":messages,"tools":tools,"stream":False,
             "thinking":{"type":"disabled"},"max_tokens":output_tokens,"temperature":0})
         if len(body)>65536: raise RunError("budget_exhausted")

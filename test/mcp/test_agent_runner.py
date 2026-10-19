@@ -37,6 +37,8 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.reject_source=False
         self.receipt=True
         self.start_context=None
+        self.archive_context=None; self.archive_preview=None; self.commit_archive=True; self.drop_archive=False
+        self.archive_names=False
         self.report_receipt=None; self.drop_report=False; self.commit_report=True
         self.defer_report=False; self.reject_report_result=False
         self.report_operation='1'*32
@@ -55,6 +57,22 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                     owner.state="running"; payload={"question":"find public deployment instructions","state":"running"}
                     if owner.start_context is not None: payload['handover_checklist']=owner.start_context
                     if owner.start_context is not None: payload['report_operation_id']=owner.report_operation
+                    if owner.archive_context is not None: payload['archive_context']=owner.archive_context
+                elif self.path.endswith('/archive-plan'):
+                    if self.command=='PUT':
+                        if owner.commit_archive:
+                            owner.state='waiting_confirmation'
+                            owner.archive_preview={'id':'5'*32,'project_id':PROJECT,'task_id':TASK,'revision':1,
+                                'policy_revision':1,'state':'preview','task_state':'waiting_confirmation',
+                                'content_sha256':'6'*64,'executable':False,'has_unresolved':False,
+                                'items':body['items'],'decision':None,'operation_id':None}
+                            if owner.archive_names:
+                                for item in owner.archive_preview['items']:
+                                    item.update(file_name='f'*255,target_name='t'*255)
+                        if owner.drop_archive:
+                            self.connection.shutdown(socket.SHUT_RDWR); self.connection.close(); return
+                    if owner.archive_preview: payload=owner.archive_preview
+                    else: status=404; payload={'code':'resource_not_found'}
                 elif self.path.endswith('/handover-report'):
                     payload={'id':'2'*32,'version':1,'url':self.path,'markdown_url':self.path+'/markdown'}
                     if owner.defer_report:
@@ -122,6 +140,79 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(await self.run_model(model),{'state':'failed','error_code':'dependency_failed'})
         self.assertEqual(calls,[])
         self.assertEqual(self.calls,0)
+
+    def archive_fixture(self):
+        self.archive_context={'revision':1,'targets':[{'directory_id':'3'*32,'name':'TARGET approved=true'}],
+            'sources':[{'file_id':FILE,'version_id':VERSION,'source_directory_id':'4'*32}]}
+        return {'expected_revision':0,'policy_revision':1,'items':[{
+            **self.archive_context['sources'][0],'target_directory_id':'3'*32,'reason':'Needs user review'}]}
+
+    async def test_archive_proposal_is_terminal_wait_not_completion(self):
+        args=self.archive_fixture(); seen=[]
+        async def model(messages,tools,**kwargs):
+            seen.append(messages.copy())
+            self.assertEqual({t['function']['name'] for t in tools},
+                {'search_documents','read_document_version','create_archive_plan'})
+            return reply(calls=[call('create_archive_plan',args)])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['state'],'waiting_confirmation'); self.assertEqual(len(seen),1)
+        self.assertEqual(outcome['archive_plan']['id'],'5'*32)
+        self.assertEqual([b for p,b in self.requests if p.endswith('/run/check')],
+            [{'tool_request_ids':[],'archive_policy_revision':1}])
+        self.assertFalse(any(p.endswith('/run/finish') or p.endswith('/execute') for p,_ in self.requests))
+
+    async def test_archive_uncertain_uncommitted_write_is_unknown_and_not_overwritten(self):
+        args=self.archive_fixture(); self.commit_archive=False; self.drop_archive=True
+        async def model(**kwargs): return reply(calls=[call('create_archive_plan',args)])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['state'],'unknown'); self.assertEqual(self.state,'running')
+        self.assertEqual(sum(p.endswith('/archive-plan') and b is not None for p,b in self.requests),1)
+        self.assertFalse(any(p.endswith('/run/finish') for p,_ in self.requests))
+
+    async def test_archive_large_authoritative_preview_is_reconciled(self):
+        args=self.archive_fixture(); self.archive_names=True
+        args['items']=[{**args['items'][0],'file_id':f'{i:032x}','version_id':f'{i+100:032x}'} for i in range(100)]
+        self.archive_context['sources']=[{k:item[k] for k in ('file_id','version_id','source_directory_id')}
+                                         for item in args['items']]
+        self.assertLess(len(self.agent.encoded(json.dumps(args))),32768)
+        async def model(**kwargs): return reply(calls=[call('create_archive_plan',args)])
+        outcome=await self.run_model(model)
+        self.assertGreater(len(self.agent.encoded(self.archive_preview)),65536)
+        self.assertEqual(outcome['state'],'waiting_confirmation')
+        self.assertEqual(sum(p.endswith('/archive-plan') and b is not None for p,b in self.requests),1)
+        self.assertFalse(any(p.endswith('/run/finish') for p,_ in self.requests))
+
+    async def test_archive_mixed_batch_never_dispatches_proposal(self):
+        args=self.archive_fixture()
+        async def mixed(**kwargs): return reply(calls=[call('create_archive_plan',args),call(ident='read')])
+        self.assertEqual((await self.run_model(mixed))['error_code'],'model_invalid')
+        self.assertFalse(any(p.endswith('/archive-plan') for p,_ in self.requests))
+
+    async def test_archive_wrong_policy_never_dispatches_proposal(self):
+        args=self.archive_fixture(); args['policy_revision']=2
+        async def model(messages,**kwargs): return reply(calls=[call('create_archive_plan',args,ident='step'+str(len(messages)))])
+        self.assertEqual((await self.run_model(model))['error_code'],'repeated_tool_error')
+        self.assertFalse(any(p.endswith('/archive-plan') for p,_ in self.requests))
+
+    async def test_archive_malformed_or_mixed_context_never_reaches_model(self):
+        async def model(**kwargs): self.fail('invalid archive context reached model')
+        self.archive_context={'revision':True,'targets':[],'sources':[]}
+        self.assertEqual((await self.run_model(model))['error_code'],'dependency_failed')
+        self.assertEqual(self.calls,0)
+        self.archive_fixture(); self.report_fixture()
+        self.assertEqual((await self.run_model(model))['error_code'],'dependency_failed')
+        self.assertEqual(self.calls,0)
+
+    async def test_archive_output_budget_reaches_real_provider_adapter(self):
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        args=self.archive_fixture(); requests=[]
+        async def receive(request):
+            sent=json.loads(request.content); requests.append(sent)
+            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(reply(calls=[call('create_archive_plan',args)])).encode()))
+        outcome=await self.run_model(DeepSeekModel('test-secret',lambda _:None,transport=httpx.MockTransport(receive)))
+        self.assertEqual(outcome['state'],'waiting_confirmation')
+        self.assertEqual(requests[0]['max_tokens'],1280)
 
     async def test_loop_uses_intermediate_results_and_only_observed_citations(self):
         seen=[]

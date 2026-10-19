@@ -1,0 +1,117 @@
+2026-10-19T17:25:59+0800 aliyun-lou systemd[1]: Started /bin/bash -c set -e; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_agent_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_execution_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_handover_context_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_report_mcp_test.py.
+2026-10-19T17:26:01+0800 aliyun-lou bash[831957]: 2026-10-19T09:26:01.536982Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 831957
+2026-10-19T17:26:01+0800 aliyun-lou bash[831957]: 2026-10-19T09:26:01.779676Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:26:17+0800 aliyun-lou bash[831957]: 2026-10-19T09:26:17.107704Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:26:24+0800 aliyun-lou bash[831957]: 2026-10-19T09:26:24.791937Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:27:12+0800 aliyun-lou bash[832280]: schema_version=15
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:27:38+0800 aliyun-lou bash[832346]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:27:39+0800 aliyun-lou bash[832427]: test_archive_agent_binding_rejects_unapproved_empty_stale_mixed_and_reader (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:41+0800 aliyun-lou bash[832427]: test_archive_agent_cancel_prevents_proposal (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:42+0800 aliyun-lou bash[832427]: test_archive_agent_context_is_opt_in_bound_and_requires_acknowledgment (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:43+0800 aliyun-lou bash[832427]: test_archive_agent_dynamic_search_read_proposal_stops_at_real_wait (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:44+0800 aliyun-lou bash[832427]: test_archive_agent_lost_plan_reply_queries_without_rewrite_or_false_failure (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:45+0800 aliyun-lou bash[832427]: test_archive_agent_policy_changes_block_start_read_and_saved_plan (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:45+0800 aliyun-lou bash[832427]: test_archive_agent_revocation_stops_future_model_calls (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:46+0800 aliyun-lou bash[832427]: test_archive_agent_snapshot_survives_restart_and_remains_private (__main__.ArchiveAgentE2E) ... ok
+2026-10-19T17:27:46+0800 aliyun-lou bash[832427]: ----------------------------------------------------------------------
+2026-10-19T17:27:46+0800 aliyun-lou bash[832427]: Ran 8 tests in 7.287s
+2026-10-19T17:27:46+0800 aliyun-lou bash[832427]: OK
+2026-10-19T17:27:52+0800 aliyun-lou bash[832482]: 2026-10-19T09:27:52.836804Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 832482
+2026-10-19T17:27:52+0800 aliyun-lou bash[832482]: 2026-10-19T09:27:52.841488Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:28:08+0800 aliyun-lou bash[832482]: 2026-10-19T09:28:08.148594Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:28:16+0800 aliyun-lou bash[832482]: 2026-10-19T09:28:16.122228Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:29:02+0800 aliyun-lou bash[832806]: schema_version=15
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:29:29+0800 aliyun-lou bash[832874]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:29:30+0800 aliyun-lou bash[832991]: test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:31+0800 aliyun-lou bash[832991]: test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:32+0800 aliyun-lou bash[832991]: test_archive_preview_concurrent_cas_publishes_only_one_proposal (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:33+0800 aliyun-lou bash[832991]: test_archive_preview_owner_role_project_and_same_origin (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:33+0800 aliyun-lou bash[832991]: test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:34+0800 aliyun-lou bash[832991]: test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:36+0800 aliyun-lou bash[832991]: test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:36+0800 aliyun-lou bash[832991]: test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:37+0800 aliyun-lou bash[832991]: test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:38+0800 aliyun-lou bash[832991]: test_execution_checks_owner_role_origin_and_cancel_before_commit (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:39+0800 aliyun-lou bash[832991]: test_execution_concurrent_identical_requests_have_one_commit_and_receipt (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:40+0800 aliyun-lou bash[832991]: test_execution_confirmation_is_separate_and_batch_commit_replays_once (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:41+0800 aliyun-lou bash[832991]: test_execution_database_failure_after_first_move_rolls_back_all_business_state (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:41+0800 aliyun-lou bash[832991]: test_execution_expired_model_run_cannot_publish_new_plan (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:42+0800 aliyun-lou bash[832991]: test_execution_lost_body_restart_and_later_move_do_not_repeat_operation (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:44+0800 aliyun-lou bash[832991]: test_execution_new_destination_conflict_after_confirmation_blocks_whole_batch (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:45+0800 aliyun-lou bash[832991]: test_execution_rechecks_location_and_target_policy_after_confirmation (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:46+0800 aliyun-lou bash[832991]: test_execution_reject_old_digest_revision_and_unresolved_targets (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:47+0800 aliyun-lou bash[832991]: test_execution_schema_rejects_cross_task_plan_decision (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:48+0800 aliyun-lou bash[832991]: test_execution_waiting_releases_running_slot_and_preserves_budget_on_restart (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:49+0800 aliyun-lou bash[832991]: test_execution_waiting_releases_slot_and_never_accepts_model_approval (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:50+0800 aliyun-lou bash[832991]: test_execution_whole_scope_revocation_and_new_version_block_moves (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T17:29:50+0800 aliyun-lou bash[832991]: ----------------------------------------------------------------------
+2026-10-19T17:29:50+0800 aliyun-lou bash[832991]: Ran 22 tests in 20.804s
+2026-10-19T17:29:50+0800 aliyun-lou bash[832991]: OK
+2026-10-19T17:29:54+0800 aliyun-lou bash[833044]: 2026-10-19T09:29:54.948256Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 833044
+2026-10-19T17:29:54+0800 aliyun-lou bash[833044]: 2026-10-19T09:29:54.952943Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:30:10+0800 aliyun-lou bash[833044]: 2026-10-19T09:30:10.080250Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:30:18+0800 aliyun-lou bash[833044]: 2026-10-19T09:30:18.842879Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:31:03+0800 aliyun-lou bash[833220]: schema_version=15
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:31:30+0800 aliyun-lou bash[833287]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:31:31+0800 aliyun-lou bash[833368]: test_context_check_requires_matching_snapshot_acknowledgment (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:33+0800 aliyun-lou bash[833368]: test_context_database_rejects_invalid_snapshot_metadata (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:33+0800 aliyun-lou bash[833368]: test_context_oversized_start_fails_without_stuck_running_or_model_calls (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:34+0800 aliyun-lou bash[833368]: test_context_reader_snapshot_is_private_persistent_and_not_an_implicit_opt_in (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:35+0800 aliyun-lou bash[833368]: test_context_real_runner_sends_snapshot_as_data_and_stops_after_revocation (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:36+0800 aliyun-lou bash[833368]: test_context_rejects_unapproved_missing_empty_stale_and_forged_input (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:37+0800 aliyun-lou bash[833368]: test_context_revision_changes_block_each_content_exit (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:38+0800 aliyun-lou bash[833368]: test_context_revocation_keeps_only_committed_archive_audit_receipt (__main__.HandoverContextE2E) ... ok
+2026-10-19T17:31:38+0800 aliyun-lou bash[833368]: ----------------------------------------------------------------------
+2026-10-19T17:31:38+0800 aliyun-lou bash[833368]: Ran 8 tests in 7.578s
+2026-10-19T17:31:38+0800 aliyun-lou bash[833368]: OK
+2026-10-19T17:31:43+0800 aliyun-lou bash[833442]: 2026-10-19T09:31:43.969520Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 833442
+2026-10-19T17:31:43+0800 aliyun-lou bash[833442]: 2026-10-19T09:31:43.974290Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:31:59+0800 aliyun-lou bash[833442]: 2026-10-19T09:31:59.100025Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:32:07+0800 aliyun-lou bash[833442]: 2026-10-19T09:32:07.026401Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:32:52+0800 aliyun-lou bash[833626]: schema_version=15
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:33:19+0800 aliyun-lou bash[833694]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:33:22+0800 aliyun-lou bash[833802]: test_mcp_report_cancel_before_save_cannot_create_report (__main__.ReportMcpE2E) ... ok
+2026-10-19T17:33:24+0800 aliyun-lou bash[833802]: test_mcp_report_invalid_citation_owner_and_operation_are_rejected (__main__.ReportMcpE2E) ... ok
+2026-10-19T17:33:25+0800 aliyun-lou bash[833802]: test_mcp_report_lost_reply_recovers_committed_result_without_second_save (__main__.ReportMcpE2E) ... ok
+2026-10-19T17:33:27+0800 aliyun-lou bash[833802]: test_mcp_report_reader_dynamic_search_read_save_and_exact_replay (__main__.ReportMcpE2E) ... ok
+2026-10-19T17:33:27+0800 aliyun-lou bash[833802]: ----------------------------------------------------------------------
+2026-10-19T17:33:27+0800 aliyun-lou bash[833802]: Ran 4 tests in 6.810s
+2026-10-19T17:33:27+0800 aliyun-lou bash[833802]: OK
+2026-10-19T17:33:32+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-http-green.service: Deactivated successfully.
+2026-10-19T17:33:32+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-http-green.service: Consumed 33.902s CPU time.

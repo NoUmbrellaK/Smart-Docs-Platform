@@ -1,6 +1,6 @@
 # M3 可信交接清单上下文
 
-历史增量说明：后续[个人报告后端](m3-handover-report.md)已增加持久化接口，当前部署要求 schema14；下文 schema13 是该前置增量的验证基线。
+历史增量说明：后续[个人报告后端](m3-handover-report.md)已增加持久化接口，当前部署要求 [schema15](m3-archive-agent.md#schema15和部署)；下文 schema13 是该前置增量的验证基线。
 
 这是报告前置能力，不是报告保存、Markdown导出或新的MCP工具。沿用C++权限、任务和MySQL，
 没有新增服务或依赖。模型仍只有两个只读工具，完成结果仍是回答草稿。

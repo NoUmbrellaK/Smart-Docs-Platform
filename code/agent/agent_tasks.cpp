@@ -50,6 +50,22 @@ Json TaskChecklist(MySqlConnection& db,const std::string& task) {
     if(rows.empty()) Missing();
     return rows[0].IsNull(0) ? Json(nullptr) : Json::parse(rows[0].String(0));
 }
+Json ArchiveContext(MySqlConnection& db,const std::string& project,uint64_t revision) {
+    try {
+        const auto policy=ProjectService::ApprovedArchivePolicy(db,project,revision);
+        if(policy["targets"].empty()) throw AppError(409,"task_scope_changed","task archive targets are unavailable");
+        return {{"revision",revision},{"targets",policy["targets"]}};
+    } catch(const AppError& error) {
+        if(error.http_status==404 || error.http_status==409)
+            throw AppError(409,"task_scope_changed","task archive targets are unavailable");
+        throw;
+    }
+}
+Json TaskArchive(MySqlConnection& db,const std::string& task) {
+    const auto rows=db.Query("SELECT archive_context FROM agent_tasks WHERE id=? FOR SHARE",{SqlValue(task)});
+    if(rows.empty()) Missing();
+    return rows[0].IsNull(0) ? Json(nullptr) : Json::parse(rows[0].String(0));
+}
 void Scope(MySqlConnection& db,const std::string& project,const std::string& task,
     const std::string& file="",const std::string& version="",bool exclusive=false) {
     const auto checklist=TaskChecklist(db,task);
@@ -64,6 +80,10 @@ void Scope(MySqlConnection& db,const std::string& project,const std::string& tas
         if(item.String(0)==file && item.String(1)==version) contains=true;
     }
     if(!contains) Missing();
+    // Preserve the existing archive lock order: task, fixed files, then policy/directories.
+    const auto archive=TaskArchive(db,task);
+    if(!archive.is_null() && ArchiveContext(db,project,archive.at("revision").get<uint64_t>())!=archive)
+        throw AppError(409,"task_scope_changed","task archive targets are unavailable");
 }
 void FailRun(MySqlConnection& db,const std::string& task,const std::string& code) {
     db.Execute("UPDATE agent_tasks SET state='failed' WHERE id=?",{SqlValue(task)});
@@ -116,6 +136,8 @@ Json Status(MySqlConnection& db,const MySqlRow& row,const std::string& project) 
         {"created_at",row.String(2)},{"updated_at",row.String(3)},{"confirmed_at",row.String(4)},{"versions",scope}};
     const auto checklist=TaskChecklist(db,row.String(0));
     if(!checklist.is_null()) result["handover_checklist_revision"]=checklist["revision"];
+    const auto archive=TaskArchive(db,row.String(0));
+    if(!archive.is_null()) result["archive_policy_revision"]=archive["revision"];
     return result;
 }
 }
@@ -123,11 +145,12 @@ Json Status(MySqlConnection& db,const MySqlRow& row,const std::string& project) 
 nlohmann::json AgentTaskService::Create(const SessionContext& session,const std::string& project,const nlohmann::json& body) {
     Id(project);
     const bool handover=body.is_object() && body.contains("handover_checklist_revision");
-    if(handover) {
-        RequireExactObject(body,{"question","versions","confirm_remote_ai","handover_checklist_revision"});
-        if(!body["handover_checklist_revision"].is_number_unsigned() || body["handover_checklist_revision"].get<uint64_t>()==0 ||
-            body["handover_checklist_revision"].get<uint64_t>()>4294967295ULL)
-            throw AppError(400,"invalid_request","checklist revision is invalid");
+    const bool archive=body.is_object() && body.contains("archive_policy_revision");
+    if(handover || archive) {
+        const char* key=handover ? "handover_checklist_revision" : "archive_policy_revision";
+        RequireExactObject(body,{"question","versions","confirm_remote_ai",key});
+        if(!body[key].is_number_unsigned() || body[key].get<uint64_t>()==0 || body[key].get<uint64_t>()>4294967295ULL)
+            throw AppError(400,"invalid_request","context revision is invalid");
     } else RequireExactObject(body,{"question","versions","confirm_remote_ai"});
     if(!body["question"].is_string() || !body["confirm_remote_ai"].is_boolean() || !body["confirm_remote_ai"].get<bool>() ||
         !body["versions"].is_array() || body["versions"].empty() || body["versions"].size()>100)
@@ -146,15 +169,17 @@ nlohmann::json AgentTaskService::Create(const SessionContext& session,const std:
         if(!versions.emplace(file,version).second) throw AppError(400,"invalid_request","duplicate scope file");
     }
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
-    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
+    projects_.RequireRole(db,session.user_id,project,archive ? Role::Editor : Role::Reader); LockQueue(db);
     const auto checklist=handover ? Checklist(db,project,body["handover_checklist_revision"].get<uint64_t>()) : Json(nullptr);
     if(db.Query("SELECT id FROM agent_tasks WHERE state IN ('pending','running') LIMIT 100 FOR UPDATE").size()>=100)
         throw AppError(429,"agent_busy","agent task queue is full",true);
     for(const auto& item:versions) if(!Allowed(db,project,item.first,item.second)) Missing();
+    const auto targets=archive ? ArchiveContext(db,project,body["archive_policy_revision"].get<uint64_t>()) : Json(nullptr);
     const auto id=GenerateId();
-    db.Execute("INSERT INTO agent_tasks(id,owner_user_id,project_id,question,handover_context) VALUES (?,?,?,?,?)",
+    db.Execute("INSERT INTO agent_tasks(id,owner_user_id,project_id,question,handover_context,archive_context) VALUES (?,?,?,?,?,?)",
         {SqlValue(id),SqlValue(session.user_id),SqlValue(project),SqlValue(question),
-         checklist.is_null() ? SqlValue::Null() : SqlValue(checklist.dump())});
+         checklist.is_null() ? SqlValue::Null() : SqlValue(checklist.dump()),
+         targets.is_null() ? SqlValue::Null() : SqlValue(targets.dump())});
     for(const auto& item:versions)
         db.Execute("INSERT INTO agent_task_versions(task_id,project_id,file_id,version_id) VALUES (?,?,?,?)",
             {SqlValue(id),SqlValue(project),SqlValue(item.first),SqlValue(item.second)});
@@ -216,6 +241,15 @@ nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const st
         db.Execute("UPDATE agent_runs SET report_operation_id=? WHERE task_id=?",{SqlValue(operation),SqlValue(task)});
         result["report_operation_id"]=operation;
     }
+    auto archive=TaskArchive(db,task);
+    if(!archive.is_null()) {
+        archive["sources"]=Json::array();
+        for(const auto& item:db.Query("SELECT a.file_id,a.version_id,f.directory_id FROM agent_task_versions a "
+            "JOIN files f ON f.id=a.file_id WHERE a.task_id=? ORDER BY a.file_id FOR SHARE",{SqlValue(task)}))
+            archive["sources"].push_back({{"file_id",item.String(0)},{"version_id",item.String(1)},
+                {"source_directory_id",item.String(2)}});
+        result["archive_context"]=archive;
+    }
     if(result.dump().size()>64000) {
         FailRun(db,task,"budget_exhausted"); transaction.Commit();
         throw AppError(409,"budget_exhausted","task context exceeds the response budget");
@@ -224,7 +258,9 @@ nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const st
 }
 nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const std::string& project,const std::string& task,const Json& body) {
     const bool handover=body.is_object() && body.contains("handover_checklist_revision");
+    const bool archive=body.is_object() && body.contains("archive_policy_revision");
     if(handover) RequireExactObject(body,{"tool_request_ids","handover_checklist_revision"});
+    else if(archive) RequireExactObject(body,{"tool_request_ids","archive_policy_revision"});
     else RequireExactObject(body,{"tool_request_ids"});
     const auto invalid=[] { throw AppError(400,"invalid_source_receipt","model source receipts are invalid"); };
     if(!body["tool_request_ids"].is_array() || body["tool_request_ids"].size()>64) invalid();
@@ -241,6 +277,10 @@ nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const st
     if(handover==checklist.is_null() || (handover && (!body["handover_checklist_revision"].is_number_unsigned() ||
         body["handover_checklist_revision"]!=checklist["revision"])))
         throw AppError(400,"invalid_request","checklist acknowledgment is invalid");
+    const auto targets=TaskArchive(db,task);
+    if(archive==targets.is_null() || (archive && (!body["archive_policy_revision"].is_number_unsigned() ||
+        body["archive_policy_revision"]!=targets["revision"])))
+        throw AppError(400,"invalid_request","archive acknowledgment is invalid");
     const auto run=Run(db,task); Deadline(db,transaction,task,run); LiveScope(db,transaction,project,task);
     if(run.UInt64(0)>=8) {
         FailRun(db,task,"budget_exhausted"); transaction.Commit();

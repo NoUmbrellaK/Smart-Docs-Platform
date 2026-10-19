@@ -1,0 +1,80 @@
+2026-10-19T17:14:55+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k test_archive -v.
+2026-10-19T17:14:56+0800 aliyun-lou python[828800]: test_archive_malformed_or_mixed_context_never_reaches_model (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:14:57+0800 aliyun-lou python[828800]: test_archive_mixed_batch_never_dispatches_proposal (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:14:57+0800 aliyun-lou python[828800]: test_archive_output_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:14:58+0800 aliyun-lou python[828800]: test_archive_proposal_is_terminal_wait_not_completion (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: test_archive_uncertain_uncommitted_write_is_unknown_and_not_overwritten (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: test_archive_wrong_policy_never_dispatches_proposal (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ======================================================================
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: FAIL: test_archive_malformed_or_mixed_context_never_reaches_model (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ----------------------------------------------------------------------
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: Traceback (most recent call last):
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self._callMaybeAsync(method)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return future.result()
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     ret = await awaitable
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 183, in test_archive_malformed_or_mixed_context_never_reaches_model
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self.assertEqual((await self.run_model(model))['error_code'],'dependency_failed')
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: AssertionError: 'model_invalid' != 'dependency_failed'
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: - model_invalid
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: + dependency_failed
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ======================================================================
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: FAIL: test_archive_output_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ----------------------------------------------------------------------
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: Traceback (most recent call last):
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self._callMaybeAsync(method)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return future.result()
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     ret = await awaitable
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 197, in test_archive_output_budget_reaches_real_provider_adapter
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self.assertEqual(outcome['state'],'waiting_confirmation')
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: AssertionError: 'failed' != 'waiting_confirmation'
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: - failed
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: + waiting_confirmation
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ======================================================================
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: FAIL: test_archive_proposal_is_terminal_wait_not_completion (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ----------------------------------------------------------------------
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: Traceback (most recent call last):
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self._callMaybeAsync(method)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return future.result()
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     ret = await awaitable
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 154, in test_archive_proposal_is_terminal_wait_not_completion
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self.assertEqual(outcome['state'],'waiting_confirmation'); self.assertEqual(len(seen),1)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: AssertionError: 'failed' != 'waiting_confirmation'
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: - failed
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: + waiting_confirmation
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ======================================================================
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: FAIL: test_archive_uncertain_uncommitted_write_is_unknown_and_not_overwritten (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ----------------------------------------------------------------------
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: Traceback (most recent call last):
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self._callMaybeAsync(method)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     return future.result()
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     ret = await awaitable
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 164, in test_archive_uncertain_uncommitted_write_is_unknown_and_not_overwritten
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]:     self.assertEqual(outcome['state'],'unknown'); self.assertEqual(self.state,'running')
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: AssertionError: 'failed' != 'unknown'
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: - failed
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: + unknown
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: ----------------------------------------------------------------------
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: Ran 6 tests in 3.207s
+2026-10-19T17:14:59+0800 aliyun-lou python[828800]: FAILED (failures=4)
+2026-10-19T17:14:59+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-unit-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:14:59+0800 aliyun-lou systemd[1]: smartdocs-archive-agent-unit-red.service: Failed with result 'exit-code'.

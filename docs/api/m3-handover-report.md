@@ -1,6 +1,6 @@
 # M3 个人交接报告后端
 
-本增量提供持久化和下载，不等于模型报告质量验收。后续已接入[报告MCP与执行器](m3-report-mcp.md)；网页入口和两个归档MCP工具仍待完成。
+本增量提供持久化和下载，不等于模型报告质量验收。后续已接入[报告MCP与执行器](m3-report-mcp.md)及[归档MCP](m3-archive-mcp.md)；报告网页入口仍待完成。
 每个绑定清单的任务最多保存一份不可变 version=1 的个人草稿；修改内容需新建任务。
 Reader 可保存本人报告；项目管理员也不能读取其他人的报告。没有共享或发布功能。
 
@@ -62,8 +62,8 @@ JSON 中正文是非可信数据，客户端必须按纯文本渲染。Markdown 
 
 `014_handover_reports.sql` 增加运行操作 ID 和 handover_reports 表；唯一键约束每任务/操作最多一份报告，
 复合外键绑定运行与操作，版本固定为 1。旧运行的操作 ID 保留 NULL，不补造报告授权。
-停止应用、worker 和网关，备份数据库及资料，再运行 `scripts/migrate.sh`，成功输出 `schema_version=14`。
-新二进制要求 schema14；不能直接启动于 schema13 或更早数据库。DDL 非整批事务，失败恢复匹配备份，
+当前分支继续增加[归档上下文schema15](m3-archive-agent.md#schema15和部署)。停止应用、worker 和网关，备份数据库及资料，再运行 `scripts/migrate.sh`，成功输出 `schema_version=15`。
+新二进制要求 schema15；不能直接启动于 schema14 或更早数据库。DDL 非整批事务，失败恢复匹配备份，
 不要盲目重放。同步发布二进制及受信调用方；本轮只在隔离库验证，不迁移生产。
 
 证据见[报告后端验证](../evidence/m3/handover-report/README.md)。

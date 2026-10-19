@@ -36,7 +36,7 @@ async def run_session(context, client, model, audit):
             payload=reply.structuredContent if isinstance(reply.structuredContent,dict) else {}
             data=payload.get("data") if isinstance(payload.get("data"),dict) else {}
             status=payload.get("status")
-            if status not in {"success","processing","unavailable","invalid_request","access_denied",
+            if status not in {"success","waiting_confirmation","processing","unavailable","invalid_request","access_denied",
                               "conflict","busy","timeout","dependency_failed"}: status="dependency_failed"
             event={**base,"event":"tool_result","status":status,
                 "duration_ms":int((time.monotonic()-start)*1000),
@@ -53,9 +53,9 @@ async def run_session(context, client, model, audit):
 
 
 def safe_outcome(outcome):
-    if not isinstance(outcome,dict) or outcome.get("state") not in {"pending","running","completed","failed","cancelled","interrupted","unknown"}:
+    if not isinstance(outcome,dict) or outcome.get("state") not in {"pending","running","completed","failed","cancelled","interrupted","unknown","waiting_confirmation","waiting_execution"}:
         return {"state":"unknown","error_code":"dependency_failed"}
-    if outcome["state"]=="completed": return {"state":"completed"}
+    if outcome["state"] in {'completed','waiting_confirmation','waiting_execution'}: return {'state':outcome['state']}
     code=outcome.get("error_code")
     if code not in {"timeout","budget_exhausted","model_invalid","invalid_source","dependency_failed",
                     "scope_changed","repeated_tool_error","access_denied","cancelled"}: code="dependency_failed"
@@ -100,7 +100,7 @@ def main():
     except (Exception,KeyboardInterrupt):
         print(json.dumps({"state":"unknown","error_code":"dependency_failed"})); return 1
     print(json.dumps(outcome))
-    return 0 if outcome.get("state")=="completed" else 1
+    return 0 if outcome.get("state") in {'completed','waiting_confirmation','waiting_execution'} else 1
 
 
 if __name__=="__main__":
