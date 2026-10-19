@@ -1,0 +1,19 @@
+A23 local fixture validation only. No business-task execution, model calls or database.
+Command: python3 -B -m unittest discover -s test/python -p test_agent_benchmark_fixtures.py -v
+Corpus: 16 logical documents, 19 versions; 30 tasks (10 per category), all not_run.
+50 predefined evidence-anchor usages are NOT 50 measured citations.
+Mon Oct 19 14:15:38 UTC 2026
+45520eebb0f835ddbfc979705acfb18f283cb2fa
+Python 3.10.12
+test_fixed_denominator_and_unique_task_inputs (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_handover_keys_and_archive_targets_use_declared_configuration (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_scope_and_oracle_anchors_resolve_without_cross_project_leaks (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_sources_have_real_literal_paragraphs_and_no_duplicate_versions (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+OK
+5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228  test/fixtures/agent-p0/corpus.json
+9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099  test/fixtures/agent-p0/tasks.json
+46118e93fe87c81010ede4d26660aab16808a8cf16c573f2ede95a905c45198c  test/python/test_agent_benchmark_fixtures.py
