@@ -25,6 +25,8 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 截至 `b43fc71` 的[当前阶段门槛与剩余交付核对](./docs/evidence/m3/stage-gate-audit.md)：五工具及归档/报告链路已有实现和独立证据，但真实模型动态改查仍未验收，固定30项只有前置预检，尚无业务完成率或实际引用准确率。先看此页了解当前缺口；下方为历史增量记录，不把旧“待实现”重复当作新任务。
 
+新增[离线结果与引用判定入口](./docs/evidence/m3/benchmark-review/README.md)：保存原始快照和逐次引用，人工分别检查定位与结论支持关系，拒绝漏评、报告错配和修改分母。仅使用标准库，不调用API或自动确认归档；不是实际30项评测结果，M3/P0仍未验收。
+
 当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema16](./docs/api/m3-tool-audit.md#schema16和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema15及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前五工具、分模式有界执行、受控供应商适配器、网页入口及五类后端请求轨迹已接通；真实供应商验证、生产部署、完整MCP/模型审计和固定任务评测仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。

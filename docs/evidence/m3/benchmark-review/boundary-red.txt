@@ -1,0 +1,44 @@
+test_cli_private_exclusive_files_no_raw_output_and_strict_json (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest) ... FAIL
+test_empty_citations_and_denied_admission_remain_explicit (test_benchmark_review.BenchmarkReviewTest) ... ERROR
+test_incomplete_or_inconsistent_assessment_cannot_be_business_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_missing_report_and_removed_changed_or_reordered_rows_are_rejected (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_prepare_preserves_every_occurrence_without_semantic_auto_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids (test_benchmark_review.BenchmarkReviewTest) ... ERROR
+
+======================================================================
+ERROR: test_empty_citations_and_denied_admission_remain_explicit (test_benchmark_review.BenchmarkReviewTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 110, in test_empty_citations_and_denied_admission_remain_explicit
+    self.assertFalse(result['live_provider_declared'])
+KeyError: 'live_provider_declared'
+
+======================================================================
+ERROR: test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids (test_benchmark_review.BenchmarkReviewTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 65, in test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids
+    self.assertFalse(result['live_provider_declared'])
+KeyError: 'live_provider_declared'
+
+======================================================================
+FAIL: test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest) (result=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 116, in test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run
+    with self.subTest(result=result), self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 120, in test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run
+    with self.assertRaises(ValueError): self.tool.prepare(source)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.304s
+
+FAILED (failures=2, errors=2)

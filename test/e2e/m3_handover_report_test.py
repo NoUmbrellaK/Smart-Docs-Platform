@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from m1_http_test import HttpClient, complete, create_upload, data, login, upload_parts
 from m3_handover_context_test import HandoverContextE2E
 from smartdocs import worker
+from benchmark_review import prepare, summarize
 
 
 class HandoverReportE2E(HandoverContextE2E):
@@ -53,6 +54,18 @@ class HandoverReportE2E(HandoverContextE2E):
         self.assertEqual((citation['file_name'],citation['text'],citation['line_start']),('found.txt','Evidence found.txt',1))
         self.assertIn(jobs[0]['version_id'],citation['source_url'])
         self.assertEqual(data(actor.request('GET',path+'/run/result'))['handover_report'],receipt)
+        # Wire-format compatibility only: this synthetic report is NOT an H01 business run.
+        snapshot={'case_id':'H01','run_kind':'transport_fixture',
+            'metadata':{'code_revision':'test-checkout','recorded_at':'contract-test',
+                'environment':'isolated C++/SQL fixture','model':'no model invoked',
+                'evidence_path':'test_report_reader_save_exact_replay_private_read_and_safe_markdown'},
+            'run_result':data(actor.request('GET',path+'/run/result')),'handover_report':saved}
+        review=prepare(snapshot); summary=summarize(snapshot,review)
+        self.assertEqual(summary['citations_total'],1)
+        self.assertEqual(summary['citations_reviewed'],0)
+        self.assertIsNone(summary['business_verdict'])
+        self.assertFalse(summary['execution_verified'])
+        self.assertEqual(review['citations'][0]['citation'],citation)
         self.assertEqual(self.user.request('GET',url).status,404)
         self.assertEqual(self.user.request('GET',url+'/markdown').status,404)
         md=actor.request('GET',url+'/markdown')
