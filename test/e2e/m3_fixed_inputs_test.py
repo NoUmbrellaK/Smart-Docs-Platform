@@ -3,6 +3,7 @@
 Only disposable MySQL is allowed by WorkerE2E. No provider/runner is imported.
 Preflight runs are cancelled, never confirmed, executed, or counted as successes.
 """
+import argparse
 import hashlib
 import json
 import unittest
@@ -29,7 +30,40 @@ class FixedInputsE2E(ArchivePreviewE2E):
         if data(self.user.request('GET', path))['state'] in ('pending', 'running'):
             data(self.user.request('POST', path + '/cancel'))
 
-    def preflight(self, case):
+    def pending_case(self, case):
+        self.assertTrue(callable(getattr(self, 'prepare_case', None)),
+                        'fresh pending fixture entrypoint not implemented')
+        prepared = self.prepare_case(case)
+        self.assertEqual(prepared['admission_http'], {'Q08': 404, 'Q09': 404, 'A09': 403}.get(case['id'], 201))
+        task, actor, path = prepared['task'], prepared['actor'], prepared['path']
+        if task is not None:
+            self.assertEqual(task['state'], 'pending')
+            self.assertEqual(data(actor.request('GET', path))['state'], 'pending')
+            self.assertCountEqual(task['versions'], [pair(prepared['loaded'][ref]) for ref in case['scope']])
+            self.assertEqual(self.user.request('GET', path).status, 404)
+        else:
+            self.assertIsNone(path)
+            self.assertEqual(data(actor.request('GET', self.tasks_path()))['items'], [])
+        # Not even a run/start, metadata search or model source admission has happened.
+        for table in ('agent_runs', 'agent_tool_calls', 'archive_plans', 'archive_decisions', 'handover_reports'):
+            self.assertEqual(self.count('SELECT COUNT(*) FROM ' + table), 0, table)
+        if case['id'] == 'H03':
+            self.assertEqual(prepared['mapping']['deployment@2']['parse_state'], 'pending')
+            self.assertEqual(prepared['mapping']['deployment@2']['chunks'], [])
+        if case['id'] == 'H05':
+            self.assertEqual(prepared['upload_order'], case['present'])
+            self.assertEqual(len(task['versions']), 11)
+        print(json.dumps({'case': case['id'], 'pending_setup': 'passed', 'business_task': 'not_run',
+            'admission_http': prepared['admission_http'], 'state': task['state'] if task else 'rejected',
+            'agent_runs': 0, 'agent_tool_calls': 0, 'model_calls': 0,
+            'archive_plans': 0, 'archive_decisions': 0, 'handover_reports': 0}, ensure_ascii=False), flush=True)
+
+    def prepare_case(self, case):
+        """Load one frozen case and return its untouched task plus owner client.
+
+        Only the caller may claim/run it. Cleanup cancels unfinished tasks; returned
+        clients carry private cookies and must never be logged or sent to a model.
+        """
         projects = {'alpha': self.project, 'beta': data(self.user.request(
             'POST', '/api/v1/projects', {'name': 'Synthetic beta ' + case['id']}), 201)}
         directories = {}
@@ -139,13 +173,26 @@ class FixedInputsE2E(ArchivePreviewE2E):
         response = actor.request('POST', self.tasks_path(), body)
         expected_status = {'Q08': 404, 'Q09': 404, 'A09': 403}.get(case['id'], 201)
         self.assertEqual(response.status, expected_status, response.body)
-        metadata_pages = []
+        task = path = None
         if expected_status == 201:
             task = data(response, 201)
             path = self.tasks_path() + '/' + task['id']
             self.addCleanup(lambda: data(actor.request('POST', path + '/cancel')))
             self.assertCountEqual(task['versions'], body['versions'])
             self.assertEqual(self.user.request('GET', path).status, 404)
+        else:
+            self.assertEqual(data(actor.request('GET', self.tasks_path()))['items'], [])
+        return {'actor': actor, 'task': task, 'path': path, 'admission_http': response.status,
+                'body': body, 'checklist': checklist, 'policy': policy, 'loaded': loaded,
+                'mapping': mapping, 'upload_order': ordered}
+
+    def preflight(self, case):
+        prepared = self.prepare_case(case)
+        actor, task, path = (prepared[key] for key in ('actor', 'task', 'path'))
+        body, checklist, policy = (prepared[key] for key in ('body', 'checklist', 'policy'))
+        loaded, mapping = prepared['loaded'], prepared['mapping']
+        metadata_pages = []
+        if task is not None:
             started = data(actor.request('POST', path + '/run/start'))
             if case['id'] == 'Q03':
                 empty = data(actor.request('POST', path + '/tools/search',
@@ -173,31 +220,37 @@ class FixedInputsE2E(ArchivePreviewE2E):
                 self.assertEqual(metadata_pages, [10, 1])
             self.assertEqual(data(actor.request('GET', path + '/run/result'))['model_calls'], 0)
             data(actor.request('POST', path + '/cancel'))
-        else:
-            self.assertEqual(data(actor.request('GET', self.tasks_path()))['items'], [])
 
         # Global zero counts in this disposable suite prove no preflight ran business writes/models.
         self.assertEqual(self.count('SELECT COALESCE(SUM(model_calls),0) FROM agent_runs'), 0)
         for table in ('archive_plans', 'archive_decisions', 'handover_reports'):
             self.assertEqual(self.count('SELECT COUNT(*) FROM ' + table), 0)
         print(json.dumps({'case': case['id'], 'preflight': 'passed', 'business_task': 'not_run',
-            'admission_http': response.status, 'model_calls': 0, 'metadata_page_sizes': metadata_pages,
-            'upload_order': ordered, 'fixture_mapping': mapping}, ensure_ascii=False), flush=True)
+            'admission_http': prepared['admission_http'], 'model_calls': 0, 'metadata_page_sizes': metadata_pages,
+            'upload_order': prepared['upload_order'], 'fixture_mapping': mapping}, ensure_ascii=False), flush=True)
 
 
-def fixture_test(case):
+def fixture_test(case, pending=False):
     def test(self):
-        self.preflight(case)
+        if pending:
+            self.pending_case(case)
+        else:
+            self.preflight(case)
     return test
 
 
 for case in TASKS:
     setattr(FixedInputsE2E, 'test_fixed_' + case['id'], fixture_test(case))
+    setattr(FixedInputsE2E, 'test_pending_' + case['id'], fixture_test(case, pending=True))
 
 
 if __name__ == '__main__':
-    print(json.dumps({'kind': 'fixture_preflight_only', 'business_tasks_executed': 0,
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pending-only', action='store_true', help='verify untouched pending tasks; never start runs')
+    args = parser.parse_args()
+    print(json.dumps({'kind': 'fixture_pending_only' if args.pending_only else 'fixture_preflight_only', 'business_tasks_executed': 0,
         'sha256': {name: hashlib.sha256((FIXTURES / name).read_bytes()).hexdigest()
                    for name in ('corpus.json', 'tasks.json')}}), flush=True)
-    suite = unittest.TestSuite(FixedInputsE2E('test_fixed_' + case['id']) for case in TASKS)
+    prefix = 'test_pending_' if args.pending_only else 'test_fixed_'
+    suite = unittest.TestSuite(FixedInputsE2E(prefix + case['id']) for case in TASKS)
     raise SystemExit(not unittest.TextTestRunner(verbosity=2, failfast=True).run(suite).wasSuccessful())

@@ -1,0 +1,39 @@
+2026-10-19T23:41:01+08:00
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-m3-fixed-pending-red.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-fixed-pending-green.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-fixed-pending-regression.service
+ActiveState=inactive
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1999         348           3        1146        1228
+Swap:              0           0           0
+active
+58f98ba4c1a3f0afd13eef901b96c28eca18e82321c7013dd0a54431a0806dc6  test/e2e/m3_fixed_inputs_test.py
+9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099  test/fixtures/agent-p0/tasks.json
+5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228  test/fixtures/agent-p0/corpus.json

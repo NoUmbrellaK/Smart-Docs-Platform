@@ -80,6 +80,23 @@ python3 -B -m unittest discover -s test/python -p test_agent_benchmark_fixtures.
 
 ## 隔离库前置数据预检（不是业务评测）
 
+装载与预检现在可分开：`FixedInputsE2E.prepare_case(case)` 只装载原冻结资料、创建任务并返回
+`actor/task/path/admission_http/body/checklist/policy/loaded/mapping/upload_order`。
+成功任务保持pending，不领取、不搜索任务资料、不准入模型上下文；Q08/Q09/A09仍按预期拒绝。
+`actor`含本地认证Cookie，不能打印、序列化、传给模型或提交仓库；`mapping`和冻结判据仅供测试核对。
+后续执行驱动须在同一测试生命周期内使用实际owner和服务端task ID，不能把这些返回值当作模型参数。
+测试cleanup仍会取消未完成任务，结束后没有持久待执行池；正式评测必须重新创建资料和任务。
+
+`--pending-only` 检查全部30项装载的上述边界，随后清理；无此参数仍运行既有领取/分页预检。
+两种模式分别使用新的隔离数据库，禁止复用上一轮的读取/来源台账：
+
+```sh
+# 仍须通过下述共享资源限额执行；不调用模型。
+scripts/test-with-mysql.sh -- python -B test/e2e/m3_fixed_inputs_test.py --pending-only
+```
+
+这是数据准备入口，不是实际业务运行驱动或真实模型动态决策验收。
+
 `test/e2e/m3_fixed_inputs_test.py` 复用真实C++上传/版本/权限/任务接口与本地解析worker，
 每项创建新的alpha/beta项目及editor/reader身份（套件共用独立admin账号）。仅允许既有
 `scripts/test-with-mysql.sh` 创建的临时数据库；不应直接对业务数据库运行。

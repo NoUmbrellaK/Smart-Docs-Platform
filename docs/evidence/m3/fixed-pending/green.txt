@@ -1,0 +1,86 @@
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+2026-10-19T23:34:04+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_fixed_inputs_test.py --pending-only.
+2026-10-19T23:34:04+0800 aliyun-lou test-with-mysql.sh[907235]: 2026-10-19T15:34:04.576454Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 907235
+2026-10-19T23:34:04+0800 aliyun-lou test-with-mysql.sh[907235]: 2026-10-19T15:34:04.580869Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T23:34:19+0800 aliyun-lou test-with-mysql.sh[907235]: 2026-10-19T15:34:19.899254Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T23:34:27+0800 aliyun-lou test-with-mysql.sh[907235]: 2026-10-19T15:34:27.660880Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T23:35:16+0800 aliyun-lou test-with-mysql.sh[907541]: schema_version=16
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T23:35:44+0800 aliyun-lou test-with-mysql.sh[907640]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T23:35:45+0800 aliyun-lou test-with-mysql.sh[907825]: {"kind": "fixture_pending_only", "business_tasks_executed": 0, "sha256": {"corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228", "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"}}
+2026-10-19T23:35:48+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q01 (__main__.FixedInputsE2E) ... {"case": "Q01", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:48+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:50+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q02 (__main__.FixedInputsE2E) ... {"case": "Q02", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:50+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:51+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q03 (__main__.FixedInputsE2E) ... {"case": "Q03", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:51+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:52+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q04 (__main__.FixedInputsE2E) ... {"case": "Q04", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:52+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:53+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q05 (__main__.FixedInputsE2E) ... {"case": "Q05", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:53+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:54+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q06 (__main__.FixedInputsE2E) ... {"case": "Q06", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:54+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:56+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q07 (__main__.FixedInputsE2E) ... {"case": "Q07", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:56+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:57+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q08 (__main__.FixedInputsE2E) ... {"case": "Q08", "pending_setup": "passed", "business_task": "not_run", "admission_http": 404, "state": "rejected", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:57+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:35:59+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q09 (__main__.FixedInputsE2E) ... {"case": "Q09", "pending_setup": "passed", "business_task": "not_run", "admission_http": 404, "state": "rejected", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:35:59+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:01+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_Q10 (__main__.FixedInputsE2E) ... {"case": "Q10", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:01+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:02+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A01 (__main__.FixedInputsE2E) ... {"case": "A01", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:02+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:04+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A02 (__main__.FixedInputsE2E) ... {"case": "A02", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:04+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:05+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A03 (__main__.FixedInputsE2E) ... {"case": "A03", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:05+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:07+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A04 (__main__.FixedInputsE2E) ... {"case": "A04", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:07+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:09+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A05 (__main__.FixedInputsE2E) ... {"case": "A05", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:09+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:10+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A06 (__main__.FixedInputsE2E) ... {"case": "A06", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:10+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:12+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A07 (__main__.FixedInputsE2E) ... {"case": "A07", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:12+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:14+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A08 (__main__.FixedInputsE2E) ... {"case": "A08", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:14+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:15+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A09 (__main__.FixedInputsE2E) ... {"case": "A09", "pending_setup": "passed", "business_task": "not_run", "admission_http": 403, "state": "rejected", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:15+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:16+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_A10 (__main__.FixedInputsE2E) ... {"case": "A10", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:17+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:20+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H01 (__main__.FixedInputsE2E) ... {"case": "H01", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:20+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:23+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H02 (__main__.FixedInputsE2E) ... {"case": "H02", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:23+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:27+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H03 (__main__.FixedInputsE2E) ... {"case": "H03", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:27+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:30+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H04 (__main__.FixedInputsE2E) ... {"case": "H04", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:30+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:36+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H05 (__main__.FixedInputsE2E) ... {"case": "H05", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:36+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:40+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H06 (__main__.FixedInputsE2E) ... {"case": "H06", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:40+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:44+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H07 (__main__.FixedInputsE2E) ... {"case": "H07", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:44+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:46+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H08 (__main__.FixedInputsE2E) ... {"case": "H08", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:46+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:49+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H09 (__main__.FixedInputsE2E) ... {"case": "H09", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:49+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:51+0800 aliyun-lou test-with-mysql.sh[907825]: test_pending_H10 (__main__.FixedInputsE2E) ... {"case": "H10", "pending_setup": "passed", "business_task": "not_run", "admission_http": 201, "state": "pending", "agent_runs": 0, "agent_tool_calls": 0, "model_calls": 0, "archive_plans": 0, "archive_decisions": 0, "handover_reports": 0}
+2026-10-19T23:36:51+0800 aliyun-lou test-with-mysql.sh[907825]: ok
+2026-10-19T23:36:51+0800 aliyun-lou test-with-mysql.sh[907825]: ----------------------------------------------------------------------
+2026-10-19T23:36:51+0800 aliyun-lou test-with-mysql.sh[907825]: Ran 30 tests in 66.492s
+2026-10-19T23:36:51+0800 aliyun-lou test-with-mysql.sh[907825]: OK
+2026-10-19T23:36:55+0800 aliyun-lou systemd[1]: smartdocs-m3-fixed-pending-green.service: Deactivated successfully.
+2026-10-19T23:36:55+0800 aliyun-lou systemd[1]: smartdocs-m3-fixed-pending-green.service: Consumed 14.969s CPU time.
