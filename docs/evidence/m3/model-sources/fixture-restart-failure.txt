@@ -1,0 +1,60 @@
+2026-10-19T14:50:10+0800 aliyun-lou systemd[1]: Started /bin/bash -c make -j1 bin/smartdocs_tests && stdbuf -oL bin/smartdocs_tests --filter=agent_sources && scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_model_sources_test.py && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema && stdbuf -oL bin/smartdocs_tests --filter=auth_project && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=file_mutation && stdbuf -oL bin/smartdocs_tests --filter=authorization'.
+2026-10-19T14:50:11+0800 aliyun-lou bash[803088]: g++ -I. -Icode -Ithird_party -DSMARTDOCS_ENABLE_FAULT_OBSERVER=1 -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP -c test/unit/tool_sources_test.cpp -o build/obj/tests/test/unit/tool_sources_test.o
+2026-10-19T14:50:15+0800 aliyun-lou bash[803088]: g++ -std=c++14 -O2 -g -Wall -Wextra -Wpedantic -MMD -MP build/obj/tests/code/core/crypto.o build/obj/tests/code/core/id.o build/obj/tests/code/core/fault_injector.o build/obj/tests/code/file/range.o build/obj/tests/code/file/file_store.o build/obj/tests/code/file/file_routes.o build/obj/tests/code/file/file_repository.o build/obj/tests/code/file/file_service.o build/obj/tests/code/upload/upload_repository.o build/obj/tests/code/upload/upload_reconciler.o build/obj/tests/code/upload/upload_routes.o build/obj/tests/code/upload/upload_service.o build/obj/tests/code/upload/chunk_body_handler.o build/obj/tests/code/app/application.o build/obj/tests/code/app/config.o build/obj/tests/code/http/router.o build/obj/tests/code/http/httprequest.o build/obj/tests/code/http/httpconn.o build/obj/tests/code/http/httpresponse.o build/obj/tests/code/http/jsonbody.o build/obj/tests/code/processing/processing_routes.o build/obj/tests/code/processing/processing_service.o build/obj/tests/code/processing/worker_routes.o build/obj/tests/code/processing/document_result.o build/obj/tests/code/processing/vector_result.o build/obj/tests/code/processing/document_search.o build/obj/tests/code/log/log.o build/obj/tests/code/buffer/buffer.o build/obj/tests/code/auth/auth_repository.o build/obj/tests/code/auth/auth_service.o build/obj/tests/code/auth/auth_routes.o build/obj/tests/code/timer/heaptimer.o build/obj/tests/code/project/handover_checklist.o build/obj/tests/code/project/project_service.o build/obj/tests/code/project/project_repository.o build/obj/tests/code/project/archive_policy.o build/obj/tests/code/project/project_routes.o build/obj/tests/code/db/schema.o build/obj/tests/code/db/mysql.o build/obj/tests/code/agent/archive_plans.o build/obj/tests/code/agent/agent_tasks.o build/obj/tests/code/agent/tool_sources.o build/obj/tests/code/agent/agent_routes.o build/obj/tests/code/server/webserver.o build/obj/tests/code/server/epoller.o build/obj/tests/test/test_main.o build/obj/tests/test/mysql_test_support.o build/obj/tests/test/unit/file_store_test.o build/obj/tests/test/unit/webserver_socket_test.o build/obj/tests/test/unit/config_test.o build/obj/tests/test/unit/vector_result_test.o build/obj/tests/test/unit/document_result_test.o build/obj/tests/test/unit/core_crypto_test.o build/obj/tests/test/unit/http_request_test.o build/obj/tests/test/unit/baseline_test.o build/obj/tests/test/unit/tool_sources_test.o build/obj/tests/test/unit/range_test.o build/obj/tests/test/unit/timer_test.o build/obj/tests/test/unit/router_test.o build/obj/tests/test/unit/authorization_test.o build/obj/tests/test/unit/upload_validation_test.o build/obj/tests/test/unit/http_response_test.o build/obj/tests/test/unit/threadpool_test.o build/obj/tests/test/integration/file_mutation_test.o build/obj/tests/test/integration/mysql_readiness_test.o build/obj/tests/test/integration/auth_project_test.o build/obj/tests/test/integration/upload_part_test.o build/obj/tests/test/integration/mysql_schema_test.o build/obj/tests/test/integration/file_metadata_test.o build/obj/tests/test/integration/processing_jobs_test.o build/obj/tests/test/integration/mysql_transaction_test.o build/obj/tests/test/integration/upload_recovery_test.o build/obj/tests/test/integration/upload_complete_test.o build/obj/tests/test/integration/file_download_test.o -o bin/smartdocs_tests -pthread -lmysqlclient -lcrypto
+2026-10-19T14:50:17+0800 aliyun-lou bash[803140]: PASS agent_sources_only_fixed_positions_deduplicate_and_ignore_embedded_instructions
+2026-10-19T14:50:17+0800 aliyun-lou bash[803140]: RESULT 1 passed, 0 failed, 0 skipped
+2026-10-19T14:50:29+0800 aliyun-lou bash[803146]: 2026-10-19T06:50:28.809283Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 803146
+2026-10-19T14:50:32+0800 aliyun-lou bash[803146]: 2026-10-19T06:50:32.275768Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T14:50:47+0800 aliyun-lou bash[803146]: 2026-10-19T06:50:47.632781Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T14:50:55+0800 aliyun-lou bash[803146]: 2026-10-19T06:50:55.716024Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T14:51:40+0800 aliyun-lou bash[803295]: schema_version=12
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T14:52:05+0800 aliyun-lou bash[803350]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T14:52:07+0800 aliyun-lou bash[803417]: test_sources_admission_failure_rolls_back_receipts_and_budget (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:08+0800 aliyun-lou bash[803417]: test_sources_database_rejects_invalid_source_and_admission_metadata (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:09+0800 aliyun-lou bash[803417]: test_sources_exact_check_contract_and_no_body_rejected (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:10+0800 aliyun-lou bash[803417]: test_sources_foreign_failed_and_unknown_receipts_are_not_admitted (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:10+0800 aliyun-lou bash[803417]: test_sources_metadata_and_chunks_are_server_derived_and_monotonic (__main__.ModelSourcesE2E) ... ERROR
+2026-10-19T14:52:11+0800 aliyun-lou bash[803417]: test_sources_reader_can_admit_processing_and_unavailable_metadata (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:14+0800 aliyun-lou bash[803417]: test_sources_real_sdk_runner_keeps_uncited_metadata_but_not_hybrid_preflight (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: test_sources_revocation_cancel_and_other_owner_block_admission (__main__.ModelSourcesE2E) ... ok
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: ======================================================================
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: ERROR: test_sources_metadata_and_chunks_are_server_derived_and_monotonic (__main__.ModelSourcesE2E)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: ----------------------------------------------------------------------
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: Traceback (most recent call last):
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 19, in tearDown
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     super().tearDown()
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 74, in tearDown
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     state = self.state(job)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 80, in state
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     def state(self, job): return data(self.user.request("GET", self.job_path(job)))
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 61, in request
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     connection.request(method, path, body=body, headers=request_headers)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 1312, in request
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self._send_request(method, url, body, headers, encode_chunked)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 1358, in _send_request
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self.endheaders(body, encode_chunked=encode_chunked)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 1307, in endheaders
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self._send_output(message_body, encode_chunked=encode_chunked)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 1067, in _send_output
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self.send(msg)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 1005, in send
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self.connect()
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/http/client.py", line 971, in connect
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     self.sock = self._create_connection(
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/socket.py", line 845, in create_connection
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     raise err
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:   File "/usr/lib/python3.10/socket.py", line 833, in create_connection
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]:     sock.connect(sa)
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: ConnectionRefusedError: [Errno 111] Connection refused
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: ----------------------------------------------------------------------
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: Ran 8 tests in 9.959s
+2026-10-19T14:52:15+0800 aliyun-lou bash[803417]: FAILED (errors=1)
+2026-10-19T14:52:19+0800 aliyun-lou systemd[1]: smartdocs-sources-verified.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T14:52:19+0800 aliyun-lou systemd[1]: smartdocs-sources-verified.service: Failed with result 'exit-code'.
+2026-10-19T14:52:19+0800 aliyun-lou systemd[1]: smartdocs-sources-verified.service: Consumed 11.668s CPU time.

@@ -1,0 +1,136 @@
+2026-10-19T14:40:10+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /bin/bash -c source_test_status=0; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_model_sources_test.py || source_test_status=1; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_model_admission_cumulates_receipts_even_without_final_citations test_agent_runner.AgentRunnerTests.test_missing_backend_receipt_prevents_next_model_send test_mcp_read.ReadToolsTests.test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result -v || source_test_status=1; exit "$source_test_status".
+2026-10-19T14:40:11+0800 aliyun-lou test-with-mysql.sh[800120]: 2026-10-19T06:40:11.228565Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 800120
+2026-10-19T14:40:11+0800 aliyun-lou test-with-mysql.sh[800120]: 2026-10-19T06:40:11.234217Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T14:40:26+0800 aliyun-lou test-with-mysql.sh[800120]: 2026-10-19T06:40:26.468605Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T14:40:34+0800 aliyun-lou test-with-mysql.sh[800120]: 2026-10-19T06:40:34.008333Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T14:41:16+0800 aliyun-lou test-with-mysql.sh[800315]: schema_version=11
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T14:41:41+0800 aliyun-lou test-with-mysql.sh[800369]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T14:41:42+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_admission_failure_rolls_back_receipts_and_budget (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:43+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_exact_check_contract_and_no_body_rejected (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:44+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_foreign_failed_and_unknown_receipts_are_not_admitted (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:45+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_metadata_and_chunks_are_server_derived_and_monotonic (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:46+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_real_sdk_runner_keeps_uncited_metadata_but_not_hybrid_preflight (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: test_sources_revocation_cancel_and_other_owner_block_admission (__main__.ModelSourcesE2E) ... FAIL
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_admission_failure_rolls_back_receipts_and_budget (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 114, in test_sources_admission_failure_rolls_back_receipts_and_budget
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(self.check(path, [receipt]).status, 503)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: 400 != 503
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_exact_check_contract_and_no_body_rejected (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 47, in test_sources_exact_check_contract_and_no_body_rejected
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(self.user.request("POST", path+"/run/check").status, 400)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: 200 != 400
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_foreign_failed_and_unknown_receipts_are_not_admitted (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 85, in test_sources_foreign_failed_and_unknown_receipts_are_not_admitted
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual([row["model_call"] for row in self.ledger(task)], [None,None])
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 29, in ledger
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(self.count("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='smart_docs_test' "
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: 0 != 2
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_metadata_and_chunks_are_server_derived_and_monotonic (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 58, in test_sources_metadata_and_chunks_are_server_derived_and_monotonic
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(data(self.check(path, [first])), {"model_calls":1})
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: expected HTTP 200, got 400: {'error': {'code': 'body_not_allowed', 'message': 'body is not supported', 'retryable': False}, 'request_id': '79556a417b3b1e3e16f72ab2f6bd5b97'}
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_real_sdk_runner_keeps_uncited_metadata_but_not_hybrid_preflight (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 151, in test_sources_real_sdk_runner_keeps_uncited_metadata_but_not_hybrid_preflight
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(outcome, {"state":"completed"})
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'completed'}
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: - {'error_code': 'model_invalid', 'state': 'failed'}
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: + {'state': 'completed'}
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ======================================================================
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAIL: test_sources_revocation_cancel_and_other_owner_block_admission (__main__.ModelSourcesE2E)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Traceback (most recent call last):
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_model_sources_test.py", line 96, in test_sources_revocation_cancel_and_other_owner_block_admission
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]:     self.assertEqual(reader.request("POST", path+"/run/check", {"tool_request_ids":[receipt]}).status, 404)
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: AssertionError: 400 != 404
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: ----------------------------------------------------------------------
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: Ran 6 tests in 5.417s
+2026-10-19T14:41:47+0800 aliyun-lou test-with-mysql.sh[800464]: FAILED (failures=6)
+2026-10-19T14:41:48+0800 aliyun-lou test-with-mysql.sh[800488]: test_model_admission_cumulates_receipts_even_without_final_citations (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T14:41:48+0800 aliyun-lou test-with-mysql.sh[800488]: test_missing_backend_receipt_prevents_next_model_send (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... FAIL
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ======================================================================
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: FAIL: test_model_admission_cumulates_receipts_even_without_final_citations (test_agent_runner.AgentRunnerTests)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ----------------------------------------------------------------------
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: Traceback (most recent call last):
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self._callMaybeAsync(method)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return future.result()
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     ret = await awaitable
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 234, in test_model_admission_cumulates_receipts_even_without_final_citations
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self.assertEqual(checks, [{"tool_request_ids":[]}, {"tool_request_ids":receipts[:1]},
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: AssertionError: Lists differ: [None, None, None] != [{'tool_request_ids': []}, {'tool_request_[135 chars]5']}]
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: First differing element 0:
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: None
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: {'tool_request_ids': []}
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: - [None, None, None]
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: + [{'tool_request_ids': []},
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: +  {'tool_request_ids': ['00000000000000000000000000000003']},
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: +  {'tool_request_ids': ['00000000000000000000000000000003',
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: +                        '00000000000000000000000000000005']}]
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ======================================================================
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: FAIL: test_missing_backend_receipt_prevents_next_model_send (test_agent_runner.AgentRunnerTests)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ----------------------------------------------------------------------
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: Traceback (most recent call last):
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self._callMaybeAsync(method)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return future.result()
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     ret = await awaitable
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 245, in test_missing_backend_receipt_prevents_next_model_send
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self.assertEqual((outcome['error_code'],count), ('dependency_failed',1))
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: AssertionError: Tuples differ: ('budget_exhausted', 8) != ('dependency_failed', 1)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: First differing element 0:
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: 'budget_exhausted'
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: 'dependency_failed'
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: - ('budget_exhausted', 8)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: + ('dependency_failed', 1)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ======================================================================
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: FAIL: test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ----------------------------------------------------------------------
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: Traceback (most recent call last):
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self._callMaybeAsync(method)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     return future.result()
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     ret = await awaitable
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_mcp_read.py", line 199, in test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]:     self.assertEqual(result.structuredContent.get('source_request_id'), f'{2:032x}')
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: AssertionError: None != '00000000000000000000000000000002'
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: ----------------------------------------------------------------------
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: Ran 3 tests in 1.699s
+2026-10-19T14:41:49+0800 aliyun-lou test-with-mysql.sh[800488]: FAILED (failures=3)
+2026-10-19T14:41:53+0800 aliyun-lou systemd[1]: smartdocs-sources-red-recheck.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T14:41:53+0800 aliyun-lou systemd[1]: smartdocs-sources-red-recheck.service: Failed with result 'exit-code'.
+2026-10-19T14:41:53+0800 aliyun-lou systemd[1]: smartdocs-sources-red-recheck.service: Consumed 7.673s CPU time.

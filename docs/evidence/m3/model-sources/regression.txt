@@ -1,0 +1,205 @@
+2026-10-19T15:01:41+0800 aliyun-lou systemd[1]: Started /bin/bash -c scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_read_test.py && scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_tool_audit_test.py && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p "test_*.py" -v && /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p "test_*.py" -v.
+2026-10-19T15:01:41+0800 aliyun-lou bash[804597]: 2026-10-19T07:01:41.674197Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 804597
+2026-10-19T15:01:41+0800 aliyun-lou bash[804597]: 2026-10-19T07:01:41.678738Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T15:01:56+0800 aliyun-lou bash[804597]: 2026-10-19T07:01:56.983187Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T15:02:04+0800 aliyun-lou bash[804597]: 2026-10-19T07:02:04.809060Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T15:02:49+0800 aliyun-lou bash[804862]: schema_version=12
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T15:03:13+0800 aliyun-lou bash[804917]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T15:03:14+0800 aliyun-lou bash[804917]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T15:03:19+0800 aliyun-lou bash[805005]: test_mcp_agent_dynamic_read_and_persistent_result (__main__.McpReadE2E) ... Agent local supplier: empty search -> changed query -> exact read -> persisted cited answer PASS
+2026-10-19T15:03:19+0800 aliyun-lou bash[805005]: ok
+2026-10-19T15:03:20+0800 aliyun-lou bash[805005]: test_mcp_agent_revocation_blocks_next_model_request (__main__.McpReadE2E) ... Agent local supplier: revoked real MCP output never enters the next model request PASS
+2026-10-19T15:03:20+0800 aliyun-lou bash[805005]: ok
+2026-10-19T15:03:22+0800 aliyun-lou bash[805005]: test_mcp_persistent_task_scope_cancel_and_restart (__main__.McpReadE2E) ... MCP task: persisted exact scope, no outside names/counts, cancellation and server restart interruption PASS
+2026-10-19T15:03:22+0800 aliyun-lou bash[805005]: ok
+2026-10-19T15:03:24+0800 aliyun-lou bash[805005]: test_mcp_range_reads_text_and_physical_pdf_pages (__main__.McpReadE2E) ... MCP range: real 13-chunk Markdown reconstruction and Chinese physical PDF pages 1/2 PASS
+2026-10-19T15:03:24+0800 aliyun-lou bash[805005]: ok
+2026-10-19T15:03:26+0800 aliyun-lou bash[805005]: test_mcp_stdio_authorization_and_exact_sources (__main__.McpReadE2E) ... MCP stdio: two read tools; real approved search/chunk, internal exclusion, new-version default deny, historical read, revocation PASS
+2026-10-19T15:03:26+0800 aliyun-lou bash[805005]: ok
+2026-10-19T15:03:26+0800 aliyun-lou bash[805005]: ----------------------------------------------------------------------
+2026-10-19T15:03:26+0800 aliyun-lou bash[805005]: Ran 5 tests in 11.126s
+2026-10-19T15:03:26+0800 aliyun-lou bash[805005]: OK
+2026-10-19T15:03:31+0800 aliyun-lou bash[805065]: 2026-10-19T07:03:31.734632Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 805065
+2026-10-19T15:03:31+0800 aliyun-lou bash[805065]: 2026-10-19T07:03:31.739364Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T15:03:46+0800 aliyun-lou bash[805065]: 2026-10-19T07:03:46.952049Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T15:03:54+0800 aliyun-lou bash[805065]: 2026-10-19T07:03:54.984008Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T15:04:37+0800 aliyun-lou bash[805241]: schema_version=12
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T15:05:01+0800 aliyun-lou bash[805295]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T15:05:06+0800 aliyun-lou bash[805365]: test_audit_capacity_concurrent_sequence_and_unknown_is_not_success (__main__.ToolAuditE2E) ... ok
+2026-10-19T15:05:07+0800 aliyun-lou bash[805365]: test_audit_owner_scope_membership_and_read_only_route (__main__.ToolAuditE2E) ... ok
+2026-10-19T15:05:08+0800 aliyun-lou bash[805365]: test_audit_persistence_failure_never_admits_or_returns_source (__main__.ToolAuditE2E) ... ok
+2026-10-19T15:05:09+0800 aliyun-lou bash[805365]: test_audit_real_calls_errors_and_restart_are_persistent_and_redacted (__main__.ToolAuditE2E) ... ok
+2026-10-19T15:05:09+0800 aliyun-lou bash[805365]: ----------------------------------------------------------------------
+2026-10-19T15:05:09+0800 aliyun-lou bash[805365]: Ran 4 tests in 7.631s
+2026-10-19T15:05:09+0800 aliyun-lou bash[805365]: OK
+2026-10-19T15:05:15+0800 aliyun-lou bash[805414]: test_invalid_context_and_missing_key_fail_without_traceback_or_echo (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T15:05:16+0800 aliyun-lou bash[805414]: test_live_module_discovery_is_opt_in_and_never_starts_database (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T15:05:16+0800 aliyun-lou bash[805414]: test_outcome_summary_excludes_untrusted_extras_and_error_text (test_agent_cli.AgentCliTests) ... ok
+2026-10-19T15:05:16+0800 aliyun-lou bash[805414]: test_authoritative_source_rejection_persists_failure_instead_of_stranding_run (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:17+0800 aliyun-lou bash[805414]: test_invalid_tool_is_not_executed_and_repeated_error_stops (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:17+0800 aliyun-lou bash[805414]: test_loop_uses_intermediate_results_and_only_observed_citations (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:18+0800 aliyun-lou bash[805414]: test_lost_completion_response_never_submits_opposite_terminal_outcome (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:18+0800 aliyun-lou bash[805414]: test_missing_backend_receipt_prevents_next_model_send (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:19+0800 aliyun-lou bash[805414]: test_model_admission_cumulates_receipts_even_without_final_citations (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:19+0800 aliyun-lou bash[805414]: test_model_request_budget_stops_without_false_completion (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:20+0800 aliyun-lou bash[805414]: test_oversized_history_stops_before_next_model_call (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:20+0800 aliyun-lou bash[805414]: test_project_debug_scope_never_reaches_runtime_or_model (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:21+0800 aliyun-lou bash[805414]: test_provider_entry_records_dynamic_tool_summary_without_content (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:21+0800 aliyun-lou bash[805414]: test_provider_tool_failure_has_attempt_and_terminal_summary (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:22+0800 aliyun-lou bash[805414]: test_revocation_prevents_next_model_request_and_discards_old_context (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:23+0800 aliyun-lou bash[805414]: test_timeout_and_truncated_model_output_are_failed_not_completed (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:23+0800 aliyun-lou bash[805414]: test_twelve_tool_limit_stops_before_thirteenth_tool (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_uncertain_completion_replays_identical_outcome_before_read_can_overtake_commit (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_unknown_citation_is_rejected_before_result_submission (test_agent_runner.AgentRunnerTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:24+0800 aliyun-lou bash[805414]: test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+2026-10-19T15:05:40+0800 aliyun-lou bash[805414]: test_backend_socket_timeout_is_explicit_without_retry (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:51+0800 aliyun-lou bash[805414]: test_cli_hybrid_socket_deadline_rechecks_keyword_fallback (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:52+0800 aliyun-lou bash[805414]: test_context_and_private_config_reject_untrusted_identity_sources (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:52+0800 aliyun-lou bash[805414]: test_discovery_and_search_bind_identity_and_use_only_remote_route (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:53+0800 aliyun-lou bash[805414]: test_errors_redirects_and_oversized_malformed_payloads_are_sanitized (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:53+0800 aliyun-lou bash[805414]: test_hybrid_configuration_is_not_available_to_model_and_other_modes_do_not_encode (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:54+0800 aliyun-lou bash[805414]: test_hybrid_denied_preflight_never_encodes_or_falls_back_to_other_scope (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:54+0800 aliyun-lou bash[805414]: test_hybrid_encodes_only_query_after_bound_preflight_and_preserves_result (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:55+0800 aliyun-lou bash[805414]: test_hybrid_encoding_failure_rechecks_and_revocation_discards_preflight (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:55+0800 aliyun-lou bash[805414]: test_invalid_and_identity_arguments_never_reach_backend_or_echo_values (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:56+0800 aliyun-lou bash[805414]: test_metadata_state_does_not_claim_unparsed_content_read (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:57+0800 aliyun-lou bash[805414]: test_persistent_task_scope_uses_only_bound_routes_without_fallback (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:57+0800 aliyun-lou bash[805414]: test_range_read_uses_bounded_post_and_preserves_pagination (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:58+0800 aliyun-lou bash[805414]: test_range_rejects_mixed_selectors_and_invalid_bounds_before_http (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:58+0800 aliyun-lou bash[805414]: test_read_preserves_exact_version_chunk_and_rechecks_every_call (test_mcp_read.ReadToolsTests) ... ok
+2026-10-19T15:05:58+0800 aliyun-lou bash[805414]: test_unknown_write_tool_is_refused_without_backend_call (test_mcp_read.ReadToolsTests) ... Tool 'execute_archive_plan' not listed, no validation will be performed
+2026-10-19T15:05:59+0800 aliyun-lou bash[805414]: ok
+2026-10-19T15:05:59+0800 aliyun-lou bash[805414]: ----------------------------------------------------------------------
+2026-10-19T15:05:59+0800 aliyun-lou bash[805414]: Ran 45 tests in 44.405s
+2026-10-19T15:05:59+0800 aliyun-lou bash[805414]: OK
+2026-10-19T15:05:59+0800 aliyun-lou bash[804590]: test_child_environment_does_not_inherit_credentials_or_proxy (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:05:59+0800 aliyun-lou bash[804590]: test_encoder_disables_native_arena_to_limit_retained_memory (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:05:59+0800 aliyun-lou bash[804590]: test_first_stage_timeout_never_starts_inference_and_releases_lock (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:05:59+0800 aliyun-lou bash[804590]: test_input_boundary_rejects_oversize_duplicate_ids_and_invalid_utf8 (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:00+0800 aliyun-lou bash[804590]: test_interrupt_during_either_stage_reaps_child_and_releases_lock (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:00+0800 aliyun-lou bash[804590]: test_malformed_stage_output_is_rejected_before_inference (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:00+0800 aliyun-lou bash[804590]: test_missing_stage_dependency_returns_safe_dependency_error (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:00+0800 aliyun-lou bash[804590]: test_nonmonotonic_counts_do_not_create_over_budget_windows (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:00+0800 aliyun-lou bash[804590]: test_output_validator_rejects_holes_wrong_digest_and_bad_vectors (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_process_group_cleanup_also_terminates_descendants (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_real_stages_run_serially_and_reap_after_second_stage_timeout (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_real_subprocess_timeout_output_limit_and_errors_are_safe (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_second_stage_overrun_cannot_return_success (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_stages_share_deadline_and_lock_until_validated_result (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_tokenizer_stdout_is_bounded_before_json_parsing (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_window_budget_and_unencodable_character_fail (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:01+0800 aliyun-lou bash[804590]: test_windows_cover_unicode_and_tail_without_truncation (test_embeddings.EmbeddingTests) ... ok
+2026-10-19T15:06:02+0800 aliyun-lou bash[804590]: test_child_receives_no_secret_environment_and_ignores_python_injection (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:02+0800 aliyun-lou bash[804590]: test_chinese_pdf_preserves_text_physical_pages_and_unicode_offsets (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:02+0800 aliyun-lou bash[804590]: test_empty_pages_preserve_physical_page_numbers_and_coverage (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:02+0800 aliyun-lou bash[804590]: test_encrypted_unreadable_pdf_fails_but_empty_password_is_readable (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:03+0800 aliyun-lou bash[804590]: test_file_page_text_chunk_and_stream_limits_are_enforced (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_image_only_pdf_is_not_misreported_as_parsed_text (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_invalid_extracted_unicode_has_a_safe_error_not_raw_text (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_kernel_memory_limit_blocks_allocation_in_real_child (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_library_warning_about_missing_or_cyclic_form_cannot_publish_partial_text (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_malformed_pdf_never_returns_success_or_content_in_error (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_missing_pdf_dependency_is_explicit_without_skipping_test (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_nested_compressed_form_streams_are_included_in_page_limit (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_real_child_crash_and_bad_response_are_safe_failures (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:04+0800 aliyun-lou bash[804590]: test_real_timeout_kills_and_reaps_child (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_real_two_page_pdf_uses_physical_pages_and_page_local_offsets (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_resource_and_processing_limits_cannot_be_disabled_or_increased (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_stable_citations_bind_pdf_file_version_content_and_page (test_pdf_parser.PdfParserTest) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_failed_snapshot_does_not_leak_descriptors (test_resident_embeddings.ResidentSnapshotTests) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_snapshot_rejects_symlinks_nonregular_and_oversized_files (test_resident_embeddings.ResidentSnapshotTests) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_verified_snapshot_is_immutable_and_independent_of_source (test_resident_embeddings.ResidentSnapshotTests) ... ok
+2026-10-19T15:06:05+0800 aliyun-lou bash[804590]: test_child_crash_returns_safe_failure_and_removes_listener (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:06+0800 aliyun-lou bash[804590]: test_entrypoint_refuses_unrestricted_network_before_loading (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:06+0800 aliyun-lou bash[804590]: test_existing_path_unsafe_directory_and_shared_lock_refused (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:06+0800 aliyun-lou bash[804590]: test_oversized_or_invalid_child_reply_retires_instance (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:07+0800 aliyun-lou bash[804590]: test_ready_precedes_listen_reuse_and_sigterm_reaps_child (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:07+0800 aliyun-lou bash[804590]: test_slow_client_has_total_deadline_and_invalid_input_never_encodes (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:08+0800 aliyun-lou bash[804590]: test_startup_timeout_and_failure_never_open_listener (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:09+0800 aliyun-lou bash[804590]: test_stopped_native_child_times_out_busy_is_not_queued_and_no_replay (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:10+0800 aliyun-lou bash[804590]: test_systemd_ready_notification_follows_model_initialization (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_total_deadline_kills_model_and_stopped_transient_tokenizer (test_resident_service.ResidentServiceTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_denied_preflight_never_encodes (test_search.SearchTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_encodes_query_only_after_backend_authorization (test_search.SearchTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_encoding_failure_rechecks_backend_instead_of_returning_stale_preflight (test_search.SearchTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_model_arguments_cannot_supply_mode_vector_or_identity (test_search.SearchTests) ... ok
+2026-10-19T15:06:11+0800 aliyun-lou bash[804590]: test_permission_revoked_during_encoding_is_not_hidden_by_preflight (test_search.SearchTests) ... ok
+2026-10-19T15:06:12+0800 aliyun-lou bash[804590]: test_bad_origin_host_cookie_never_reaches_backend_or_encoder (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:13+0800 aliyun-lou bash[804590]: test_config_disallows_remote_plaintext_and_untrusted_origin_components (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:13+0800 aliyun-lou bash[804590]: test_degraded_query_forwards_only_session_and_fixed_origin_and_rechecks (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:14+0800 aliyun-lou bash[804590]: test_denied_backend_never_encodes_and_does_not_leak_error (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:15+0800 aliyun-lou bash[804590]: test_limits_body_route_and_media_type (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:16+0800 aliyun-lou bash[804590]: test_malformed_oversized_or_redirected_backend_is_sanitized_unavailable (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:17+0800 aliyun-lou bash[804590]: test_rejects_ambiguous_http_framing_and_duplicate_origin (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:18+0800 aliyun-lou bash[804590]: test_rejects_invalid_body_identity_mode_vectors_and_duplicate_keys (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:19+0800 aliyun-lou bash[804590]: test_revocation_after_encoding_returns_error_not_stale_preflight (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_two_slow_connections_bound_threads_and_third_is_rejected (test_search_http.SearchHttpTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_binary_controls_are_rejected_but_tab_is_kept (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_byte_character_and_chunk_limits_fail_without_partial_result (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_chinese_long_line_splits_by_characters_without_loss (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_empty_or_whitespace_only_document_is_not_success (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_invalid_identifiers_data_and_limits_are_rejected (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_invalid_limits_fail_early_including_bool_and_float (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_invalid_utf8_is_not_silently_replaced (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_markdown_instructions_and_whitespace_remain_plain_text (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_pdf_and_unknown_formats_are_not_misreported_as_text_success (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_source_hash_is_of_original_bytes_not_normalized_text (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_stable_ids_bind_file_version_source_and_character_range (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_trailing_newlines_do_not_invent_empty_tail_chunk_or_page (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_utf8_bom_and_newlines_keep_exact_source_locations (test_text_parser.TextParserTest) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_bad_oversized_crash_and_safe_errors_never_return_partial_tokens (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_constructor_retains_only_sealed_fds_and_close_is_idempotent (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_invalid_input_does_not_spawn (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_native_stop_times_out_and_is_reaped (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_real_child_rejects_non_model_sealed_bytes (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_sealed_descriptors_only_environment_and_reaping_before_result (test_transient_tokenizer.TransientTokenizerTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_entrypoint_refuses_missing_kernel_network_restriction (test_vector_worker.EncodingServiceTests) ... ok
+2026-10-19T15:06:20+0800 aliyun-lou bash[804590]: test_stdio_service_bounds_input_and_sanitizes_errors (test_vector_worker.EncodingServiceTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_bad_batch_fails_before_encoding_or_publication (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_changed_batch_total_fails_before_more_encoding (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_elapsed_connect_deadline_prevents_sending_query (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_encoder_failure_and_invalid_result_do_not_publish (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_idle_and_malformed_claim_never_encode_or_fetch (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_invalid_failure_ack_also_exits (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_misleading_ack_exits_without_overwriting_uncertain_publication (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_revoked_attempt_stops_before_next_batch_and_transport_uncertainty_exits (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_short_query_deadline_closes_hung_socket_without_retry (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_socket_exchange_validates_results_limits_and_safe_errors (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_two_batches_replay_same_publication_then_finish_only_on_final_ack (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_unsafe_socket_path_refused_without_connection (test_vector_worker.VectorWorkerTests) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_client_rejects_untrusted_host_like_port_or_secret (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_hash_mismatch_and_invalid_text_never_publish (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_local_lock_excludes_second_worker_and_rejects_symlinks (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_malformed_claim_never_becomes_a_path_or_api_call (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_publication_and_failure_replay_exact_body_on_truncated_ack (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_real_pdf_result_has_physical_pages_and_original_hash (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_retry_is_bounded_and_redirects_and_claim_are_not_replayed (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_short_source_response_is_transport_failure_not_corrupt_content (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_text_and_markdown_are_real_local_parser_results (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: ----------------------------------------------------------------------
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: Ran 106 tests in 22.141s
+2026-10-19T15:06:21+0800 aliyun-lou bash[804590]: OK
+2026-10-19T15:06:21+0800 aliyun-lou systemd[1]: smartdocs-sources-regression.service: Deactivated successfully.
+2026-10-19T15:06:21+0800 aliyun-lou systemd[1]: smartdocs-sources-regression.service: Consumed 28.250s CPU time.

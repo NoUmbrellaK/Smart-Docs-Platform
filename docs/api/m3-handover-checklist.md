@@ -44,8 +44,8 @@ true是管理员对本次完整清单的重新批准，身份取自认证会话�
 
 011_handover_checklists.sql新增一表，每项目保存当前修订、items JSON、审批状态和最近请求。
 数据库约束修订大于0、items数组不超过50、批准状态与审批者/时间一致；项目和审批者是外键。
-升级不填造清单、批准、任务或报告。当前C++要求schema11；新二进制不能连接schema10，旧二进制也不能连接schema11。
-先停止应用/worker/网关并备份数据库及文件，再执行scripts/migrate.sh，成功输出schema_version=11。
+升级不填造清单、批准、任务或报告。此为schema11历史增量，当前C++要求[schema12](m3-model-sources.md#schema12和部署)。
+先停止应用/worker/网关并备份数据库及文件，再执行scripts/migrate.sh，成功输出schema_version=12。
 MySQL DDL不是整批原子；失败须恢复匹配备份，不能盲目重放半套DDL。
 本轮只在临时隔离库验证，不执行生产升级。
 

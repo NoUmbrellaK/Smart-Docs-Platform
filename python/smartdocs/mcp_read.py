@@ -134,6 +134,11 @@ def backend_read(context, name, arguments):
         if not isinstance(payload, dict) or not isinstance(payload.get("data"), dict):
             raise ValueError()
         data = payload["data"]
+        if context["scope"] == "task_versions":
+            receipt = payload.get("request_id")
+            if not isinstance(receipt, str) or not re.fullmatch("[0-9a-f]{32}", receipt): raise ValueError()
+            # Internal carrier survives the coordinator's final response only; stripped before MCP data is returned.
+            data = {**data, "_source_request_id": receipt}
         status = "success"
         if name == "read_document_version" and "chunk_id" not in arguments:
             state = data.get("parse_state")
@@ -196,7 +201,10 @@ def create_server(context, encoder=None):
             status, data = "dependency_failed", None
         payload = {"request_id": uuid.uuid4().hex, "task_id": context["task_id"],
                    "duration_ms": max(0, int((time.monotonic()-started)*1000)), "status": status}
-        if data is not None: payload["data"] = data
+        if data is not None:
+            if context["scope"] == "task_versions":
+                payload["source_request_id"] = data.pop("_source_request_id")
+            payload["data"] = data
         else: payload["error"] = {"code": status}
         return CallToolResult(content=[TextContent(type="text", text=json.dumps(payload, ensure_ascii=False))],
                               structuredContent=payload, isError=status not in {"success", "processing"})

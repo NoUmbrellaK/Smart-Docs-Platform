@@ -35,6 +35,7 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.state="pending"; self.calls=0; self.requests=[]; self.result=None; self.denied=False; self.drop_completion=False
         self.delay_completion=False; self.release_completion=threading.Event()
         self.reject_source=False
+        self.receipt=True
         owner=self
         class Receiver(BaseHTTPRequestHandler):
             def log_message(self,*args): pass
@@ -73,7 +74,9 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                 elif self.path.endswith("/tools/read"):
                     payload={"parse_state":"completed","chunks":[{**CITATION,"text":"Public deployment: run documented checks."}]}
                 else: payload={"state":owner.state}
-                data=json.dumps({"data" if status==200 else "error":payload}).encode()
+                envelope={"data" if status==200 else "error":payload}
+                if owner.receipt: envelope["request_id"]=f'{len(owner.requests):032x}'
+                data=json.dumps(envelope).encode()
                 self.send_response(status); self.send_header("Content-Length",str(len(data))); self.end_headers(); self.wfile.write(data)
         self.http=ThreadingHTTPServer(("127.0.0.1",0),Receiver)
         self.thread=threading.Thread(target=self.http.serve_forever,daemon=True); self.thread.start()
@@ -217,3 +220,26 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([e["event"] for e in events],["tool_attempt","tool_result"])
         self.assertEqual(events[-1]["status"],"dependency_failed")
         self.assertNotIn("private-protocol-error",json.dumps(events))
+
+    async def test_model_admission_cumulates_receipts_even_without_final_citations(self):
+        count=0
+        async def model(messages, **kwargs):
+            nonlocal count
+            count+=1
+            if count<3: return reply(calls=[call(ident=f'call_{count}')])
+            return reply(json.dumps({"answer":"Some evidence remains uncertain.","citations":[]}))
+        self.assertEqual(await self.run_model(model), {"state":"completed"})
+        checks=[body for path,body in self.requests if path.endswith('/run/check')]
+        receipts=[f'{index+1:032x}' for index,(path,_) in enumerate(self.requests) if '/tools/' in path]
+        self.assertEqual(checks, [{"tool_request_ids":[]}, {"tool_request_ids":receipts[:1]},
+                                 {"tool_request_ids":receipts}])
+
+    async def test_missing_backend_receipt_prevents_next_model_send(self):
+        self.receipt=False
+        count=0
+        async def model(messages, **kwargs):
+            nonlocal count
+            count+=1
+            return reply(calls=[call(ident=f'call_{count}')])
+        outcome=await self.run_model(model)
+        self.assertEqual((outcome['error_code'],count), ('dependency_failed',1))

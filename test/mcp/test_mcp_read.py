@@ -36,7 +36,8 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
                 body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
                 owner.calls.append((self.command, self.path, dict(self.headers), body))
                 time.sleep(owner.delay)
-                raw = owner.raw if owner.raw is not None else json.dumps(owner.payload).encode()
+                raw = owner.raw if owner.raw is not None else json.dumps(
+                    {"request_id":f'{len(owner.calls):032x}', **owner.payload}).encode()
                 self.send_response(owner.status)
                 self.send_header("Content-Length", str(len(raw)))
                 self.send_header("Location", "http://127.0.0.1:1/secret")
@@ -194,6 +195,10 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
             result=await self.hybrid(encoder)
             self.assertFalse(result.isError)
             self.assertEqual(result.structuredContent["data"],self.payload["data"])
+            if scope == 'task_versions':
+                self.assertEqual(result.structuredContent.get('source_request_id'), f'{2:032x}')
+            else:
+                self.assertNotIn('source_request_id', result.structuredContent)
             self.assertEqual(len(self.calls),2)
             suffix=f"/agent-tasks/{TASK}/tools/search" if scope=="task_versions" else "/remote-ai/search"
             self.assertTrue(all(c[1]==f"/api/v1/projects/{PROJECT}"+suffix for c in self.calls))

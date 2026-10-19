@@ -23,7 +23,7 @@
 FinishToolCall(request,status,duration,data)存来源；CheckRun(session,project,task,body)事务准入回执。
 MCP任务响应顶层source_request_id；runner的check body为累计tool_request_ids。
 
-- [ ] 写失败测试并运行既有schema11副本与Python单测，确认缺失来源协议RED。
+- [x] 写失败测试并运行既有schema11副本与Python单测，确认缺失来源协议RED。
 
 ```python
 response = self.user.request('POST', path+'/tools/search', {'mode':'metadata','query':''})
@@ -32,21 +32,21 @@ self.assertEqual(self.user.request('POST', path+'/run/check', {'tool_request_ids
 self.assertEqual(self.count("SELECT COUNT(*) FROM agent_tool_calls WHERE model_call=1"), 1)
 ```
 
-- [ ] C++从已知响应位置去重ID，source_json与status一起写；check验证完整回执后标记首次model_call。
+- [x] C++从已知响应位置去重ID，source_json与status一起写；check验证完整回执后标记首次model_call。
 
 ```sql
 UPDATE agent_tool_calls SET model_call=COALESCE(model_call,?) WHERE task_id=? AND request_id=?;
 UPDATE agent_runs SET model_calls=model_calls+1 WHERE task_id=?;
 ```
 
-- [ ] MCP只转发最终响应回执；runner收到data必须验证回执，累计后check再调用模型。
+- [x] MCP只转发最终响应回执；runner收到data必须验证回执，累计后check再调用模型。
 
 ```python
 await backend.request('check', {'tool_request_ids': sorted(receipts)})
 ```
 
-- [ ] schema12同步版本断言，改旧C++测试check调用显式空数组；受限构建3个二进制。
-- [ ] 串行运行新增HTTP/SQL和相关C++，独立库运行真实SDK/执行器链路；运行MCP和既有Python单测。
-- [ ] 独立只读审查，修复并复验；保存实际输出/源码指纹/资源检查，更新文档后正常提交推送。
+- [x] schema12同步版本断言，改旧C++测试check调用显式空数组；受限构建3个二进制。
+- [x] 串行运行新增HTTP/SQL和相关C++，独立库运行真实SDK/执行器链路；运行MCP和既有Python单测。
+- [x] 独立只读审查，修复并复验；保存实际输出/源码指纹/资源检查，更新文档；按用户授权正常提交推送。
 
 自审：一条跨层来源链，不能用Python模拟响应代替真实C++来源记录；报告消费尚未交付且明确记载。

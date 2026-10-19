@@ -1,4 +1,5 @@
 #include "agent_tasks.h"
+#include "tool_sources.h"
 #include "core/app_error.h"
 #include "core/id.h"
 #include "db/mysql.h"
@@ -180,7 +181,16 @@ nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const st
     const auto question=db.Query("SELECT question FROM agent_tasks WHERE id=?",{SqlValue(task)})[0].String(0);
     transaction.Commit(); return {{"state","running"},{"question",question}};
 }
-nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const std::string& project,const std::string& task) {
+nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const std::string& project,const std::string& task,const Json& body) {
+    RequireExactObject(body,{"tool_request_ids"});
+    const auto invalid=[] { throw AppError(400,"invalid_source_receipt","model source receipts are invalid"); };
+    if(!body["tool_request_ids"].is_array() || body["tool_request_ids"].size()>64) invalid();
+    std::set<std::string> receipts;
+    for(const auto& id:body["tool_request_ids"]) {
+        if(!id.is_string()) invalid();
+        const auto value=id.get<std::string>(); Id(value);
+        if(!receipts.insert(value).second) invalid();
+    }
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Reader); LockQueue(db);
     if(Task(db,session,project,task).String(1)!="running") throw AppError(409,"task_inactive","task is not running");
@@ -189,6 +199,20 @@ nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const st
         FailRun(db,task,"budget_exhausted"); transaction.Commit();
         throw AppError(409,"budget_exhausted","task budget is exhausted");
     }
+    size_t matched=0;
+    for(const auto& row:db.Query("SELECT request_id,status,source_json IS NOT NULL,model_call FROM agent_tool_calls "
+        "WHERE task_id=? ORDER BY sequence FOR UPDATE",{SqlValue(task)})) {
+        const bool selected=receipts.count(row.String(0));
+        if(!row.IsNull(3) && !selected) invalid();
+        if(selected) {
+            if(!row.Bool(2) || (row.String(1)!="success" && row.String(1)!="processing" && row.String(1)!="unavailable")) invalid();
+            ++matched;
+        }
+    }
+    if(matched!=receipts.size()) invalid();
+    for(const auto& request:receipts)
+        db.Execute("UPDATE agent_tool_calls SET model_call=COALESCE(model_call,?) WHERE task_id=? AND request_id=?",
+            {SqlValue(run.UInt64(0)+1),SqlValue(task),SqlValue(request)});
     db.Execute("UPDATE agent_runs SET model_calls=model_calls+1 WHERE task_id=?",{SqlValue(task)});
     transaction.Commit(); return {{"model_calls",run.UInt64(0)+1}};
 }
@@ -299,10 +323,11 @@ std::string AgentTaskService::BeginToolCall(const SessionContext& session,const 
     transaction.Commit(); return request;
 }
 
-void AgentTaskService::FinishToolCall(const std::string& request,const std::string& status,uint64_t duration) {
+void AgentTaskService::FinishToolCall(const std::string& request,const std::string& status,uint64_t duration,const Json& data) {
+    const auto sources=data.is_null() ? SqlValue::Null() : SqlValue(ExtractToolSources(data).dump());
     auto db=pool_.Acquire();
-    if(db.Execute("UPDATE agent_tool_calls SET status=?,duration_ms=? WHERE request_id=? AND status='unknown'",
-        {SqlValue(status),SqlValue(duration),SqlValue(request)})!=1)
+    if(db.Execute("UPDATE agent_tool_calls SET status=?,duration_ms=?,source_json=? WHERE request_id=? AND status='unknown'",
+        {SqlValue(status),SqlValue(duration),sources,SqlValue(request)})!=1)
         throw AppError(503,"agent_unavailable","tool outcome could not be recorded");
 }
 

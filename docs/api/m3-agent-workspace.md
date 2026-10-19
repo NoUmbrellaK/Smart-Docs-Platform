@@ -55,7 +55,7 @@
 ## 部署与验证
 
 新增静态模块`/js/agent.js`已加入C++精确白名单。部署需同时更新静态资源和二进制，
-当前开发分支要求[schema11](m3-handover-checklist.md#schema11和部署)；没有迁移业务库或启用CLI常驻服务。
+当前开发分支要求[schema12](m3-model-sources.md#schema12和部署)；没有迁移业务库或启用CLI常驻服务。
 沿用原生JS和手机单列布局，按钮至少44px，无新依赖或外部脚本。
 [证据](../evidence/m3/task-ui/README.md)区分替身DOM行为测试、真实浏览器业务接口与
 脚本化回答夹具；不把夹具结果当作真实DeepSeek质量或完整Agent闭环。

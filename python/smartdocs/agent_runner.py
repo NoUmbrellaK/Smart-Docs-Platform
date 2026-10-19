@@ -101,7 +101,7 @@ async def run_task(context, client, model):
     if context["scope"] != "task_versions": raise ValueError("persistent task scope is required")
     backend = RuntimeBackend(context)
     messages = []
-    observed, used_ids, failed_calls = set(), set(), set()
+    observed, used_ids, failed_calls, receipts = set(), set(), set(), set()
     tools = [{"type":"function", "function":{"name":name, "description":DESCRIPTIONS[name], "parameters":schema}}
              for name, schema in SCHEMAS.items()]
     validators = {name:Draft202012Validator(schema) for name, schema in SCHEMAS.items()}
@@ -127,7 +127,7 @@ async def run_task(context, client, model):
         for _ in range(8):
             size = len(encoded({"messages":messages, "tools":tools}))
             if size > 65536 or sent_bytes + size > 524288: raise RunError("budget_exhausted")
-            await bounded(backend.request("check"), 15)
+            await bounded(backend.request("check", {"tool_request_ids":sorted(receipts)}), 15)
             sent_bytes += size
             remaining = min(60, deadline-time.monotonic())
             response = await bounded(model(messages=messages, tools=tools, max_tokens=1024, timeout=remaining))
@@ -184,19 +184,26 @@ async def run_task(context, client, model):
                     if payload.get("status") in {"access_denied", "conflict"}: raise RunError("scope_changed")
                     if payload.get("status") in {"timeout", "dependency_failed", "busy"}: raise RunError("dependency_failed")
                     if payload.get("status") not in {"success", "processing", "unavailable", "invalid_request"}: raise RunError("dependency_failed")
+                    if "data" in payload:
+                        receipt = payload.get("source_request_id")
+                        if (not isinstance(payload["data"], dict) or not isinstance(receipt, str)
+                                or not re.fullmatch("[0-9a-f]{32}", receipt)):
+                            raise RunError("dependency_failed")
+                        receipts.add(receipt)
                     observed.update(sources(payload.get("data")))
                 if payload["status"] not in {"success", "processing"}:
                     signature = (name, raw)
                     if signature in failed_calls: raise RunError("repeated_tool_error")
                     failed_calls.add(signature)
-                messages.append({"role":"tool", "tool_call_id":call["id"], "content":encoded(payload).decode("utf-8")})
+                model_payload = {key:value for key,value in payload.items() if key != "source_request_id"}
+                messages.append({"role":"tool", "tool_call_id":call["id"], "content":encoded(model_payload).decode("utf-8")})
         raise RunError("budget_exhausted")
     except asyncio.CancelledError:
         messages.clear()
         raise
     except Exception as error:
         code = error.code if isinstance(error, RunError) else "timeout" if isinstance(error, asyncio.TimeoutError) else "model_invalid"
-        messages.clear(); observed.clear()
+        messages.clear(); observed.clear(); receipts.clear()
         if completion_body is not None and not (isinstance(error, RunError) and code == "invalid_source"):
             # A cancelled thread await does not stop HTTP. Never race it with an opposite outcome.
             # One identical idempotent replay also resolves failure before the first send.
@@ -225,4 +232,4 @@ async def run_task(context, client, model):
             # Transport uncertainty is not evidence of a committed failure or completion.
             return {"state":"unknown", "error_code":code}
     finally:
-        messages.clear(); observed.clear()
+        messages.clear(); observed.clear(); receipts.clear()

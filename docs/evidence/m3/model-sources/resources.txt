@@ -1,0 +1,46 @@
+2026-10-19 final resource check. Baseline memory.events high=80521, max/oom/oom_kill=0.
+MainPID=0
+ExecMainStatus=0
+Id=smartdocs-sources-regression.service
+ActiveState=inactive
+
+MainPID=0
+ExecMainStatus=0
+Id=smartdocs-sources-green.service
+ActiveState=inactive
+
+MainPID=0
+ExecMainStatus=1
+Id=smartdocs-sources-verified.service
+ActiveState=failed
+
+MainPID=0
+ExecMainStatus=0
+Id=smartdocs-sources-build.service
+ActiveState=inactive
+Oct 19 15:06:21 aliyun-lou bash[804590]: test_unsupported_and_oversized_are_failed_before_source_download (test_worker.WorkerTest) ... ok
+Oct 19 15:06:21 aliyun-lou bash[804590]: test_worker_entrypoint_exists (test_worker.WorkerTest) ... ok
+Oct 19 15:06:21 aliyun-lou bash[804590]: ----------------------------------------------------------------------
+Oct 19 15:06:21 aliyun-lou bash[804590]: Ran 106 tests in 22.141s
+Oct 19 15:06:21 aliyun-lou bash[804590]: OK
+Oct 19 15:06:21 aliyun-lou systemd[1]: smartdocs-sources-regression.service: Deactivated successfully.
+Oct 19 15:06:21 aliyun-lou systemd[1]: smartdocs-sources-regression.service: Consumed 28.250s CPU time.
+MainPID=975
+ActiveState=active
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1756         346           3        1391        1468
+Swap:              0           0           0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256

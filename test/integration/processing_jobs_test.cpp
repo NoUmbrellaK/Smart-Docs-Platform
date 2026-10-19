@@ -209,7 +209,7 @@ TEST_CASE(m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scop
     const auto prefix="/"+task.at("id").get<std::string>();
     CHECK(AgentRequest(app,f,"POST",prefix+"/run/start").at("question")=="检查交接资料");
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/start"),"task_inactive");
-    CHECK(AgentRequest(app,f,"POST",prefix+"/run/check").at("model_calls")==1);
+    CHECK(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}).at("model_calls")==1);
     const auto chunk=TextResult(job).at("chunks")[0];
     Json result={{"answer","部署文档"},{"citations",Json::array({{{"file_id",job.file_id},
         {"version_id",job.version_id},{"chunk_id",chunk.at("chunk_id")}}})}};
@@ -221,7 +221,7 @@ TEST_CASE(m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scop
     auto changed=finish; changed["result"]["answer"]="different";
     CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/finish",changed),"task_conflict");
     CHECK(AgentRequest(app,f,"GET",prefix+"/run/result").at("result")==result);
-    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"task_inactive");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}),"task_inactive");
     { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET remote_ai_policy='internal_only' WHERE id=?",{SqlValue(job.file_id)}); }
     CHECK_THROWS_CODE(AgentRequest(app,f,"GET",prefix+"/run/result"),"task_scope_changed");
     Approve(f,job);
@@ -238,12 +238,12 @@ TEST_CASE(m3_run_model_budget_deadline_cancel_and_restart_block_late_results) {
         const auto id=task.at("id").get<std::string>(), prefix="/"+id;
         AgentRequest(app,f,"POST",prefix+"/run/start");
         if(mode=="budget") {
-            for(int i=0;i<8;++i) CHECK(AgentRequest(app,f,"POST",prefix+"/run/check").at("model_calls")==i+1);
-            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"budget_exhausted");
+            for(int i=0;i<8;++i) CHECK(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}).at("model_calls")==i+1);
+            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}),"budget_exhausted");
             CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="failed");
         } else if(mode=="deadline") {
             auto db=TestDatabase().Acquire(); db.Execute("UPDATE agent_runs SET started_at=UTC_TIMESTAMP(6)-INTERVAL 181 SECOND WHERE task_id=?",{SqlValue(id)});
-            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"budget_exhausted");
+            CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}),"budget_exhausted");
         } else if(mode=="cancel") AgentRequest(app,f,"POST",prefix+"/cancel");
         else { Application restarted(TestAppConfig(f.storage)); }
         CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/finish",{{"status","completed"},
@@ -264,9 +264,9 @@ TEST_CASE(m3_run_checks_all_dependencies_before_first_and_later_model_calls) {
     { auto db=TestDatabase().Acquire(); db.Execute("UPDATE files SET deleted_at=NULL WHERE id=?",{SqlValue(b.file_id)}); }
     task=AgentRequest(app,f,"POST","",body); prefix="/"+task.at("id").get<std::string>();
     AgentRequest(app,f,"POST",prefix+"/run/start");
-    AgentRequest(app,f,"POST",prefix+"/run/check");
+    AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}});
     f.AddJob(b.file_id);
-    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check"),"task_scope_changed");
+    CHECK_THROWS_CODE(AgentRequest(app,f,"POST",prefix+"/run/check",{{"tool_request_ids",nlohmann::json::array()}}),"task_scope_changed");
     CHECK(AgentRequest(app,f,"GET",prefix).at("state")=="failed");
     CHECK(AgentRequest(app,f,"GET",prefix+"/run/result").at("result").is_null());
 }

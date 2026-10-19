@@ -9,12 +9,12 @@
 ## 运行API
 
 前缀`/api/v1/projects/{project_id}/agent-tasks/{task_id}/run`，复用本人任务、
-有效会话、项目reader权限；POST同源；拒绝query，除finish外拒绝正文。
+有效会话、项目reader权限；POST同源；拒绝query，start/result拒绝正文，check/finish要求JSON。
 
 | 路径 | 行为 |
 | --- | --- |
 | POST /start | 仅pending可领取；检查全范围、运行容量，持久running及唯一run；返回state/question。question来自用户此前确认的数据库记录，不能覆盖 |
-| POST /check | 仅已领取running任务；复核全范围和180秒期限，最多8次，先持久递增model_calls再返回许可 |
+| POST /check | 严格JSON `tool_request_ids`累计数组；仅已领取running任务，复核全范围和180秒期限，最多8次；来源回执和model_calls同事务准入，见[来源协议](m3-model-sources.md) |
 | POST /finish | 严格JSON `status/result/error_code`，保存completed回答或failed原因；返回state |
 | GET /result | 返回state、model_calls、result、error_code；已完成回答再次核验整个任务依赖，失败/取消/中断不返回正文 |
 
@@ -81,7 +81,7 @@ Python协程被强制取消时不续跑；进程消失
 ## schema7与验证边界
 
 schema7新增agent_runs，扩展agent_tasks状态，不回填虚构运行；当前C++已要求
-[schema11](m3-handover-checklist.md#schema11和部署)，不可用旧schema10及更早版本直接启动。
+[schema12](m3-model-sources.md#schema12和部署)，不可用旧schema11及更早版本直接启动。
 升级须停C++/worker/网关并备份后运行scripts/migrate.sh；MySQL DDL非整批原子事务，
 中途失败恢复备份，不盲目重放；回退需恢复匹配版本备份。只验证隔离测试库，
 原业务库未升级，不要直接替换旧库上的二进制。

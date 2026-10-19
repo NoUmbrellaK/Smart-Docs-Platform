@@ -87,9 +87,12 @@ void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::s
                 if(operation=="finish") return PrepareJsonBody(head,std::min<uint64_t>(65536,max_json_bytes),[=](const nlohmann::json& body) {
                     return Result(tasks->FinishRun(session,project,task,body),head.keep_alive);
                 });
+                if(operation=="check") return PrepareJsonBody(head,std::min<uint64_t>(4096,max_json_bytes),[=](const nlohmann::json& body) {
+                    return Result(tasks->CheckRun(session,project,task,body),head.keep_alive);
+                });
                 if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
                 return ReadyResponse(Result(operation=="start" ? tasks->StartRun(session,project,task) :
-                    operation=="check" ? tasks->CheckRun(session,project,task) : tasks->GetResult(session,project,task),head.keep_alive));
+                    tasks->GetResult(session,project,task),head.keep_alive));
             });
     }
     router.Add("POST",path,[=](const RequestHead& head,const RouteParams& params) {
@@ -121,7 +124,7 @@ void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::s
                     const auto respond=[&](const std::string& status,int http,nlohmann::json payload) {
                         try {
                             tasks->FinishToolCall(request,status,static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
-                                std::chrono::steady_clock::now()-started).count()));
+                                std::chrono::steady_clock::now()-started).count()),payload.value("data",nlohmann::json(nullptr)));
                         } catch(...) {
                             return HttpResponse::Json(503,{{"request_id",request},{"error",{{"code","agent_unavailable"},
                                 {"message","tool outcome could not be recorded"},{"retryable",false}}}},false);
