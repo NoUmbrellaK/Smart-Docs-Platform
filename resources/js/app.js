@@ -447,7 +447,7 @@ function renderMembers(members, token) {
           state.selectedFileReady ? state.selectedFile : null
         );
         if (synchronized.changed) {
-          agentPanel.invalidate();
+          agentPanel.setProject(synchronized.project.id, synchronized.project.role);
           searchPanel.invalidate();
           processingPanel.reset();
           state.identity = synchronized.identity;
@@ -509,7 +509,7 @@ async function loadProject(project) {
     }
     state.projectReady = true;
     searchPanel.setProject(project.id, state.directories);
-    agentPanel.setProject(project.id);
+    agentPanel.setProject(project.id, project.role);
     agentPanel.refresh();
     applyWriteVisibility();
     renderUploads(uploads.snapshot());
@@ -635,7 +635,7 @@ byId("logout-button").addEventListener("click", async () => {
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
-    agentPanel.setProject(state.projectReady && state.project ? state.project.id : null);
+    agentPanel.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     setStatus("session-error", message);
     setStatus("global-status", "idle");
   });

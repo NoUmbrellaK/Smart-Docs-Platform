@@ -5,7 +5,10 @@ export class AgentPanel {
     this.generation = 0;
     this.listGeneration = 0;
     this.detailGeneration = 0;
+    this.busy = false; // Cancellation lock: only the settled request may release it.
     this.creating = false;
+    this.archiveWriting = false;
+    this.archiveGeneration = 0;
     this.uncertain = false;
     get("agent-form").addEventListener("submit", event => { event.preventDefault(); return this.create(); });
     get("agent-question").addEventListener("input", () => { get("agent-consent").checked = false; });
@@ -28,7 +31,7 @@ export class AgentPanel {
   }
   status(part, text) { this.get(`agent-${part}-status`).textContent = text; }
   controls() {
-    const blocked = !this.project || this.busy || this.creating;
+    const blocked = !this.project || this.busy || this.creating || this.archiveWriting;
     for (const id of ["question", "consent", "new-draft"]) this.get(`agent-${id}`).disabled = blocked;
     this.get("agent-create").disabled = blocked || this.uncertain;
     this.get("agent-refresh").disabled = blocked;
@@ -41,21 +44,22 @@ export class AgentPanel {
     this.get("agent-scope").replaceChildren();
   }
   newDraft() {
-    if (this.creating) return;
+    if (this.creating || this.archiveWriting) return;
     this.uncertain = false;
     this.clearDraft();
     this.status("create", "Select approved current versions in File detail. A new draft does not retry an earlier task.");
     this.controls();
   }
-  setProject(project) {
+  setProject(project, role = "reader") {
     this.project = project;
+    this.role = role;
     this.invalidate();
   }
   invalidate() {
     this.generation += 1;
     this.listGeneration += 1;
     this.detailGeneration += 1;
-    this.busy = false;
+    this.clearArchive();
     this.next = null;
     this.clearDraft();
     this.status("create", this.creating ? "A create request is still in flight; wait and check your tasks." :
@@ -68,7 +72,7 @@ export class AgentPanel {
     this.status("detail", "Select a task to check its current state.");
   }
   addVersion(project, file, version) {
-    if (!this.project || project !== this.project || this.busy || this.creating) return;
+    if (!this.project || project !== this.project || this.busy || this.creating || this.archiveWriting) return;
     if (file.deleted || file.remote_ai_policy !== "remote_ai_allowed" ||
         file.current_version_id !== version.id || !version.remote_ai_approved) {
       this.status("create", "Only an explicitly approved current version can be selected."); return;
@@ -86,14 +90,14 @@ export class AgentPanel {
       const card = this.node("article"); card.className = "task-card";
       card.append(this.node("p", `${item.name} · File ${item.file_id} · Version ${item.version_id}`),
         this.button("Remove from task", () => {
-          if (generation !== this.generation || this.busy || this.creating) return;
+          if (generation !== this.generation || this.busy || this.creating || this.archiveWriting) return;
           this.scope.delete(item.file_id); this.get("agent-consent").checked = false; this.renderScope();
         }));
       return card;
     }));
   }
   async create() {
-    if (!this.project || this.busy || this.creating || this.uncertain) return;
+    if (!this.project || this.busy || this.creating || this.archiveWriting || this.uncertain) return;
     const question = this.get("agent-question").value;
     if (!question.trim() || new TextEncoder().encode(question).length > 4000 ||
         /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(question) ||
@@ -123,13 +127,14 @@ export class AgentPanel {
   }
   clearDetail() {
     this.detailGeneration += 1;
+    this.clearArchive();
     this.get("agent-detail").replaceChildren(); this.get("agent-source").replaceChildren();
     this.get("agent-audit").replaceChildren();
     this.status("audit", "Select a task and load its tool calls; no automatic polling.");
     this.status("detail", "Select a task to check its current state.");
   }
   async refresh(before = "") {
-    if (!this.project || this.busy || this.creating) return;
+    if (!this.project || this.busy || this.creating || this.archiveWriting) return;
     const generation = this.generation, list = ++this.listGeneration, project = this.project;
     this.clearDetail(); this.next = null; this.controls();
     this.get("agent-list").replaceChildren(); this.status("list", "Loading your tasks…");
@@ -153,7 +158,7 @@ export class AgentPanel {
     }
   }
   async view(id) {
-    if (!this.project || this.busy || this.creating) return;
+    if (!this.project || this.busy || this.creating || this.archiveWriting) return;
     this.clearDetail(); const token = this.detailGeneration, project = this.project;
     this.status("detail", "Checking task access…");
     try {
@@ -181,6 +186,8 @@ export class AgentPanel {
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
     box.append(this.button("Refresh task", () => { if (token === this.detailGeneration) return this.view(task.id); }));
     box.append(this.button("Load / refresh tool calls", () => this.audit(project, task.id, token)));
+    box.append(this.button("View archive plan", () => this.loadArchive(project, task.id, token)));
+    box.append(this.button("Check archive receipt", () => this.loadArchive(project, task.id, token, true)));
     if (["pending", "running", "interrupted", "waiting_confirmation", "waiting_execution"].includes(state)) box.append(this.button("Cancel task", () => this.cancel(task.id, token)));
     if (outcome) box.append(this.node("p", `Admitted model requests: ${outcome.model_calls} · Reason: ${outcome.error_code || "none"}. These are not confirmed provider usage or cost.`));
     if (archive) {
@@ -198,8 +205,96 @@ export class AgentPanel {
       box.append(card);
     }
   }
+  clearArchive() {
+    this.archiveGeneration += 1;
+    this.get("agent-archive").replaceChildren();
+    this.status("archive", "Load a plan to review a specific revision, or check its committed receipt.");
+  }
+  async loadArchive(project, id, token, receipt = false) {
+    if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;
+    this.clearArchive(); const request = this.archiveGeneration;
+    const current = () => token === this.detailGeneration && request === this.archiveGeneration;
+    this.status("archive", "Checking access…");
+    try {
+      if (receipt) {
+        const result = await this.api.getArchiveReceipt(project, id);
+        if (current()) this.renderArchiveReceipt(result);
+      } else {
+        const plan = await this.api.getArchivePlan(project, id);
+        if (!current()) return;
+        // Directory names are local UI metadata, never added to model context here.
+        const directories = await this.api.listDirectories(project);
+        if (current()) this.renderArchive(plan, directories.items, project, id, token, request);
+      }
+    } catch (error) {
+      if (current()) { this.clearArchive(); this.status("archive", `${this.errorText(error)} Refresh to recheck access and state.`); }
+    }
+  }
+  renderArchiveReceipt(receipt) {
+    this.get("agent-archive").replaceChildren(
+      this.node("p", `Plan ${receipt.plan_id} · Revision ${receipt.revision} · ${receipt.status}`),
+      this.node("p", `${receipt.moved_count} files archived · Operation ${receipt.operation_id} · Audit ${receipt.audit_id}. This is the committed receipt, not their current location.`));
+    this.status("archive", "Committed archive receipt; no automatic execution or retry.");
+  }
+  renderArchive(plan, directories, project, id, token, request) {
+    const box = this.get("agent-archive"), names = new Map(directories.map(item => [item.id, item.name]));
+    box.replaceChildren(this.node("p", `Plan ${plan.id} · Revision ${plan.revision} · ${plan.state} · Task ${plan.task_state}`),
+      this.node("p", `Revision digest: ${plan.content_sha256}`));
+    for (const item of plan.items) {
+      const card = this.node("article"); card.className = "task-card";
+      card.append(this.node("p", `${item.name} · File ${item.file_id} · Version ${item.version_id}`),
+        this.node("p", `From: ${names.get(item.source_directory_id) || "Directory unavailable"} · ${item.source_directory_id}`),
+        this.node("p", item.target_directory_id ? `To: ${item.target_name} · ${item.target_directory_id}` : "Needs review: no approved target directory."),
+        this.node("p", `Reason: ${item.reason}`));
+      box.append(card);
+    }
+    this.status("archive", "Review every item. Confirmation alone does not move files; execution is a separate action.");
+    if (!["editor", "admin"].includes(this.role)) return;
+    const ready = () => token === this.detailGeneration && request === this.archiveGeneration &&
+      !this.busy && !this.creating && !this.archiveWriting && ["editor", "admin"].includes(this.role);
+    const write = async (execute, decision) => {
+      if (!ready()) return;
+      this.archiveWriting = true; this.clearArchive(); this.controls();
+      const writing = this.archiveGeneration;
+      const current = () => token === this.detailGeneration && writing === this.archiveGeneration;
+      this.status("archive", execute ? "Requesting archive execution…" : "Saving your decision…");
+      try {
+        const result = execute ? await this.api.executeArchivePlan(project, id, {
+          plan_id: plan.id, revision: plan.revision, operation_id: plan.operation_id
+        }) : await this.api.decideArchivePlan(project, id, {
+          plan_id: plan.id, revision: plan.revision, content_sha256: plan.content_sha256, decision
+        });
+        if (!current()) return;
+        if (execute) {
+          this.renderArchiveReceipt(result);
+          this.status("detail", `Task ${id} · Archive committed. Refresh task to load its current state.`);
+        } else this.renderArchive(result, directories, project, id, token, writing);
+      } catch (error) {
+        if (current()) {
+          this.clearArchive();
+          this.status("archive", `${this.errorText(error)} Outcome may be unknown. Check archive receipt or refresh the plan before another explicit action; no automatic retry.`);
+        }
+      } finally { this.archiveWriting = false; this.controls(); }
+    };
+    const actions = this.node("div"); actions.className = "action-row";
+    if (plan.state === "preview" && plan.task_state === "waiting_confirmation") {
+      if (!plan.has_unresolved) {
+        const checkbox = this.node("input"); checkbox.type = "checkbox"; checkbox.checked = false;
+        const label = this.node("label"); label.className = "checkbox-label";
+        label.append(checkbox, this.node("span", `I approve these exact items in revision ${plan.revision}.`));
+        const confirm = this.button("Confirm this revision", () => { if (checkbox.checked) return write(false, "confirm"); });
+        confirm.disabled = true;
+        checkbox.addEventListener("change", () => { confirm.disabled = !checkbox.checked; });
+        box.append(label); actions.append(confirm);
+      }
+      actions.append(this.button("Reject this revision", () => write(false, "reject")));
+    } else if (plan.state === "confirmed" && plan.task_state === "waiting_execution" && plan.executable) {
+      actions.append(this.button("Execute confirmed revision", () => write(true)));
+    } else if (plan.state === "rejected") box.append(this.node("p", "Rejected. A new revision is required before confirmation."));
+    box.append(actions);
+  }
   async audit(project, id, token) {
-    if (token !== this.detailGeneration || this.busy || this.creating) return;
+    if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;
     const request = (this.auditGeneration || 0) + 1; this.auditGeneration = request;
     const current = () => token === this.detailGeneration && request === this.auditGeneration;
     const box = this.get("agent-audit"); box.replaceChildren();
@@ -236,7 +331,7 @@ export class AgentPanel {
     }
   }
   async cancel(id, token) {
-    if (token !== this.detailGeneration || this.busy || this.creating) return;
+    if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;
     const project = this.project, generation = this.generation;
     this.busy = true; this.controls(); this.clearDetail();
     this.status("detail", "Requesting cancellation…");
@@ -247,11 +342,11 @@ export class AgentPanel {
     } catch (error) {
       if (generation === this.generation) this.status("detail", `${this.errorText(error)} Refresh tasks to check actual state; no automatic retry.`);
     } finally {
-      if (generation === this.generation) { this.busy = false; this.controls(); }
+      this.busy = false; this.controls();
     }
   }
   async source(project, id, ref, token) {
-    if (token !== this.detailGeneration || this.busy || this.creating) return;
+    if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;
     const sourceToken = (this.sourceGeneration || 0) + 1; this.sourceGeneration = sourceToken;
     const current = () => token === this.detailGeneration && sourceToken === this.sourceGeneration;
     const box = this.get("agent-source"); box.replaceChildren();

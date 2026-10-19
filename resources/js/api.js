@@ -69,6 +69,13 @@ export const cancelAgentTask = (projectId, taskId) =>
   metadata(`${agentPath(projectId)}/${id(taskId)}/cancel`, { method: "POST" });
 export const getAgentResult = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/run/result`);
 export const getAgentToolCalls = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/tool-calls`);
+const archivePath = (projectId, taskId) => `${agentPath(projectId)}/${id(taskId)}/archive-plan`;
+export const getArchivePlan = (projectId, taskId) => metadata(archivePath(projectId, taskId));
+export const decideArchivePlan = (projectId, taskId, command) =>
+  metadata(`${archivePath(projectId, taskId)}/decision`, { method: "POST", body: command });
+export const executeArchivePlan = (projectId, taskId, command) =>
+  metadata(`${archivePath(projectId, taskId)}/execute`, { method: "POST", body: command });
+export const getArchiveReceipt = (projectId, taskId) => metadata(`${archivePath(projectId, taskId)}/result`);
 export const createProject = (name) =>
   metadata("/projects", { method: "POST", body: { name } });
 

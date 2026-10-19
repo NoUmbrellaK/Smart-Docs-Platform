@@ -1,0 +1,12 @@
+8bfcf66797d8110c4933eecc78735eae9512d4d9
+codex/m3-mcp-agent
+origin	git@github.com:NoUmbrellaK/Smart-Docs-Platform.git (fetch)
+origin	git@github.com:NoUmbrellaK/Smart-Docs-Platform.git (push)
+c18096c2415558f163f0249b14afbc4322ceecb1d7bcd5a2364c830f1eefff03  resources/app.html
+807d1f01f25bd775459f6e192487f5c95e28de32966de9d205c9d0231b38f6f2  resources/js/agent.js
+1ebcb263e44bec9e2a9e1001754c5734fffe2de1b2acb8aa6e567590d6775f82  resources/js/api.js
+2435c2bd5cf46c3bb169faf95d8c6307f24c2ff5008f03563f4ce6322a168afd  resources/js/app.js
+3e1b6c64bc991f74fd402356db8ff756cfd9e0a782df604e05159985269af34e  resources/css/app.css
+fecdcb896a0aa0c0d161f8a4696706acbe2e4f1b650857482a26f432c8c6efaa  test/e2e/agent_ui_test.mjs
+93fc868bdec90b0663d7d3a2bd3ea3527541a9dcca4e34fc970378799fb1d47e  test/e2e/m3_agent_browser_test.py
+627dc908f8ce4d5c43598c189ae3e73dc6b9fdf64f9f1003a9b367d18ce9663c  test/e2e/ui_contract_test.py

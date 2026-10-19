@@ -44,6 +44,184 @@ function draft(view) {
   view.get("agent-consent").checked=true;
 }
 
+const archivePlan={id:"a".repeat(32),task_id:"t",project_id:"p",revision:3,policy_revision:2,
+  content_sha256:"b".repeat(64),state:"preview",task_state:"waiting_confirmation",decision:null,
+  operation_id:null,executable:false,has_unresolved:false,
+  items:[{file_id:"f",version_id:"v",source_directory_id:"source",target_directory_id:"target",
+    name:"<img onerror=bad> sample",target_name:"Deployment",reason:"<script>not approval</script>",state:"proposed"}]};
+const archiveReceipt={plan_id:archivePlan.id,revision:3,operation_id:"c".repeat(32),status:"executed",moved_count:1,audit_id:"d".repeat(32)};
+const descendants=n=>[n,...n.children.flatMap(descendants)];
+function clickNamed(view,box,name) {
+  const button=buttons(view.get(box)).find(b=>b.textContent===name);
+  assert.ok(button,`missing visible action: ${name}`); return button.fire();
+}
+async function archiveSetup(overrides={},initial=archivePlan,role="editor") {
+  let current=structuredClone(initial),committed=false; const events=[];
+  const view=await setup({getAgentTask:async()=>({...task,state:committed?"completed":current.task_state}),
+    getAgentResult:async()=>({state:"completed",kind:"archive_operation",model_calls:0,result:null,error_code:null,archive_operation:archiveReceipt}),
+    getArchivePlan:async(...args)=>{events.push(["plan",...args]);return structuredClone(current);},
+    listDirectories:async()=>({items:[{id:"source",name:"Original directory"},{id:"target",name:"Deployment"}]}),
+    decideArchivePlan:async(...args)=>{events.push(["decision",...args]); const decision=args[2].decision;
+      current={...current,decision,state:decision==="confirm"?"confirmed":"rejected",
+        task_state:decision==="confirm"?"waiting_execution":"waiting_confirmation",executable:decision==="confirm",
+        operation_id:decision==="confirm"?archiveReceipt.operation_id:null};return structuredClone(current);},
+    executeArchivePlan:async(...args)=>{events.push(["execute",...args]);committed=true;return {...archiveReceipt,items:[]};},
+    getArchiveReceipt:async(...args)=>{events.push(["receipt",...args]);return archiveReceipt;},...overrides});
+  view.panel.setProject("p",role); await view.panel.view("t"); return {...view,events};
+}
+async function openArchive(view) { await clickNamed(view,"agent-detail","View archive plan"); }
+function archiveConsent(view) {
+  const checkbox=descendants(view.get("agent-archive")).find(n=>n.tagName==="INPUT" && n.type==="checkbox");
+  assert.ok(checkbox,"confirmation needs a visible unchecked checkbox"); return checkbox;
+}
+
+test("archive review displays bound items as text and requires a separate explicit confirmation and execution",async()=>{
+  const view=await archiveSetup(); assert.equal(view.events.length,0); await openArchive(view);
+  const box=view.get("agent-archive"), content=text(box);
+  for(const marker of ["Original directory","Deployment","<img onerror=bad>","<script>not approval</script>","Version v","Revision 3"]) assert.ok(content.includes(marker));
+  assert.equal(descendants(box).filter(n=>["SCRIPT","IMG"].includes(n.tagName)).length,0);
+  assert.equal(archiveConsent(view).checked,false);
+  await clickNamed(view,"agent-archive","Confirm this revision");
+  assert.equal(view.events.filter(x=>x[0]==="decision").length,0);
+  archiveConsent(view).checked=true; await clickNamed(view,"agent-archive","Confirm this revision");
+  assert.deepEqual(view.events.find(x=>x[0]==="decision"),["decision","p","t",{
+    plan_id:"a".repeat(32),revision:3,content_sha256:"b".repeat(64),decision:"confirm"}]);
+  assert.equal(view.events.filter(x=>x[0]==="execute").length,0);
+  await clickNamed(view,"agent-archive","Execute confirmed revision");
+  assert.deepEqual(view.events.find(x=>x[0]==="execute"),["execute","p","t",{
+    plan_id:"a".repeat(32),revision:3,operation_id:"c".repeat(32)}]);
+  assert.match(text(view.get("agent-archive")),/1 files/);
+  assert.equal(buttons(view.get("agent-archive")).filter(b=>/Confirm|Execute/.test(b.textContent)).length,0);
+});
+
+test("archive reject cannot execute and unresolved targets cannot be confirmed",async()=>{
+  const view=await archiveSetup();await openArchive(view);
+  await clickNamed(view,"agent-archive","Reject this revision");
+  assert.equal(view.events.find(x=>x[0]==="decision")[3].decision,"reject");
+  assert.equal(buttons(view.get("agent-archive")).filter(b=>/Confirm|Execute/.test(b.textContent)).length,0);
+  const unresolved=await archiveSetup({}, {...archivePlan,has_unresolved:true,items:[{...archivePlan.items[0],target_directory_id:null,target_name:null,state:"needs_review"}]});
+  await openArchive(unresolved);
+  assert.match(text(unresolved.get("agent-archive")),/needs review|Needs review/i);
+  assert.equal(buttons(unresolved.get("agent-archive")).filter(b=>/Confirm|Execute/.test(b.textContent)).length,0);
+});
+
+test("archive readers and terminal tasks have no write controls",async()=>{
+  for(const [role,state] of [["reader","waiting_confirmation"],["editor","cancelled"],["editor","interrupted"]]) {
+    const view=await archiveSetup({}, {...archivePlan,task_state:state},role); await openArchive(view);
+    assert.equal(buttons(view.get("agent-archive")).filter(b=>/Confirm|Reject|Execute/.test(b.textContent)).length,0);
+  }
+});
+
+test("archive delayed loads and stale actions cannot survive task refresh logout or role change",async()=>{
+  for(const invalidate of [v=>v.panel.invalidate(),v=>v.panel.setProject(null),v=>v.panel.setProject("other","editor"),v=>v.panel.setProject("p","reader"),v=>v.panel.view("new")]) {
+    const late=deferred(); const view=await archiveSetup(); await openArchive(view);
+    archiveConsent(view).checked=true; const old=buttons(view.get("agent-archive")).find(b=>b.textContent==="Confirm this revision");
+    view.panel.api.getArchivePlan=()=>late.promise;
+    const loading=clickNamed(view,"agent-detail","View archive plan");
+    await invalidate(view);late.resolve(archivePlan);await loading;await old.fire();
+    assert.equal(view.get("agent-archive").children.length,0);
+    assert.equal(view.events.filter(x=>x[0]==="decision").length,0);
+  }
+});
+
+test("archive write lock survives invalidation and duplicate clicks until the actual request settles",async()=>{
+  const late=deferred(); let count=0;
+  const view=await archiveSetup({decideArchivePlan:()=>{count++;return late.promise;}});await openArchive(view);
+  archiveConsent(view).checked=true;const old=buttons(view.get("agent-archive")).find(b=>b.textContent==="Confirm this revision");
+  const sending=old.fire();await old.fire();view.panel.invalidate();view.panel.setProject("p","editor");
+  await view.panel.view("t");await old.fire();assert.equal(count,1);
+  assert.equal(view.get("agent-create").disabled,true);
+  late.resolve({...archivePlan,state:"confirmed",task_state:"waiting_execution",operation_id:archiveReceipt.operation_id,executable:true});
+  await sending;assert.equal(view.get("agent-archive").children.length,0);
+  assert.equal(view.get("agent-create").disabled,false);
+});
+
+test("cancellation remains locked across invalidation until the real request settles",async()=>{
+  for(const fails of [false,true]) {
+    const late=deferred();let cancellations=0;
+    const view=await archiveSetup({cancelAgentTask:()=>{cancellations++;return late.promise;}});
+    const cancelling=clickNamed(view,"agent-detail","Cancel task");
+    view.panel.invalidate();view.panel.setProject("p","editor");
+    await view.panel.view("t");
+    if(view.get("agent-detail").children.length) {
+      await openArchive(view);archiveConsent(view).checked=true;
+      await clickNamed(view,"agent-archive","Confirm this revision");
+    }
+    assert.equal(view.events.filter(x=>x[0]==="decision").length,0);
+    assert.equal(view.get("agent-create").disabled,true);
+    assert.equal(cancellations,1);
+    if(fails) late.reject(new Error("cancel response lost")); else late.resolve({...task,state:"cancelled"});
+    await cancelling;
+    assert.equal(view.get("agent-archive").children.length,0);
+    assert.equal(view.get("agent-create").disabled,false);
+    await view.panel.view("t");assert.ok(view.get("agent-detail").children.length);
+  }
+});
+
+test("archive conflict clears sensitive snapshot and invalidates held confirmation buttons",async()=>{
+  let writes=0;
+  const view=await archiveSetup({decideArchivePlan:async()=>{writes++;throw new Error("archive_plan_changed");}});await openArchive(view);
+  archiveConsent(view).checked=true;const old=buttons(view.get("agent-archive")).find(b=>b.textContent==="Confirm this revision");
+  await old.fire();await old.fire();
+  assert.equal(writes,1);
+  assert.equal(view.get("agent-archive").children.length,0);
+  assert.match(text(view.get("agent-archive-status")),/unknown|check|refresh/i);
+  assert.doesNotMatch(text(view.get("agent-archive")),/not approval/);
+});
+
+test("archive receipt remains readable after revoked plan and ignores non-receipt fields",async()=>{
+  const view=await archiveSetup({getArchiveReceipt:async()=>({...archiveReceipt,items:[{name:"PRIVATE-RECEIPT-ITEM"}],answer:"PRIVATE-ANSWER"})});
+  await openArchive(view);
+  view.panel.api.getArchivePlan=async()=>{throw new Error("task_scope_changed");};
+  await openArchive(view);
+  assert.equal(view.get("agent-archive").children.length,0);
+  await clickNamed(view,"agent-detail","Check archive receipt");
+  const content=text(view.get("agent-archive"));
+  for(const marker of [archiveReceipt.plan_id,archiveReceipt.operation_id,archiveReceipt.audit_id,"Revision 3","1 files","executed"]) assert.ok(content.includes(marker));
+  assert.doesNotMatch(content,/PRIVATE|not approval/);
+  assert.equal(buttons(view.get("agent-archive")).length,0);
+});
+
+test("archive lost execution response offers only explicit read recovery and no automatic write retry",async()=>{
+  let writes=0;const confirmed={...archivePlan,state:"confirmed",decision:"confirm",task_state:"waiting_execution",executable:true,operation_id:archiveReceipt.operation_id};
+  const view=await archiveSetup({executeArchivePlan:async()=>{writes++;throw new Error("response lost");}},confirmed);await openArchive(view);
+  await clickNamed(view,"agent-archive","Execute confirmed revision");assert.equal(writes,1);
+  assert.equal(view.events.filter(x=>x[0]==="receipt").length,0);
+  await clickNamed(view,"agent-detail","Check archive receipt");assert.equal(writes,1);
+  assert.equal(view.events.filter(x=>x[0]==="receipt").length,1);
+  assert.match(text(view.get("agent-archive")),new RegExp(archiveReceipt.operation_id));
+  assert.equal(buttons(view.get("agent-archive")).length,0);
+});
+
+test("archive stale load cannot overwrite a newer preview and reloading resets consent",async()=>{
+  const view=await archiveSetup();await openArchive(view);archiveConsent(view).checked=true;
+  const first=deferred(),second=deferred();let reads=0;
+  view.panel.api.getArchivePlan=()=>++reads===1?first.promise:second.promise;
+  const older=clickNamed(view,"agent-detail","View archive plan"),newer=clickNamed(view,"agent-detail","View archive plan");
+  second.resolve({...archivePlan,revision:4,content_sha256:"e".repeat(64)});await newer;
+  first.resolve(archivePlan);await older;
+  assert.match(text(view.get("agent-archive")),/Revision 4/);assert.equal(archiveConsent(view).checked,false);
+});
+
+test("archive HTTP adapter preserves encoded identity and exact bound write payloads",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  assert.equal(typeof api.getArchivePlan,"function");const original=globalThis.fetch,calls=[];
+  globalThis.fetch=async(...args)=>{calls.push(args);return new Response(JSON.stringify({data:archivePlan}));};
+  try {
+    await api.getArchivePlan("p/x","t?x");
+    const command={plan_id:archivePlan.id,revision:3,content_sha256:archivePlan.content_sha256,decision:"confirm"};
+    await api.decideArchivePlan("p/x","t?x",command);
+    await api.executeArchivePlan("p/x","t?x",{plan_id:archivePlan.id,revision:3,operation_id:archiveReceipt.operation_id});
+    await api.getArchiveReceipt("p/x","t?x");
+    assert.deepEqual(calls.map(c=>[c[0],c[1].method,c[1].credentials]),[
+      ["/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/archive-plan","GET","same-origin"],
+      ["/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/archive-plan/decision","POST","same-origin"],
+      ["/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/archive-plan/execute","POST","same-origin"],
+      ["/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/archive-plan/result","GET","same-origin"]]);
+    assert.deepEqual(JSON.parse(calls[1][1].body),command);assert.equal(calls[0][1].body,undefined);assert.equal(calls[3][1].body,undefined);
+  } finally {globalThis.fetch=original;}
+});
+
 test("creation requires explicit exact-version consent and never claims execution",async()=>{
   const view=await setup(); const {panel,get,calls}=view;
   panel.addVersion("p",{...file,remote_ai_policy:"internal_only"},version);

@@ -1,0 +1,29 @@
+2026-10-19T13:53:11+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-name-pattern=cancellation remains locked test/e2e/agent_ui_test.mjs.
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ✖ cancellation remains locked across invalidation until the real request settles (7.488929ms)
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ tests 1
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ suites 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ pass 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ fail 1
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ cancelled 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ skipped 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ todo 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ℹ duration_ms 104.609597
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ✖ failing tests:
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: test at test/e2e/agent_ui_test.mjs:139:1
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]: ✖ cancellation remains locked across invalidation until the real request settles (7.488929ms)
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:   
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:   1 !== 0
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:   
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:150:12)
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     generatedMessage: true,
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     code: 'ERR_ASSERTION',
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     actual: 1,
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     expected: 0,
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     operator: 'strictEqual',
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:     diff: 'simple'
+2026-10-19T13:53:16+0800 aliyun-lou node[791907]:   }
+2026-10-19T13:53:16+0800 aliyun-lou systemd[1]: smartdocs-archive-cancel-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T13:53:16+0800 aliyun-lou systemd[1]: smartdocs-archive-cancel-red.service: Failed with result 'exit-code'.
