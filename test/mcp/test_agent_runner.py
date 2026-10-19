@@ -37,11 +37,15 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.reject_source=False
         self.receipt=True
         self.start_context=None
+        self.report_receipt=None; self.drop_report=False; self.commit_report=True
+        self.defer_report=False; self.reject_report_result=False
+        self.report_operation='1'*32
         owner=self
         class Receiver(BaseHTTPRequestHandler):
             def log_message(self,*args): pass
             def do_GET(self): self.respond()
             def do_POST(self): self.respond()
+            def do_PUT(self): self.respond()
             def respond(self):
                 raw=self.rfile.read(int(self.headers.get("Content-Length","0")))
                 body=json.loads(raw) if raw else None
@@ -50,6 +54,22 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                 if self.path.endswith("/run/start"):
                     owner.state="running"; payload={"question":"find public deployment instructions","state":"running"}
                     if owner.start_context is not None: payload['handover_checklist']=owner.start_context
+                    if owner.start_context is not None: payload['report_operation_id']=owner.report_operation
+                elif self.path.endswith('/handover-report'):
+                    payload={'id':'2'*32,'version':1,'url':self.path,'markdown_url':self.path+'/markdown'}
+                    if owner.defer_report:
+                        self.connection.shutdown(socket.SHUT_RDWR); self.connection.close()
+                        owner.release_completion.wait(10)
+                        owner.state='completed'; owner.report_receipt=payload
+                        return
+                    if owner.commit_report:
+                        owner.state='completed'; owner.report_receipt=payload
+                    if owner.drop_report:
+                        self.connection.shutdown(socket.SHUT_RDWR); self.connection.close(); return
+                elif self.path.endswith('/run/result') and owner.report_receipt:
+                    payload={'state':'completed','kind':'handover_report','result':None,'error_code':None,
+                             'model_calls':owner.calls,'handover_report':owner.report_receipt}
+                    if owner.reject_report_result: status=503; payload={'code':'database_unavailable'}
                 elif self.path.endswith("/run/check"):
                     if owner.denied:
                         status=409; payload={"code":"task_scope_changed"}; owner.state="failed"
@@ -255,3 +275,100 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
             return reply(calls=[call(ident=f'call_{count}')])
         outcome=await self.run_model(model)
         self.assertEqual((outcome['error_code'],count), ('dependency_failed',1))
+
+    def report_fixture(self):
+        self.start_context={'revision':1,'items':[{'key':'deployment','title':'Deployment','description':'Check','required':True}]}
+        return {'operation_id':self.report_operation,'report':{'summary':'Uncertain','limitations':'No evidence read',
+            'recommendations':'Review manually','items':[{'key':'deployment','status':'uncertain','notes':'No evidence','citations':[]}]}}
+
+    async def test_report_tool_is_terminal_and_never_finishes_with_plain_answer(self):
+        arguments=self.report_fixture(); seen=[]
+        async def model(messages,tools,**kwargs):
+            seen.append(copy.deepcopy(messages))
+            self.assertIn('save_handover_report',{t['function']['name'] for t in tools})
+            return reply(calls=[call('save_handover_report',arguments)])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome.get('kind'),'handover_report')
+        self.assertEqual(outcome.get('handover_report'),self.report_receipt)
+        self.assertEqual(len(seen),1)
+        self.assertEqual(sum(path.endswith('/handover-report') for path,_ in self.requests),1)
+        self.assertFalse(any(path.endswith('/run/finish') for path,_ in self.requests))
+
+    async def test_report_lost_ack_queries_authority_without_retrying_write(self):
+        arguments=self.report_fixture(); self.drop_report=True
+        async def model(**kwargs): return reply(calls=[call('save_handover_report',arguments)])
+        outcome=await self.run_model(model)
+        self.assertEqual((outcome.get('state'),outcome.get('kind')),('completed','handover_report'))
+        self.assertEqual(sum(path.endswith('/handover-report') for path,_ in self.requests),1)
+        self.assertFalse(any(path.endswith('/run/finish') for path,_ in self.requests))
+
+    async def test_report_uncertain_write_never_races_failure_or_claims_completion(self):
+        arguments=self.report_fixture(); self.drop_report=True; self.commit_report=False
+        async def model(**kwargs): return reply(calls=[call('save_handover_report',arguments)])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['state'],'unknown')
+        self.assertEqual(self.state,'running')
+        self.assertEqual(sum(path.endswith('/handover-report') for path,_ in self.requests),1)
+        self.assertFalse(any(path.endswith('/run/finish') for path,_ in self.requests))
+
+    async def test_report_cannot_share_batch_with_reads_or_more_writes(self):
+        arguments=self.report_fixture()
+        async def model(**kwargs): return reply(calls=[call('save_handover_report',arguments),call(ident='second')])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['state'],'failed')
+        self.assertFalse(any(path.endswith('/handover-report') or '/tools/' in path for path,_ in self.requests))
+
+    async def test_report_missing_operation_and_plain_answer_cannot_claim_report_saved(self):
+        self.report_fixture(); self.report_operation=None
+        async def model(**kwargs): return reply(json.dumps({'answer':'Not a report','citations':[]}))
+        self.assertEqual((await self.run_model(model)).get('error_code'),'dependency_failed')
+        self.assertEqual(self.calls,0)
+        self.report_operation='1'*32
+        self.assertEqual((await self.run_model(model)).get('error_code'),'model_invalid')
+        self.assertIsNone(self.report_receipt)
+
+    async def test_report_multi_item_budget_reaches_real_provider_adapter(self):
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        arguments=self.report_fixture()
+        self.start_context['items']=[{'key':f'item_{i}','title':f'Material {i}','description':'Check','required':True} for i in range(6)]
+        arguments['report']['items']=[{'key':f'item_{i}','status':'uncertain','notes':'Review the unavailable source before acceptance.',
+            'citations':[]} for i in range(6)]
+        requests=[]; events=[]
+        async def receive(request):
+            sent=json.loads(request.content); requests.append(sent)
+            result=reply(calls=[call('save_handover_report',arguments)]) if sent['max_tokens']==2560 else reply('truncated',finish='length')
+            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(result).encode()))
+        model=DeepSeekModel('test-secret',events.append,transport=httpx.MockTransport(receive))
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome.get('kind'),'handover_report')
+        self.assertEqual(requests[0]['max_tokens'],2560)
+        self.assertEqual(events[0]['max_tokens'],2560)
+
+    async def test_report_wrong_operation_is_not_dispatched(self):
+        arguments=self.report_fixture(); arguments['operation_id']='9'*32
+        async def model(messages,**kwargs): return reply(calls=[call('save_handover_report',arguments,ident=f'call_{len(messages)}')])
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['error_code'],'repeated_tool_error')
+        self.assertFalse(any(path.endswith('/handover-report') for path,_ in self.requests))
+
+    async def test_report_late_commit_after_unknown_is_not_overwritten(self):
+        arguments=self.report_fixture(); self.defer_report=True
+        async def model(**kwargs): return reply(calls=[call('save_handover_report',arguments)])
+        self.assertEqual((await self.run_model(model))['state'],'unknown')
+        self.assertEqual(self.state,'running')
+        self.release_completion.set()
+        for _ in range(50):
+            if self.state=='completed': break
+            await asyncio.sleep(0.01)
+        outcome=await self.agent.RuntimeBackend(self.context).request('result')
+        self.assertEqual((outcome['state'],outcome['kind']),('completed','handover_report'))
+        self.assertFalse(any(path.endswith('/run/finish') for path,_ in self.requests))
+        self.assertEqual(sum(path.endswith('/handover-report') for path,_ in self.requests),1)
+
+    async def test_report_result_unavailable_is_unknown_not_false_failure(self):
+        arguments=self.report_fixture(); self.reject_report_result=True
+        async def model(**kwargs): return reply(calls=[call('save_handover_report',arguments)])
+        self.assertEqual((await self.run_model(model))['state'],'unknown')
+        self.assertEqual(self.state,'completed')
+        self.assertFalse(any(path.endswith('/run/finish') for path,_ in self.requests))

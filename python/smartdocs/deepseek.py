@@ -8,6 +8,7 @@ import uuid
 
 import httpx
 from .agent_runner import RunError, encoded
+from .mcp_read import REPORT_TOOL
 from .search_http import strict_json
 
 
@@ -60,17 +61,20 @@ class DeepSeekModel:
 
     async def __call__(self, *, messages, tools, max_tokens, timeout):
         if self._active or self._calls>=self._limit: raise RunError("budget_exhausted")
-        if (type(max_tokens) is not int or not 1<=max_tokens<=1024
+        if (type(max_tokens) is not int or not 1<=max_tokens<=8192 or not isinstance(tools,list)
                 or type(timeout) not in (int,float) or not 0<timeout<=60):
             raise RunError("model_invalid")
+        report = any(isinstance(tool,dict) and isinstance(tool.get('function'),dict)
+                     and tool['function'].get('name')==REPORT_TOOL for tool in tools)
+        output_tokens = max_tokens if report else min(max_tokens,512)
         body=encoded({"model":MODEL,"messages":messages,"tools":tools,"stream":False,
-            "thinking":{"type":"disabled"},"max_tokens":min(max_tokens,512),"temperature":0})
+            "thinking":{"type":"disabled"},"max_tokens":output_tokens,"temperature":0})
         if len(body)>65536: raise RunError("budget_exhausted")
         self._calls+=1; self._active=True
         request_id=uuid.uuid4().hex; start=time.monotonic(); usage=None; reason="provider_unavailable"
         base={"request_id":request_id,"sequence":self._calls,"model":MODEL}
         try:
-            self.record({**base,"event":"model_attempt","request_bytes":len(body),"max_tokens":min(max_tokens,512)})
+            self.record({**base,"event":"model_attempt","request_bytes":len(body),"max_tokens":output_tokens})
             try:
                 response=await asyncio.wait_for(self._send(body),timeout)
                 usage=usage_counts(response.get("usage")); reason="success"

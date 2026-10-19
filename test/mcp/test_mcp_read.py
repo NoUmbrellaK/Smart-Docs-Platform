@@ -32,6 +32,7 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
             def log_message(self, *args): pass
             def do_GET(self): self.respond()
             def do_POST(self): self.respond()
+            def do_PUT(self): self.respond()
             def respond(self):
                 body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
                 owner.calls.append((self.command, self.path, dict(self.headers), body))
@@ -134,6 +135,38 @@ class ReadToolsTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(result.isError)
         self.assertEqual(result.structuredContent["status"], "invalid_request")
         self.assertFalse(self.calls)
+
+    async def test_report_tool_is_task_only_and_forwards_exact_operation(self):
+        arguments={'operation_id':'1'*32,'report':{'summary':'Uncertain','limitations':'No material read',
+            'recommendations':'Review','items':[{'key':'deployment','status':'uncertain','notes':'No evidence','citations':[]}]}}
+        result=await self.call('save_handover_report',arguments)
+        self.assertEqual(result.structuredContent['status'],'invalid_request'); self.assertFalse(self.calls)
+        self.context['scope']='task_versions'
+        path=f'/api/v1/projects/{PROJECT}/agent-tasks/{TASK}/handover-report'
+        self.payload={'data':{'id':'2'*32,'version':1,'url':path,'markdown_url':path+'/markdown'}}
+        async with create_connected_server_and_client_session(self.module.create_server(self.context)) as client:
+            tools={t.name:t for t in (await client.list_tools()).tools}
+            first=await client.call_tool('save_handover_report',arguments)
+            second=await client.call_tool('save_handover_report',arguments)
+        self.assertIn('save_handover_report',tools)
+        self.assertFalse(tools['save_handover_report'].annotations.readOnlyHint)
+        self.assertTrue(tools['save_handover_report'].annotations.idempotentHint)
+        self.assertEqual(first.structuredContent['data'],self.payload['data'])
+        self.assertEqual(first.structuredContent['data'],second.structuredContent['data'])
+        self.assertNotIn('source_request_id',first.structuredContent)
+        self.assertEqual(self.calls[0][:2],('PUT',path)); self.assertEqual(json.loads(self.calls[0][3]),arguments)
+
+    async def test_report_rejects_forged_receipt_links_and_oversized_input(self):
+        self.context['scope']='task_versions'
+        arguments={'operation_id':'1'*32,'report':{'summary':'x','limitations':'x','recommendations':'x',
+            'items':[{'key':'deployment','status':'uncertain','notes':'x','citations':[]}]}}
+        self.payload={'data':{'id':'2'*32,'version':1,'url':'https://evil.invalid','markdown_url':'https://evil.invalid'}}
+        result=await self.call('save_handover_report',arguments)
+        self.assertEqual(result.structuredContent['status'],'dependency_failed')
+        self.assertNotIn('evil.invalid',result.model_dump_json())
+        before=len(self.calls); arguments['report']['summary']='x'*8001
+        self.assertEqual((await self.call('save_handover_report',arguments)).structuredContent['status'],'invalid_request')
+        self.assertEqual(len(self.calls),before)
 
     async def test_range_read_uses_bounded_post_and_preserves_pagination(self):
         self.payload={"data":{"file_id":FILE,"version_id":VERSION,"parse_state":"completed",

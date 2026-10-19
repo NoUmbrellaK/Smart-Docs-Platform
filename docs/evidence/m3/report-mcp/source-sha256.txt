@@ -1,0 +1,7 @@
+All listed source files compare identical to /tmp/smartdocs-safe.h4SzvX/repo.
+d26bf24e8d1cbc138cf3774e430e1e9c78f3a753bf2615e733f4a5cc6832f8c6  python/smartdocs/mcp_read.py
+a74d08ebf74603ee6b2e09a122b33793857430359a9100b75158928e18f5eb55  python/smartdocs/agent_runner.py
+6921a3fb49e1e61dedf7636a2028c825d825f52858bdc953efc0e4aff8e069ee  python/smartdocs/deepseek.py
+a9adc65b6de84579ef93ac1266e0f893b396f281cc864b1bbd5a8233767029a0  test/mcp/test_agent_runner.py
+23d92f71f423ed892dbe8a5d44b219e646cb017425a21d9b8063a2d2808cce46  test/mcp/test_mcp_read.py
+3cd1f8fa51212b970e0e4409c560342cf98b363b1c54de466430ce2ee0e90ce6  test/e2e/m3_report_mcp_test.py

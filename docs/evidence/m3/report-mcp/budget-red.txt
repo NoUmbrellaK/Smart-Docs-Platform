@@ -1,0 +1,22 @@
+2026-10-19T16:37:45+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k multi_item -v.
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: ======================================================================
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: FAIL: test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests)
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: ----------------------------------------------------------------------
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: Traceback (most recent call last):
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:     self._callMaybeAsync(method)
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:     return future.result()
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:     ret = await awaitable
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 337, in test_report_multi_item_budget_reaches_real_provider_adapter
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]:     self.assertEqual(outcome.get('kind'),'handover_report')
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: AssertionError: None != 'handover_report'
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: ----------------------------------------------------------------------
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: Ran 1 test in 0.820s
+2026-10-19T16:37:47+0800 aliyun-lou python[820500]: FAILED (failures=1)
+2026-10-19T16:37:47+0800 aliyun-lou systemd[1]: smartdocs-report-budget-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T16:37:47+0800 aliyun-lou systemd[1]: smartdocs-report-budget-red.service: Failed with result 'exit-code'.
