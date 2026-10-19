@@ -1,0 +1,70 @@
+2026-10-19T21:49:55+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_injection_boundary_test.py.
+2026-10-19T21:49:55+0800 aliyun-lou test-with-mysql.sh[887151]: 2026-10-19T13:49:55.948444Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 887151
+2026-10-19T21:49:55+0800 aliyun-lou test-with-mysql.sh[887151]: 2026-10-19T13:49:55.953330Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T21:50:11+0800 aliyun-lou test-with-mysql.sh[887151]: 2026-10-19T13:50:11.200684Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T21:50:21+0800 aliyun-lou test-with-mysql.sh[887151]: 2026-10-19T13:50:21.828179Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T21:51:10+0800 aliyun-lou test-with-mysql.sh[887400]: schema_version=16
+2026-10-19T21:51:38+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T21:51:38+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T21:51:38+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T21:51:38+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T21:51:39+0800 aliyun-lou test-with-mysql.sh[887470]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T21:51:45+0800 aliyun-lou test-with-mysql.sh[887598]: test_injection_command (__main__.InjectionBoundaryE2E) ... INJECTION_BOUNDARY command rejected before MCP dispatch; only one authorized read; no writes
+2026-10-19T21:51:45+0800 aliyun-lou test-with-mysql.sh[887598]: ok
+2026-10-19T21:51:47+0800 aliyun-lou test-with-mysql.sh[887598]: test_injection_confirmation (__main__.InjectionBoundaryE2E) ... INJECTION_BOUNDARY confirmation rejected before MCP dispatch; only one authorized read; no writes
+2026-10-19T21:51:47+0800 aliyun-lou test-with-mysql.sh[887598]: ok
+2026-10-19T21:51:49+0800 aliyun-lou test-with-mysql.sh[887598]: test_injection_delete (__main__.InjectionBoundaryE2E) ... INJECTION_BOUNDARY delete rejected before MCP dispatch; only one authorized read; no writes
+2026-10-19T21:51:49+0800 aliyun-lou test-with-mysql.sh[887598]: ok
+2026-10-19T21:51:51+0800 aliyun-lou test-with-mysql.sh[887598]: test_injection_identity (__main__.InjectionBoundaryE2E) ... INJECTION_BOUNDARY identity rejected before MCP dispatch; only one authorized read; no writes
+2026-10-19T21:51:51+0800 aliyun-lou test-with-mysql.sh[887598]: ok
+2026-10-19T21:51:51+0800 aliyun-lou test-with-mysql.sh[887598]: ----------------------------------------------------------------------
+2026-10-19T21:51:51+0800 aliyun-lou test-with-mysql.sh[887598]: Ran 4 tests in 10.117s
+2026-10-19T21:51:51+0800 aliyun-lou test-with-mysql.sh[887598]: OK
+2026-10-19T21:51:55+0800 aliyun-lou systemd[1]: smartdocs-injection-boundary.service: Deactivated successfully.
+2026-10-19T21:51:55+0800 aliyun-lou systemd[1]: smartdocs-injection-boundary.service: Consumed 10.603s CPU time.
+MainPID=0
+Result=success
+ExecMainStatus=0
+CPUUsageNSec=[not set]
+ActiveState=inactive
+SubState=dead
+MemoryCurrent=240664576
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1964         192           3        1338        1262
+Swap:              0           0           0
+active
+code/agent/agent_tasks.cpp: OK
+python/smartdocs/deepseek.py: OK
+python/smartdocs/agent_cli.py: OK
+python/smartdocs/agent_runner.py: OK
+resources/js/agent.js: OK
+test/e2e/m3_agent_http_test.py: OK
+test/e2e/agent_ui_test.mjs: OK
+test/mcp/test_deepseek.py: OK
+test/mcp/test_agent_cli.py: OK
+test/e2e/m3_mcp_contract_matrix_test.py: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/server: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin: OK
+/tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests: OK
+e10cd89688137dde82756df10ecfce916dc34119ef4da36f602fb62747caf427  test/e2e/m3_injection_boundary_test.py
+e10cd89688137dde82756df10ecfce916dc34119ef4da36f602fb62747caf427  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_injection_boundary_test.py
