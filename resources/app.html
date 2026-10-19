@@ -98,6 +98,18 @@
       <h2 id="agent-title">Agent tasks</h2>
       <p>Create a pending task for approved public or synthetic materials. Execution currently requires the trusted server-side CLI; this page does not start a model request. No automatic retry or continuation.</p>
       <form id="agent-form">
+        <label for="agent-mode">Task mode</label>
+        <select id="agent-mode" disabled>
+          <option value="question">Question and answer</option>
+          <option value="handover">Handover check</option>
+          <option id="agent-mode-archive" value="archive" disabled>Archive proposal (editor/admin)</option>
+        </select>
+        <fieldset id="agent-context-fields" hidden>
+          <legend>Configuration for this task</legend>
+          <button id="agent-context-refresh" type="button" disabled>Load / refresh approved configuration</button>
+          <p id="agent-context-status" role="status" aria-live="polite"></p>
+          <div id="agent-context"></div>
+        </fieldset>
         <label for="agent-question">Question (up to 4000 UTF-8 bytes)</label>
         <textarea id="agent-question" rows="4" maxlength="4000" required disabled></textarea>
         <fieldset>
@@ -107,7 +119,7 @@
         </fieldset>
         <label for="agent-consent" class="checkbox-label">
           <input id="agent-consent" type="checkbox" required disabled>
-          I confirm that this question and the selected versions may be sent to the remote AI provider. This is not permission to move files.
+          I confirm that this question, the selected versions and the configuration shown for this mode may be sent to the remote AI provider. This is not permission to move files.
         </label>
         <button id="agent-create" type="submit" disabled>Create pending task</button>
         <button id="agent-new-draft" type="button" disabled>New draft (not a retry)</button>

@@ -1,0 +1,101 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✖ task modes bind only the reviewed server revision and never send metadata bodies (4.666495ms)
+✖ missing, unapproved, malformed or denied contexts cannot silently become question tasks (0.678781ms)
+✖ context refresh revokes consent, clears old metadata and ignores obsolete responses (0.603236ms)
+✖ mode changes cannot release a creation lock or bypass unknown creation outcome (0.678599ms)
+✖ task context GET adapters encode project identity and use same-origin credentials (1.883459ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (1.855013ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (1.605002ms)
+✔ report stale loads cannot survive logout, project, role or task changes (1.309222ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.832915ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (2.143072ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (31.862668ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.682825ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.931577ms)
+✔ archive readers and terminal tasks have no write controls (17.044911ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (2.929151ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.469096ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.7497ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.487436ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.472357ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.684317ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.638133ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.543286ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.843985ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.731547ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.354261ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.4543ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.721154ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.542573ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.412693ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.606903ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (1.680397ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.589848ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.045376ms)
+✔ empty audit never means the task succeeded or no model was called (0.437928ms)
+✔ audit refresh clears old rows and latest response wins (0.53729ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.149287ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.439325ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 32
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1143.454305
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:54:1
+✖ task modes bind only the reviewed server revision and never send metadata bodies (4.666495ms)
+  TypeError: this.listeners[type] is not a function
+      at Node.fire (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:10:51)
+      at mode (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:51:32)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:59:55)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+test at test/e2e/agent_ui_test.mjs:76:1
+✖ missing, unapproved, malformed or denied contexts cannot silently become question tasks (0.678781ms)
+  TypeError: this.listeners[type] is not a function
+      at Node.fire (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:10:51)
+      at mode (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:51:32)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:80:23)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+test at test/e2e/agent_ui_test.mjs:92:1
+✖ context refresh revokes consent, clears old metadata and ignores obsolete responses (0.603236ms)
+  TypeError: this.listeners[type] is not a function
+      at Node.fire (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:10:51)
+      at mode (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:51:32)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:97:23)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+test at test/e2e/agent_ui_test.mjs:112:1
+✖ mode changes cannot release a creation lock or bypass unknown creation outcome (0.678599ms)
+  TypeError: this.listeners[type] is not a function
+      at Node.fire (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:10:51)
+      at mode (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:51:32)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:115:21)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+test at test/e2e/agent_ui_test.mjs:123:1
+✖ task context GET adapters encode project identity and use same-origin credentials (1.883459ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:125:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-task-mode-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-task-mode-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code

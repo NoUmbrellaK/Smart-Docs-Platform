@@ -7,7 +7,7 @@ class Node {
   append(...nodes) { this.children.push(...nodes); }
   replaceChildren(...nodes) { this.children=nodes; }
   addEventListener(type, fn) { this.listeners[type]=fn; }
-  fire(type="click") { return this.listeners[type]({preventDefault() {}}); }
+  fire(type="click") { return this.listeners[type]?.({preventDefault() {}}); }
 }
 globalThis.document={createElement: tag => Object.assign(new Node(), {tagName:tag.toUpperCase()})};
 const text=n => [n.textContent || "", ...n.children.map(text)].join(" ");
@@ -43,6 +43,94 @@ function draft(view) {
   view.get("agent-question").fire("input");
   view.get("agent-consent").checked=true;
 }
+
+const checklist={revision:7,remote_ai_approved:true,items:[{key:"deploy",title:"<script>Deployment</script>",description:"Check rollback",required:true}]};
+const policy={revision:9,remote_ai_approved:true,targets:[{directory_id:"destination",name:"<img>Archive"}]};
+async function mode(view, value) {
+  view.get("agent-mode").value=value;
+  await view.get("agent-mode").fire("change");
+}
+
+test("task modes bind only the reviewed server revision and never send metadata bodies",async()=>{
+  for(const [choice,role,field,revision] of [["question","reader",null,null],
+    ["handover","reader","handover_checklist_revision",7],["archive","editor","archive_policy_revision",9]]) {
+    const reads=[];const view=await setup({getHandoverChecklist:async p=>{reads.push(p);return checklist;},
+      getArchivePolicy:async p=>{reads.push(p);return policy;}});
+    view.panel.setProject("p",role);draft(view);await mode(view,choice);
+    assert.equal(view.get("agent-consent").checked,false);
+    if(field) {
+      view.get("agent-consent").checked=true;await view.panel.create();assert.equal(view.calls.length,0);
+      await view.get("agent-context-refresh").fire();assert.deepEqual(reads,["p"]);
+      assert.equal(view.get("agent-consent").checked,false);
+      assert.match(text(view.get("agent-context")),choice==="handover"?/Check rollback/:/<img>Archive/);
+      assert.equal(descendants(view.get("agent-context")).filter(n=>["SCRIPT","IMG"].includes(n.tagName)).length,0);
+    }
+    view.get("agent-consent").checked=true;await view.panel.create();
+    const expected={question:"Check public sample",versions:[{file_id:"f",version_id:"v"}],confirm_remote_ai:true};
+    if(field)expected[field]=revision;
+    assert.deepEqual(view.calls.filter(c=>c[0]==="create"),[["create","p",expected]]);
+    if(!field)assert.deepEqual(reads,[]);
+  }
+});
+
+test("missing, unapproved, malformed or denied contexts cannot silently become question tasks",async()=>{
+  for(const value of [{...checklist,revision:0},{...checklist,revision:true},{...checklist,revision:4294967296},
+    {...checklist,remote_ai_approved:false},{...checklist,items:[]},null,new Error("forbidden")]) {
+    const view=await setup({getHandoverChecklist:async()=>{if(value instanceof Error)throw value;return value;}});
+    draft(view);await mode(view,"handover");await view.get("agent-context-refresh").fire();
+    view.get("agent-consent").checked=true;await view.panel.create();
+    assert.equal(view.calls.length,0);assert.equal(view.get("agent-context").children.length,0);
+    assert.equal(view.get("agent-create").disabled,true);
+  }
+  const view=await setup({getArchivePolicy:()=>assert.fail("reader must not load archive task context")});
+  draft(view);await mode(view,"archive");await view.get("agent-context-refresh").fire();
+  view.get("agent-consent").checked=true;await view.panel.create();assert.equal(view.calls.length,0);
+  assert.equal(view.get("agent-mode-archive").disabled,true);
+  await mode(view,"unknown");await view.panel.create();assert.equal(view.calls.length,0);
+});
+
+test("context refresh revokes consent, clears old metadata and ignores obsolete responses",async()=>{
+  for(const change of [v=>mode(v,"question"),v=>v.panel.setProject(null),v=>v.panel.setProject("other"),
+    v=>v.panel.setProject("p","editor"),v=>v.panel.newDraft(),v=>v.panel.invalidate()]) {
+    const late=deferred();let reads=0;
+    const view=await setup({getHandoverChecklist:()=>{reads++;return reads===1?Promise.resolve(checklist):late.promise;}});
+    draft(view);await mode(view,"handover");await view.get("agent-context-refresh").fire();
+    view.get("agent-consent").checked=true;const pending=view.get("agent-context-refresh").fire();
+    assert.equal(reads,2);assert.equal(view.get("agent-consent").checked,false);
+    assert.equal(view.get("agent-context").children.length,0);
+    await change(view);late.resolve(checklist);await pending;
+    assert.equal(view.get("agent-context").children.length,0);
+  }
+  const late=deferred();let reads=0;
+  const view=await setup({getHandoverChecklist:()=>++reads===1?late.promise:Promise.resolve({...checklist,revision:8})});
+  draft(view);await mode(view,"handover");const old=view.get("agent-context-refresh").fire();
+  await view.get("agent-context-refresh").fire();late.resolve(checklist);await old;
+  view.get("agent-consent").checked=true;await view.panel.create();
+  assert.equal(view.calls.find(c=>c[0]==="create")[2].handover_checklist_revision,8);
+});
+
+test("mode changes cannot release a creation lock or bypass unknown creation outcome",async()=>{
+  const late=deferred();let creates=0;
+  const view=await setup({getHandoverChecklist:async()=>checklist,createAgentTask:()=>{creates++;return late.promise;}});
+  draft(view);await mode(view,"handover");await view.get("agent-context-refresh").fire();
+  view.get("agent-consent").checked=true;const pending=view.panel.create();
+  assert.equal(view.get("agent-mode").disabled,true);await mode(view,"question");await view.panel.create();
+  assert.equal(creates,1);late.reject(new Error("lost"));await pending;
+  await mode(view,"question");draft(view);await view.panel.create();assert.equal(creates,1);
+  assert.equal(view.get("agent-create").disabled,true);
+});
+
+test("task context GET adapters encode project identity and use same-origin credentials",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  assert.equal(typeof api.getHandoverChecklist,"function");assert.equal(typeof api.getArchivePolicy,"function");
+  const original=globalThis.fetch,calls=[];
+  globalThis.fetch=async(...args)=>{calls.push(args);return new Response(JSON.stringify({data:checklist}));};
+  try {
+    await api.getHandoverChecklist("p/x");await api.getArchivePolicy("p/x");
+    assert.deepEqual(calls.map(c=>c[0]),["/api/v1/projects/p%2Fx/handover-checklist","/api/v1/projects/p%2Fx/archive-policy"]);
+    for(const [,options] of calls) {assert.equal(options.method,"GET");assert.equal(options.credentials,"same-origin");assert.equal(options.body,undefined);}
+  } finally {globalThis.fetch=original;}
+});
 
 const reportRecord={id:"r",version:1,project_id:"p",task_id:"t",state:"draft",
   verification:"citations_validated_not_semantically_reviewed",created_at:"2026-10-19",

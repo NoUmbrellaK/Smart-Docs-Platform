@@ -24,7 +24,7 @@ run/start在获准运行后，仅对绑定任务返回handover_checklist={revisi
 此类任务每次run/check必须传{"tool_request_ids":[],"handover_checklist_revision":1}，
 修订必须和保存快照一致。缺失/错误/布尔值400且不消耗模型预算；普通任务不接受额外修订字段。
 旧执行器不能忽略清单后继续获得准入。
-当前网页尚未提供清单修订选择；可通过上述受控业务接口创建，再用已有可信CLI运行。
+网页现支持[显式模式和修订选择](m3-task-mode-ui.md)；创建后仍使用已有可信CLI运行。
 
 ## 持续权限与事实边界
 

@@ -60,6 +60,8 @@ export const logout = () =>
   metadata("/auth/logout", { method: "POST", body: {}, expectedStatus: 204 });
 export const me = () => metadata("/me");
 const agentPath = projectId => `${projectPath(projectId)}/agent-tasks`;
+export const getHandoverChecklist = projectId => metadata(`${projectPath(projectId)}/handover-checklist`);
+export const getArchivePolicy = projectId => metadata(`${projectPath(projectId)}/archive-policy`);
 export const listAgentTasks = (projectId, before = "") =>
   metadata(agentPath(projectId) + (before ? `?before=${id(before)}` : ""));
 export const createAgentTask = (projectId, command) =>

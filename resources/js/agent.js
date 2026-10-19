@@ -10,7 +10,13 @@ export class AgentPanel {
     this.archiveWriting = false;
     this.archiveGeneration = 0;
     this.uncertain = false;
+    this.contextGeneration = 0;
     get("agent-form").addEventListener("submit", event => { event.preventDefault(); return this.create(); });
+    get("agent-mode").addEventListener("change", () => {
+      if (this.busy || this.creating || this.archiveWriting) { get("agent-mode").value = this.mode; return; }
+      this.mode = get("agent-mode").value; this.clearContext(); this.controls();
+    });
+    get("agent-context-refresh").addEventListener("click", () => this.loadContext());
     get("agent-question").addEventListener("input", () => { get("agent-consent").checked = false; });
     get("agent-new-draft").addEventListener("click", () => { if (!this.busy) this.newDraft(); });
     get("agent-refresh").addEventListener("click", () => this.refresh());
@@ -32,16 +38,60 @@ export class AgentPanel {
   status(part, text) { this.get(`agent-${part}-status`).textContent = text; }
   controls() {
     const blocked = !this.project || this.busy || this.creating || this.archiveWriting;
-    for (const id of ["question", "consent", "new-draft"]) this.get(`agent-${id}`).disabled = blocked;
-    this.get("agent-create").disabled = blocked || this.uncertain;
+    for (const id of ["question", "mode", "new-draft"]) this.get(`agent-${id}`).disabled = blocked;
+    this.get("agent-mode-archive").disabled = !["editor", "admin"].includes(this.role);
+    this.get("agent-context-fields").hidden = this.mode === "question";
+    this.get("agent-context-refresh").disabled = blocked || !this.contextModeAllowed();
+    this.get("agent-consent").disabled = blocked || !this.contextReady();
+    this.get("agent-create").disabled = blocked || this.uncertain || !this.contextReady();
     this.get("agent-refresh").disabled = blocked;
     this.get("agent-next").disabled = blocked || !this.next;
   }
   clearDraft() {
+    this.mode = "question"; this.get("agent-mode").value = this.mode; this.clearContext();
     this.scope = new Map();
     this.get("agent-question").value = "";
     this.get("agent-consent").checked = false;
     this.get("agent-scope").replaceChildren();
+  }
+  contextModeAllowed() {
+    return this.mode === "handover" || (this.mode === "archive" && ["editor", "admin"].includes(this.role));
+  }
+  contextReady() {
+    return this.get("agent-mode").value === this.mode && (this.mode === "question" ||
+      (this.contextModeAllowed() && this.contextRevision !== null));
+  }
+  clearContext() {
+    this.contextGeneration += 1; this.contextRevision = null;
+    this.get("agent-consent").checked = false;
+    this.get("agent-context").replaceChildren();
+    this.status("context", this.contextModeAllowed() ? "Load the approved configuration, review it, then confirm remote AI use." :
+      this.mode === "question" ? "No checklist or archive directory metadata will be attached." : "Archive proposals require an editor or administrator.");
+  }
+  async loadContext() {
+    if (!this.project || this.busy || this.creating || this.archiveWriting || !this.contextModeAllowed()) return;
+    this.clearContext(); this.controls();
+    const request = this.contextGeneration, project = this.project, mode = this.mode;
+    this.status("context", "Loading approved configuration…");
+    try {
+      const snapshot = mode === "handover" ? await this.api.getHandoverChecklist(project) : await this.api.getArchivePolicy(project);
+      if (request !== this.contextGeneration) return;
+      const items = mode === "handover" ? snapshot?.items : snapshot?.targets;
+      if (!snapshot || snapshot.remote_ai_approved !== true || !Number.isInteger(snapshot.revision) ||
+          snapshot.revision < 1 || snapshot.revision > 4294967295 || !Array.isArray(items) || !items.length)
+        throw new Error("No approved, nonempty configuration. Ask a project administrator to configure and approve it.");
+      const box = this.get("agent-context");
+      box.append(this.node("p", `${mode === "handover" ? "Handover checklist" : "Archive directory policy"} · Revision ${snapshot.revision}`));
+      for (const item of items) {
+        box.append(this.node("p", mode === "handover" ? `${item.title} · ${item.required ? "Required" : "Optional"} · ${item.description}` :
+          `${item.name} · Directory ${item.directory_id}`));
+      }
+      this.contextRevision = snapshot.revision;
+      this.get("agent-consent").checked = false;
+      this.status("context", "Review this configuration before confirming external use. The server rechecks this exact revision; no automatic upgrade or file move.");
+    } catch (error) {
+      if (request === this.contextGeneration) { this.clearContext(); this.status("context", this.errorText(error)); }
+    } finally { this.controls(); }
   }
   newDraft() {
     if (this.creating || this.archiveWriting) return;
@@ -98,6 +148,7 @@ export class AgentPanel {
   }
   async create() {
     if (!this.project || this.busy || this.creating || this.archiveWriting || this.uncertain) return;
+    if (!this.contextReady()) { this.status("create", "Load and review the approved configuration for this mode first."); return; }
     const question = this.get("agent-question").value;
     if (!question.trim() || new TextEncoder().encode(question).length > 4000 ||
         /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(question) ||
@@ -106,9 +157,12 @@ export class AgentPanel {
     }
     const generation = this.generation, project = this.project;
     const versions = Array.from(this.scope.values(), ({file_id, version_id}) => ({file_id, version_id}));
+    const command = {question, versions, confirm_remote_ai: true};
+    if (this.mode === "handover") command.handover_checklist_revision = this.contextRevision;
+    if (this.mode === "archive") command.archive_policy_revision = this.contextRevision;
     this.creating = true; this.controls(); this.status("create", "Creating pending task…");
     try {
-      const task = await this.api.createAgentTask(project, {question, versions, confirm_remote_ai: true});
+      const task = await this.api.createAgentTask(project, command);
       if (generation !== this.generation) {
         this.uncertain = true;
         this.status("create", "An earlier creation outcome may be unknown in this view. Check your tasks before explicitly starting a new draft.");
@@ -118,7 +172,7 @@ export class AgentPanel {
       this.status("create", `Created task ${task.id} · pending, waiting for an executor. This page does not start model execution.`);
     } catch (error) {
       this.uncertain = true;
-      this.get("agent-consent").checked = false;
+      this.clearContext();
       this.status("create", `${generation === this.generation ? this.errorText(error) : ""} Creation outcome may be unknown. Refresh your tasks and check before explicitly starting a new draft; no automatic retry.`);
     } finally {
       this.creating = false; this.controls();
