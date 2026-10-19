@@ -76,7 +76,7 @@ Python协程被强制取消时不续跑；进程消失
 ## schema7与验证边界
 
 schema7新增agent_runs，扩展agent_tasks状态，不回填虚构运行；当前C++已要求
-[schema8](m3-tool-audit.md#schema8和部署)，不可用旧schema7直接启动。
+[schema9](m3-archive-preview.md#schema9和部署)，不可用旧schema8及更早版本直接启动。
 升级须停C++/worker/网关并备份后运行scripts/migrate.sh；MySQL DDL非整批原子事务，
 中途失败恢复备份，不盲目重放；回退需恢复匹配版本备份。只验证隔离测试库，
 原业务库未升级，不要直接替换旧库上的二进制。

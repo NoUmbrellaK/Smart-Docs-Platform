@@ -24,6 +24,9 @@ public:
         bool search, const nlohmann::json& body);
     void FinishToolCall(const std::string& request_id, const std::string& status, uint64_t duration_ms);
     nlohmann::json ToolCalls(const SessionContext&, const std::string& project, const std::string& task);
+    nlohmann::json SaveArchivePlan(const SessionContext&, const std::string& project, const std::string& task,
+        const nlohmann::json& body, const std::string& request_id);
+    nlohmann::json GetArchivePlan(const SessionContext&, const std::string& project, const std::string& task);
     void RecoverInterrupted();
 private:
     MySqlPool& pool_;
@@ -33,5 +36,8 @@ private:
 // Caller owns transaction and membership lock. Locks are held through content construction/commit.
 void RequireAgentTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
     const std::string& task, const std::string& file="", const std::string& version="");
+// Preview never claims an execution slot. Caller owns membership/transaction locks.
+void RequireArchiveTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
+    const std::string& task, bool writing);
 void RegisterAgentRoutes(Router&, std::shared_ptr<AuthService>, std::shared_ptr<AgentTaskService>,
     std::shared_ptr<ProcessingService>, bool secure_cookie, uint64_t max_json_bytes);

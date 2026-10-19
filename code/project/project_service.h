@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 class MySqlConnection;
 class MySqlPool;
@@ -80,8 +81,16 @@ public:
                               const std::string& directory_id,
                               const std::string& name,
                               const std::string& request_id = std::string());
+    nlohmann::json ArchivePolicy(const SessionContext&, const std::string& project);
+    nlohmann::json SetArchivePolicy(const SessionContext&, const std::string& project,
+        const nlohmann::json& body, const std::string& request_id);
+    // Internal callers hold membership and transaction locks through result construction.
+    static nlohmann::json ApprovedArchivePolicy(MySqlConnection&, const std::string& project,
+        uint64_t revision);
 
 private:
+    void InvalidateArchiveTarget(MySqlConnection&, const std::string& project,
+        const std::string& directory);
     Role RequireRole(MySqlConnection& connection, const std::string& user_id,
                      const std::string& project_id, Role minimum);
 

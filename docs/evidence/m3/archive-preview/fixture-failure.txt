@@ -1,0 +1,47 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_archive_preview_test.py && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema && stdbuf -oL bin/smartdocs_tests --filter=auth_project && stdbuf -oL bin/smartdocs_tests --filter=file_mutation && stdbuf -oL bin/smartdocs_tests --filter=authorization.
+2026-10-19T04:48:55.932642Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 780900
+2026-10-19T04:48:56.447861Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T04:49:12.067680Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T04:49:19.906420Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=9
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchivePreviewE2E) ... ok
+test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_concurrent_cas_publishes_only_one_proposal (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_owner_role_project_and_same_origin (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E) ... FAIL
+FAIL
+test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchivePreviewE2E) ... ok
+======================================================================
+FAIL: test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 215, in test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata
+    data(self.user.request("DELETE", self.base()+"/files/"+blocker["file_id"]))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 204: {'body_bytes': 0}
+======================================================================
+FAIL: test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 74, in tearDown
+    state = self.state(job)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 80, in state
+    def state(self, job): return data(self.user.request("GET", self.job_path(job)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'resource_not_found', 'message': 'resource was not found', 'retryable': False}, 'request_id': '99d9fd23979547d00a704be64d9337df'}
+----------------------------------------------------------------------
+Ran 9 tests in 8.843s
+FAILED (failures=2)
+smartdocs-archive-preview-green.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-archive-preview-green.service: Failed with result 'exit-code'.
+smartdocs-archive-preview-green.service: Consumed 6.872s CPU time.

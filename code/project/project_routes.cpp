@@ -8,6 +8,7 @@
 #include "project_service.h"
 
 #include <cctype>
+#include <algorithm>
 #include <nlohmann/json.hpp>
 #include <utility>
 
@@ -81,6 +82,22 @@ void RegisterProjectRoutes(Router& router,
                            const std::shared_ptr<AuthService>& auth,
                            const std::shared_ptr<ProjectService>& projects,
                            uint64_t maximum_json_bytes, bool secure_cookie) {
+    for (const bool writing : {false, true}) {
+        router.Add(writing ? "PUT" : "GET", "/api/v1/projects/{project_id}/archive-policy",
+            [=](const RequestHead& head, const RouteParams& params) {
+            if (!head.query.empty()) throw AppError(400,"invalid_request","query parameters are not supported");
+            if (writing) RequireSameOrigin(head, secure_cookie);
+            const auto session = Authenticate(*auth, head);
+            const auto project = EntityIdParameter(params, "project_id");
+            if (writing) return PrepareJsonBody(head, std::min<uint64_t>(65536, maximum_json_bytes),
+                [=](const nlohmann::json& body) {
+                const auto request = GenerateId();
+                return DataResponse(200, projects->SetArchivePolicy(session, project, body, request), request, head.keep_alive);
+            });
+            if (head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
+            return ReadyResponse(DataResponse(200, projects->ArchivePolicy(session, project), GenerateId(), head.keep_alive));
+        });
+    }
     router.Add("POST", "/api/v1/projects",
         [auth, projects, maximum_json_bytes, secure_cookie](
             const RequestHead& head, const RouteParams&) {

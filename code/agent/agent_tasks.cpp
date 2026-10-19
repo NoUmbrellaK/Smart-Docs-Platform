@@ -235,6 +235,14 @@ nlohmann::json AgentTaskService::GetResult(const SessionContext& session,const s
     transaction.Commit(); return result;
 }
 
+void RequireArchiveTaskScope(MySqlConnection& db,const SessionContext& session,const std::string& project,
+    const std::string& task,bool writing) {
+    LockQueue(db); const auto row=Task(db,session,project,task);
+    if(writing && row.String(1)!="pending" && row.String(1)!="running")
+        throw AppError(409,"task_inactive","task is not active");
+    Scope(db,project,task);
+}
+
 void RequireAgentTaskScope(MySqlConnection& db,const SessionContext& session,const std::string& project,
     const std::string& task,const std::string& file,const std::string& version) {
     // ponytail: one short task-read transaction at a time; replace the guard with worker admission if measured throughput requires it.

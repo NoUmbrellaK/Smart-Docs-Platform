@@ -1,0 +1,61 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_archive_preview_test.py && stdbuf -oL bin/smartdocs_tests --filter=m3_ && stdbuf -oL bin/smartdocs_tests --filter=mysql_schema && stdbuf -oL bin/smartdocs_tests --filter=auth_project && stdbuf -oL bin/smartdocs_tests --filter=file_mutation && stdbuf -oL bin/smartdocs_tests --filter=authorization.
+2026-10-19T04:51:46.040757Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 781466
+2026-10-19T04:51:46.045324Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T04:52:01.280303Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T04:52:08.910998Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=9
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchivePreviewE2E) ... ok
+test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_concurrent_cas_publishes_only_one_proposal (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_owner_role_project_and_same_origin (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E) ... ok
+test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchivePreviewE2E) ... ok
+----------------------------------------------------------------------
+Ran 9 tests in 6.781s
+OK
+PASS m3_run_claim_is_exclusive_and_result_is_persistent_idempotent_and_scoped
+PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+PASS m3_task_scopes_search_counts_and_reads_before_returning_data
+PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+PASS m3_task_rechecks_entire_scope_on_revocation_update_and_delete
+PASS m3_task_caps_active_work_and_restart_never_claims_completion
+PASS m3_task_cancel_waits_for_inflight_read_then_blocks_next_call
+PASS m3_range_text_paginates_exact_history_and_rechecks_approval
+PASS m3_range_pdf_uses_physical_pages_preserves_empty_pages_and_order
+PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+PASS m3_remote_search_excludes_internal_names_counts_and_text_in_all_modes
+PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+PASS m3_remote_read_requires_live_exact_version_approval_and_preserves_source
+PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+PASS m3_remote_search_rechecks_approval_after_candidate_selection
+RESULT 17 passed, 0 failed, 0 skipped
+PASS mysql_schema_version_is_nine
+PASS mysql_schema_rejects_two_root_directories_for_one_project
+PASS mysql_schema_rejects_duplicate_active_file_name
+PASS mysql_schema_rejects_duplicate_upload_part_number
+PASS mysql_schema_allows_zero_part_upload_tasks
+PASS mysql_schema_allows_zero_based_upload_parts
+RESULT 6 passed, 0 failed, 0 skipped
+PASS auth_project_sessions_reject_invalid_expired_and_revoked_tokens
+PASS auth_project_membership_is_project_scoped_and_directories_are_checked
+PASS auth_project_http_routes_form_a_same_origin_vertical_slice
+RESULT 3 passed, 0 failed, 0 skipped
+PASS file_mutation_enforces_roles_project_scope_conflicts_and_stable_ids
+PASS file_mutation_remote_ai_approval_is_exact_version_specific_and_admin_only
+PASS file_mutation_http_routes_enforce_origin_json_limit_and_audit_request_id
+RESULT 3 passed, 0 failed, 0 skipped
+PASS authorization_role_matrix_is_explicit
+PASS processing_vectors_routes_and_job_controls_reuse_authorization
+RESULT 2 passed, 0 failed, 0 skipped
+smartdocs-archive-preview-verified.service: Deactivated successfully.
+smartdocs-archive-preview-verified.service: Consumed 19.914s CPU time.

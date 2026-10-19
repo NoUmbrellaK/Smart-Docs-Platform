@@ -27,6 +27,21 @@ std::string ToolError(int status) {
 void RegisterAgentRoutes(Router& router,std::shared_ptr<AuthService> auth,std::shared_ptr<AgentTaskService> tasks,
     std::shared_ptr<ProcessingService> processing,bool secure_cookie,uint64_t max_json_bytes) {
     const std::string path="/api/v1/projects/{project_id}/agent-tasks";
+    for(const bool writing:{false,true}) {
+        router.Add(writing ? "PUT" : "GET",path+"/{task_id}/archive-plan",
+            [=](const RequestHead& head,const RouteParams& params) {
+            NoQuery(head); if(writing) RequireSameOrigin(head,secure_cookie);
+            const auto session=auth->Authenticate(RequireSessionCookie(head));
+            const auto project=params.at("project_id"),task=params.at("task_id");
+            if(writing) return PrepareJsonBody(head,std::min<uint64_t>(65536,max_json_bytes),[=](const nlohmann::json& body) {
+                const auto request=GenerateId();
+                return HttpResponse::Json(200,{{"request_id",request},
+                    {"data",tasks->SaveArchivePlan(session,project,task,body,request)}},head.keep_alive);
+            });
+            if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");
+            return ReadyResponse(Result(tasks->GetArchivePlan(session,project,task),head.keep_alive));
+        });
+    }
     router.Add("GET",path+"/{task_id}/tool-calls",[=](const RequestHead& head,const RouteParams& params) {
         NoQuery(head);
         if(head.content_length) throw AppError(400,"body_not_allowed","body is not supported");

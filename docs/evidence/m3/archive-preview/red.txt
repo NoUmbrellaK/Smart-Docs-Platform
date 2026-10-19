@@ -1,0 +1,106 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_archive_preview_test.py.
+2026-10-19T04:36:30.761122Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 777815
+2026-10-19T04:36:31.607295Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T04:36:47.564910Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T04:36:58.234834Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=8
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_owner_role_project_and_same_origin (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E) ... FAIL
+test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchivePreviewE2E) ... FAIL
+======================================================================
+FAIL: test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 57, in test_archive_policy_defaults_replay_revision_and_actual_rename_revokes
+    self.assertEqual(data(self.user.request("GET", path)), {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'f9f8785b2f27f9bd53a4f0b55ac4c18c'}
+======================================================================
+FAIL: test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 109, in test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input
+    self.assertEqual(self.user.request("PUT", path, bad).status, 409)
+AssertionError: 404 != 409
+======================================================================
+FAIL: test_archive_preview_owner_role_project_and_same_origin (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 121, in test_archive_preview_owner_role_project_and_same_origin
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '47ff05adef7e6df597dab836a70e1f34'}
+======================================================================
+FAIL: test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 77, in test_archive_preview_persists_replays_revises_without_moving_or_confirming
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'cd9474ca7f71e5491cc0ba32fa4e77ef'}
+======================================================================
+FAIL: test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 160, in test_archive_preview_rechecks_whole_scope_policy_location_and_cancel
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'd1eeef0164b78c9ee959e60fb7d6e3d2'}
+======================================================================
+FAIL: test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 190, in test_archive_preview_rejects_batch_collation_collision_and_new_version
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'c7aefeb4b0757c3b844fd0dadfc9add5'}
+======================================================================
+FAIL: test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 177, in test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '1aafd16e9d44f962a916320473f2e73d'}
+======================================================================
+FAIL: test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchivePreviewE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 137, in test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets
+    job, target, task, path, body = self.fixture()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_preview_test.py", line 29, in fixture
+    policy = data(self.user.request("PUT", self.base()+"/archive-policy", self.settings(target)))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'd6e06c82e05718b983761d0ecc7ee952'}
+----------------------------------------------------------------------
+Ran 8 tests in 4.438s
+FAILED (failures=8)
+smartdocs-archive-preview-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-archive-preview-red.service: Failed with result 'exit-code'.
+smartdocs-archive-preview-red.service: Consumed 6.681s CPU time.

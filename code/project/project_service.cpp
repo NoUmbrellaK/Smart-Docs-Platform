@@ -238,6 +238,8 @@ Directory ProjectService::RenameDirectory(const SessionContext& session,
         MySqlTransaction transaction(connection);
         RequireRole(connection, session.user_id, project_id, Role::Admin);
         Directory directory;
+        // Serialize target approval and rename, including rename-away-and-back.
+        connection.Query("SELECT id FROM projects WHERE id=? FOR UPDATE", {SqlValue(project_id)});
         if (!repository_->FindDirectory(connection, project_id, directory_id,
                                         &directory)) {
             ResourceNotFound();
@@ -246,6 +248,7 @@ Directory ProjectService::RenameDirectory(const SessionContext& session,
             throw AppError(409, "root_directory_immutable",
                            "the project root directory cannot be renamed");
         }
+        if (directory.name != name) InvalidateArchiveTarget(connection, project_id, directory_id);
         repository_->RenameDirectory(connection, project_id, directory_id,
                                      name);
         repository_->InsertAudit(connection, session.user_id, project_id,
