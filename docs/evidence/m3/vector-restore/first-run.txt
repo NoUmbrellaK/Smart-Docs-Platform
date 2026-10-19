@@ -1,0 +1,45 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_backup_restore_test.py --vectors.
+2026-10-19T15:01:59.128982Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 901204
+2026-10-19T15:01:59.529328Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T15:02:14.743956Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T15:02:23.148145Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_backup_restore_paired_snapshot_and_authoritative_http (__main__.BackupRestoreE2E) ... FAIL
+======================================================================
+FAIL: test_backup_restore_paired_snapshot_and_authoritative_http (__main__.BackupRestoreE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_backup_restore_test.py", line 243, in test_backup_restore_paired_snapshot_and_authoritative_http
+    self.assertEqual(data(restored_reader.request('GET', citation['source_url'])), cited_source)
+AssertionError: {'cha[842 chars]e': 'completed', 'version_id': 'fb9494502e7dd4[15 chars]873'} != {'cha[842 chars]e': 'pending', 'version_id': 'fb9494502e7dd4db[13 chars]873'}
+Diff is 1164 characters long. Set self.maxDiff to None to see it.
+----------------------------------------------------------------------
+Ran 1 test in 36.483s
+FAILED (failures=1)
+smartdocs-m3-vector-restore-test.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-vector-restore-test.service: Failed with result 'exit-code'.
+smartdocs-m3-vector-restore-test.service: Consumed 8.750s CPU time.
+MainPID=0
+Result=exit-code
+ActiveState=failed
+MainPID=900951
+Result=success
+ActiveState=active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2365         233          19         896         846
+Swap:              0           0           0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0

@@ -1,4 +1,5 @@
-"""Paired logical backup/restore in disposable MySQL only; no model or real data."""
+"""Paired disposable restore; optional real offline vectors, never a cloud model."""
+import argparse
 import hashlib
 import json
 import os
@@ -10,7 +11,7 @@ from m1_http_test import (HttpClient, ServerProcess, complete, create_upload, da
                           login, put_part, upload_parts)
 from m2_worker_test import ROOT
 from m3_handover_report_test import HandoverReportE2E
-from smartdocs import worker
+from smartdocs import search, vector_worker, worker
 
 
 def digest(path):
@@ -22,6 +23,77 @@ def digest(path):
 
 
 class BackupRestoreE2E(HandoverReportE2E):
+    with_vectors = False
+
+    def encode(self, chunks):
+        self.encoding_requests += 1
+        return vector_worker.request_encoding(os.environ['SMARTDOCS_ENCODER_SOCKET'], chunks)
+
+    def hybrid(self, client):
+        result = search.search_documents(
+            lambda arguments: data(client.request('POST', self.base() + '/search', arguments)),
+            self.encode, {'query': 'Evidence'})
+        result['items'].sort(key=lambda hit: hit['chunk']['chunk_id'])
+        return result
+
+    def vector_rows(self, database):
+        # Read-only fingerprint includes exact vectors, windows, stable chunks and revision.
+        rows = self.mysql('SELECT chunk_id,window_ordinal,job_id,embedding_revision,char_start,char_end,vector '
+                          'FROM document_embeddings ORDER BY chunk_id,window_ordinal', database)
+        self.assertEqual(len(rows.splitlines()), 2)
+        return hashlib.sha256(rows.encode()).hexdigest()
+
+    def prepare_vectors(self, jobs):
+        self.encoding_requests = 0
+        vector = vector_worker.VectorClient(self.server.port, self.token)
+        for _ in range(2):
+            self.assertEqual(vector_worker.run_once(vector, self.encode), 'completed')
+        # The obsolete third version and unapproved replacement must not be encoded.
+        self.assertEqual(vector_worker.run_once(vector, self.encode), 'idle')
+        self.assertEqual(self.encoding_requests, 2)
+        result = self.hybrid(self.user)
+        self.assertEqual(result['retrieval'], 'hybrid')
+        self.assertEqual({hit['version_id'] for hit in result['items']},
+                         {job['version_id'] for job in jobs[:2]})
+        self.assertTrue(all('vector' in hit['match_sources'] for hit in result['items']))
+        return self.vector_rows('smart_docs_test'), result
+
+    def rebuild_vectors(self, admin, jobs, snapshot):
+        rows_hash, expected_search = snapshot
+        database = 'smart_docs_restore_test'
+        self.assertEqual(self.vector_rows(database), rows_hash)
+        self.assertEqual(self.hybrid(admin), expected_search)
+        before_attempts = int(self.mysql("SELECT SUM(attempt_count) FROM processing_jobs "
+                                        "WHERE task_type='vectorize'", database))
+        for job in jobs[:2]:
+            # Explicit admin reapproval queues a fresh attempt through the existing API.
+            # It is confined to the restored synthetic versions, not a new model consent.
+            data(admin.request('PUT', self.base() + '/files/' + job['file_id'] + '/remote-ai-policy',
+                {'policy': 'remote_ai_allowed', 'approved_version_ids': [job['version_id']]}))
+        degraded = self.hybrid(admin)
+        self.assertEqual(degraded['retrieval'], 'keyword_only')
+        self.assertIn('vector_index_unavailable', degraded['warnings'])
+        self.assertEqual([hit['chunk'] for hit in degraded['items']],
+                         [hit['chunk'] for hit in expected_search['items']])
+        self.assertEqual(degraded['coverage']['vector_completed_files'], 0)
+        self.assertTrue(all('vector' not in hit['match_sources'] for hit in degraded['items']))
+        vector = vector_worker.VectorClient(admin.port, self.token)
+        def encode_fresh(chunks):
+            # Claim removes old windows before actual local inference, so replay cannot pass.
+            for chunk in chunks:
+                self.assertRegex(chunk['chunk_id'], r'^[0-9a-f]{64}$')
+                self.assertEqual(self.mysql("SELECT COUNT(*) FROM document_embeddings WHERE chunk_id='" +
+                                            chunk['chunk_id'] + "'", database), '0')
+            return self.encode(chunks)
+        for _ in range(2):
+            self.assertEqual(vector_worker.run_once(vector, encode_fresh), 'completed')
+        self.assertEqual(vector_worker.run_once(vector, encode_fresh), 'idle')
+        self.assertEqual(int(self.mysql("SELECT SUM(attempt_count) FROM processing_jobs "
+                                       "WHERE task_type='vectorize'", database)), before_attempts + 2)
+        self.assertEqual(self.vector_rows(database), rows_hash)
+        self.assertEqual(self.hybrid(admin), expected_search)
+        self.assertEqual(self.encoding_requests, 8)
+
     def mysql(self, statement, database='smart_docs_test'):
         self.assertIn(database, ('smart_docs_test', 'smart_docs_restore_test'))
         return subprocess.run(['mysql', '--no-defaults', '--protocol=SOCKET',
@@ -57,7 +129,6 @@ class BackupRestoreE2E(HandoverReportE2E):
         report = data(reader.request('GET', report_url))
         markdown = reader.request('GET', report_url + '/markdown').body
         citation = report['report']['items'][0]['citations'][0]
-        cited_source = data(reader.request('GET', citation['source_url']))
         _, editor = self.member('editor')
         beta = data(self.user.request('POST', '/api/v1/projects', {'name': 'Restore beta'}), 201)
         target = self.directory('Restore destination')
@@ -83,6 +154,8 @@ class BackupRestoreE2E(HandoverReportE2E):
                       partial_bytes[:partial['chunk_size']]))
         partial_url = self.base() + '/uploads/' + partial['task_id']
         before_partial = data(self.user.request('GET', partial_url))
+        vector_snapshot = self.prepare_vectors(jobs) if self.with_vectors else None
+        cited_source = data(reader.request('GET', citation['source_url']))
         expected = {path: data(self.user.request('GET', path)) for path in (
             self.base() + '/directories', self.base() + '/files',
             self.base() + '/archive-policy', self.base() + '/handover-checklist')}
@@ -171,6 +244,9 @@ class BackupRestoreE2E(HandoverReportE2E):
             self.assertEqual(data(admin.request('GET', historical_url)), historical)
             self.assertEqual(admin.request('GET', self.version_path(new) + '/chunks/' + historical_chunk).status, 404)
             self.assertEqual(data(restored_reader.request('PUT', report_url, report_body)), receipt)
+            if self.with_vectors:
+                self.rebuild_vectors(admin, jobs, vector_snapshot)
+                self.assertEqual(data(restored_reader.request('GET', report_url)), report)
             for client in (admin, restored_editor):
                 self.assertEqual(client.request('GET', report_url).status, 404)
             self.assertEqual(restored_reader.request('POST', self.base() + '/directories', {
@@ -205,13 +281,17 @@ class BackupRestoreE2E(HandoverReportE2E):
             self.user.port = self.server.port
         reader.port = self.server.port
         self.assertEqual(data(reader.request('GET', report_url)), report)
-        print(json.dumps({'case': 'T20-isolated-keyword-restore', 'result': 'pass',
+        print(json.dumps({'case': 'T20-isolated-mixed-restore' if self.with_vectors else 'T20-isolated-keyword-restore', 'result': 'pass',
             'database_rows_sha256': digest(backup / 'rows.sql'), 'storage_files': len(manifest),
             'file_versions': len(versions), 'report_citations': 1, 'resumed_uploads': 1,
             'keyword_order_changed': keyword_order_changed,
-            'real_model_calls': 0, 'vector_rebuild': 'not_run', 'production_restore': 'not_run'}), flush=True)
+            'remote_model_calls': 0, 'local_embedding_requests': self.encoding_requests if self.with_vectors else 0,
+            'vector_rebuild': 'pass' if self.with_vectors else 'not_run', 'production_restore': 'not_run'}), flush=True)
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--vectors', action='store_true', help='Require an existing isolated offline encoder socket')
+    BackupRestoreE2E.with_vectors = parser.parse_args().vectors
     suite = unittest.TestSuite([BackupRestoreE2E('test_backup_restore_paired_snapshot_and_authoritative_http')])
     raise SystemExit(not unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful())

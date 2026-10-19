@@ -1,0 +1,134 @@
+A27 vector restore, base 7c8f947cb83fe57703bd9d646a959b76289e9eca plus this commit
+2026-10-19 Asia/Shanghai
+Python 3.10.12; MySQL 8.0.46 (same existing isolated wrapper).
+Model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+Revision: minilm-634d0f66-fastembed0.9.0-ort1.23.2-halves128-l2-v1
+Existing cached files validated by resident encoder startup; no download.
+Verified vector run: 23:05:19-23:07:49 including isolated DB setup/cleanup.
+Model service: READY 23:01:16, explicitly stopped 23:08:27.
+
+First-run observed runtime settings and hashes (before fixture snapshot correction):
+Type=notify
+NotifyAccess=main
+TimeoutStartUSec=3min 10s
+RuntimeMaxUSec=15min
+MainPID=900951
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+KillMode=control-group
+ActiveState=active
+RuntimeMaxUSec=13min
+MainPID=901198
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+nobody nogroup 700 /tmp/smartdocs-m3-vector-restore.c5KGER
+nobody nogroup 600 /tmp/smartdocs-m3-vector-restore.c5KGER/encoder.sock
+59efd05b687bd613ea5640513c820c0c7cb55560a488413009adf61d2b9d01fb  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_backup_restore_test.py
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+
+Verified rerun observed runtime settings and current source hash:
+RuntimeMaxUSec=13min
+MainPID=901881
+Result=success
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+ActiveState=active
+SubState=running
+1687acbbd698e42b8ff4ffcbcf8a7dff097581ff67826a818702fd39643c4f23  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_backup_restore_test.py
+{'fastembed': '0.9.0', 'onnxruntime': '1.23.2', 'numpy': '2.2.6', 'tokenizers': '0.23.3', 'huggingface-hub': '1.33.0'}
+
+Encoder journal and post-stop observation:
+2026-10-19T23:00:11+0800 aliyun-lou systemd[1]: Starting /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-m3-vector-restore.c5KGER/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-19T23:01:16+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-m3-vector-restore.c5KGER/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-19T23:08:27+0800 aliyun-lou systemd[1]: Stopping /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-m3-vector-restore.c5KGER/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock...
+2026-10-19T23:08:27+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-encoder.service: Deactivated successfully.
+2026-10-19T23:08:27+0800 aliyun-lou systemd[1]: Stopped /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.resident_service /tmp/smartdocs-m3-vector-restore.c5KGER/encoder.sock /tmp/smartdocs-safe.h4SzvX/vector-probe/model /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python /tmp/smartdocs-safe.h4SzvX/vector-socket/model.lock.
+2026-10-19T23:08:27+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-encoder.service: Consumed 10.994s CPU time.
+2026-10-19T23:07:45+0800 aliyun-lou test-with-mysql.sh[902408]: ----------------------------------------------------------------------
+2026-10-19T23:07:45+0800 aliyun-lou test-with-mysql.sh[902408]: Ran 1 test in 36.758s
+2026-10-19T23:07:45+0800 aliyun-lou test-with-mysql.sh[902408]: OK
+2026-10-19T23:07:49+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-recheck.service: Deactivated successfully.
+2026-10-19T23:07:49+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-recheck.service: Consumed 8.692s CPU time.
+MainPID=902547
+Result=success
+ActiveState=active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2078         518           3         898        1151
+Swap:              0           0           0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+
+Final lifecycle and resource check:
+MainPID=0
+Result=success
+Id=smartdocs-m3-vector-restore-encoder.service
+ActiveState=inactive
+
+MainPID=0
+Result=exit-code
+Id=smartdocs-m3-vector-restore-test.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+Id=smartdocs-m3-vector-restore-recheck.service
+ActiveState=inactive
+
+MainPID=0
+Result=success
+Id=smartdocs-m3-vector-restore-default.service
+ActiveState=inactive
+MemoryCurrent=136192000
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+active
+2026-10-19T23:10:33+0800 aliyun-lou test-with-mysql.sh[903067]: ----------------------------------------------------------------------
+2026-10-19T23:10:33+0800 aliyun-lou test-with-mysql.sh[903067]: Ran 1 test in 21.940s
+2026-10-19T23:10:33+0800 aliyun-lou test-with-mysql.sh[903067]: OK
+2026-10-19T23:10:37+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-default.service: Deactivated successfully.
+2026-10-19T23:10:37+0800 aliyun-lou systemd[1]: smartdocs-m3-vector-restore-default.service: Consumed 8.628s CPU time.
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+
+Checks:
+PASS test source cmp between worktree and execution copy
+PASS resident_service.py, vector_worker.py and search.py cmp
+PASS Python ast.parse
+PASS git diff --check
+All database tests serial; one shared resource slice; no C++ rebuild.
+Only disposable DB/storage and empty socket directory cleaned; cached model retained.

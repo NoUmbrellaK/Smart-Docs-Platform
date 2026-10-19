@@ -79,3 +79,6 @@ RuntimeMaxSec=900、TimeoutStopSec=5、KillMode=control-group，IPAddressDeny=an
 - 未对产品做修改，因此没有虚构的产品 RED→GREEN。测试自身的失败及最终复验如实保留。
 
 正式运维注意事项见[部署手册](../../../deployment/m1-single-host.md#备份与恢复)。
+
+后续 A27 在同一脚本加入显式 `--vectors` 模式，完整保留本场景并补充真实本地向量恢复/重建；
+见[后续证据](../vector-restore/README.md)。本页 A26 历史结果和限制不回写为当时已覆盖向量。

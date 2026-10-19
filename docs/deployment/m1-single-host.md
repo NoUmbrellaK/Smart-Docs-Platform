@@ -251,6 +251,24 @@ ALTER TABLE document_chunks ADD FULLTEXT INDEX ft_document_body (body) WITH PARS
 
 可复现的人工资料恢复演练脚本为 [m3_backup_restore_test.py](../../test/e2e/m3_backup_restore_test.py)，须通过 `scripts/test-with-mysql.sh` 在资源受限测试单元中运行。脚本拒绝非测试 socket，使用新建 `smart_docs_restore_test` 库，不读取生产数据或真实模型 key；其范围及实际结果见[恢复演练证据](../evidence/m3/backup-restore/README.md)。
 
+### 向量恢复与重新生成
+
+当前实现将向量窗口存于 MySQL `document_embeddings`，批次回执存于 `embedding_batches`，
+与原始片段、版本和向量任务一同逻辑备份；不是另有一套需复制的外部向量数据库。
+恢复后须核对任务状态、384 维向量、编码修订及混合检索，不能只看表存在。
+
+需要重新生成时，在隔离恢复环境由项目管理员核对原有版本批准列表，使用现有
+`PUT /api/v1/projects/{project_id}/files/{file_id}/remote-ai-policy` 提交相同策略及批准列表。
+这会使当前获批且已解析的版本重新排队，旧尝试失效；worker 领取时清除该任务旧向量，
+从已恢复片段重新编码并经 C++ 校验发布。保留全部原有批准 ID，不能为凑齐索引批准
+未获准的新版本或内部资料。报告依赖、当前版本与权限仍按正常规则检查。
+重建期间应看到明确关键词降级，且关键词资料仍可读；完成后再检查混合结果和固定引用。
+
+该演练脚本的 `--vectors` 模式覆盖上述流程，并保留默认模式的所有文件/权限/报告/续传检查。
+需预先启动已经校验的禁网本地编码器，设置 `SMARTDOCS_ENCODER_SOCKET`，确认实际 READY 后
+才运行受限测试。使用既有固定模型/依赖/编码修订，不在运行中联网下载或替换模型；
+模型缓存文件丢失或换机器后的重建需另验。实际记录见[向量恢复证据](../evidence/m3/vector-restore/README.md)。
+
 ## 发布前检查
 
 - `bin/server` 与 `bin/smartdocs-admin` 来自目标提交；
