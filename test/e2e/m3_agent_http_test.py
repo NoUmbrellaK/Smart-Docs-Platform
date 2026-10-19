@@ -34,6 +34,7 @@ class AgentHttpE2E(HandoverContextE2E):
             except Exception as error:
                 self.model_errors.append(type(error).__name__+': '+str(error))
                 raise
+            if isinstance(answer, httpx.Response): return answer
             answer['usage'] = {'prompt_tokens': 10, 'completion_tokens': 5, 'total_tokens': 15}
             return httpx.Response(200, stream=httpx.ByteStream(json.dumps(answer).encode()))
         def model(key, audit, **kwargs):
@@ -155,6 +156,50 @@ class AgentHttpE2E(HandoverContextE2E):
             self.assertFalse(preview['executable']); self.assertEqual(preview['state'], 'preview')
             self.assertEqual(self.file(job)['directory_id'], self.project['root_directory_id'])
             self.assertEqual(self.execute(archive_task)[0], 409); self.assertEqual(len(self.calls), 2)
+
+    def test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes(self):
+        job = self.approved_file()
+        for status, reason in ((401, 'provider_auth'), (402, 'provider_balance'),
+                               (429, 'provider_rate_limit'), (503, 'provider_unavailable'), (302, 'provider_rejected')):
+            with self.subTest(status=status):
+                task = self.create_task(job); path = self.tasks_path()+'/'+task['id']
+                async def reject(body):
+                    return httpx.Response(status, headers={'location':'https://evil.invalid'}, text='SECRET-PROVIDER-BODY')
+                with self.gateway(reject):
+                    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+                    saved = data(self.user.request('GET', path+'/run/result'))
+                    self.assertEqual((saved['state'], saved['error_code'], saved['model_calls'], saved['result']),
+                                     ('failed', reason, 1, None))
+                    self.assertEqual(self.execute(task)[0], 409); self.assertEqual(len(self.calls), 1)
+                    self.assertEqual(self.count("SELECT COUNT(*) FROM agent_runs WHERE task_id='"+task['id']+
+                                                "' AND finish_code='"+reason+"'"), 1)
+                    for table in ('agent_tool_calls', 'archive_plans', 'handover_reports'):
+                        self.assertEqual(self.count("SELECT COUNT(*) FROM "+table+" WHERE task_id='"+task['id']+"'"), 0)
+                    trace = next(self.audit.glob('*.jsonl')).read_text()
+                    self.assertNotIn('SECRET-PROVIDER-BODY', trace)
+                    events = [json.loads(line) for line in trace.splitlines()]
+                    self.assertEqual([e['reason'] for e in events if e['event']=='model_result'], [reason])
+                    self.assertTrue(all(e['usage'] is None for e in events if e['event']=='model_result'))
+                    self.assertEqual(events[-1]['error_code'], reason)
+
+    def test_http_finish_accepts_only_known_provider_codes_and_replays_identically(self):
+        job = self.approved_file()
+        for reason in ('provider_auth', 'provider_balance', 'provider_rate_limit', 'provider_unavailable', 'provider_rejected'):
+            with self.subTest(reason=reason):
+                task = self.create_task(job); path = self.tasks_path()+'/'+task['id']
+                try:
+                    data(self.user.request('POST', path+'/run/start'))
+                    self.assertEqual(self.user.request('POST', path+'/run/finish', {
+                        'status':'failed', 'result':None, 'error_code':'provider_SECRET'}).status, 400)
+                    outcome = {'status':'failed', 'result':None, 'error_code':reason}
+                    self.assertEqual(data(self.user.request('POST', path+'/run/finish', outcome)), {'state':'failed'})
+                    self.assertEqual(data(self.user.request('POST', path+'/run/finish', outcome)), {'state':'failed'})
+                    self.assertEqual(self.user.request('POST', path+'/run/finish',
+                        {**outcome, 'error_code':'dependency_failed'}).status, 409)
+                    self.assertEqual(data(self.user.request('GET', path+'/run/result'))['error_code'], reason)
+                finally:
+                    # A failed finish assertion must not consume the next case's execution slot.
+                    data(self.user.request('POST', path+'/cancel'))
 
 
 if __name__ == '__main__':

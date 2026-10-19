@@ -52,12 +52,13 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
     async def test_http_rejections_are_not_retried_or_leaked(self):
         for status,reason in [(302,"provider_rejected"),(401,"provider_auth"),(402,"provider_balance"),
                               (429,"provider_rate_limit"),(503,"provider_unavailable")]:
-            async def reject(request): return httpx.Response(status,headers={"location":"https://evil.invalid"},text="secret-provider-body")
-            model=self.model(reject)
-            with self.assertRaises(RunError) as caught: await model(**ARGS)
-            self.assertEqual(caught.exception.code,"dependency_failed")
-            self.assertEqual(self.events[-1]["reason"],reason)
-            self.assertNotIn("secret-provider-body",str(caught.exception))
+            with self.subTest(status=status):
+                async def reject(request): return httpx.Response(status,headers={"location":"https://evil.invalid"},text="secret-provider-body")
+                model=self.model(reject)
+                with self.assertRaises(RunError) as caught: await model(**ARGS)
+                self.assertEqual(caught.exception.code,reason)
+                self.assertEqual(self.events[-1]["reason"],reason)
+                self.assertNotIn("secret-provider-body",str(caught.exception))
         self.assertEqual(len(self.requests),5)
 
     async def test_whole_request_deadline_cancels_transport(self):

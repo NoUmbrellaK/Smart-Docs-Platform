@@ -1,0 +1,46 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_mcp_contract_matrix_test.py.
+2026-10-19T13:41:50.664168Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 885370
+2026-10-19T13:41:50.670074Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T13:42:05.908656Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T13:42:14.431503Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_contract_01_search_documents_normal (__main__.McpContractMatrix) ... ok
+test_contract_02_search_documents_invalid (__main__.McpContractMatrix) ... ok
+test_contract_03_search_documents_other_owner (__main__.McpContractMatrix) ... ok
+test_contract_04_search_documents_new_version (__main__.McpContractMatrix) ... ok
+test_contract_05_search_documents_timeout (__main__.McpContractMatrix) ... ok
+test_contract_06_read_document_version_normal (__main__.McpContractMatrix) ... ok
+test_contract_07_read_document_version_invalid (__main__.McpContractMatrix) ... ok
+test_contract_08_read_document_version_other_owner (__main__.McpContractMatrix) ... ok
+test_contract_09_read_document_version_new_version (__main__.McpContractMatrix) ... ok
+test_contract_10_read_document_version_timeout (__main__.McpContractMatrix) ... ok
+test_contract_11_create_archive_plan_normal (__main__.McpContractMatrix) ... ok
+test_contract_12_create_archive_plan_invalid (__main__.McpContractMatrix) ... ok
+test_contract_13_create_archive_plan_other_owner (__main__.McpContractMatrix) ... ok
+test_contract_14_create_archive_plan_new_version (__main__.McpContractMatrix) ... ok
+test_contract_15_create_archive_plan_timeout (__main__.McpContractMatrix) ... ok
+test_contract_16_execute_archive_plan_normal (__main__.McpContractMatrix) ... ok
+test_contract_17_execute_archive_plan_invalid (__main__.McpContractMatrix) ... ok
+test_contract_18_execute_archive_plan_other_owner (__main__.McpContractMatrix) ... ok
+test_contract_19_execute_archive_plan_new_version (__main__.McpContractMatrix) ... ok
+test_contract_20_execute_archive_plan_timeout (__main__.McpContractMatrix) ... ok
+test_contract_21_save_handover_report_normal (__main__.McpContractMatrix) ... ok
+test_contract_22_save_handover_report_invalid (__main__.McpContractMatrix) ... ok
+test_contract_23_save_handover_report_other_owner (__main__.McpContractMatrix) ... ok
+test_contract_24_save_handover_report_new_version (__main__.McpContractMatrix) ... ok
+test_contract_25_save_handover_report_timeout (__main__.McpContractMatrix) ... ok
+----------------------------------------------------------------------
+Ran 25 tests in 31.844s
+OK
+smartdocs-provider-reasons-matrix.service: Deactivated successfully.
+smartdocs-provider-reasons-matrix.service: Consumed 23.426s CPU time.

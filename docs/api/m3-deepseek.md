@@ -19,10 +19,18 @@ HTTPS证书验证开启，trust_env=False，不读取代理/自定义CA环境，
 抵达供应商的请求仍可能产生费用，不能宣称取消即撤回。领取、工具、全任务时限与
 外发前依赖复核仍由既有核心执行。字节/次数限额不是精确货币预算。
 
-401/402/429/5xx等返回通用dependency_failed，受控轨迹分别记录provider_auth、
-provider_balance、provider_rate_limit、provider_unavailable；不记录供应商错误正文。
+401/402/429/5xx分别返回provider_auth、provider_balance、provider_rate_limit、provider_unavailable，
+其他非200（含重定向）返回provider_rejected。仅从HTTP状态映射固定错误码，不读取或传播
+供应商错误正文；同一码保存在受控轨迹和C++任务失败结果，现有网页Reason字段可查看。
+鉴权/余额问题需管理员检查配置或账户，限流/不可用应先确认持久任务状态、稍后由用户
+显式新建任务；原失败任务不自动重跑，也不跟随重定向或切换供应商。响应未包含有效usage时
+仍为null，不据此声称没有计费。网络传输和审计等其他故障仍可能为dependency_failed。
 超时返回timeout，超次数/请求大小返回budget_exhausted，非法模型结果终止。
 隐藏推理与未知响应字段不返回给核心；无第三方追踪。
+
+此错误码扩展不修改schema16，也不重写历史dependency_failed记录。部署时须配套更新
+C++和Python；旧C++不接受新增finish错误码，可能留下running任务，不能仅替换适配器。
+本轮仅在隔离环境验证，未部署生产服务。
 
 ## 本机可信入口
 

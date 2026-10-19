@@ -306,7 +306,8 @@ nlohmann::json AgentTaskService::CheckRun(const SessionContext& session,const st
 nlohmann::json AgentTaskService::FinishRun(const SessionContext& session,const std::string& project,const std::string& task,const Json& body) {
     RequireExactObject(body,{"status","result","error_code"});
     const std::set<std::string> codes{"timeout","budget_exhausted","model_invalid","invalid_source","dependency_failed",
-        "scope_changed","repeated_tool_error","access_denied","cancelled"};
+        "scope_changed","repeated_tool_error","access_denied","cancelled",
+        "provider_auth","provider_balance","provider_rate_limit","provider_unavailable","provider_rejected"};
     if(!body["status"].is_string()) throw AppError(400,"invalid_request","status is invalid");
     const auto status=body["status"].get<std::string>();
     if((status=="completed" && (!body["error_code"].is_null() || !body["result"].is_object())) ||

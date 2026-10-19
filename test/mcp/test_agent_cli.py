@@ -46,3 +46,12 @@ class AgentCliTests(unittest.TestCase):
         from smartdocs.agent_cli import safe_outcome
         self.assertEqual(safe_outcome({'state':'waiting_execution','error_code':'scope_changed','secret':'raw'}),
                          {'state':'waiting_execution','error_code':'scope_changed'})
+
+    def test_provider_failure_summary_preserves_only_known_codes(self):
+        from smartdocs.agent_cli import safe_outcome
+        for code in ('provider_auth', 'provider_balance', 'provider_rate_limit', 'provider_unavailable', 'provider_rejected'):
+            with self.subTest(code=code):
+                self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+                                 {'state':'failed', 'error_code':code})
+        self.assertEqual(safe_outcome({'state':'failed', 'error_code':'provider_SECRET'}),
+                         {'state':'failed', 'error_code':'dependency_failed'})

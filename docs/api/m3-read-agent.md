@@ -51,7 +51,10 @@ waiting_confirmation/waiting_execution拒绝本页模型start/check/finish，不
 
 失败时status=failed、result=null；error_code仅可为timeout、budget_exhausted、
 model_invalid、invalid_source、dependency_failed、scope_changed、repeated_tool_error、
-access_denied或cancelled，不接受供应商错误正文。模型检查/结果查询观察到范围失效时
+access_denied、cancelled，以及provider_auth、provider_balance、provider_rate_limit、
+provider_unavailable、provider_rejected，不接受任意provider_前缀或供应商错误正文。
+新增供应商错误码要求匹配版本的Python/C++同时更新，不改变schema16或历史记录；
+详见[错误分类与处置](m3-deepseek.md#固定出口与预算)。模型检查/结果查询观察到范围失效时
 持久failed并清除旧结果，重新批准也不恢复；只按当前业务状态检查，不监听全部
 历史策略变更事件。权限已被完全撤销时接口拒绝，不能冒充有权写失败记录。
 
@@ -83,7 +86,7 @@ Python协程被强制取消时不续跑；进程消失
 ## schema7与验证边界
 
 schema7新增agent_runs，扩展agent_tasks状态，不回填虚构运行；当前C++已要求
-[schema15](m3-archive-agent.md#schema15和部署)，不可用旧schema14及更早版本直接启动。
+[schema16](m3-tool-audit.md#schema16和部署)，不可用旧schema15及更早版本直接启动。
 升级须停C++/worker/网关并备份后运行scripts/migrate.sh；MySQL DDL非整批原子事务，
 中途失败恢复备份，不盲目重放；回退需恢复匹配版本备份。只验证隔离测试库，
 原业务库未升级，不要直接替换旧库上的二进制。

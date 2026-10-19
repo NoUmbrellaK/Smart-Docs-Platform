@@ -1,0 +1,138 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest m3_agent_http_test.AgentHttpE2E.test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes m3_agent_http_test.AgentHttpE2E.test_http_finish_accepts_only_known_provider_codes_and_replays_identically -v.
+2026-10-19T13:25:30.914537Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 881063
+2026-10-19T13:25:31.215144Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T13:25:48.934752Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T13:25:58.427513Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) ... test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) ...
+======================================================================
+FAIL: test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) (status=401)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 169, in test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes
+    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'dependency_failed'}}) != (200, {'data': {'state': 'failed', 'error_code': 'provider_auth'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'dependency_failed'}}
+{'data': {'state': 'failed', 'error_code': 'provider_auth'}}
+- (200, {'data': {'error_code': 'dependency_failed', 'state': 'failed'}})
+?                                  ^^^^^^^^ - ^^^^
++ (200, {'data': {'error_code': 'provider_auth', 'state': 'failed'}})
+?                                +++++  ^  ^^^
+======================================================================
+FAIL: test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) (status=402)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 169, in test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes
+    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'dependency_failed'}}) != (200, {'data': {'state': 'failed', 'error_code': 'provider_balance'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'dependency_failed'}}
+{'data': {'state': 'failed', 'error_code': 'provider_balance'}}
+- (200, {'data': {'error_code': 'dependency_failed', 'state': 'failed'}})
+?                                  ^^^^^  ------ -
++ (200, {'data': {'error_code': 'provider_balance', 'state': 'failed'}})
+?                                +++++  ^^^^^^
+======================================================================
+FAIL: test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) (status=429)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 169, in test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes
+    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'dependency_failed'}}) != (200, {'data': {'state': 'failed', 'error_code': 'provider_rate_limit'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'dependency_failed'}}
+{'data': {'state': 'failed', 'error_code': 'provider_rate_limit'}}
+- (200, {'data': {'error_code': 'dependency_failed', 'state': 'failed'}})
+?                                  ^ ------ ^^ ^^^
++ (200, {'data': {'error_code': 'provider_rate_limit', 'state': 'failed'}})
+?                                +++++  ^^^^^  ^ ^^^
+======================================================================
+FAIL: test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) (status=503)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 169, in test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes
+    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'dependency_failed'}}) != (200, {'data': {'state': 'failed', 'error_code': 'provider_unavailable'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'dependency_failed'}}
+{'data': {'state': 'failed', 'error_code': 'provider_unavailable'}}
+- (200, {'data': {'error_code': 'dependency_failed', 'state': 'failed'}})
+?                                  ^^ ^^^^^^^    -
++ (200, {'data': {'error_code': 'provider_unavailable', 'state': 'failed'}})
+?                                +++++  ^^^ ^^   +++
+======================================================================
+FAIL: test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes (m3_agent_http_test.AgentHttpE2E) (status=302)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 169, in test_http_provider_rejections_persist_safe_reasons_without_retry_or_writes
+    self.assertEqual(self.execute(task), (200, {'data': {'state':'failed', 'error_code':reason}}))
+AssertionError: Tuples differ: (200, {'data': {'state': 'failed', 'error_code': 'dependency_failed'}}) != (200, {'data': {'state': 'failed', 'error_code': 'provider_rejected'}})
+First differing element 1:
+{'data': {'state': 'failed', 'error_code': 'dependency_failed'}}
+{'data': {'state': 'failed', 'error_code': 'provider_rejected'}}
+- (200, {'data': {'error_code': 'dependency_failed', 'state': 'failed'}})
+?                                  ^ ^^ - ^^^^^^
++ (200, {'data': {'error_code': 'provider_rejected', 'state': 'failed'}})
+?                                +++++  ^^^ ^  ^
+======================================================================
+FAIL: test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) (reason='provider_auth')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 193, in test_http_finish_accepts_only_known_provider_codes_and_replays_identically
+    self.assertEqual(data(self.user.request('POST', path+'/run/finish', outcome)), {'state':'failed'})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 400: {'error': {'code': 'invalid_request', 'message': 'outcome is invalid', 'retryable': False}, 'request_id': '846b366b11435d6c02e1b64a5ead4b63'}
+======================================================================
+FAIL: test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) (reason='provider_balance')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 193, in test_http_finish_accepts_only_known_provider_codes_and_replays_identically
+    self.assertEqual(data(self.user.request('POST', path+'/run/finish', outcome)), {'state':'failed'})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 400: {'error': {'code': 'invalid_request', 'message': 'outcome is invalid', 'retryable': False}, 'request_id': 'fb2ae38363a485c46f0d1b07d3547628'}
+======================================================================
+FAIL: test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) (reason='provider_rate_limit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 189, in test_http_finish_accepts_only_known_provider_codes_and_replays_identically
+    data(self.user.request('POST', path+'/run/start'))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 429: {'error': {'code': 'agent_busy', 'message': 'agent execution slots are full', 'retryable': True}, 'request_id': '80f82ac750794e12e41f032569df8e4c'}
+======================================================================
+FAIL: test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) (reason='provider_unavailable')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 189, in test_http_finish_accepts_only_known_provider_codes_and_replays_identically
+    data(self.user.request('POST', path+'/run/start'))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 429: {'error': {'code': 'agent_busy', 'message': 'agent execution slots are full', 'retryable': True}, 'request_id': 'bc420bcd347ab199ae122d625ad94803'}
+======================================================================
+FAIL: test_http_finish_accepts_only_known_provider_codes_and_replays_identically (m3_agent_http_test.AgentHttpE2E) (reason='provider_rejected')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_http_test.py", line 189, in test_http_finish_accepts_only_known_provider_codes_and_replays_identically
+    data(self.user.request('POST', path+'/run/start'))
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+    raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+AssertionError: expected HTTP 200, got 429: {'error': {'code': 'agent_busy', 'message': 'agent execution slots are full', 'retryable': True}, 'request_id': '137e43e57ad7ea11ed44ed2ec5cb0c7f'}
+----------------------------------------------------------------------
+Ran 2 tests in 7.810s
+FAILED (failures=10)
+smartdocs-provider-reasons-http-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-provider-reasons-http-red.service: Failed with result 'exit-code'.
+smartdocs-provider-reasons-http-red.service: Consumed 10.786s CPU time.

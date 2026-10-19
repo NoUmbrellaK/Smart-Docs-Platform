@@ -1,0 +1,107 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_deepseek.DeepSeekTests.test_http_rejections_are_not_retried_or_leaked test_agent_cli.AgentCliTests.test_provider_failure_summary_preserves_only_known_codes -v.
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) ...
+======================================================================
+FAIL: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) (status=302)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 59, in test_http_rejections_are_not_retried_or_leaked
+    self.assertEqual(caught.exception.code,reason)
+AssertionError: 'dependency_failed' != 'provider_rejected'
+- dependency_failed
++ provider_rejected
+======================================================================
+FAIL: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) (status=401)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 59, in test_http_rejections_are_not_retried_or_leaked
+    self.assertEqual(caught.exception.code,reason)
+AssertionError: 'dependency_failed' != 'provider_auth'
+- dependency_failed
++ provider_auth
+======================================================================
+FAIL: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) (status=402)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 59, in test_http_rejections_are_not_retried_or_leaked
+    self.assertEqual(caught.exception.code,reason)
+AssertionError: 'dependency_failed' != 'provider_balance'
+- dependency_failed
++ provider_balance
+======================================================================
+FAIL: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) (status=429)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 59, in test_http_rejections_are_not_retried_or_leaked
+    self.assertEqual(caught.exception.code,reason)
+AssertionError: 'dependency_failed' != 'provider_rate_limit'
+- dependency_failed
++ provider_rate_limit
+======================================================================
+FAIL: test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) (status=503)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 59, in test_http_rejections_are_not_retried_or_leaked
+    self.assertEqual(caught.exception.code,reason)
+AssertionError: 'dependency_failed' != 'provider_unavailable'
+- dependency_failed
++ provider_unavailable
+======================================================================
+FAIL: test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) (code='provider_auth')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 54, in test_provider_failure_summary_preserves_only_known_codes
+    self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+AssertionError: {'state': 'failed', 'error_code': 'dependency_failed'} != {'state': 'failed', 'error_code': 'provider_auth'}
+- {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ^^^^^^^^ - ^^^^
++ {'error_code': 'provider_auth', 'state': 'failed'}
+?                 +++++  ^  ^^^
+======================================================================
+FAIL: test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) (code='provider_balance')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 54, in test_provider_failure_summary_preserves_only_known_codes
+    self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+AssertionError: {'state': 'failed', 'error_code': 'dependency_failed'} != {'state': 'failed', 'error_code': 'provider_balance'}
+- {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ^^^^^  ------ -
++ {'error_code': 'provider_balance', 'state': 'failed'}
+?                 +++++  ^^^^^^
+======================================================================
+FAIL: test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) (code='provider_rate_limit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 54, in test_provider_failure_summary_preserves_only_known_codes
+    self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+AssertionError: {'state': 'failed', 'error_code': 'dependency_failed'} != {'state': 'failed', 'error_code': 'provider_rate_limit'}
+- {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ^ ------ ^^ ^^^
++ {'error_code': 'provider_rate_limit', 'state': 'failed'}
+?                 +++++  ^^^^^  ^ ^^^
+======================================================================
+FAIL: test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) (code='provider_unavailable')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 54, in test_provider_failure_summary_preserves_only_known_codes
+    self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+AssertionError: {'state': 'failed', 'error_code': 'dependency_failed'} != {'state': 'failed', 'error_code': 'provider_unavailable'}
+- {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ^^ ^^^^^^^    -
++ {'error_code': 'provider_unavailable', 'state': 'failed'}
+?                 +++++  ^^^ ^^   +++
+======================================================================
+FAIL: test_provider_failure_summary_preserves_only_known_codes (test_agent_cli.AgentCliTests) (code='provider_rejected')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 54, in test_provider_failure_summary_preserves_only_known_codes
+    self.assertEqual(safe_outcome({'state':'failed', 'error_code':code, 'body':'SECRET'}),
+AssertionError: {'state': 'failed', 'error_code': 'dependency_failed'} != {'state': 'failed', 'error_code': 'provider_rejected'}
+- {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ^ ^^ - ^^^^^^
++ {'error_code': 'provider_rejected', 'state': 'failed'}
+?                 +++++  ^^^ ^  ^
+----------------------------------------------------------------------
+Ran 2 tests in 0.017s
+FAILED (failures=10)
+smartdocs-provider-reasons-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-provider-reasons-red.service: Failed with result 'exit-code'.

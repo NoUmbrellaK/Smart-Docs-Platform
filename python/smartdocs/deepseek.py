@@ -84,7 +84,7 @@ class DeepSeekModel:
             except (asyncio.TimeoutError,httpx.TimeoutException):
                 reason="timeout"; raise RunError("timeout") from None
             except RunError as error:
-                reason=getattr(error,"provider_reason",error.code); raise
+                reason=error.code; raise
             except (httpx.HTTPError,ValueError,KeyError,TypeError,RecursionError):
                 reason="provider_invalid"; raise RunError("dependency_failed") from None
             finally:
@@ -103,10 +103,8 @@ class DeepSeekModel:
             async with client.stream("POST",URL,content=body,headers={"Authorization":"Bearer "+self._key,
                     "Content-Type":"application/json","Accept-Encoding":"identity"}) as response:
                 if response.status_code!=200:
-                    error=RunError("dependency_failed")
-                    error.provider_reason={401:"provider_auth",402:"provider_balance",429:"provider_rate_limit"}.get(
-                        response.status_code,"provider_unavailable" if response.status_code>=500 else "provider_rejected")
-                    raise error
+                    raise RunError({401:"provider_auth",402:"provider_balance",429:"provider_rate_limit"}.get(
+                        response.status_code,"provider_unavailable" if response.status_code>=500 else "provider_rejected"))
                 if response.headers.get("content-encoding","identity").lower()!="identity":
                     raise RunError("model_invalid")
                 raw=bytearray()

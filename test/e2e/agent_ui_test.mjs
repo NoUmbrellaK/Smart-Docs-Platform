@@ -67,6 +67,18 @@ test("execution never appears on nonpending tasks or reader archive tasks",async
   await view.panel.view("t");assert.equal(executeButton(view),undefined);
 });
 
+test("provider failures display the persisted reason and never offer an automatic restart",async()=>{
+  for(const code of ["provider_auth","provider_balance","provider_rate_limit","provider_unavailable","provider_rejected"]){
+    const view=await setup({getAgentTask:async()=>({...task,state:"failed"}),
+      getAgentResult:async()=>({state:"failed",model_calls:1,error_code:code,result:null,body:"SECRET-PROVIDER-BODY"})});
+    await view.panel.view("t");
+    assert.match(view.get("agent-detail-status").textContent,/failed/);
+    assert.ok(text(view.get("agent-detail")).includes(code));
+    assert.doesNotMatch(text(view.get("agent-detail")),/SECRET-PROVIDER-BODY/);
+    assert.equal(executeButton(view),undefined);
+  }
+});
+
 test("in-flight execution keeps refresh and cancellation usable without allowing duplicate starts",async()=>{
   const late=deferred();let runs=0,state="pending";
   const view=await setup({executeAgentTask:()=>{runs++;state="running";return late.promise;},

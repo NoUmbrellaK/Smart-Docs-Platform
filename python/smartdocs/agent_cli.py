@@ -60,7 +60,8 @@ def safe_outcome(outcome):
                                           and outcome.get('error_code') is None): return {'state':outcome['state']}
     code=outcome.get("error_code")
     if code not in {"timeout","budget_exhausted","model_invalid","invalid_source","dependency_failed",
-                    "scope_changed","repeated_tool_error","access_denied","cancelled","archive_not_ready"}: code="dependency_failed"
+                    "scope_changed","repeated_tool_error","access_denied","cancelled","archive_not_ready",
+                    "provider_auth","provider_balance","provider_rate_limit","provider_unavailable","provider_rejected"}: code="dependency_failed"
     return {"state":outcome["state"],"error_code":code}
 
 

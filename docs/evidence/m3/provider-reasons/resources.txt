@@ -1,0 +1,50 @@
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-provider-reasons-red.service
+
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-provider-reasons-http-red.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-provider-reasons-build.service
+
+MainPID=0
+Result=exit-code
+ExecMainStatus=9
+Id=smartdocs-provider-reasons-green.service
+
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-provider-reasons-verified.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-provider-reasons-matrix.service
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2013         371           3        1109        1213
+Swap:              0           0           0
+active
+v24.18.0
+Python 3.10.12
