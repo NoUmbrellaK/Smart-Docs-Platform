@@ -1,0 +1,118 @@
+Started /bin/bash -c set -e; /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/project_settings_ui_test.mjs test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/processing_lifecycle_test.mjs test/e2e/processing_ui_test.mjs test/e2e/search_ui_test.mjs; /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/ui_contract_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_settings_browser_test.py.
+✔ task modes bind only the reviewed server revision and never send metadata bodies (7.506795ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (2.385721ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (2.172117ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.512842ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (30.927007ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (1.340868ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.9143ms)
+✔ report stale loads cannot survive logout, project, role or task changes (1.146493ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.852002ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (3.003677ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (2.981427ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.595229ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.774612ms)
+✔ archive readers and terminal tasks have no write controls (0.801199ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.591494ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (3.798977ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.627686ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.470808ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.651877ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.514635ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (1.523353ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.53595ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.550002ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.569347ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.458824ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.490015ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.715597ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.559743ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.42339ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.666036ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.452635ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.481641ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.025252ms)
+✔ empty audit never means the task succeeded or no model was called (0.436607ms)
+✔ audit refresh clears old rows and latest response wins (0.351685ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (21.508271ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.561913ms)
+✔ logout fences a delayed version load before it can enter the processing panel (51.299474ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.33875ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.880137ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.625347ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (4.042238ms)
+✔ project/file reset fences late status and old buttons (0.425126ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.397217ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.748412ms)
+✔ null jobs are explicit and safe text remains text (1.504614ms)
+✔ task API uses same-origin exact job and empty POST bodies (37.522817ms)
+✔ settings load as unapproved drafts and save only exact revision and explicit approval (5.854163ms)
+✔ checklist edits including add remove and required revoke approval; empty lists can be saved (1.086466ms)
+✔ invalid UTF-8 sizes keys duplicates and controls are rejected without writes (4.294935ms)
+✔ non-admin callers and stale loads or detached editors never gain write authority (1.728075ms)
+✔ late reads cannot overwrite newer snapshots and failed reads clear all old fields (0.675091ms)
+✔ write locks survive project resets and uncertain writes require explicit reread (0.80911ms)
+✔ settings PUT adapters bind encoded project and full revision-checked commands (32.92297ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (3.818342ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.653849ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.487157ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.495371ms)
+✔ failed source reads clear old content; logout fences a pending source (0.422078ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.539013ms)
+✔ newer searches and source selections win over late successes and errors (0.544908ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (32.729033ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.852256ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (1.224966ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.581089ms)
+✔ API response parser accepts 204 and maps the unified error (52.303408ms)
+✔ logout API rejects an unexpected successful status (1.102174ms)
+✔ all upload tasks share four actual PUT slots (17.629813ms)
+✔ invalidated slot waiters do not PUT or leak capacity (3.699219ms)
+✔ duplicate resume is single-flight and completes only once (1.003336ms)
+✔ pause after part hashing starts schedules no later PUT (2.323945ms)
+✔ project refresh during hashing invalidates the old upload (1.179211ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (3.817482ms)
+✔ pending cancel is single-flight and blocks pause and resume (1.670681ms)
+✔ failed cancel clears pending state and can be retried (0.661672ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.533862ms)
+✔ resume read failure clears the file and returns to actionable state (0.462128ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.338323ms)
+✔ project generation drops A after B and project actions retain scope (4.056894ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.407185ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.295077ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.410925ms)
+ℹ tests 82
+ℹ suites 0
+ℹ pass 82
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2328.294353
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.007s
+OK
+2026-10-19T11:10:43.815648Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 853213
+2026-10-19T11:10:43.911699Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T11:10:59.220082Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T11:11:07.053386Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_browser_settings_approval_conflicts_and_role_invalidation (__main__.SettingsBrowser) ... ok
+----------------------------------------------------------------------
+Ran 1 test in 58.634s
+OK
+smartdocs-settings-ui-touch-verified.service: Deactivated successfully.
+smartdocs-settings-ui-touch-verified.service: Consumed 14.791s CPU time.
+MainPID=0
+Result=success

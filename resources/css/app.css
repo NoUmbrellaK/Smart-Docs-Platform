@@ -142,6 +142,11 @@ td { overflow-wrap: anywhere; }
 #document-search-source pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 #agent-workspace pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 #agent-workspace h3 { overflow-wrap: anywhere; }
+#project-settings label { overflow-wrap: anywhere; }
+#project-settings form { grid-template-columns: minmax(0, 1fr); }
+#project-settings .checkbox-label input { flex: 0 0 1.25rem; padding: 0; }
+.checklist-item { display: grid; gap: 0.5rem; }
+#project-settings fieldset > button { margin-block: 0.5rem; }
 #agent-workspace .action-row { margin-block: 0.75rem; }
 #agent-audit summary { min-height: 44px; padding-block: 0.5rem; cursor: pointer; overflow-wrap: anywhere; }
 #document-search .action-row { margin-block: 0.75rem; }

@@ -62,6 +62,10 @@ export const me = () => metadata("/me");
 const agentPath = projectId => `${projectPath(projectId)}/agent-tasks`;
 export const getHandoverChecklist = projectId => metadata(`${projectPath(projectId)}/handover-checklist`);
 export const getArchivePolicy = projectId => metadata(`${projectPath(projectId)}/archive-policy`);
+export const setHandoverChecklist = (projectId, command) =>
+  metadata(`${projectPath(projectId)}/handover-checklist`, {method: "PUT", body: command});
+export const setArchivePolicy = (projectId, command) =>
+  metadata(`${projectPath(projectId)}/archive-policy`, {method: "PUT", body: command});
 export const listAgentTasks = (projectId, before = "") =>
   metadata(agentPath(projectId) + (before ? `?before=${id(before)}` : ""));
 export const createAgentTask = (projectId, command) =>

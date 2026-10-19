@@ -49,8 +49,8 @@ true是管理员对本次完整清单的重新批准，身份取自认证会话�
 MySQL DDL不是整批原子；失败须恢复匹配备份，不能盲目重放半套DDL。
 本轮只在临时隔离库验证，不执行生产升级。
 
-## 未交付
+## 后续进度
 
-项目设置网页、个人报告保存、报告展示/Markdown下载、
-save_handover_report及其他写工具编排仍待实现。清单API通过不等于交接报告或M3验收完成。
+后续已接入[项目设置网页](m3-project-settings-ui.md)、[个人报告和Markdown下载](m3-handover-report.md)、
+[报告MCP编排](m3-report-mcp.md)与[归档编排](m3-archive-agent.md)。清单API通过不等于M3整体验收完成。
 实际结果见[本轮证据](../evidence/m3/handover-checklist/README.md)。

@@ -1,0 +1,11 @@
+MainPID=0
+Result=success
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B /tmp/smartdocs-settings-browser-probe.py.
+products {'browser': {'executable': 'chrome', 'version': '155.0.8059.84'}, 'webdriver': {'executable': 'chromedriver', 'version': '155.0.8059.84'}} sandbox enabled
+session_started_seconds 11.173
+blank_page_verified
+smartdocs-settings-browser-probe.service: Deactivated successfully.
+smartdocs-settings-browser-probe.service: Consumed 1.552s CPU time.
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1935         268           3        1291        1293
+Swap:              0           0           0

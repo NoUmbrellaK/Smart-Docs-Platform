@@ -1,0 +1,145 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/project_settings_ui_test.mjs.
+✖ settings load as unapproved drafts and save only exact revision and explicit approval (2.099697ms)
+✖ checklist edits including add remove and required revoke approval; empty lists can be saved (0.36394ms)
+✖ invalid UTF-8 sizes keys duplicates and controls are rejected without writes (1.169791ms)
+✖ non-admin callers and stale loads or detached editors never gain write authority (0.447637ms)
+✖ late reads cannot overwrite newer snapshots and failed reads clear all old fields (0.419592ms)
+✖ write locks survive project resets and uncertain writes require explicit reread (0.393434ms)
+✖ settings PUT adapters bind encoded project and full revision-checked commands (2.143075ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.542006
+✖ failing tests:
+test at test/e2e/project_settings_ui_test.mjs:37:1
+✖ settings load as unapproved drafts and save only exact revision and explicit approval (2.099697ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:38:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:57:1
+✖ checklist edits including add remove and required revoke approval; empty lists can be saved (0.36394ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:58:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:77:1
+✖ invalid UTF-8 sizes keys duplicates and controls are rejected without writes (1.169791ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:80:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:88:1
+✖ non-admin callers and stale loads or detached editors never gain write authority (0.447637ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:90:53)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:100:1
+✖ late reads cannot overwrite newer snapshots and failed reads clear all old fields (0.419592ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:101:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:108:1
+✖ write locks survive project resets and uncertain writes require explicit reread (0.393434ms)
+  AssertionError [ERR_ASSERTION]: project settings editor is not implemented
+      at setup (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:22:10)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:109:52)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/project_settings_ui_test.mjs:123:1
+✖ settings PUT adapters bind encoded project and full revision-checked commands (2.143075ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/project_settings_ui_test.mjs:124:62)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-settings-ui-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-settings-ui-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code

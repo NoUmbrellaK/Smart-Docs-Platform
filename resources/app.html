@@ -218,6 +218,35 @@
       <p>Only project administrators can view and edit member roles.</p>
       <div id="member-list" hidden></div>
       <p id="members-status" role="status" aria-live="polite">idle</p>
+      <h3>Handover checklist</h3>
+      <button id="settings-checklist-refresh" type="button" disabled>Load / refresh checklist</button>
+      <p id="settings-checklist-status" role="status" aria-live="polite"></p>
+      <form id="settings-checklist-form" hidden>
+        <fieldset id="settings-checklist-editor" disabled>
+          <legend>Full checklist (up to 50 items; empty clears the list)</legend>
+          <div id="settings-checklist-rows" class="task-list"></div>
+          <button id="settings-checklist-add" type="button">Add checklist item</button>
+          <label for="settings-checklist-approval" class="checkbox-label">
+            <input id="settings-checklist-approval" type="checkbox">
+            I approve this complete checklist for remote AI use. Unchecked saves it as internal only and revokes prior approval.
+          </label>
+          <button type="submit">Save complete checklist</button>
+        </fieldset>
+      </form>
+      <h3>Allowed archive directories</h3>
+      <button id="settings-archive-refresh" type="button" disabled>Load / refresh archive directories</button>
+      <p id="settings-archive-status" role="status" aria-live="polite"></p>
+      <form id="settings-archive-form" hidden>
+        <fieldset id="settings-archive-editor" disabled>
+          <legend>Full target set (up to 100; uncheck all to clear)</legend>
+          <div id="settings-archive-rows" class="task-list"></div>
+          <label for="settings-archive-approval" class="checkbox-label">
+            <input id="settings-archive-approval" type="checkbox">
+            I approve these directory names for remote AI use. Unchecked revokes prior approval. This does not confirm or execute a file move.
+          </label>
+          <button type="submit">Save archive directory policy</button>
+        </fieldset>
+      </form>
     </section>
   </main>
 

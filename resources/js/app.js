@@ -3,6 +3,7 @@ import { UploadController } from "./uploads.js";
 import { SearchPanel } from "./search.js";
 import { ProcessingPanel } from "./processing.js";
 import { AgentPanel } from "./agent.js";
+import { ProjectSettingsPanel } from "./project-settings.js";
 
 export class ProjectGeneration {
   constructor() {
@@ -118,6 +119,7 @@ let uploads = null;
 let searchPanel = null;
 let processingPanel = null;
 let agentPanel = null;
+let projectSettings = null;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -171,6 +173,7 @@ function applyWriteVisibility() {
 }
 
 function resetProjectView(project) {
+  projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.setProject(null, []);
   processingPanel.reset();
@@ -245,6 +248,7 @@ function renderIdentity(identity) {
 }
 
 function signedOut() {
+  projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.setProject(null, []);
   processingPanel.reset();
@@ -447,6 +451,7 @@ function renderMembers(members, token) {
           state.selectedFileReady ? state.selectedFile : null
         );
         if (synchronized.changed) {
+          projectSettings.setProject(synchronized.project.id, synchronized.project.role);
           agentPanel.setProject(synchronized.project.id, synchronized.project.role);
           searchPanel.invalidate();
           processingPanel.reset();
@@ -508,6 +513,7 @@ async function loadProject(project) {
       byId("member-list").replaceChildren();
     }
     state.projectReady = true;
+    projectSettings.setProject(project.id, project.role);
     searchPanel.setProject(project.id, state.directories);
     agentPanel.setProject(project.id, project.role);
     agentPanel.refresh();
@@ -611,6 +617,8 @@ processingPanel = new ProcessingPanel(byId, api, errorText,
     state.selectedFileReady ? state.selectedFile : null).update,
   project => { if (state.project && state.project.id === project) searchPanel.invalidate(); });
 agentPanel = new AgentPanel(byId, api, errorText);
+projectSettings = new ProjectSettingsPanel(byId, api, errorText,
+  project => { if (state.project && state.project.id === project) agentPanel.invalidate(); });
 
 byId("login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -626,6 +634,7 @@ byId("login-form").addEventListener("submit", async (event) => {
 });
 
 byId("logout-button").addEventListener("click", async () => {
+  projectSettings.setProject(null);
   agentPanel.setProject(null);
   searchPanel.invalidate();
   processingPanel.reset();
@@ -635,6 +644,7 @@ byId("logout-button").addEventListener("click", async () => {
   setStatus("session-error", "");
   setStatus("global-status", "loading");
   await performLogout(api.logout, signedOut, (message) => {
+    projectSettings.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     agentPanel.setProject(state.projectReady && state.project ? state.project.id : null, state.project?.role);
     setStatus("session-error", message);
     setStatus("global-status", "idle");

@@ -1,0 +1,39 @@
+MainPID=0
+Result=exit-code
+Started /bin/bash -c set -e; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_settings_browser_test.py.
+2026-10-19T10:57:13.651620Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 850300
+2026-10-19T10:57:14.051376Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T10:57:29.284760Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T10:57:38.527545Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_browser_settings_approval_conflicts_and_role_invalidation (__main__.SettingsBrowser) ... FAIL
+======================================================================
+FAIL: test_browser_settings_approval_conflicts_and_role_invalidation (__main__.SettingsBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_settings_browser_test.py", line 80, in test_browser_settings_approval_conflicts_and_role_invalidation
+    self.assertEqual(geometry, {'width': width, 'overflow': False, 'small': False})
+AssertionError: {'overflow': True, 'small': False, 'width': 768} != {'width': 768, 'overflow': False, 'small': False}
+- {'overflow': True, 'small': False, 'width': 768}
+?              ^^^
++ {'overflow': False, 'small': False, 'width': 768}
+?              ^^^^
+----------------------------------------------------------------------
+Ran 1 test in 85.018s
+FAILED (failures=1)
+smartdocs-settings-ui-browser-recheck.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-settings-ui-browser-recheck.service: Failed with result 'exit-code'.
+smartdocs-settings-ui-browser-recheck.service: Consumed 12.429s CPU time.
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1938         459           3        1097        1289
+Swap:              0           0           0
