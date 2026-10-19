@@ -666,6 +666,20 @@ test("audit is user-loaded, expandable, redacted and distinguishes zero time fro
   assert.doesNotMatch(text(get("agent-audit")),/SECRET|PRIVATE|0 ms|success/i);
 });
 
+test("write tool audit names and waiting status never imply completed file moves",async()=>{
+  const rows=[
+    {tool:"create_archive_plan",status:"waiting_confirmation",parameters:{item_count:2,expected_revision:0,policy_revision:1,reason:"PRIVATE"}},
+    {tool:"execute_archive_plan",status:"unknown",duration_ms:null,parameters:{revision:1,operation_id:"PRIVATE"}},
+    {tool:"save_handover_report",status:"success",parameters:{item_count:3,summary:"PRIVATE"}},
+  ].map((row,index)=>({...audit.items[0],...row,sequence:index+1}));
+  const {panel,get}=await setup({getAgentToolCalls:async()=>({...audit,items:rows})});
+  await panel.view("t");await auditButton(get).fire();
+  const content=text(get("agent-audit"));
+  for(const expected of ["Create archive plan","Execute archive plan","Save handover report","Waiting for confirmation","items: 2","revision: 1","items: 3"])
+    assert.ok(content.includes(expected),`missing audit explanation: ${expected}`);
+  assert.match(content,/Outcome unknown/);assert.doesNotMatch(content,/Unknown tool|PRIVATE/);
+});
+
 test("empty audit never means the task succeeded or no model was called",async()=>{
   const {panel,get}=await setup({getAgentToolCalls:async()=>({...audit,items:[]})});
   await panel.view("t"); await auditButton(get).fire();

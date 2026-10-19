@@ -399,28 +399,40 @@ void RequireAgentTaskScope(MySqlConnection& db,const SessionContext& session,con
 }
 
 std::string AgentTaskService::BeginToolCall(const SessionContext& session,const std::string& project,
-    const std::string& task,bool search,const Json& body) {
+    const std::string& task,const std::string& tool,const Json& body) {
+    const bool reading=tool=="search_documents" || tool=="read_document_version";
+    if(!reading && tool!="create_archive_plan" && tool!="execute_archive_plan" && tool!="save_handover_report")
+        throw AppError(400,"invalid_request","tool is invalid");
     Json parameters=Json::object();
-    if(search) {
+    if(tool=="search_documents") {
         if(body.is_object() && body.contains("mode") && body["mode"].is_string() &&
             (body["mode"]=="metadata" || body["mode"]=="keyword" || body["mode"]=="hybrid"))
             parameters["mode"]=body["mode"];
         if(body.is_object() && body.contains("query") && body["query"].is_string())
             parameters["query_bytes"]=body["query"].get_ref<const std::string&>().size();
-    } else parameters["selector"]=body.is_object() && body.contains("chunk_id") ? "chunk" :
+    } else if(reading) parameters["selector"]=body.is_object() && body.contains("chunk_id") ? "chunk" :
         body.is_object() && body.contains("range") ? "range" : "status";
+    else if(body.is_object()) {
+        const auto& contents=tool=="save_handover_report" && body.contains("report") ? body["report"] : body;
+        if(contents.is_object() && contents.contains("items") && contents["items"].is_array())
+            parameters["item_count"]=contents["items"].size();
+        for(const auto* key:{"revision","expected_revision","policy_revision"})
+            if(body.contains(key) && body[key].is_number_unsigned() && body[key].get<uint64_t>()<=4294967295ULL)
+                parameters[key]=body[key];
+    }
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Reader);
     const auto row=Task(db,session,project,task);
-    if(row.String(1)!="pending" && row.String(1)!="running")
+    if(reading && row.String(1)!="pending" && row.String(1)!="running")
         throw AppError(409,"task_inactive","task is not active");
+    // Write services recheck state/role/confirmation themselves, including completed-operation replay.
     // The task row serializes admission. A hybrid MCP call may issue multiple backend requests.
     const auto count=db.ScalarInt("SELECT COUNT(*) FROM agent_tool_calls WHERE task_id=?",{SqlValue(task)});
     if(count>=64) throw AppError(429,"agent_audit_full","task backend call limit reached");
     const auto request=GenerateId();
     db.Execute("INSERT INTO agent_tool_calls(task_id,sequence,request_id,tool,parameters) VALUES (?,?,?,?,?)",
         {SqlValue(task),SqlValue(count+1),SqlValue(request),
-         SqlValue(search ? "search_documents" : "read_document_version"),SqlValue(parameters.dump())});
+         SqlValue(tool),SqlValue(parameters.dump())});
     transaction.Commit(); return request;
 }
 

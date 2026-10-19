@@ -1,7 +1,7 @@
 # 受控同源 Agent 执行入口
 
 本增量把已创建的本人 pending 任务交给[既有 CLI/MCP 执行器](m3-deepseek.md)，
-不增加数据库、队列、后台自动调度或 MCP Streamable HTTP 服务。C++ schema15 是
+不增加数据库、队列、后台自动调度或 MCP Streamable HTTP 服务。C++ 是
 业务权威；本页是部署模板，**不表示生产已部署**。
 [任务工作区](m3-agent-workspace.md)已有显式启动按钮，须部署本入口和同源代理后才能使用。
 
@@ -60,7 +60,7 @@ SIGKILL/主机崩溃不能保证 finally 执行，必须使用下方不保留的
 
 ## systemd 模板（未安装）
 
-先部署 schema15 C++、已有 MCP 虚拟环境；复用
+先部署匹配[schema16](m3-tool-audit.md#schema16和部署)的 C++、已有 MCP 虚拟环境；复用
 [处理资源组](../deployment/m2-vector-worker.md)，不提高同机总预算。
 以下为独立服务示例；配置路径、账号与域名由管理员替换。EnvironmentFile仅含
 DEEPSEEK_API_KEY，仓库外 root 管理0600，不打印、不放命令行、不提交。

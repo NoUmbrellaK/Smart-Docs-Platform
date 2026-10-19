@@ -1,0 +1,80 @@
+Started /bin/bash /tmp/smartdocs-a18-integration.sh.
+2026-10-19T12:54:38.716823Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 874256
+2026-10-19T12:54:38.911585Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:54:54.211610Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:55:02.318365Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_mcp_archive_lost_reply_preserves_minimal_receipt_after_revocation (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_owner_reader_cancel_and_revised_confirmation_are_enforced (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_policy_and_whole_scope_revocation_block_writes (__main__.ArchiveMcpE2E) ... ok
+test_mcp_archive_preview_replay_waits_for_real_confirmation_then_executes_once (__main__.ArchiveMcpE2E) ... ok
+----------------------------------------------------------------------
+Ran 4 tests in 6.369s
+OK
+2026-10-19T12:56:32.297966Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 874883
+2026-10-19T12:56:32.302946Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:56:47.523942Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:56:55.706579Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_mcp_report_cancel_before_save_cannot_create_report (__main__.ReportMcpE2E) ... ok
+test_mcp_report_invalid_citation_owner_and_operation_are_rejected (__main__.ReportMcpE2E) ... ok
+test_mcp_report_lost_reply_recovers_committed_result_without_second_save (__main__.ReportMcpE2E) ... ok
+test_mcp_report_reader_dynamic_search_read_save_and_exact_replay (__main__.ReportMcpE2E) ... ok
+----------------------------------------------------------------------
+Ran 4 tests in 7.580s
+OK
+2026-10-19T12:58:24.113300Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 875342
+2026-10-19T12:58:24.118113Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:58:39.428667Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:58:47.631527Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_browser_write_traces_are_redacted_and_read_only (__main__.WriteAuditBrowser) ... ERROR
+======================================================================
+ERROR: test_browser_write_traces_are_redacted_and_read_only (__main__.WriteAuditBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_audit_browser_test.py", line 36, in test_browser_write_traces_are_redacted_and_read_only
+    browser.start()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+----------------------------------------------------------------------
+Ran 1 test in 127.270s
+FAILED (errors=1)
+smartdocs-write-audit-integration.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-write-audit-integration.service: Failed with result 'exit-code'.
+smartdocs-write-audit-integration.service: Consumed 27.437s CPU time.

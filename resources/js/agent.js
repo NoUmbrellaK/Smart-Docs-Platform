@@ -439,13 +439,16 @@ export class AgentPanel {
       if (!current()) return;
       if (trace.kind !== "backend_requests" || trace.capacity !== 64 || !Array.isArray(trace.items) || trace.items.length > 64)
         throw new Error("Tool-call summary is unavailable.");
-      const states = {success:"Request succeeded", processing:"Processing; content not ready", unavailable:"Content unavailable",
+      const states = {success:"Request succeeded", waiting_confirmation:"Waiting for confirmation; no files moved", processing:"Processing; content not ready", unavailable:"Content unavailable",
         invalid_request:"Invalid request", access_denied:"Access denied", conflict:"Conflict", busy:"Busy", timeout:"Timed out",
         dependency_failed:"Dependency failed", unknown:"Outcome unknown (not confirmed)"};
       for (const item of trace.items) {
         const card = this.node("details"); card.className = "task-card";
         const name = item.tool === "search_documents" ? "Search documents" :
-          item.tool === "read_document_version" ? "Read document version" : "Unknown tool";
+          item.tool === "read_document_version" ? "Read document version" :
+          item.tool === "create_archive_plan" ? "Create archive plan" :
+          item.tool === "execute_archive_plan" ? "Execute archive plan" :
+          item.tool === "save_handover_report" ? "Save handover report" : "Unknown tool";
         const duration = Number.isSafeInteger(item.duration_ms) && item.duration_ms >= 0 ? `${item.duration_ms} ms` : "not recorded";
         const parameters = item.parameters || {}, summary = [];
         if (item.tool === "search_documents") {
@@ -453,6 +456,11 @@ export class AgentPanel {
           if (Number.isSafeInteger(parameters.query_bytes) && parameters.query_bytes >= 0) summary.push(`query bytes: ${parameters.query_bytes}`);
         } else if (item.tool === "read_document_version" && ["status", "chunk", "range"].includes(parameters.selector))
           summary.push(`selector: ${parameters.selector}`);
+        else if (["create_archive_plan", "execute_archive_plan", "save_handover_report"].includes(item.tool)) {
+          for (const [key, label] of [["item_count", "items"], ["revision", "revision"],
+            ["expected_revision", "expected revision"], ["policy_revision", "policy revision"]])
+            if (Number.isSafeInteger(parameters[key]) && parameters[key] >= 0) summary.push(`${label}: ${parameters[key]}`);
+        }
         card.append(this.node("summary", `${item.sequence}. ${name} · ${states[item.status] || states.unknown} · ${duration}`),
           this.node("p", `Tool: ${item.tool} · Request: ${item.request_id}`),
           this.node("p", `Started ${item.started_at} UTC · Backend duration: ${duration}`),

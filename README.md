@@ -23,9 +23,9 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema15](./docs/api/m3-archive-agent.md#schema15和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema14及更早数据库。
+当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema16](./docs/api/m3-tool-audit.md#schema16和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema15及更早数据库。
 
-已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
+已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前五工具、分模式有界执行、受控供应商适配器、网页入口及五类后端请求轨迹已接通；真实供应商验证、生产部署、完整MCP/模型审计和固定任务评测仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
 首个门禁增量已实现，[C++ 分组验证 147/147](./docs/evidence/m3/remote-read/README.md)，包括 6 项新增 M3 回归。搜索、覆盖计数和固定版本读取均检查具体版本外发批准；普通内部搜索不变。首次整套超时及测试夹具失败均保留记录，最终分组无失败/跳过。原资源限额下无新增 OOM，无 DeepSeek 调用、无生产部署；下一步接 MCP 只读工具与可信任务身份，M3 尚未验收。
 
@@ -102,6 +102,10 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 方案A第十七个增量接入[管理员逻辑目录网页](./docs/api/m3-directory-ui.md)：可在已有父目录下创建子目录、改名非根目录；不删除/移动目录或文件，不调用模型。改名获批归档目标后，后端撤销批准并更新修订，页面清除旧批准提示、配置和Agent草稿；需要重新加载并单独批准。未知写入结果只读刷新、不自动重试，保留上传目标及有效目录选择。按最小实现与移动端原则复用已有API/模块，无新依赖、C++或schema修改。
 
 [本轮测试及失败记录](./docs/evidence/m3/directory-ui/README.md)：前端 **99/99**、页面契约 **8/8**、真实Chrome→C++→隔离SQL复验 **1/1**，六种屏宽通过。浏览器两次尝试1成功/1启动失败，后者未进入业务页面且根因未确定；完整保留记录。测试进程已退出，无新增节流/OOM、真实key读取、付费模型调用或生产部署；完整审计、固定任务评测及演示仍待后续，M3/P0尚未验收。
+
+方案A第十八个增量将[后端工具轨迹](./docs/api/m3-tool-audit.md)扩展至五类工具：归档方案、执行、报告保存也记录真实请求及脱敏摘要；网页区分等待确认、成功、明确拒绝和结果未知。写入前轨迹失败则不执行业务；写入5xx或审计完成失败不猜测事务回滚，要求查询持久回执，不自动重试。写结果不能进入模型来源台账，单任务64条容量包含失败和重放；schema16仅扩展既有表CHECK、不回填历史。
+
+[本轮验证及审查记录](./docs/evidence/m3/write-tool-audit/README.md)：前端100/100、页面契约8/8、MCP/执行器87/87、Python106/106、相关C++18/18、真实HTTP48/48、SDK归档/报告各4/4；浏览器复验1/1通过，两次尝试1成功/1启动失败，未确定的启动故障与RED/修复证据完整保留。按最小实现原则复用既有表、入口和原生详情控件，无新依赖；所有测试进程退出，无新增节流/OOM、业务库迁移、真实key读取或付费模型请求。五类后端轨迹不等于完整MCP/模型审计；固定任务评测、演示及M3/P0验收仍未完成。
 
 ### M2 实现与验证记录
 
@@ -298,7 +302,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=15`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema15说明](./docs/api/m3-archive-agent.md#schema15和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=16`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema16说明](./docs/api/m3-tool-audit.md#schema16和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

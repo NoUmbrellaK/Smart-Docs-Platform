@@ -1,0 +1,35 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest m3_write_tool_audit_test.WriteToolAuditE2E.test_write_audit_business_503_is_unknown_and_not_retryable -v.
+2026-10-19T12:42:34.108570Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 871184
+2026-10-19T12:42:34.344163Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:42:49.551361Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:42:57.304641Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_write_audit_business_503_is_unknown_and_not_retryable (m3_write_tool_audit_test.WriteToolAuditE2E) ... FAIL
+======================================================================
+FAIL: test_write_audit_business_503_is_unknown_and_not_retryable (m3_write_tool_audit_test.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 85, in test_write_audit_business_503_is_unknown_and_not_retryable
+    self.assertEqual((row['status'], row['duration_ms']), ('unknown', None))
+AssertionError: Tuples differ: ('dependency_failed', 9) != ('unknown', None)
+First differing element 0:
+'dependency_failed'
+'unknown'
+- ('dependency_failed', 9)
++ ('unknown', None)
+----------------------------------------------------------------------
+Ran 1 test in 2.008s
+FAILED (failures=1)
+smartdocs-write-audit-review-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-write-audit-review-red.service: Failed with result 'exit-code'.
+smartdocs-write-audit-review-red.service: Consumed 6.784s CPU time.

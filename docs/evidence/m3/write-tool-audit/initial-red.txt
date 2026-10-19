@@ -1,0 +1,155 @@
+Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_write_tool_audit_test.py.
+✔ execution requires a fresh explicit pending-task decision and reads the authoritative result (8.758973ms)
+✔ execution never appears on nonpending tasks or reader archive tasks (2.528071ms)
+✔ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (0.70092ms)
+✔ late execution responses cannot refill switched views or release the in-flight lock early (0.877863ms)
+✔ lost execution response requires read-only refresh and never retries the write (0.65726ms)
+✔ execution consent resets on refresh and stale controls cannot start a task (0.538547ms)
+✔ execution adapter sends only empty JSON to the same origin without redirects or retries (31.256171ms)
+✔ execution adapter aborts at its deadline, clears its timer and does not resend (0.676661ms)
+✔ task modes bind only the reviewed server revision and never send metadata bodies (2.449318ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (2.103423ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (2.613792ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.45742ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (0.777985ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (0.78112ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.702139ms)
+✔ report stale loads cannot survive logout, project, role or task changes (0.94721ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.174554ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (1.251654ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (2.547073ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.784893ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.70719ms)
+✔ archive readers and terminal tasks have no write controls (1.888879ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.541031ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.424859ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.612086ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.543853ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.490893ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.480844ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.561774ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.774123ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.577547ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.468767ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.470941ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.44854ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.614735ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.450917ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.43169ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.653795ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.536217ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.582456ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.117259ms)
+✖ write tool audit names and waiting status never imply completed file moves (0.980112ms)
+✔ empty audit never means the task succeeded or no model was called (0.377694ms)
+✔ audit refresh clears old rows and latest response wins (0.422154ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.390772ms)
+✔ audit denial clears answer, source and audit without automatic retries (239.857752ms)
+ℹ tests 46
+ℹ suites 0
+ℹ pass 45
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1614.353269
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:669:1
+✖ write tool audit names and waiting status never imply completed file moves (0.980112ms)
+  AssertionError [ERR_ASSERTION]: missing audit explanation: Create archive plan
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:679:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+2026-10-19T12:33:14.456961Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 869445
+2026-10-19T12:33:14.655022Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T12:33:29.988576Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T12:33:38.003478Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_audit_capacity_concurrent_sequence_and_unknown_is_not_success (__main__.WriteToolAuditE2E) ... ok
+test_audit_owner_scope_membership_and_read_only_route (__main__.WriteToolAuditE2E) ... ok
+test_audit_persistence_failure_never_admits_or_returns_source (__main__.WriteToolAuditE2E) ... ok
+test_audit_real_calls_errors_and_restart_are_persistent_and_redacted (__main__.WriteToolAuditE2E) ... ok
+test_write_audit_admission_failure_prevents_plan_and_execution (__main__.WriteToolAuditE2E) ... FAIL
+test_write_audit_archive_waiting_rejection_execution_and_replay (__main__.WriteToolAuditE2E) ... FAIL
+test_write_audit_capacity_is_bounded_and_never_silently_executes (__main__.WriteToolAuditE2E) ... FAIL
+test_write_audit_completion_failure_preserves_committed_move_and_unknown_trace (__main__.WriteToolAuditE2E) ... FAIL
+test_write_audit_report_admission_and_completion_failures_are_distinct (__main__.WriteToolAuditE2E) ... FAIL
+test_write_audit_report_replay_does_not_become_model_evidence (__main__.WriteToolAuditE2E) ... FAIL
+======================================================================
+FAIL: test_write_audit_admission_failure_prevents_plan_and_execution (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 64, in test_write_audit_admission_failure_prevents_plan_and_execution
+    self.assertEqual(self.user.request('PUT', path, body).status, 503)
+AssertionError: 200 != 503
+======================================================================
+FAIL: test_write_audit_archive_waiting_rejection_execution_and_replay (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 18, in test_write_audit_archive_waiting_rejection_execution_and_replay
+    self.assertEqual([(r['tool'], r['status']) for r in rows], [('create_archive_plan', 'waiting_confirmation')])
+AssertionError: Lists differ: [] != [('create_archive_plan', 'waiting_confirmation')]
+Second list contains 1 additional elements.
+First extra element 0:
+('create_archive_plan', 'waiting_confirmation')
+- []
++ [('create_archive_plan', 'waiting_confirmation')]
+======================================================================
+FAIL: test_write_audit_capacity_is_bounded_and_never_silently_executes (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 124, in test_write_audit_capacity_is_bounded_and_never_silently_executes
+    self.assertEqual(response.status, 429)
+AssertionError: 200 != 429
+======================================================================
+FAIL: test_write_audit_completion_failure_preserves_committed_move_and_unknown_trace (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 84, in test_write_audit_completion_failure_preserves_committed_move_and_unknown_trace
+    self.assertEqual(lost.status, 503)
+AssertionError: 200 != 503
+======================================================================
+FAIL: test_write_audit_report_admission_and_completion_failures_are_distinct (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 100, in test_write_audit_report_admission_and_completion_failures_are_distinct
+    self.assertEqual(actor.request('PUT', path+'/handover-report', body).status, 503)
+AssertionError: 200 != 503
+======================================================================
+FAIL: test_write_audit_report_replay_does_not_become_model_evidence (__main__.WriteToolAuditE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_write_tool_audit_test.py", line 49, in test_write_audit_report_replay_does_not_become_model_evidence
+    self.assertEqual([r['tool'] for r in rows], ['read_document_version', 'read_document_version', 'save_handover_report', 'save_handover_report'])
+AssertionError: Lists differ: ['rea[30 chars]ument_version'] != ['rea[30 chars]ument_version', 'save_handover_report', 'save_handover_report']
+Second list contains 2 additional elements.
+First extra element 2:
+'save_handover_report'
+- ['read_document_version', 'read_document_version']
++ ['read_document_version',
++  'read_document_version',
++  'save_handover_report',
++  'save_handover_report']
+----------------------------------------------------------------------
+Ran 10 tests in 15.215s
+FAILED (failures=6)
+smartdocs-write-audit-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-write-audit-red.service: Failed with result 'exit-code'.
+smartdocs-write-audit-red.service: Consumed 8.885s CPU time.
