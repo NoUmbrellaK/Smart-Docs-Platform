@@ -1,0 +1,17 @@
+Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/ui_contract_test.py.
+.F......
+======================================================================
+FAIL: test_css_is_mobile_first_and_touch_safe (__main__.UiContractTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/ui_contract_test.py", line 164, in test_css_is_mobile_first_and_touch_safe
+    self.assertIsNotNone(re.search(r"#agent-detail \.checkbox-label input\s*\{[^}]*flex:\s*0 0 1\.25rem;", self.css),
+AssertionError: unexpectedly None : Agent consent checkbox must not shrink beside long mobile text
+----------------------------------------------------------------------
+Ran 8 tests in 0.006s
+FAILED (failures=1)
+smartdocs-execute-ui-mobile-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-execute-ui-mobile-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1

@@ -161,6 +161,8 @@ class UiContractTest(unittest.TestCase):
             source_digest.group(1))
 
     def test_css_is_mobile_first_and_touch_safe(self):
+        self.assertIsNotNone(re.search(r"#agent-detail \.checkbox-label input\s*\{[^}]*flex:\s*0 0 1\.25rem;", self.css),
+                             "Agent consent checkbox must not shrink beside long mobile text")
         self.assertIn("box-sizing: border-box", self.css)
         self.assertRegex(self.css, r"min-height:\s*44px")
         self.assertRegex(self.css, r"font-size:\s*(?:1rem|16px)")

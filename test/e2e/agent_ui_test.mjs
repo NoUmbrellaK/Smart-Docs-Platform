@@ -44,6 +44,98 @@ function draft(view) {
   view.get("agent-consent").checked=true;
 }
 
+const executeButton = v => buttons(v.get("agent-detail")).find(b=>b.textContent==="Start this task");
+const executeConsent = v => descendants(v.get("agent-detail")).find(n=>n.type==="checkbox");
+async function approveExecution(v) {const box=executeConsent(v);assert.ok(box);box.checked=true;await box.fire("change");}
+
+test("execution requires a fresh explicit pending-task decision and reads the authoritative result",async()=>{
+  let state="pending",runs=0;const view=await setup({getAgentTask:async()=>({...task,state}),
+    executeAgentTask:async(p,id)=>{assert.deepEqual([p,id],["p","t"]);runs++;state="completed";return {state:"failed"};}});
+  await view.panel.view("t");const start=executeButton(view);assert.ok(start);assert.equal(start.disabled,true);
+  await start.fire();assert.equal(runs,0);await approveExecution(view);await start.fire();
+  assert.equal(runs,1);assert.match(text(view.get("agent-detail")),/<script>answer/);
+  assert.equal(executeButton(view),undefined);assert.equal(view.calls.filter(c=>c[0]==="result").length,1);
+  await start.fire();assert.equal(runs,1);
+});
+
+test("execution never appears on nonpending tasks or reader archive tasks",async()=>{
+  for(const state of ["running","failed","completed","cancelled","interrupted","waiting_confirmation","waiting_execution"]){
+    const view=await setup({getAgentTask:async()=>({...task,state}),getAgentResult:async()=>({...result,state,result:null})});
+    await view.panel.view("t");assert.equal(executeButton(view),undefined);
+  }
+  const view=await setup({getAgentTask:async()=>({...task,archive_policy_revision:1})});
+  await view.panel.view("t");assert.equal(executeButton(view),undefined);
+});
+
+test("in-flight execution keeps refresh and cancellation usable without allowing duplicate starts",async()=>{
+  const late=deferred();let runs=0,state="pending";
+  const view=await setup({executeAgentTask:()=>{runs++;state="running";return late.promise;},
+    getAgentTask:async()=>({...task,state}),cancelAgentTask:async()=>{state="cancelled";}});
+  await view.panel.view("t");await approveExecution(view);const start=executeButton(view),pending=start.fire();
+  await start.fire();assert.equal(runs,1);assert.equal(view.get("agent-refresh").disabled,false);
+  await buttons(view.get("agent-detail")).find(b=>b.textContent==="Refresh task").fire();
+  assert.match(view.get("agent-detail-status").textContent,/running/);
+  await buttons(view.get("agent-detail")).find(b=>b.textContent==="Cancel task").fire();
+  assert.match(view.get("agent-detail-status").textContent,/cancelled/);
+  late.resolve({state:"completed"});await pending;
+  assert.match(view.get("agent-detail-status").textContent,/cancelled/);assert.equal(runs,1);
+});
+
+test("late execution responses cannot refill switched views or release the in-flight lock early",async()=>{
+  for(const settle of ["resolve","reject"]) {
+    const late=deferred();let runs=0;
+    const view=await setup({executeAgentTask:()=>{runs++;return late.promise;}});
+    await view.panel.view("t");await approveExecution(view);const pending=executeButton(view).fire();
+    view.panel.setProject("other");await view.panel.view("t");
+    const start=executeButton(view);await approveExecution(view);await start.fire();assert.equal(runs,1);
+    view.panel.setProject(null);late[settle](settle==="resolve"?{state:"completed"}:new Error("old secret"));await pending;
+    assert.equal(view.get("agent-detail").children.length,0);
+    assert.doesNotMatch(view.get("agent-detail-status").textContent,/old secret|completed/);
+  }
+});
+
+test("lost execution response requires read-only refresh and never retries the write",async()=>{
+  let runs=0,state="pending";const view=await setup({getAgentTask:async()=>({...task,state}),
+    executeAgentTask:async()=>{runs++;state="completed";throw new Error("connection lost");}});
+  await view.panel.view("t");await approveExecution(view);await executeButton(view).fire();
+  assert.match(view.get("agent-detail-status").textContent,/unknown.*Refresh.*no automatic retry/i);
+  assert.equal(executeButton(view),undefined);assert.equal(view.calls.filter(c=>c[0]==="result").length,0);
+  await buttons(view.get("agent-detail")).find(b=>b.textContent==="Refresh task").fire();
+  assert.match(text(view.get("agent-detail")),/<script>answer/);assert.equal(runs,1);
+});
+
+test("execution consent resets on refresh and stale controls cannot start a task",async()=>{
+  let runs=0;const view=await setup({executeAgentTask:async()=>{runs++;return {state:"unknown"};}});
+  await view.panel.view("t");await approveExecution(view);const stale=executeButton(view);
+  await view.panel.view("t");assert.equal(executeConsent(view).checked,false);
+  await stale.fire();await executeButton(view).fire();assert.equal(runs,0);
+});
+
+test("execution adapter sends only empty JSON to the same origin without redirects or retries",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  assert.equal(typeof api.executeAgentTask,"function");const original=globalThis.fetch,calls=[];
+  globalThis.fetch=async(...args)=>{calls.push(args);return new Response(JSON.stringify({error:{code:"agent_busy",message:"Busy",retryable:true}}),{status:503});};
+  try {
+    await assert.rejects(api.executeAgentTask("p/x","t/y"),/Busy/);assert.equal(calls.length,1);
+    const [url,options]=calls[0];assert.equal(url,"/api/v1/projects/p%2Fx/agent-tasks/t%2Fy/execute");
+    assert.equal(options.method,"POST");assert.equal(options.body,"{}");assert.equal(options.credentials,"same-origin");
+    assert.equal(options.redirect,"error");assert.equal(options.cache,"no-store");assert.ok(options.signal);
+  } finally {globalThis.fetch=original;}
+});
+
+test("execution adapter aborts at its deadline, clears its timer and does not resend",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  const original={fetch:globalThis.fetch,setTimeout:globalThis.setTimeout,clearTimeout:globalThis.clearTimeout};
+  let expire,cleared=0,requests=0;const timer={};
+  globalThis.setTimeout=(fn,ms)=>{assert.ok(ms>0&&ms<=300000);expire=fn;return timer;};
+  globalThis.clearTimeout=value=>{assert.equal(value,timer);cleared++;};
+  globalThis.fetch=async(url,options)=>{requests++;return new Promise((resolve,reject)=>
+    options.signal.addEventListener("abort",()=>reject(new Error("deadline exceeded")),{once:true}));};
+  try {const pending=api.executeAgentTask("p","t");expire();await assert.rejects(pending,/deadline/);
+    assert.equal(requests,1);assert.equal(cleared,1);
+  } finally {Object.assign(globalThis,original);}
+});
+
 const checklist={revision:7,remote_ai_approved:true,items:[{key:"deploy",title:"<script>Deployment</script>",description:"Check rollback",required:true}]};
 const policy={revision:9,remote_ai_approved:true,targets:[{directory_id:"destination",name:"<img>Archive"}]};
 async function mode(view, value) {

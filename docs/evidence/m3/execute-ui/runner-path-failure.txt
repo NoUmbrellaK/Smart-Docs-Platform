@@ -1,0 +1,5 @@
+Started /root/Smart-Docs-Platform/.worktrees/m1-file-business/scripts/test-with-mysql.sh -- /bin/bash -c set -e; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_execute_browser_test.py; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_http_test.py.
+smartdocs-execute-ui-browser-review.service: Failed to execute /root/Smart-Docs-Platform/.worktrees/m1-file-business/scripts/test-with-mysql.sh: Permission denied
+smartdocs-execute-ui-browser-review.service: Failed at step EXEC spawning /root/Smart-Docs-Platform/.worktrees/m1-file-business/scripts/test-with-mysql.sh: Permission denied
+smartdocs-execute-ui-browser-review.service: Main process exited, code=exited, status=203/EXEC
+smartdocs-execute-ui-browser-review.service: Failed with result 'exit-code'.

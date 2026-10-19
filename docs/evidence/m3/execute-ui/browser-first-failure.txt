@@ -1,0 +1,138 @@
+Started /bin/bash -c set -e; /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/*_test.mjs; /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/ui_contract_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_execute_browser_test.py.
+✔ execution requires a fresh explicit pending-task decision and reads the authoritative result (6.478395ms)
+✔ execution never appears on nonpending tasks or reader archive tasks (2.554633ms)
+✔ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (0.790722ms)
+✔ late execution responses cannot refill switched views or release the in-flight lock early (13.041263ms)
+✔ lost execution response requires read-only refresh and never retries the write (0.668819ms)
+✔ execution consent resets on refresh and stale controls cannot start a task (0.519333ms)
+✔ execution adapter sends only empty JSON to the same origin without redirects or retries (30.937749ms)
+✔ execution adapter aborts at its deadline, clears its timer and does not resend (0.613257ms)
+✔ task modes bind only the reviewed server revision and never send metadata bodies (2.532026ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (2.307869ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (2.668443ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.419255ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (0.870245ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (0.83503ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.707327ms)
+✔ report stale loads cannot survive logout, project, role or task changes (0.993223ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.139256ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (1.324882ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (2.802501ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.752917ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.72965ms)
+✔ archive readers and terminal tasks have no write controls (2.391202ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.537371ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.495755ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.569517ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.527024ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.637349ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.715296ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.622621ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.791051ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.577206ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.494271ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.509056ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.42705ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.706887ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.473263ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.461909ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.62729ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.50243ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.426003ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.139963ms)
+✔ empty audit never means the task succeeded or no model was called (0.380758ms)
+✔ audit refresh clears old rows and latest response wins (0.409286ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.453941ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.574583ms)
+✔ logout fences a delayed version load before it can enter the processing panel (53.224774ms)
+✔ reload obtains persisted job identity and independent states, not upload memory (4.611959ms)
+✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.722446ms)
+✔ vector failure remains independent and cancel targets the exact selected job (0.658792ms)
+✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.903341ms)
+✔ project/file reset fences late status and old buttons (0.453937ms)
+✔ late mutation clears search for original project but cannot overwrite new selection (0.554378ms)
+✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.974998ms)
+✔ null jobs are explicit and safe text remains text (0.715719ms)
+✔ task API uses same-origin exact job and empty POST bodies (29.49686ms)
+✔ settings load as unapproved drafts and save only exact revision and explicit approval (5.740216ms)
+✔ checklist edits including add remove and required revoke approval; empty lists can be saved (1.177938ms)
+✔ invalid UTF-8 sizes keys duplicates and controls are rejected without writes (4.088391ms)
+✔ non-admin callers and stale loads or detached editors never gain write authority (1.763158ms)
+✔ late reads cannot overwrite newer snapshots and failed reads clear all old fields (0.648929ms)
+✔ write locks survive project resets and uncertain writes require explicit reread (0.917574ms)
+✔ settings PUT adapters bind encoded project and full revision-checked commands (49.794838ms)
+✔ search submits bounded exact filters, paginates and shows truthful coverage (5.111816ms)
+✔ project changes and changed filters fence late responses and old source buttons (0.756133ms)
+✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.641099ms)
+✔ text sources keep line ranges without misleading PDF page guidance (0.560609ms)
+✔ failed source reads clear old content; logout fences a pending source (0.576429ms)
+✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (1.041778ms)
+✔ newer searches and source selections win over late successes and errors (0.729916ms)
+✔ API sends same-origin search POST and exact encoded version/chunk GETs (44.153437ms)
+✔ hybrid mode uses session-bound gateway without client-supplied mode (0.761463ms)
+✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.911193ms)
+✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.821268ms)
+✔ API response parser accepts 204 and maps the unified error (31.278028ms)
+✔ logout API rejects an unexpected successful status (1.088613ms)
+✔ all upload tasks share four actual PUT slots (35.892653ms)
+✔ invalidated slot waiters do not PUT or leak capacity (4.166997ms)
+✔ duplicate resume is single-flight and completes only once (0.894712ms)
+✔ pause after part hashing starts schedules no later PUT (2.576013ms)
+✔ project refresh during hashing invalidates the old upload (2.371042ms)
+✔ cancel remains final when in-flight PUTs finish or fail late (1.64288ms)
+✔ pending cancel is single-flight and blocks pause and resume (2.687594ms)
+✔ failed cancel clears pending state and can be retried (0.631645ms)
+✔ confirmed parts are keyed and confirmed bytes never exceed size (0.512207ms)
+✔ resume read failure clears the file and returns to actionable state (0.513392ms)
+✔ zero-byte upload resumes and calls complete exactly once (0.380984ms)
+✔ project generation drops A after B and project actions retain scope (4.431266ms)
+✔ logout only clears UI after 204-equivalent success or explicit 401 (0.379447ms)
+✔ permission state hides writes synchronously on admin to reader switch (0.384279ms)
+✔ confirmed self-demotion synchronizes identity, project, and visibility (0.506726ms)
+ℹ tests 90
+ℹ suites 0
+ℹ pass 90
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2325.950501
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.007s
+OK
+2026-10-19T11:43:57.512872Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 860190
+2026-10-19T11:43:57.518411Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T11:44:13.534600Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T11:44:22.284117Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_browser_explicit_execution_lost_response_and_cancel (__main__.ExecuteBrowser) ... ERROR
+======================================================================
+ERROR: test_browser_explicit_execution_lost_response_and_cancel (__main__.ExecuteBrowser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_execute_browser_test.py", line 79, in test_browser_explicit_execution_lost_response_and_cancel
+    browser.start(); browser.command('POST','/url',{'url':origin+'/app.html'})
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+    value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+    return webdriver_value(response.status, response.read())
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+    raise RuntimeError(f'WebDriver {safe}')
+RuntimeError: WebDriver session not created
+----------------------------------------------------------------------
+Ran 1 test in 131.776s
+FAILED (errors=1)
+smartdocs-execute-ui-browser.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-execute-ui-browser.service: Failed with result 'exit-code'.
+smartdocs-execute-ui-browser.service: Consumed 11.400s CPU time.

@@ -7,6 +7,7 @@ export class AgentPanel {
     this.detailGeneration = 0;
     this.busy = false; // Cancellation lock: only the settled request may release it.
     this.creating = false;
+    this.executing = false; // Only the settled execution request releases this across view changes.
     this.archiveWriting = false;
     this.archiveGeneration = 0;
     this.uncertain = false;
@@ -169,7 +170,7 @@ export class AgentPanel {
         return;
       }
       this.clearDraft();
-      this.status("create", `Created task ${task.id} · pending, waiting for an executor. This page does not start model execution.`);
+      this.status("create", `Created task ${task.id} · pending, waiting for an executor. View the task to explicitly start it; creation alone does not call the model.`);
     } catch (error) {
       this.uncertain = true;
       this.clearContext();
@@ -237,7 +238,7 @@ export class AgentPanel {
   }
   renderTask(task, outcome, token) {
     const state = outcome ? outcome.state : task.state, project = this.project;
-    const labels = {pending:"Waiting for an executor; this page does not start execution.", running:"Execution started; refresh for current state.",
+    const labels = {pending:"Waiting for an executor; review and explicitly start this task below.", running:"Execution started; refresh for current state.",
       waiting_confirmation:"Waiting for archive confirmation; no files have been moved by this proposal.",
       waiting_execution:"Waiting for explicit archive execution; confirmation alone does not move files.",
       interrupted:"Interrupted; no automatic continuation.", cancelled:"Cancelled; already committed work is not undone.",
@@ -248,6 +249,20 @@ export class AgentPanel {
     const box = this.get("agent-detail");
     box.replaceChildren(this.node("p", `Created ${task.created_at} UTC · Updated ${task.updated_at} UTC`));
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
+    if (state === "pending" && (!task.archive_policy_revision || ["editor", "admin"].includes(this.role))) {
+      box.append(this.node("p", task.archive_policy_revision ? `Archive proposal · Approved policy revision ${task.archive_policy_revision}. No automatic confirmation or file move.` :
+        task.handover_checklist_revision ? `Handover check · Approved checklist revision ${task.handover_checklist_revision}.` : "Question and answer · No checklist or directory policy attached."));
+      const consent = this.node("input"); consent.type = "checkbox"; consent.checked = false;
+      const label = this.node("label"); label.className = "checkbox-label";
+      label.append(consent, this.node("span", "Start this task with the remote AI provider; this may incur charges. Use only the versions and configuration already approved for this task."));
+      const start = this.button("Start this task", () => {
+        if (consent.checked) return this.execute(task.id, token);
+      });
+      start.disabled = true;
+      consent.addEventListener("change", () => { start.disabled = !consent.checked || this.executing; });
+      box.append(label, start);
+      if (this.executing) box.append(this.node("p", "Another execution request was in flight when this view loaded. Refresh before starting a task; do not retry the earlier request."));
+    }
     box.append(this.button("Refresh task", () => { if (token === this.detailGeneration) return this.view(task.id); }));
     box.append(this.button("Load / refresh tool calls", () => this.audit(project, task.id, token)));
     box.append(this.button("View archive plan", () => this.loadArchive(project, task.id, token)));
@@ -268,6 +283,24 @@ export class AgentPanel {
         this.button("Read cited source", () => this.source(project, task.id, ref, token)));
       box.append(card);
     }
+  }
+  async execute(id, token) {
+    if (!this.project || token !== this.detailGeneration || this.executing || this.busy || this.creating || this.archiveWriting) return;
+    const project = this.project;
+    this.executing = true; this.clearDetail(); const request = this.detailGeneration;
+    this.status("detail", `Task ${id} · Execution requested; the server has not yet confirmed its state. Refresh or cancel while waiting. Closing the page does not cancel the task.`);
+    this.get("agent-detail").append(
+      this.button("Refresh task", () => { if (request === this.detailGeneration) return this.view(id); }),
+      this.button("Cancel task", () => this.cancel(id, request)));
+    let received = false;
+    try {
+      await this.api.executeAgentTask(project, id);
+      received = true; // Never render a result from this adapter; query C++ authority instead.
+    } catch (error) {
+      if (request === this.detailGeneration)
+        this.status("detail", `${this.errorText(error)} Outcome may be unknown. Refresh task to check persisted state; no automatic retry. The execution service may need deployment.`);
+    } finally { this.executing = false; }
+    if (received && request === this.detailGeneration) await this.view(id);
   }
   renderReport(saved, project, id, token) {
     const box = this.get("agent-detail"), report = saved.report;

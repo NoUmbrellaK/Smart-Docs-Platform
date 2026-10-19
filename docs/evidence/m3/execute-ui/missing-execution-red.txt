@@ -1,0 +1,160 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✖ execution requires a fresh explicit pending-task decision and reads the authoritative result (9.091607ms)
+✔ execution never appears on nonpending tasks or reader archive tasks (3.198167ms)
+✖ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (1.043019ms)
+✖ late execution responses cannot refill switched views or release the in-flight lock early (0.704088ms)
+✖ lost execution response requires read-only refresh and never retries the write (0.638033ms)
+✖ execution consent resets on refresh and stale controls cannot start a task (0.504105ms)
+✖ execution adapter sends only empty JSON to the same origin without redirects or retries (1.763444ms)
+✔ task modes bind only the reviewed server revision and never send metadata bodies (2.866225ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (2.654632ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (3.056959ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.575075ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (42.224887ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (0.944755ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.846808ms)
+✔ report stale loads cannot survive logout, project, role or task changes (0.86292ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.163347ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (1.392032ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (3.09993ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.719066ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.751745ms)
+✔ archive readers and terminal tasks have no write controls (0.973098ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.724074ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.545139ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.617486ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.442416ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.502448ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.577616ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.397674ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.524795ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.537646ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.583052ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.473867ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.418502ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.659126ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.463772ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.470938ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.776901ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.463717ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.47263ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.039768ms)
+✔ empty audit never means the task succeeded or no model was called (0.431984ms)
+✔ audit refresh clears old rows and latest response wins (0.400904ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.379372ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.61318ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 38
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 720.961653
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:51:1
+✖ execution requires a fresh explicit pending-task decision and reads the authoritative result (9.091607ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(start)
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:54:69)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:70:1
+✖ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (1.043019ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(box)
+
+      at approveExecution (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:49:72)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:74:36)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:84:1
+✖ late execution responses cannot refill switched views or release the in-flight lock early (0.704088ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(box)
+
+      at approveExecution (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:49:72)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:88:38)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:97:1
+✖ lost execution response requires read-only refresh and never retries the write (0.638033ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(box)
+
+      at approveExecution (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:49:72)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:100:36)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:107:1
+✖ execution consent resets on refresh and stale controls cannot start a task (0.504105ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(box)
+
+      at approveExecution (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:49:72)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:109:36)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:114:1
+✖ execution adapter sends only empty JSON to the same origin without redirects or retries (1.763444ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'undefined'
+  - 'function'
+
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:116:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-execute-ui-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-execute-ui-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code

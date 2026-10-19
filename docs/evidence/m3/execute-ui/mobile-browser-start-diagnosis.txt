@@ -1,0 +1,5 @@
+[1792411112.729][INFO]: ChromeDriver supports communication with Chrome via pipes. This is more reliable and more secure.
+[1792411112.729][INFO]: Use the --remote-debugging-pipe Chrome switch instead of the default --remote-debugging-port to enable this communication mode.
+[1792411176.959][INFO]: Failed to connect to Chrome. Attempting to kill it.
+[1792411180.331][INFO]: [526054f3f31f5dcc31fd4ea71512b198] RESPONSE InitSession ERROR session not created
+from chrome not reachable

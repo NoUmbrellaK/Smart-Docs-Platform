@@ -1,0 +1,59 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /bin/bash -c set -e; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_execute_browser_test.py; /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_http_test.py.
+2026-10-19T11:49:43.224263Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 861312
+2026-10-19T11:49:43.329674Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T11:49:58.744907Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T11:50:07.649644Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=15
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_browser_explicit_execution_lost_response_and_cancel (__main__.ExecuteBrowser) ... ----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 32772)
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/usr/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_execute_browser_test.py", line 46, in relay
+    self.end_headers(); self.wfile.write(body)
+  File "/usr/lib/python3.10/socketserver.py", line 826, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+PASS real browser: explicit pending execution, private cited result and source, lost response read-only recovery, in-flight cancel, refresh does not execute; six viewports and 44px controls; five synthetic provider responses, zero paid requests.
+ok
+----------------------------------------------------------------------
+Ran 1 test in 91.678s
+OK
+ERROR
+======================================================================
+ERROR: setUpClass (__main__.AgentHttpE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m2_worker_test.py", line 53, in setUpClass
+    create_user(str(ROOT/"bin/smartdocs-admin"), "worker-e2e-admin", cls.password)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 253, in create_user
+    raise RuntimeError(f"create-user failed for {username}: exit {completed.returncode}")
+RuntimeError: create-user failed for worker-e2e-admin: exit 2
+----------------------------------------------------------------------
+Ran 0 tests in 1.242s
+FAILED (errors=1)
+smartdocs-execute-ui-browser-final.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-execute-ui-browser-final.service: Failed with result 'exit-code'.
+smartdocs-execute-ui-browser-final.service: Consumed 16.265s CPU time.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1

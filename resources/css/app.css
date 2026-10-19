@@ -100,6 +100,7 @@ a {
   min-height: 44px;
 }
 .checkbox-label input { width: 1.25rem; min-height: 1.25rem; }
+#agent-detail .checkbox-label input { flex: 0 0 1.25rem; padding: 0; }
 .section-heading, .action-row {
   display: flex;
   flex-wrap: wrap;

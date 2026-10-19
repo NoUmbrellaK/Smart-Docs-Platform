@@ -23,7 +23,7 @@ def tool(name, arguments, sequence=1):
 
 class AgentHttpE2E(HandoverContextE2E):
     @contextmanager
-    def gateway(self, respond):
+    def gateway(self, respond, *, origin=None):
         self.calls, self.model_errors = [], []
         async def transport(request):
             self.assertEqual(str(request.url), deepseek.URL)
@@ -41,7 +41,7 @@ class AgentHttpE2E(HandoverContextE2E):
         with tempfile.TemporaryDirectory(dir=self.root) as directory:
             self.runtime, self.audit = Path(directory)/'runtime', Path(directory)/'audit'
             self.runtime.mkdir(mode=0o700); self.audit.mkdir(mode=0o700)
-            server = agent_http.AgentHTTPServer(0, self.server.port, f'http://127.0.0.1:{self.server.port}',
+            server = agent_http.AgentHTTPServer(0, self.server.port, origin or f'http://127.0.0.1:{self.server.port}',
                 self.runtime, self.audit, 'synthetic-http-key')
             thread = threading.Thread(target=server.serve_forever); thread.start()
             self.gateway_port = server.server_port

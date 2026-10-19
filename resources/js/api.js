@@ -71,6 +71,17 @@ export const listAgentTasks = (projectId, before = "") =>
 export const createAgentTask = (projectId, command) =>
   metadata(agentPath(projectId), { method: "POST", body: command, expectedStatus: 201 });
 export const getAgentTask = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}`);
+export async function executeAgentTask(projectId, taskId) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 300000);
+  try {
+    const response = await fetch(API_ROOT + `${agentPath(projectId)}/${id(taskId)}/execute`, {
+      method: "POST", credentials: "same-origin", cache: "no-store", redirect: "error",
+      headers: {"Content-Type": "application/json"}, body: "{}", signal: controller.signal
+    });
+    return await parseApiResponse(response);
+  } finally { clearTimeout(timer); }
+}
 export const cancelAgentTask = (projectId, taskId) =>
   metadata(`${agentPath(projectId)}/${id(taskId)}/cancel`, { method: "POST" });
 export const getAgentResult = (projectId, taskId) => metadata(`${agentPath(projectId)}/${id(taskId)}/run/result`);
