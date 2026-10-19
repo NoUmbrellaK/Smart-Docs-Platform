@@ -61,7 +61,7 @@ expected.targets只约束实际存在的提案；A07允许明确的冲突拒绝�
 每项fixture到真实ID映射、初始状态、真实轨迹/结果、实际/预期对照、判定人及理由、异常与未覆盖点。
 usage缺失为不可得；费用按执行时核实的供应商价格计算，不使用假usage或预设成功率。
 
-## 本轮仅做静态数据一致性检查
+## 静态数据一致性检查
 
 ```sh
 python3 -B -m unittest discover -s test/python -p test_agent_benchmark_fixtures.py -v
@@ -75,3 +75,31 @@ python3 -B -m unittest discover -s test/python -p test_agent_benchmark_fixtures.
 
 只读审查修正了A07拒绝分支与方案要求的矛盾、A05可能把全败算成功的问题，并明确H05空引用。
 这些是执行前判据审查，不是实测模型失败或通过记录。
+
+## 隔离库前置数据预检（不是业务评测）
+
+`test/e2e/m3_fixed_inputs_test.py` 复用真实C++上传/版本/权限/任务接口与本地解析worker，
+每项创建新的alpha/beta项目及editor/reader身份（套件共用独立admin账号）。仅允许既有
+`scripts/test-with-mysql.sh` 创建的临时数据库；不应直接对业务数据库运行。
+在受限测试副本、正确Python环境中执行：
+
+```sh
+scripts/test-with-mysql.sh -- python -B test/e2e/m3_fixed_inputs_test.py
+```
+
+当前ECS必须通过既有 `smartdocsvectorcheck.slice` 串行运行，禁止并行建库/重编译。
+本轮单元额外设置 `IPAddressDeny=any` / `IPAddressAllow=localhost`，无模型/向量请求。
+脚本记录实际版本、SHA-256、已获批正文的chunk/行号、上传顺序、解析状态与准入HTTP码；
+未批准资料不通过远程读取接口获得chunk，pending版本没有伪造chunk。
+
+- 保持present声明的文件顺序、同文件版本升序；H03在其他资料解析后最后上传deployment@2。
+- 检查真实成员权限、逐版本批准、下载字节、当前版本指针、目录/清单快照及任务范围。
+- Q08/Q09/A09验证准入拒绝；Q03验证首次指定元数据查询为空；H05验证分页确为10+1。
+- 为核对数据，预检会读取获批正文并遍历元数据；**不是实际H05的“模型仅看首页”轨迹**。
+  预检任务最终取消，后续业务评测必须新建项目/任务，不可复用预检的读取记录。
+- 不执行后续模型选择、人工确认/拒绝、报告生成或H10报告生成后的批准撤销。
+  不解释自然语言setup为自动动作，不根据expected生成回答、方案或确认。
+
+每项日志固定标注 `business_task: not_run`；预检通过数不可用于30项业务成功率、归档效果
+或引用准确率。原始JSON及其 `run_status: not_run` 保持不变。
+[本轮日志与失败记录](../../../docs/evidence/m3/fixed-task-preflight/README.md)：完整复验30/30前置预检通过。

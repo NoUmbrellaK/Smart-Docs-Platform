@@ -1,0 +1,69 @@
+Runtime observation at 2026-10-19T22:26:08+08:00 (preflight-2):
+RuntimeMaxUSec=15min
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+After successful exit, systemd unloaded transient preflight-2 properties;
+empty User/IPAddress fields below do not describe its running configuration.
+
+2026-10-19T22:29:23+08:00
+Linux 5.15.0-142-generic x86_64 GNU/Linux
+2
+Python 3.10.12
+mysql  Ver 8.0.46-0ubuntu0.22.04.4 for Linux on x86_64 ((Ubuntu))
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ExecStart={ path=/tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh ; argv[]=/tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v m3_fixed_inputs_test.FixedInputsE2E.test_fixed_Q01 ; ignore_errors=no ; start_time=[Mon 2026-10-19 22:21:52 CST] ; stop_time=[Mon 2026-10-19 22:23:46 CST] ; pid=892714 ; code=exited ; status=1 }
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m3-fixed-preflight-1.service
+ActiveState=failed
+SubState=failed
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+IPAddressAllow=
+IPAddressDeny=
+User=
+Group=
+NoNewPrivileges=no
+Id=smartdocs-m3-fixed-preflight-2.service
+ActiveState=inactive
+SubState=dead
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1989         317           3        1188        1238
+Swap:              0           0           0
+active
+5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228  test/fixtures/agent-p0/corpus.json
+9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099  test/fixtures/agent-p0/tasks.json
+83b93df79725d04b1960891647c7a5c1fe8ab87a62ebc805034209b196fdddc9  test/e2e/m3_fixed_inputs_test.py
+83b93df79725d04b1960891647c7a5c1fe8ab87a62ebc805034209b196fdddc9  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_fixed_inputs_test.py
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+9584468edf20b090773a9efb55820a36a537c42c00312ff0543d139406b28491  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests
+Dependency cmp loop exit: 0 (seven existing helpers/worker/scripts identical)
+Static fixtures: 4 tests, 0.015s, OK
+Pre-run memory.events: low=0 high=80521 max=0 oom=0 oom_kill=0
