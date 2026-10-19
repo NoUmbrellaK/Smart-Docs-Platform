@@ -1,0 +1,67 @@
+A26 backup/restore drill, 2026-10-19
+Base c0c53b6f56acdfe60044b53d5f3d200cfedded7a plus this commit
+Final unit: smartdocs-m3-backup-restore-verified.service
+Final run: 22:52:44-22:54:48 Asia/Shanghai (includes MySQL setup/cleanup)
+Test method: 1/1 passed, 22.509s
+All three units sequential; no real model/key or production DB access.
+Runtime settings observed while running; final script cmp matched working tree.
+Parent report fixture and MySQL wrapper cmp matched working tree.
+
+TimeoutStopUSec=5s
+RuntimeMaxUSec=15min
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+b84de8b6d37f93f01f838f884c1bce477c11303e58cbeb68b46295a5c8cbc735  /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_backup_restore_test.py
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+Python 3.10.12
+mysqldump  Ver 8.0.46-0ubuntu0.22.04.4 for Linux on x86_64 ((Ubuntu))
+
+Final lifecycle/resource check:
+MainPID=0
+Result=exit-code
+Id=smartdocs-m3-backup-restore.service
+ActiveState=failed
+
+MainPID=0
+Result=exit-code
+Id=smartdocs-m3-backup-restore-recheck.service
+ActiveState=failed
+
+MainPID=0
+Result=success
+Id=smartdocs-m3-backup-restore-verified.service
+ActiveState=inactive
+MemoryCurrent=125444096
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+active
+2026-10-19T22:54:44+0800 aliyun-lou test-with-mysql.sh[899893]: ----------------------------------------------------------------------
+2026-10-19T22:54:44+0800 aliyun-lou test-with-mysql.sh[899893]: Ran 1 test in 22.509s
+2026-10-19T22:54:44+0800 aliyun-lou test-with-mysql.sh[899893]: OK
+2026-10-19T22:54:48+0800 aliyun-lou systemd[1]: smartdocs-m3-backup-restore-verified.service: Deactivated successfully.
+2026-10-19T22:54:48+0800 aliyun-lou systemd[1]: smartdocs-m3-backup-restore-verified.service: Consumed 8.429s CPU time.
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+
+Local checks:
+PASS Python ast.parse for test/e2e/m3_backup_restore_test.py
+PASS git diff --check
+PASS backup documentation fail-fast control flow: 6/6 (mock commands only)

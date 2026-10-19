@@ -1,6 +1,6 @@
 # M1 单机部署手册
 
-> 本文保留 M1/schema 2 的部署基线。当前 M3 开发分支要求 [schema15](../api/m3-archive-agent.md#schema15和部署)；升级前同时阅读 [M2 任务迁移说明](../api/m2-processing-api.md)，不要仅替换二进制或使用下文旧 schema 预期。混合检索还需配置[同源网关路由](m2-hybrid-search.md)。
+> 本文保留 M1/schema 2 的部署基线。当前 M3 开发分支要求 [schema16](../api/m3-tool-audit.md#schema16和部署)；升级前同时阅读 [M2 任务迁移说明](../api/m2-processing-api.md)，不要仅替换二进制或使用下文旧 schema 预期。混合检索还需配置[同源网关路由](m2-hybrid-search.md)。
 
 本文说明 M1 C++ 文件服务的单机部署。M1 包含登录会话、项目与成员角色、逻辑目录、分片上传、不可变版本、软删除/还原、远程 AI 授权标记和受保护下载；不包含 M2 解析/检索、M3 Agent/MCP 或 M4 归档报告。
 
@@ -221,18 +221,35 @@ server {
 - 部署使用的 Git 提交号；
 - 受保护环境文件的独立加密备份。
 
-最简单的一致性流程是先停止应用写入，再备份数据库和存储。数据库凭据通过受保护的 MySQL option file 或本机 socket 认证提供，不要放在命令行：
+最简单的一致性流程是先停止所有写入方，再备份数据库和存储。M2/M3 部署还需停止 worker、Agent 执行器和任何后台清理/管理写入；`--single-transaction` 不能保证数据库与随后复制的文件来自同一时刻。记录原先运行的服务，只在两部分备份都成功后恢复它们。下例仅针对 M1 单服务；数据库凭据通过受保护的 MySQL option file 或本机 socket 认证提供，不要放在命令行：
 
 ```bash
-sudo systemctl stop smart-docs
-sudo mysqldump --single-transaction --routines --triggers smart_docs \
-  > smart-docs.sql
-sudo tar --acls --xattrs -C /var/lib -cpf smart-docs-storage.tar smart-docs
-git -C /opt/smart-docs rev-parse HEAD > smart-docs-revision.txt
-sudo systemctl start smart-docs
+(
+  set -euo pipefail
+  umask 077
+  sudo systemctl stop smart-docs
+  sudo mysqldump --single-transaction --routines --triggers smart_docs \
+    > smart-docs.sql
+  sudo tar --acls --xattrs -C /var/lib -cpf smart-docs-storage.tar smart-docs
+  git -C /opt/smart-docs rev-parse HEAD > smart-docs-revision.txt
+  sudo systemctl start smart-docs
+)
 ```
 
-恢复时停止服务，恢复数据库与整个存储根，恢复正确所有者/`0700` 权限，checkout 到记录的提交，重新执行迁移，再启动并检查 `ready`。数据库与存储必须来自同一备份窗口；只恢复其中一项可能导致版本对象缺失或不可见孤儿。
+任一步骤失败时，上例会停止，已停止的应用不会自动重启；若停止服务本身失败，须先确认实际写入状态。排查原因并确认配对备份完整后，再人工恢复原先运行的服务。不要把失败导出与另一窗口的存储打包配成一份备份。
+
+恢复演练应使用新数据库、新存储根和环回测试端口，不直接覆盖正在使用的业务库或对象。完整性核对通过后，再另外安排正式切换；演练成功不等于已部署自动备份。数据库与存储必须来自同一备份窗口；只恢复其中一项可能导致版本对象缺失或不可见孤儿。
+
+恢复正确所有者、目录 `0700` 和文件 `0600` 权限，checkout 到备份记录的提交，使用匹配的迁移与二进制启动并检查 `ready`。检查旧/新版本下载哈希、逻辑目录和项目成员、受限访问、未完成上传续传，以及报告全部引用的固定版本/片段。完整库包含会话、用户凭据散列和私有报告，备份必须受保护并加密保管，不可提交到仓库。
+
+当前 MySQL 关键词索引可从已备份 `document_chunks.body` 重建：在**隔离恢复库、应用未启动**时执行以下语句，再经 HTTP 验证检索及历史片段 ID。不能只检查 SQL 执行成功；向量模型/向量索引另按[M2 部署说明](m2-hybrid-search.md)验证，不得将关键词重建视作向量重建。
+
+```sql
+ALTER TABLE document_chunks DROP INDEX ft_document_body;
+ALTER TABLE document_chunks ADD FULLTEXT INDEX ft_document_body (body) WITH PARSER ngram;
+```
+
+可复现的人工资料恢复演练脚本为 [m3_backup_restore_test.py](../../test/e2e/m3_backup_restore_test.py)，须通过 `scripts/test-with-mysql.sh` 在资源受限测试单元中运行。脚本拒绝非测试 socket，使用新建 `smart_docs_restore_test` 库，不读取生产数据或真实模型 key；其范围及实际结果见[恢复演练证据](../evidence/m3/backup-restore/README.md)。
 
 ## 发布前检查
 
