@@ -41,3 +41,8 @@ class AgentCliTests(unittest.TestCase):
             result=subprocess.run(command,env=env,capture_output=True,text=True,timeout=10)
             self.assertEqual(result.returncode,2); self.assertNotIn("do-not-echo-key",result.stdout+result.stderr)
             self.assertFalse(audit.exists())
+
+    def test_waiting_outcome_keeps_execution_error_instead_of_success(self):
+        from smartdocs.agent_cli import safe_outcome
+        self.assertEqual(safe_outcome({'state':'waiting_execution','error_code':'scope_changed','secret':'raw'}),
+                         {'state':'waiting_execution','error_code':'scope_changed'})

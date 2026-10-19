@@ -1,0 +1,16 @@
+2026-10-19T17:51:40+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_cli.py -k waiting -v.
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: test_waiting_outcome_keeps_execution_error_instead_of_success (test_agent_cli.AgentCliTests) ... FAIL
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: ======================================================================
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: FAIL: test_waiting_outcome_keeps_execution_error_instead_of_success (test_agent_cli.AgentCliTests)
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: ----------------------------------------------------------------------
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: Traceback (most recent call last):
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_cli.py", line 47, in test_waiting_outcome_keeps_execution_error_instead_of_success
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]:     self.assertEqual(safe_outcome({'state':'waiting_execution','error_code':'scope_changed','secret':'raw'}),
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: AssertionError: {'state': 'waiting_execution'} != {'state': 'waiting_execution', 'error_code': 'scope_changed'}
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: - {'state': 'waiting_execution'}
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: + {'error_code': 'scope_changed', 'state': 'waiting_execution'}
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: ----------------------------------------------------------------------
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: Ran 1 test in 0.506s
+2026-10-19T17:51:40+0800 aliyun-lou python[835941]: FAILED (failures=1)
+2026-10-19T17:51:40+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-cli-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:51:40+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-cli-red.service: Failed with result 'exit-code'.

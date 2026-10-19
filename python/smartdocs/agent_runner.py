@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
-from .mcp_read import SCHEMAS, DESCRIPTIONS, READ_TOOLS, REPORT_TOOL, CREATE_ARCHIVE_TOOL, ID, valid_report_receipt, validate_context
+from .mcp_read import SCHEMAS, DESCRIPTIONS, READ_TOOLS, REPORT_TOOL, CREATE_ARCHIVE_TOOL, EXECUTE_ARCHIVE_TOOL, ID, valid_report_receipt, validate_context
 from .search_http import strict_json
 
 
@@ -59,11 +59,12 @@ class RuntimeBackend:
     def _request(self, action, body):
         context = self.context
         prefix = f'/api/v1/projects/{context["project_id"]}/agent-tasks/{context["task_id"]}'
-        if action not in {"start", "check", "finish", "result", "status", "archive-plan"}: raise RunError("dependency_failed")
+        if action not in {"start", "check", "finish", "result", "status", "archive-plan", "archive-result"}: raise RunError("dependency_failed")
         connection = http.client.HTTPConnection("127.0.0.1", context["backend_port"], timeout=15)
         try:
-            path = prefix if action == "status" else prefix+'/archive-plan' if action=='archive-plan' else prefix + "/run/" + action
-            connection.request("GET" if action in {"result", "status", "archive-plan"} else "POST", path,
+            path = prefix+{'status':'','archive-plan':'/archive-plan',
+                          'archive-result':'/archive-plan/result'}.get(action,'/run/'+action)
+            connection.request("GET" if action in {"result", "status", "archive-plan", "archive-result"} else "POST", path,
                 body=None if body is None else encoded(body), headers={
                     "Host": urlsplit(context["origin"]).netloc, "Origin": context["origin"],
                     "Cookie": "smartdocs_session=" + context["session_token"],
@@ -78,7 +79,7 @@ class RuntimeBackend:
                 error = data.get("error", {})
                 code = error.get("code") if isinstance(error, dict) else None
                 if response.status in {401, 403, 404}: raise RunError("access_denied")
-                raise RunError({"task_scope_changed":"scope_changed", "task_inactive":"cancelled",
+                raise RunError({"task_scope_changed":"scope_changed", "archive_plan_changed":"scope_changed", "task_inactive":"cancelled",
                                 "budget_exhausted":"budget_exhausted", "invalid_source":"invalid_source"}.get(code, "dependency_failed"))
             if not isinstance(data.get("data"), dict): raise RunError("dependency_failed")
             return data["data"]
@@ -90,6 +91,82 @@ class RuntimeBackend:
             raise RunError("dependency_failed") from None
         finally:
             connection.close()
+
+
+async def resume_confirmed_archive(context, client):
+    """Explicit local continuation; no model, confirmation, run claim, finish or write retry."""
+    context=validate_context(context)
+    if context['scope']!='task_versions': raise ValueError('persistent task scope is required')
+    backend=RuntimeBackend(context); deadline=time.monotonic()+90
+    attempted=rejected=False; command=None
+
+    async def bounded(awaitable, limit=15):
+        remaining=deadline-time.monotonic()
+        if remaining<=0:
+            awaitable.close(); raise RunError('timeout')
+        return await asyncio.wait_for(awaitable,min(limit,remaining))
+
+    async def status():
+        value=await bounded(backend.request('status'))
+        if (value.get('id')!=context['task_id'] or value.get('project_id')!=context['project_id']
+                or value.get('state') not in {'pending','running','waiting_confirmation','waiting_execution',
+                                             'completed','failed','cancelled','interrupted'}):
+            raise RunError('dependency_failed')
+        return value['state']
+
+    async def receipt():
+        value=await bounded(backend.request('archive-result'))
+        if (set(value)!={'operation_id','plan_id','revision','status','moved_count','audit_id'}
+                or any(not isinstance(value[k],str) or not re.fullmatch('[0-9a-f]{32}',value[k])
+                       for k in ('operation_id','plan_id','audit_id'))
+                or type(value['revision']) is not int or not 1<=value['revision']<=4294967295
+                or type(value['moved_count']) is not int or not 1<=value['moved_count']<=100
+                or value['status']!='executed'
+                or (command is not None and any(value[k]!=v for k,v in command.items()))):
+            raise RunError('dependency_failed')
+        return {'state':'completed','kind':'archive_operation','archive_operation':value}
+
+    try:
+        state=await status()
+        if state=='completed': return await receipt()
+        if state=='waiting_confirmation': return {'state':state}
+        if state!='waiting_execution':
+            return {'state':state,'error_code':'cancelled' if state=='cancelled' else 'archive_not_ready'}
+        plan=await bounded(backend.request('archive-plan'))
+        if plan.get('task_id')!=context['task_id'] or plan.get('project_id')!=context['project_id']:
+            raise RunError('dependency_failed')
+        if plan.get('task_state')=='completed': return await receipt()
+        if plan.get('task_state') in {'waiting_confirmation','cancelled'}:
+            return {'state':plan['task_state'],**({'error_code':'cancelled'} if plan['task_state']=='cancelled' else {})}
+        command={'plan_id':plan.get('id'),'revision':plan.get('revision'),'operation_id':plan.get('operation_id')}
+        if (type(command['revision']) is not int or not Draft202012Validator(SCHEMAS[EXECUTE_ARCHIVE_TOOL]).is_valid(command)
+                or plan.get('task_state')!='waiting_execution' or plan.get('state')!='confirmed'
+                or plan.get('decision')!='confirm' or plan.get('executable') is not True
+                or plan.get('has_unresolved') is not False): raise RunError('dependency_failed')
+        attempted=True
+        reply=await bounded(client.call_tool(EXECUTE_ARCHIVE_TOOL,command),30)
+        payload=reply.structuredContent
+        if not isinstance(payload,dict) or payload.get('task_id')!=context['task_id'] or len(encoded(payload))>262144:
+            raise RunError('dependency_failed')
+        if payload.get('status')!='success':
+            rejected=payload.get('status') in {'invalid_request','access_denied','conflict','busy'}
+            raise RunError({'access_denied':'access_denied','conflict':'scope_changed',
+                            'timeout':'timeout'}.get(payload.get('status'),'dependency_failed'))
+        return await receipt()
+    except asyncio.CancelledError:
+        raise  # In-flight HTTP may still commit; a later explicit continuation queries its receipt.
+    except Exception as error:
+        code=error.code if isinstance(error,RunError) else 'timeout' if isinstance(error,asyncio.TimeoutError) else 'dependency_failed'
+        if attempted:
+            try: return await receipt()
+            except Exception: pass
+            if rejected:
+                try:
+                    state=await status()
+                    if state!='completed':
+                        return {'state':state,'error_code':'cancelled' if state=='cancelled' else code}
+                except Exception: pass
+        return {'state':'unknown','error_code':code}
 
 
 def sources(data):

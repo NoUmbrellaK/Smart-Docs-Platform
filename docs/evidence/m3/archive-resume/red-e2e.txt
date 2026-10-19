@@ -1,0 +1,75 @@
+2026-10-19T17:49:29+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_resume_test.py.
+2026-10-19T17:49:30+0800 aliyun-lou test-with-mysql.sh[835433]: 2026-10-19T09:49:30.566891Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 835433
+2026-10-19T17:49:30+0800 aliyun-lou test-with-mysql.sh[835433]: 2026-10-19T09:49:30.667844Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:49:46+0800 aliyun-lou test-with-mysql.sh[835433]: 2026-10-19T09:49:46.098200Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:49:55+0800 aliyun-lou test-with-mysql.sh[835433]: 2026-10-19T09:49:55.626152Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:50:42+0800 aliyun-lou test-with-mysql.sh[835682]: schema_version=15
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:51:09+0800 aliyun-lou test-with-mysql.sh[835787]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:51:12+0800 aliyun-lou test-with-mysql.sh[835869]: test_resume_cancel_between_preflight_and_tool_blocks_move (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:51:14+0800 aliyun-lou test-with-mysql.sh[835869]: test_resume_cli_wait_confirm_restart_execute_and_receipt_without_key (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:51:14+0800 aliyun-lou test-with-mysql.sh[835869]: test_resume_does_not_switch_to_new_confirmation_during_execution (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:51:15+0800 aliyun-lou test-with-mysql.sh[835869]: test_resume_lost_commit_recovers_minimal_receipt_after_approval_revocation (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: test_resume_scope_revocation_and_other_owner_do_not_move (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ======================================================================
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAIL: test_resume_cancel_between_preflight_and_tool_blocks_move (__main__.ArchiveResumeE2E)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Traceback (most recent call last):
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 102, in test_resume_cancel_between_preflight_and_tool_blocks_move
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     outcome,calls,_=self.resume(task,before=lambda:data(self.user.request('POST',path+'/cancel')))
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 22, in resume
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     self.assertIn('resume_archive',inspect.signature(run_session).parameters,'explicit continuation missing')
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: AssertionError: 'resume_archive' not found in mappingproxy(OrderedDict([('context', <Parameter "context">), ('client', <Parameter "client">), ('model', <Parameter "model">), ('audit', <Parameter "audit">)])) : explicit continuation missing
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ======================================================================
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAIL: test_resume_cli_wait_confirm_restart_execute_and_receipt_without_key (__main__.ArchiveResumeE2E)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Traceback (most recent call last):
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 52, in test_resume_cli_wait_confirm_restart_execute_and_receipt_without_key
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     outcome,events=self.cli(task)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 44, in cli
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: AssertionError: 2 != 0 : usage: agent_cli.py [-h] --context CONTEXT --audit AUDIT
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:                     [--max-model-calls {1,2,3,4,5,6,7,8}]
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:                     [--encoder-socket ENCODER_SOCKET]
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: agent_cli.py: error: unrecognized arguments: --resume-archive
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ======================================================================
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAIL: test_resume_does_not_switch_to_new_confirmation_during_execution (__main__.ArchiveResumeE2E)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Traceback (most recent call last):
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 91, in test_resume_does_not_switch_to_new_confirmation_during_execution
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     outcome,calls,_=self.resume(task,before=revise)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 22, in resume
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     self.assertIn('resume_archive',inspect.signature(run_session).parameters,'explicit continuation missing')
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: AssertionError: 'resume_archive' not found in mappingproxy(OrderedDict([('context', <Parameter "context">), ('client', <Parameter "client">), ('model', <Parameter "model">), ('audit', <Parameter "audit">)])) : explicit continuation missing
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ======================================================================
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAIL: test_resume_lost_commit_recovers_minimal_receipt_after_approval_revocation (__main__.ArchiveResumeE2E)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Traceback (most recent call last):
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 75, in test_resume_lost_commit_recovers_minimal_receipt_after_approval_revocation
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     outcome,calls,_=self.resume(task,lost=True)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 22, in resume
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     self.assertIn('resume_archive',inspect.signature(run_session).parameters,'explicit continuation missing')
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: AssertionError: 'resume_archive' not found in mappingproxy(OrderedDict([('context', <Parameter "context">), ('client', <Parameter "client">), ('model', <Parameter "model">), ('audit', <Parameter "audit">)])) : explicit continuation missing
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ======================================================================
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAIL: test_resume_scope_revocation_and_other_owner_do_not_move (__main__.ArchiveResumeE2E)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Traceback (most recent call last):
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 111, in test_resume_scope_revocation_and_other_owner_do_not_move
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     denied,calls,_=self.resume(task,actor=editor)
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 22, in resume
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]:     self.assertIn('resume_archive',inspect.signature(run_session).parameters,'explicit continuation missing')
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: AssertionError: 'resume_archive' not found in mappingproxy(OrderedDict([('context', <Parameter "context">), ('client', <Parameter "client">), ('model', <Parameter "model">), ('audit', <Parameter "audit">)])) : explicit continuation missing
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: ----------------------------------------------------------------------
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: Ran 5 tests in 6.596s
+2026-10-19T17:51:16+0800 aliyun-lou test-with-mysql.sh[835869]: FAILED (failures=5)
+2026-10-19T17:51:21+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-e2e-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:51:21+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-e2e-red.service: Failed with result 'exit-code'.
+2026-10-19T17:51:21+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-e2e-red.service: Consumed 8.495s CPU time.

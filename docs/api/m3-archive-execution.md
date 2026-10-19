@@ -95,6 +95,7 @@ confirmed且waiting_execution、executable为真时才显示 **Execute confirmed
 
 ## 剩余边界
 
-归档MCP接线及个人报告后端已交付；归档模型等待/继续编排、个人报告网页和五工具整体验收尚未交付。
+归档MCP接线、提案后等待、[显式本机继续执行](m3-archive-resume.md)及个人报告后端已交付；
+网页任务模式选择、个人报告网页、生产调度和五工具整体验收尚未交付。
 网页验证的提案是夹具，不代表模型分类质量；见[确认网页证据](../evidence/m3/archive-ui/README.md)。
 完整目标和M3/M4均未关闭。

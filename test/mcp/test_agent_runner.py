@@ -39,6 +39,8 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.start_context=None
         self.archive_context=None; self.archive_preview=None; self.commit_archive=True; self.drop_archive=False
         self.archive_names=False
+        self.archive_execution=None; self.commit_execution=True; self.drop_execution=False
+        self.execution_result_patch={}
         self.report_receipt=None; self.drop_report=False; self.commit_report=True
         self.defer_report=False; self.reject_report_result=False
         self.report_operation='1'*32
@@ -58,6 +60,19 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                     if owner.start_context is not None: payload['handover_checklist']=owner.start_context
                     if owner.start_context is not None: payload['report_operation_id']=owner.report_operation
                     if owner.archive_context is not None: payload['archive_context']=owner.archive_context
+                elif self.path.endswith('/archive-plan/execute'):
+                    if owner.commit_execution:
+                        owner.state='completed'
+                        owner.archive_execution={**body,'status':'executed','moved_count':1,'audit_id':'7'*32}
+                        owner.archive_execution.update(owner.execution_result_patch)
+                    if owner.drop_execution:
+                        self.connection.shutdown(socket.SHUT_RDWR); self.connection.close(); return
+                    payload={**owner.archive_execution,'items':[]} if owner.archive_execution else {}
+                elif self.path.endswith('/archive-plan/result'):
+                    if owner.archive_execution: payload=owner.archive_execution
+                    else: status=404; payload={'code':'resource_not_found'}
+                elif self.path.endswith('/'+TASK):
+                    payload={'id':TASK,'project_id':PROJECT,'state':owner.state,'versions':[]}
                 elif self.path.endswith('/archive-plan'):
                     if self.command=='PUT':
                         if owner.commit_archive:
@@ -146,6 +161,72 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
             'sources':[{'file_id':FILE,'version_id':VERSION,'source_directory_id':'4'*32}]}
         return {'expected_revision':0,'policy_revision':1,'items':[{
             **self.archive_context['sources'][0],'target_directory_id':'3'*32,'reason':'Needs user review'}]}
+
+    def confirmed_archive(self):
+        self.state='waiting_execution'
+        self.archive_preview={'id':'5'*32,'project_id':PROJECT,'task_id':TASK,'revision':1,
+            'policy_revision':1,'state':'confirmed','task_state':'waiting_execution','content_sha256':'6'*64,
+            'decision':'confirm','operation_id':'8'*32,'executable':True,'has_unresolved':False,'items':[]}
+
+    async def resume_archive(self):
+        self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+            return await self.agent.resume_confirmed_archive(self.context,client)
+
+    async def test_resume_executes_only_server_confirmed_command_and_returns_minimal_receipt(self):
+        self.confirmed_archive()
+        outcome=await self.resume_archive()
+        self.assertEqual(outcome,{'state':'completed','kind':'archive_operation','archive_operation':{
+            'plan_id':'5'*32,'revision':1,'operation_id':'8'*32,'status':'executed','moved_count':1,'audit_id':'7'*32}})
+        commands=[b for p,b in self.requests if p.endswith('/execute')]
+        self.assertEqual(commands,[{'plan_id':'5'*32,'revision':1,'operation_id':'8'*32}])
+        self.assertFalse(any('/run/' in p or p.endswith('/decision') for p,_ in self.requests))
+        self.assertEqual(await self.resume_archive(),outcome)
+        self.assertEqual(sum(p.endswith('/execute') for p,_ in self.requests),1)
+
+    async def test_resume_unconfirmed_and_inactive_tasks_never_write(self):
+        for state in ('waiting_confirmation','pending','running','failed','interrupted','cancelled'):
+            self.state=state
+            self.assertEqual((await self.resume_archive())['state'],state)
+        self.assertFalse(any(b is not None for _,b in self.requests))
+
+    async def test_resume_invalid_confirmed_view_never_writes(self):
+        for update in ({'decision':'reject'},{'executable':1},{'has_unresolved':True},{'revision':True},
+                       {'task_id':'0'*32},{'project_id':'0'*32},{'operation_id':None},{'state':'preview'}):
+            self.confirmed_archive(); self.archive_preview.update(update)
+            self.assertNotEqual((await self.resume_archive())['state'],'completed')
+        self.assertFalse(any(b is not None for _,b in self.requests))
+
+    async def test_resume_lost_committed_reply_queries_without_write_retry(self):
+        self.confirmed_archive(); self.drop_execution=True
+        outcome=await self.resume_archive()
+        self.assertEqual(outcome['state'],'completed')
+        self.assertEqual(sum(p.endswith('/execute') for p,_ in self.requests),1)
+        self.assertFalse(any('/run/' in p for p,_ in self.requests))
+
+    async def test_resume_lost_uncommitted_reply_is_unknown_without_failed_finish(self):
+        self.confirmed_archive(); self.drop_execution=True; self.commit_execution=False
+        outcome=await self.resume_archive()
+        self.assertEqual(outcome['state'],'unknown'); self.assertEqual(self.state,'waiting_execution')
+        self.assertEqual(sum(p.endswith('/execute') for p,_ in self.requests),1)
+        self.assertFalse(any('/run/' in p for p,_ in self.requests))
+
+    async def test_resume_malformed_receipt_cannot_claim_completion(self):
+        self.state='completed'
+        for update in ({'revision':True},{'moved_count':-1},{'status':'waiting'},
+                       {'audit_id':'raw-secret'},{'items':[{'secret':'text'}]}):
+            self.archive_execution={'plan_id':'5'*32,'revision':1,'operation_id':'8'*32,
+                'status':'executed','moved_count':1,'audit_id':'7'*32,**update}
+            outcome=await self.resume_archive()
+            self.assertNotEqual(outcome['state'],'completed'); self.assertNotIn('raw-secret',json.dumps(outcome))
+        self.assertFalse(any(b is not None for _,b in self.requests))
+
+    async def test_resume_receipt_must_match_exact_dispatched_operation(self):
+        for update in ({'operation_id':'9'*32},{'plan_id':'9'*32},{'revision':2}):
+            self.confirmed_archive(); self.execution_result_patch=update
+            self.assertEqual((await self.resume_archive())['state'],'unknown')
+        self.assertEqual(sum(p.endswith('/execute') for p,_ in self.requests),3)
+        self.assertFalse(any('/run/' in p for p,_ in self.requests))
 
     async def test_archive_proposal_is_terminal_wait_not_completion(self):
         args=self.archive_fixture(); seen=[]

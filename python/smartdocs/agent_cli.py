@@ -11,12 +11,12 @@ import time
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from .agent_runner import RunError, run_task
+from .agent_runner import RunError, run_task, resume_confirmed_archive
 from .deepseek import DeepSeekModel, open_audit
 from .mcp_read import load_context
 
 
-async def run_session(context, client, model, audit):
+async def run_session(context, client, model, audit, *, resume_archive=False):
     last_query=None; sequence=0
     class Tools:
         async def call_tool(self,name,arguments):
@@ -49,35 +49,37 @@ async def run_session(context, client, model, audit):
             try: audit(event)
             except (OSError,ValueError): raise RunError("dependency_failed") from None
             return reply
+    if resume_archive: return await resume_confirmed_archive(context,Tools())
     return await run_task(context,Tools(),model)
 
 
 def safe_outcome(outcome):
     if not isinstance(outcome,dict) or outcome.get("state") not in {"pending","running","completed","failed","cancelled","interrupted","unknown","waiting_confirmation","waiting_execution"}:
         return {"state":"unknown","error_code":"dependency_failed"}
-    if outcome["state"] in {'completed','waiting_confirmation','waiting_execution'}: return {'state':outcome['state']}
+    if outcome["state"]=='completed' or (outcome["state"] in {'waiting_confirmation','waiting_execution'}
+                                          and outcome.get('error_code') is None): return {'state':outcome['state']}
     code=outcome.get("error_code")
     if code not in {"timeout","budget_exhausted","model_invalid","invalid_source","dependency_failed",
-                    "scope_changed","repeated_tool_error","access_denied","cancelled"}: code="dependency_failed"
+                    "scope_changed","repeated_tool_error","access_denied","cancelled","archive_not_ready"}: code="dependency_failed"
     return {"state":outcome["state"],"error_code":code}
 
 
-async def run_context(context_path, audit_path, api_key, max_calls=8, *, encoder_socket=None):
+async def run_context(context_path, audit_path, api_key, max_calls=8, *, encoder_socket=None, resume_archive=False):
     context=load_context(context_path)
     if context["scope"]!="task_versions": raise ValueError("persistent task required")
     # Validate credentials before creating a trace or starting any child/claim.
-    DeepSeekModel(api_key,lambda event:None,max_calls=max_calls)
+    if not resume_archive: DeepSeekModel(api_key,lambda event:None,max_calls=max_calls)
     child_args=["-B","-m","smartdocs.mcp_read","--context",str(context_path)]
     if encoder_socket is not None: child_args.extend(["--encoder-socket",str(encoder_socket)])
     parameters=StdioServerParameters(command=sys.executable, args=child_args,
         env={"PATH":"/usr/bin:/bin","PYTHONPATH":str(Path(__file__).resolve().parents[1])})
     with open_audit(audit_path,context["task_id"]) as audit:
-        model=DeepSeekModel(api_key,audit,max_calls=max_calls)
-        audit({"event":"task_start"})
+        model=None if resume_archive else DeepSeekModel(api_key,audit,max_calls=max_calls)
+        audit({"event":"archive_resume" if resume_archive else "task_start"})
         async with stdio_client(parameters) as streams:
             async with ClientSession(*streams,read_timeout_seconds=timedelta(seconds=30)) as client:
                 await client.initialize()
-                outcome=await run_session(context,client,model,audit)
+                outcome=await run_session(context,client,model,audit,resume_archive=resume_archive)
         outcome=safe_outcome(outcome)
         audit({"event":"task_outcome",**outcome})
         return outcome
@@ -89,18 +91,20 @@ def main():
     parser.add_argument("--audit",required=True)
     parser.add_argument("--max-model-calls",type=int,choices=range(1,9),default=8)
     parser.add_argument("--encoder-socket",help="optional trusted local query encoder socket")
+    parser.add_argument("--resume-archive",action="store_true",help="execute only an already confirmed archive plan; no model or API key")
     args=parser.parse_args()
     logging.disable(logging.CRITICAL)
     # A secret must not be inherited by the MCP child. Never put it on the command line.
     key=os.environ.pop("DEEPSEEK_API_KEY","")
     try:
-        outcome=asyncio.run(run_context(args.context,args.audit,key,args.max_model_calls,encoder_socket=args.encoder_socket))
+        outcome=asyncio.run(run_context(args.context,args.audit,key,args.max_model_calls,
+            encoder_socket=args.encoder_socket,resume_archive=args.resume_archive))
     except ValueError:
         print(json.dumps({"state":"not_started","error_code":"configuration_error"})); return 2
     except (Exception,KeyboardInterrupt):
         print(json.dumps({"state":"unknown","error_code":"dependency_failed"})); return 1
     print(json.dumps(outcome))
-    return 0 if outcome.get("state") in {'completed','waiting_confirmation','waiting_execution'} else 1
+    return 0 if outcome.get("state") in {'completed','waiting_confirmation','waiting_execution'} and 'error_code' not in outcome else 1
 
 
 if __name__=="__main__":

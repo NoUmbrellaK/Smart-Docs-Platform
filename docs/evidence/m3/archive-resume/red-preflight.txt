@@ -1,0 +1,38 @@
+2026-10-19T17:54:03+0800 aliyun-lou systemd[1]: Started /bin/bash -c set -e; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_resume_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_archive_agent_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_report_mcp_test.py; /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m unittest discover -s test/python -p "test_*.py" -v.
+2026-10-19T17:54:06+0800 aliyun-lou bash[836900]: 2026-10-19T09:54:06.877713Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 836900
+2026-10-19T17:54:07+0800 aliyun-lou bash[836900]: 2026-10-19T09:54:07.475492Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T17:54:22+0800 aliyun-lou bash[836900]: 2026-10-19T09:54:22.732707Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T17:54:31+0800 aliyun-lou bash[836900]: 2026-10-19T09:54:31.304456Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T17:55:20+0800 aliyun-lou bash[837109]: schema_version=15
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-19T17:55:48+0800 aliyun-lou bash[837247]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-19T17:55:51+0800 aliyun-lou bash[837325]: test_resume_cancel_between_preflight_and_tool_blocks_move (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:55:56+0800 aliyun-lou bash[837325]: test_resume_cli_wait_confirm_restart_execute_and_receipt_without_key (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:55:56+0800 aliyun-lou bash[837325]: test_resume_does_not_switch_to_new_confirmation_during_execution (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:55:57+0800 aliyun-lou bash[837325]: test_resume_lost_commit_recovers_minimal_receipt_after_approval_revocation (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:55:58+0800 aliyun-lou bash[837325]: test_resume_owner_downgrade_is_rejected_by_authority (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:55:59+0800 aliyun-lou bash[837325]: test_resume_preflight_conflict_is_reported_without_executing (__main__.ArchiveResumeE2E) ... FAIL
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: test_resume_scope_revocation_and_other_owner_do_not_move (__main__.ArchiveResumeE2E) ... ok
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: ======================================================================
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: FAIL: test_resume_preflight_conflict_is_reported_without_executing (__main__.ArchiveResumeE2E)
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: ----------------------------------------------------------------------
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: Traceback (most recent call last):
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_resume_test.py", line 138, in test_resume_preflight_conflict_is_reported_without_executing
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]:     self.assertEqual(outcome['error_code'],'scope_changed'); self.assertEqual(calls,[])
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: AssertionError: 'dependency_failed' != 'scope_changed'
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: - dependency_failed
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: + scope_changed
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: ----------------------------------------------------------------------
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: Ran 7 tests in 11.436s
+2026-10-19T17:56:00+0800 aliyun-lou bash[837325]: FAILED (failures=1)
+2026-10-19T17:56:05+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-http.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:56:05+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-http.service: Failed with result 'exit-code'.
+2026-10-19T17:56:05+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-http.service: Consumed 11.822s CPU time.

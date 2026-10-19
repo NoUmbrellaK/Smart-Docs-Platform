@@ -1,0 +1,114 @@
+2026-10-19T17:47:16+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k resume -v.
+2026-10-19T17:47:17+0800 aliyun-lou python[835318]: test_resume_executes_only_server_confirmed_command_and_returns_minimal_receipt (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:17+0800 aliyun-lou python[835318]: test_resume_invalid_confirmed_view_never_writes (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:18+0800 aliyun-lou python[835318]: test_resume_lost_committed_reply_queries_without_write_retry (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:18+0800 aliyun-lou python[835318]: test_resume_lost_uncommitted_reply_is_unknown_without_failed_finish (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: test_resume_malformed_receipt_cannot_claim_completion (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: test_resume_unconfirmed_and_inactive_tasks_never_write (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_executes_only_server_confirmed_command_and_returns_minimal_receipt (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 176, in test_resume_executes_only_server_confirmed_command_and_returns_minimal_receipt
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     outcome=await self.resume_archive()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_invalid_confirmed_view_never_writes (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 195, in test_resume_invalid_confirmed_view_never_writes
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertNotEqual((await self.resume_archive())['state'],'completed')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_lost_committed_reply_queries_without_write_retry (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 200, in test_resume_lost_committed_reply_queries_without_write_retry
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     outcome=await self.resume_archive()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_lost_uncommitted_reply_is_unknown_without_failed_finish (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 207, in test_resume_lost_uncommitted_reply_is_unknown_without_failed_finish
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     outcome=await self.resume_archive()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_malformed_receipt_cannot_claim_completion (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 218, in test_resume_malformed_receipt_cannot_claim_completion
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     outcome=await self.resume_archive()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ======================================================================
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAIL: test_resume_unconfirmed_and_inactive_tasks_never_write (test_agent_runner.AgentRunnerTests)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Traceback (most recent call last):
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self._callMaybeAsync(method)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     return future.result()
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     ret = await awaitable
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 188, in test_resume_unconfirmed_and_inactive_tasks_never_write
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertEqual((await self.resume_archive())['state'],state)
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 170, in resume_archive
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]:     self.assertTrue(hasattr(self.agent,'resume_confirmed_archive'),'confirmed archive continuation missing')
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: AssertionError: False is not true : confirmed archive continuation missing
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: ----------------------------------------------------------------------
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: Ran 6 tests in 3.103s
+2026-10-19T17:47:19+0800 aliyun-lou python[835318]: FAILED (failures=6)
+2026-10-19T17:47:20+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T17:47:20+0800 aliyun-lou systemd[1]: smartdocs-archive-resume-red.service: Failed with result 'exit-code'.
