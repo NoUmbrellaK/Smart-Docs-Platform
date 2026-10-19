@@ -1,0 +1,81 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_audit_summary.py -v.
+test_absent_cache_breakdown_never_becomes_zero_cache_miss (test_audit_summary.AuditSummaryTests) ... FAIL
+test_actual_provider_audit_writer_with_local_transport (test_audit_summary.AuditSummaryTests) ... FAIL
+test_complete_trace_separates_model_usage_from_tool_time_and_business_acceptance (test_audit_summary.AuditSummaryTests) ... FAIL
+test_missing_or_invalid_usage_is_unknown_not_free (test_audit_summary.AuditSummaryTests) ... FAIL
+test_no_model_resume_is_zero_usage_without_claiming_free_business_success (test_audit_summary.AuditSummaryTests) ... FAIL
+test_pairing_rejects_duplicate_foreign_or_inconsistent_records_without_echo (test_audit_summary.AuditSummaryTests) ... FAIL
+test_partial_usage_and_interrupted_attempt_preserve_lower_bound (test_audit_summary.AuditSummaryTests) ... FAIL
+test_reader_refuses_symlinks_fifo_and_insecure_files (test_audit_summary.AuditSummaryTests) ... FAIL
+test_truncated_tail_is_incomplete_and_complete_bad_line_is_rejected (test_audit_summary.AuditSummaryTests) ... FAIL
+======================================================================
+FAIL: test_absent_cache_breakdown_never_becomes_zero_cache_miss (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_actual_provider_audit_writer_with_local_transport (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_complete_trace_separates_model_usage_from_tool_time_and_business_acceptance (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_missing_or_invalid_usage_is_unknown_not_free (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_no_model_resume_is_zero_usage_without_claiming_free_business_success (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_pairing_rejects_duplicate_foreign_or_inconsistent_records_without_echo (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_partial_usage_and_interrupted_attempt_preserve_lower_bound (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_reader_refuses_symlinks_fifo_and_insecure_files (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+======================================================================
+FAIL: test_truncated_tail_is_incomplete_and_complete_bad_line_is_rejected (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 39, in setUp
+    self.assertIsNotNone(importlib.util.find_spec('smartdocs.audit_summary'), 'local audit summary missing')
+AssertionError: unexpectedly None : local audit summary missing
+----------------------------------------------------------------------
+Ran 9 tests in 0.002s
+FAILED (failures=9)
+smartdocs-m3-audit-summary-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-audit-summary-red.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1

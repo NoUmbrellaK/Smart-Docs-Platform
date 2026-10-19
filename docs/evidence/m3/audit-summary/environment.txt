@@ -1,0 +1,44 @@
+2026-10-19T22:37:28+08:00
+Linux 5.15.0-142-generic x86_64 GNU/Linux
+2
+Python 3.10.12
+mcp=1.30.0
+httpx=0.28.1
+               total        used        free      shared  buff/cache   available
+Mem:            3495        2007         148           3        1339        1220
+Swap:              0           0           0
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Id=smartdocs-m3-audit-summary-red.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-audit-summary-green.service
+
+MainPID=0
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m3-audit-summary-regression.service
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+active
+10067bdf450586f940fdb87e8ad5e4dd19e9c2d8167c2d1c27acf88174c7eaba  python/smartdocs/audit_summary.py
+3d70e4d4629be128c90d4427d9e308d19167d86b9440a451524240e63d02e64a  test/mcp/test_audit_summary.py
+10067bdf450586f940fdb87e8ad5e4dd19e9c2d8167c2d1c27acf88174c7eaba  /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py
+3d70e4d4629be128c90d4427d9e308d19167d86b9440a451524240e63d02e64a  /tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py
+Pre-run memory.events: low=0 high=80521 max=0 oom=0 oom_kill=0
+Four shared dependency cmp checks exited 0.
