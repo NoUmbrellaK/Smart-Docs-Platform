@@ -1,6 +1,6 @@
 # M2 本机 Python worker
 
-本手册描述可选的解析 worker 部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，M2基线为schema5，当前M3开发分支要求[schema9](../api/m3-archive-preview.md#schema9和部署)（同时阅读[处理 API](../api/m2-processing-api.md)）。[本地搜索 API](../api/m2-search-api.md)已接通；C++ 向量任务另由[向量调度与隔离编码服务](m2-vector-worker.md)处理，工作台 Hybrid 需部署[同源检索网关](m2-hybrid-search.md)。[M2功能阶段已验收](../evidence/m2/stage-audit.md)，Agent仍在M3开发中。编码器仍须隔离运行，不得加载到本手册限制512MiB地址空间的解析worker内；历史RSS测量不能代替总资源限制。
+本手册描述可选的解析 worker 部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，M2基线为schema5，当前M3开发分支要求[schema10](../api/m3-archive-execution.md#schema10和部署)（同时阅读[处理 API](../api/m2-processing-api.md)）。[本地搜索 API](../api/m2-search-api.md)已接通；C++ 向量任务另由[向量调度与隔离编码服务](m2-vector-worker.md)处理，工作台 Hybrid 需部署[同源检索网关](m2-hybrid-search.md)。[M2功能阶段已验收](../evidence/m2/stage-audit.md)，Agent仍在M3开发中。编码器仍须隔离运行，不得加载到本手册限制512MiB地址空间的解析worker内；历史RSS测量不能代替总资源限制。
 
 ## 身份与凭据
 

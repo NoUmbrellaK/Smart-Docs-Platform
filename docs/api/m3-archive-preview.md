@@ -1,7 +1,8 @@
 # M3 归档目标策略与方案预览
 
 方案A已于2026-10-19获用户批准。此接口是C++业务基础，尚未作为MCP工具发布，
-无归档执行/确认路由、无网页按钮。它不会调用模型，也不会移动文件。
+预览本身不调用模型或移动文件；后续新增的[确认/执行接口](m3-archive-execution.md)独立授权。
+尚无归档确认网页按钮，未发布MCP写工具。
 
 所有接口使用已有会话和项目角色。PUT要求同源Origin；拒绝查询参数、未知JSON字段，
 GET不接受请求体。请求最大64KiB，错误不返回其他项目的文件名或目录名。
@@ -35,7 +36,7 @@ ApprovedArchivePolicy的批准/修订/当前名称校验，不能直接转发普
 ## 本人任务的归档方案
 
 GET/PUT `/api/v1/projects/{project_id}/agent-tasks/{task_id}/archive-plan`。
-PUT要求编辑/管理员且任务属于本人、状态为pending/running；GET要求当前项目成员且属于本人。
+PUT要求编辑/管理员且任务属于本人、状态为pending/running/waiting_confirmation/waiting_execution；GET要求当前项目成员且属于本人。
 管理员不能查看其他人的方案。GET可读已取消/中断/结束任务保存的方案，但仍执行全部数据校验。
 
 ```json
@@ -53,7 +54,7 @@ PUT要求编辑/管理员且任务属于本人、状态为pending/running；GET�
 ```
 
 每任务一个稳定plan id；显式修订绑定expected_revision，修订递增。同旧修订/同完整请求
-重放返回原JSON、无重复审计；同旧修订不同内容409。数组顺序属于请求内容；不会自动创建新计划绕过冲突。
+重放返回原方案内容和当前决定/任务状态、无重复审计；同旧修订不同内容409。数组顺序属于请求内容；不会自动创建新计划绕过冲突。
 最多100个唯一文件，reason非空且最多1000 UTF-8字节。revision参数为0至4294967294的整数，
 拒绝布尔/浮点/字符串；target_directory_id可为null，表示待确认。
 
@@ -61,9 +62,12 @@ PUT要求编辑/管理员且任务属于本人、状态为pending/running；GET�
 executable=false、has_unresolved，以及items。逐项包含请求字段及服务端名称name、
 已批准目标名称target_name（待确认时null）、state="proposed"或"needs_review"。
 不返回源目录名称，避免把未经批准的目录元数据混入未来模型工具结果。
+schema10起另返回摘要、决定、操作ID和任务状态；只有当前已确认且等待执行时executable=true，
+详见[确认与回执](m3-archive-execution.md)。保存新修订进入waiting_confirmation并作废旧确认。
 
 保存和查询均重验任务的整个固定版本范围，包括未列入方案的文件；还检查当前文件位置/名称、
 策略修订和目标名称。源版本失效、权限/外发撤销、目录改名、源位置变化或新同名冲突后拒绝旧预览。
+已提交方案GET仍重验整个范围及目标批准，但不要求旧源位置（归档已改变位置），明确标注executed。
 首次生成核对请求源位置；后续显式修订可以根据最新文件位置重新提案。
 同目录目标拒绝；目标现存同名文件或批内目标同名均409，使用MySQL与文件唯一约束一致的
 大小写/重音排序规则。即使某占位文件也拟移走，首版仍保守拒绝，不自动覆盖或重命名。
@@ -75,13 +79,11 @@ executable=false、has_unresolved，以及items。逐项包含请求字段及服
 ## schema9和部署
 
 009_archive_previews.sql只新增archive_policies和archive_plans，不回填授权或方案。
-当前C++要求schema9，不能连接schema8及更早数据库。部署前停应用/worker/网关并备份数据库和
+此为schema9历史迁移；当前C++要求[schema10](m3-archive-execution.md#schema10和部署)。部署前停应用/worker/网关并备份数据库和
 文件，运行scripts/migrate.sh后再启用匹配二进制。MySQL DDL不是整批原子操作；失败按匹配备份恢复，
 不能盲目重放半套DDL。本轮只允许在独立临时数据库验证，不自动迁移业务库或部署生产服务。
 
 ## 尚未交付
 
-真实网页确认/拒绝、等待确认后的释放与继续、确认绑定及整批移动事务、服务端执行操作ID、
-清单/个人报告、可信模型输入依赖和五工具联调仍在后续增量。当前预览固定不可执行、
-不改变任务状态、不占执行槽；不能将preview写成waiting_confirmation或已完成归档。
-测试覆盖与实际结果见[增量证据](../evidence/m3/archive-preview/README.md)。
+真实网页确认/拒绝、模型等待/继续编排、清单/个人报告、可信模型输入依赖和五工具联调仍在后续增量。
+预览历史验证见[首个增量证据](../evidence/m3/archive-preview/README.md)；它不证明后续执行事务已经验收。

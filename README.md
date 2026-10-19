@@ -23,7 +23,7 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 ### M3 开发状态
 
-当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema 9](./docs/api/m3-archive-preview.md#schema9和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 8及更早数据库。
+当前开发分支新增[有界只读执行核心](./docs/api/m3-read-agent.md)，C++要求[schema 10](./docs/api/m3-archive-execution.md#schema10和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema 9及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前已有只读执行核心、受控供应商适配器和本地脱敏审计；真实供应商验证、生产 MCP 接入、完整任务审计 API 及五工具整体仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -51,7 +51,9 @@ MCP现已接上[本地查询编码器](./docs/api/m3-mcp-read-tools.md#本地hyb
 
 已完成[后三工具写入边界核查](./docs/evidence/m3/write-boundary-audit.md)，用户于2026-10-19批准方案A：沿用C++/MySQL、任务绑定的可修订方案与个人报告，不新增队列。核查时尚无归档/报告对象，不能用单文件移动循环代替整批事务；该次核查仅更新文档，无迁移或新增运行测试。后续实现按独立增量记录，五工具及M3整体尚未完成。
 
-方案A首个增量已实现[归档目标策略与持久预览](./docs/api/m3-archive-preview.md)：管理员按修订批准目标目录元数据，改名撤销批准；本人任务保存可修订方案，完整范围/版本/位置/目标重验、同名冲突拦截、并发修订及重放防重复审计。预览始终不可执行，不移动文件、不产生真实确认。[本轮验证](./docs/evidence/m3/archive-preview/README.md)：真实HTTP **9/9**、相关C++ **31/31**及迁移检查通过；保留首轮测试夹具失败记录。schema9仅在隔离库验证，无模型调用、生产部署或新增内存节流/OOM。网页确认、等待/继续、整批执行、报告及五工具联调仍待完成。
+方案A首个增量实现了[归档目标策略与持久预览](./docs/api/m3-archive-preview.md)：管理员按修订批准目标目录元数据，改名撤销批准；本人任务保存可修订方案，完整范围/版本/位置/目标重验、同名冲突拦截、并发修订及重放防重复审计。该历史版本的预览始终不可执行，不移动文件、不产生真实确认。[本轮验证](./docs/evidence/m3/archive-preview/README.md)：真实HTTP **9/9**、相关C++ **31/31**及迁移检查通过；保留首轮测试夹具失败记录。schema9仅在隔离库验证，无模型调用、生产部署或新增内存节流/OOM。后续确认/执行进展见下一段，历史验证记录保持不变。
+
+方案A第二个增量新增[确认/拒绝、整批事务与持久回执](./docs/api/m3-archive-execution.md)：确认绑定用户/方案修订/内容摘要，服务器生成操作ID；等待释放运行槽，确认本身不移动。执行前全范围及快照重验，所有移动、结果、审计和完成状态同事务提交，支持重复请求与丢失响应后的安全恢复；任务页区分等待状态和归档回执。[本轮证据](./docs/evidence/m3/archive-execution/README.md)：HTTP/SQL **22/22**、相关C++ **31/31**、JS **53/53**、页面契约 **8/8**通过；真实Chrome同配置复验 **1/1**（两轮合计 **1/2**，首次会话启动失败，根因未确定）。schema10仅用于临时库，无模型调用或生产迁移。按移动端设计要求复用原控件验证六屏宽；完整归档确认网页、模型等待/继续编排、报告及五工具联调仍未完成。
 
 ### M2 实现与验证记录
 
@@ -248,7 +250,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=9`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema9说明](./docs/api/m3-archive-preview.md#schema9和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=10`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema10说明](./docs/api/m3-archive-execution.md#schema10和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

@@ -1,0 +1,4 @@
+2026-10-19T13:36:22+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/agent_browser_startup_probe.py.
+2026-10-19T13:36:26+0800 aliyun-lou python[788368]: PASS sandboxed startup to about:blank; no login or application navigation
+2026-10-19T13:36:29+0800 aliyun-lou systemd[1]: smartdocs-archive-browser-probe.service: Deactivated successfully.
+2026-10-19T13:36:29+0800 aliyun-lou systemd[1]: smartdocs-archive-browser-probe.service: Consumed 1.275s CPU time.

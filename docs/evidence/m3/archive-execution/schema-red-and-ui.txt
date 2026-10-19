@@ -1,0 +1,111 @@
+2026-10-19T13:19:42+0800 aliyun-lou systemd[1]: Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs test/e2e/ui_behavior_test.mjs test/e2e/processing_lifecycle_test.mjs test/e2e/processing_ui_test.mjs test/e2e/search_ui_test.mjs && /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/ui_contract_test.py && scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_archive_execution_test.py.
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ creation requires explicit exact-version consent and never claims execution (5.556509ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.788848ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ task list uses cursor and fences late list responses and old buttons (0.838618ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.740142ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ completed answers and fixed sources are text only and rechecked on access (1.731487ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ cancel response loss requires refresh and cannot display stale results (0.71372ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ logout and data invalidation erase draft, answer and fence pending source (0.859676ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ waiting archive tasks remain cancellable without automatic execution (231.0843ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ completed archive receipt is not described as a model answer or rendered as citations (0.7635ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ audit uses an encoded same-origin GET and never submits a tool operation (240.216345ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.155894ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ empty audit never means the task succeeded or no model was called (0.484804ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ audit refresh clears old rows and latest response wins (0.526937ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ audit late responses and detached buttons cannot survive view or session invalidation (1.6667ms)
+2026-10-19T13:19:50+0800 aliyun-lou bash[785759]: ✔ audit denial clears answer, source and audit without automatic retries (0.684087ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ logout fences a delayed version load before it can enter the processing panel (52.390691ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ reload obtains persisted job identity and independent states, not upload memory (4.291404ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ retry is single flight and re-reads actual persisted state instead of promising completion (0.945186ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ vector failure remains independent and cancel targets the exact selected job (0.597776ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ reader and historical versions never offer writes; role changes fence already rendered buttons (0.869921ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ project/file reset fences late status and old buttons (0.482303ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ late mutation clears search for original project but cannot overwrite new selection (0.56693ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ ambiguous mutation failure does not auto-retry or retain actionable stale buttons (0.980316ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ null jobs are explicit and safe text remains text (0.693555ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ task API uses same-origin exact job and empty POST bodies (29.710548ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ search submits bounded exact filters, paginates and shows truthful coverage (3.928716ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ project changes and changed filters fence late responses and old source buttons (0.526892ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ exact source is reauthorized; old version, PDF page and missing text are explicit (0.702332ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ text sources keep line ranges without misleading PDF page guidance (0.447576ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ failed source reads clear old content; logout fences a pending source (0.458727ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ UTF-8 byte limits, blank keywords, final-page limits and retry errors (0.707971ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ newer searches and source selections win over late successes and errors (0.560515ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ API sends same-origin search POST and exact encoded version/chunk GETs (29.648ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ hybrid mode uses session-bound gateway without client-supplied mode (0.789271ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ hybrid UI distinguishes approval scope, vector coverage, lanes and degradation (0.944947ms)
+2026-10-19T13:19:51+0800 aliyun-lou bash[785759]: ✔ SHA-256 wrapper handles zero, abc, and split ArrayBuffer updates (4.557266ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ API response parser accepts 204 and maps the unified error (50.697031ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ logout API rejects an unexpected successful status (1.06475ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ all upload tasks share four actual PUT slots (16.037705ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ invalidated slot waiters do not PUT or leak capacity (3.594007ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ duplicate resume is single-flight and completes only once (1.004917ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ pause after part hashing starts schedules no later PUT (1.532958ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ project refresh during hashing invalidates the old upload (1.130847ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ cancel remains final when in-flight PUTs finish or fail late (3.673025ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ pending cancel is single-flight and blocks pause and resume (1.433103ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ failed cancel clears pending state and can be retried (0.789569ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ confirmed parts are keyed and confirmed bytes never exceed size (0.681094ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ resume read failure clears the file and returns to actionable state (0.585719ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ zero-byte upload resumes and calls complete exactly once (0.447985ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ project generation drops A after B and project actions retain scope (3.387618ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ logout only clears UI after 204-equivalent success or explicit 401 (0.467611ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ permission state hides writes synchronously on admin to reader switch (0.293504ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ✔ confirmed self-demotion synchronizes identity, project, and visibility (0.424295ms)
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ tests 53
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ suites 0
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ pass 53
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ fail 0
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ cancelled 0
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ skipped 0
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ todo 0
+2026-10-19T13:19:52+0800 aliyun-lou bash[785759]: ℹ duration_ms 2702.563205
+2026-10-19T13:19:52+0800 aliyun-lou bash[785814]: ........
+2026-10-19T13:19:52+0800 aliyun-lou bash[785814]: ----------------------------------------------------------------------
+2026-10-19T13:19:52+0800 aliyun-lou bash[785814]: Ran 8 tests in 0.085s
+2026-10-19T13:19:52+0800 aliyun-lou bash[785814]: OK
+2026-10-19T13:20:00+0800 aliyun-lou bash[785820]: 2026-10-19T05:20:00.296686Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 785820
+2026-10-19T13:20:00+0800 aliyun-lou bash[785820]: 2026-10-19T05:20:00.795262Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T13:20:16+0800 aliyun-lou bash[785820]: 2026-10-19T05:20:16.135235Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T13:20:24+0800 aliyun-lou bash[785820]: 2026-10-19T05:20:24.293613Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T13:21:07+0800 aliyun-lou bash[786060]: schema_version=10
+2026-10-19T13:21:31+0800 aliyun-lou bash[786112]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T13:21:31+0800 aliyun-lou bash[786112]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T13:21:31+0800 aliyun-lou bash[786112]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T13:21:31+0800 aliyun-lou bash[786112]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T13:21:31+0800 aliyun-lou bash[786112]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T13:21:33+0800 aliyun-lou bash[786167]: test_archive_policy_defaults_replay_revision_and_actual_rename_revokes (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:33+0800 aliyun-lou bash[786167]: test_archive_policy_rejects_foreign_directory_stale_name_and_ambiguous_input (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:33+0800 aliyun-lou bash[786167]: test_archive_preview_concurrent_cas_publishes_only_one_proposal (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:35+0800 aliyun-lou bash[786167]: test_archive_preview_owner_role_project_and_same_origin (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:36+0800 aliyun-lou bash[786167]: test_archive_preview_persists_replays_revises_without_moving_or_confirming (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:37+0800 aliyun-lou bash[786167]: test_archive_preview_rechecks_whole_scope_policy_location_and_cancel (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:38+0800 aliyun-lou bash[786167]: test_archive_preview_rejects_batch_collation_collision_and_new_version (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:39+0800 aliyun-lou bash[786167]: test_archive_preview_rejects_same_name_conflict_and_changed_target_metadata (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:40+0800 aliyun-lou bash[786167]: test_archive_preview_strict_parameters_unapproved_and_out_of_scope_targets (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:41+0800 aliyun-lou bash[786167]: test_execution_checks_owner_role_origin_and_cancel_before_commit (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:42+0800 aliyun-lou bash[786167]: test_execution_concurrent_identical_requests_have_one_commit_and_receipt (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:42+0800 aliyun-lou bash[786167]: test_execution_confirmation_is_separate_and_batch_commit_replays_once (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:43+0800 aliyun-lou bash[786167]: test_execution_database_failure_after_first_move_rolls_back_all_business_state (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:44+0800 aliyun-lou bash[786167]: test_execution_expired_model_run_cannot_publish_new_plan (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:45+0800 aliyun-lou bash[786167]: test_execution_lost_body_restart_and_later_move_do_not_repeat_operation (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:46+0800 aliyun-lou bash[786167]: test_execution_new_destination_conflict_after_confirmation_blocks_whole_batch (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:47+0800 aliyun-lou bash[786167]: test_execution_rechecks_location_and_target_policy_after_confirmation (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:48+0800 aliyun-lou bash[786167]: test_execution_reject_old_digest_revision_and_unresolved_targets (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:49+0800 aliyun-lou bash[786167]: test_execution_schema_rejects_cross_task_plan_decision (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:21:50+0800 aliyun-lou bash[786167]: test_execution_waiting_releases_running_slot_and_preserves_budget_on_restart (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:50+0800 aliyun-lou bash[786167]: test_execution_waiting_releases_slot_and_never_accepts_model_approval (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: test_execution_whole_scope_revocation_and_new_version_block_moves (__main__.ArchiveExecutionE2E) ... ok
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: ======================================================================
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: FAIL: test_execution_schema_rejects_cross_task_plan_decision (__main__.ArchiveExecutionE2E)
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: ----------------------------------------------------------------------
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: Traceback (most recent call last):
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 263, in test_execution_schema_rejects_cross_task_plan_decision
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]:     with self.assertRaises(subprocess.CalledProcessError) as caught:
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: AssertionError: CalledProcessError not raised
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: ----------------------------------------------------------------------
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: Ran 22 tests in 20.781s
+2026-10-19T13:21:52+0800 aliyun-lou bash[786167]: FAILED (failures=1)
+2026-10-19T13:21:56+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-check.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T13:21:56+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-check.service: Failed with result 'exit-code'.
+2026-10-19T13:21:56+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-check.service: Consumed 9.682s CPU time.

@@ -147,6 +147,32 @@ function auditButton(get) {
   return button;
 }
 
+test("waiting archive tasks remain cancellable without automatic execution",async()=>{
+  for(const state of ["waiting_confirmation","waiting_execution"]) {
+    const {panel,get,calls}=await setup({getAgentTask:async()=>({...task,state})});
+    await panel.view("t");
+    assert.doesNotMatch(text(get("agent-detail-status")),/Unknown state/);
+    assert.match(text(get("agent-detail-status")),/waiting|confirmation|execution/i);
+    const cancel=buttons(get("agent-detail")).find(b=>b.textContent==="Cancel task");
+    assert.ok(cancel);
+    assert.deepEqual(calls,[]);
+    await cancel.fire();
+    assert.equal(calls.filter(c=>c[0]==="cancel").length,1);
+  }
+});
+
+test("completed archive receipt is not described as a model answer or rendered as citations",async()=>{
+  const receipt={operation_id:"a".repeat(32),plan_id:"b".repeat(32),revision:1,status:"executed",moved_count:2,audit_id:"c".repeat(32)};
+  const {panel,get}=await setup({getAgentTask:async()=>({...task,state:"completed"}),
+    getAgentResult:async()=>({state:"completed",kind:"archive_operation",model_calls:0,result:null,error_code:null,archive_operation:receipt})});
+  await panel.view("t");
+  assert.match(text(get("agent-detail-status")),/archive|Archive/);
+  assert.doesNotMatch(text(get("agent-detail-status")),/answer draft/i);
+  assert.match(text(get("agent-detail")),/2 files/);
+  assert.match(text(get("agent-detail")),new RegExp(receipt.operation_id));
+  assert.equal(buttons(get("agent-detail")).filter(b=>/source|execute/i.test(b.textContent)).length,0);
+});
+
 test("audit uses an encoded same-origin GET and never submits a tool operation",async()=>{
   const api=await import(new URL("../../resources/js/api.js",import.meta.url));
   assert.equal(typeof api.getAgentToolCalls,"function");

@@ -170,16 +170,24 @@ export class AgentPanel {
   renderTask(task, outcome, token) {
     const state = outcome ? outcome.state : task.state, project = this.project;
     const labels = {pending:"Waiting for an executor; this page does not start execution.", running:"Execution started; refresh for current state.",
+      waiting_confirmation:"Waiting for archive confirmation; no files have been moved by this proposal.",
+      waiting_execution:"Waiting for explicit archive execution; confirmation alone does not move files.",
       interrupted:"Interrupted; no automatic continuation.", cancelled:"Cancelled; already committed work is not undone.",
       completed:"Completed answer draft; not a saved handover report.", failed:"Failed; no automatic retry."};
-    this.status("detail", `Task ${task.id} · ${state}. ${labels[state] || "Unknown state; refresh."}`);
+    const archive = state === "completed" && outcome?.kind === "archive_operation";
+    this.status("detail", `Task ${task.id} · ${state}. ${archive ? "Archive operation committed; this is not a model answer or a handover report." : labels[state] || "Unknown state; refresh."}`);
     const box = this.get("agent-detail");
     box.replaceChildren(this.node("p", `Created ${task.created_at} UTC · Updated ${task.updated_at} UTC`));
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
     box.append(this.button("Refresh task", () => { if (token === this.detailGeneration) return this.view(task.id); }));
     box.append(this.button("Load / refresh tool calls", () => this.audit(project, task.id, token)));
-    if (["pending", "running", "interrupted"].includes(state)) box.append(this.button("Cancel task", () => this.cancel(task.id, token)));
+    if (["pending", "running", "interrupted", "waiting_confirmation", "waiting_execution"].includes(state)) box.append(this.button("Cancel task", () => this.cancel(task.id, token)));
     if (outcome) box.append(this.node("p", `Admitted model requests: ${outcome.model_calls} · Reason: ${outcome.error_code || "none"}. These are not confirmed provider usage or cost.`));
+    if (archive) {
+      const receipt = outcome.archive_operation;
+      box.append(this.node("p", `${receipt.moved_count} files archived · Operation ${receipt.operation_id} · Audit ${receipt.audit_id}. This is the committed receipt, not a claim about their current location.`));
+      return;
+    }
     if (state !== "completed" || !outcome.result) return;
     box.append(this.node("pre", outcome.result.answer));
     if (!outcome.result.citations.length) box.append(this.node("p", "No citations supplied; do not treat this as verified evidence."));

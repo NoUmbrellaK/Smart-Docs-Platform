@@ -95,7 +95,7 @@ class ArchivePreviewE2E(TaskListE2E):
         self.assertEqual((revised["id"], revised["revision"], revised["has_unresolved"], revised["executable"]),
                          (saved["id"], 2, True, False))
         self.assertEqual(self.file(job), original)
-        self.assertEqual(data(self.user.request("GET", self.tasks_path()+"/"+task["id"]))["state"], "pending")
+        self.assertEqual(data(self.user.request("GET", self.tasks_path()+"/"+task["id"]))["state"], "waiting_confirmation")
         self.server.stop()
         self.server.start(environment_overrides={"SMARTDOCS_WORKER_TOKEN": self.token})
         self.user = HttpClient(self.server.port)
@@ -104,7 +104,7 @@ class ArchivePreviewE2E(TaskListE2E):
         self.assertEqual(self.file(job), original)
         self.assertEqual(self.count("SELECT COUNT(*) FROM audit_records WHERE action='archive.plan.save' AND object_id='"+saved["id"]+"'"), 2)
         data(self.user.request("POST", self.tasks_path()+"/"+task["id"]+"/cancel"))
-        self.assertEqual(data(self.user.request("GET", path)), revised)
+        self.assertEqual(data(self.user.request("GET", path)), dict(revised, task_state="cancelled"))
         self.assertEqual(self.user.request("PUT", path, different).status, 409)
         data(self.user.request("PATCH", self.base()+"/files/"+job["file_id"], {
             "name": "Changed filename.txt", "directory_id": self.project["root_directory_id"]}))

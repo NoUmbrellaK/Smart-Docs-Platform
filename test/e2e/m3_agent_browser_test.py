@@ -118,11 +118,48 @@ class AgentBrowser(TaskListE2E):
                 browser.click('//div[@id="agent-detail"]//button[text()="Load / refresh tool calls"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("task_scope_changed")')
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-detail").children.length + document.querySelector("#agent-source").children.length + document.querySelector("#agent-audit").children.length'), 0)
+                # The business API drives confirmation/execution here; this is not a claim
+                # that the future confirmation UI or a model initiated these operations.
+                self.policy(job, True)
+                base = f'/api/v1/projects/{self.project["id"]}'
+                target = data(self.user.request("POST", base+"/directories", {
+                    "parent_id": self.project["root_directory_id"], "name": "Archive target"}), 201)
+                data(self.user.request("PUT", base+"/archive-policy", {"expected_revision": 0,
+                    "targets": [{"directory_id": target["id"], "name": target["name"]}], "confirm_remote_ai": True}))
+                archive = self.create_task(job)
+                archive_path = self.tasks_path()+"/"+archive["id"]+"/archive-plan"
+                preview = data(self.user.request("PUT", archive_path, {"expected_revision": 0, "policy_revision": 1, "items": [{
+                    "file_id": job["file_id"], "version_id": job["version_id"], "source_directory_id": self.project["root_directory_id"],
+                    "target_directory_id": target["id"], "reason": "Browser fixture"}]}))
+                browser.click("#agent-refresh")
+                browser.wait('return document.querySelector("#agent-list").textContent.includes("waiting_confirmation")')
+                browser.click("#agent-list button")
+                browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("Waiting for archive confirmation")')
+                confirmed = data(self.user.request("POST", archive_path+"/decision", {"plan_id": preview["id"],
+                    "revision": preview["revision"], "content_sha256": preview["content_sha256"], "decision": "confirm"}))
+                browser.click('//div[@id="agent-detail"]//button[text()="Refresh task"]', using="xpath")
+                browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("Waiting for explicit archive execution")')
+                self.assertTrue(browser.inspect('return [...document.querySelectorAll("#agent-detail button")].some(b => b.textContent === "Cancel task")'))
+                data(self.user.request("POST", archive_path+"/execute", {"plan_id": preview["id"],
+                    "revision": preview["revision"], "operation_id": confirmed["operation_id"]}))
+                browser.click('//div[@id="agent-detail"]//button[text()="Refresh task"]', using="xpath")
+                browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("Archive operation committed")')
+                self.assertIn("1 files", browser.inspect('return document.querySelector("#agent-detail").textContent'))
+                for width in (360, 375, 390, 414, 768, 1280):
+                    browser.command("POST", "/goog/cdp/execute", {"cmd": "Emulation.setDeviceMetricsOverride",
+                        "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
+                    geometry = browser.inspect('''const p=document.querySelector('#agent-workspace');
+                        return {width:innerWidth, overflow:p.scrollWidth>p.clientWidth,
+                        small:[...p.querySelectorAll('button, textarea')].some(n=>n.getBoundingClientRect().height<44)};''')
+                    self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
+                    if width in (360, 1280):
+                        raw = browser.command("GET", "/element/"+browser.find("#agent-workspace")+"/screenshot")
+                        (output/f"archive-{width}.png").write_bytes(base64.b64decode(raw, validate=True))
                 browser.click("#logout-button")
                 sign_in("agent-browser-reader")
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-list").children.length'), 0)
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-question").value'), "")
-                print("PASS Chrome/C++/MySQL: explicit scope/consent -> pending -> cancel -> reload; seeded answer/fixed citation; real backend search/read/rejection audit; expand details; redaction; revocation clears all; owner isolation; six viewports including 44px summaries. No model call.", flush=True)
+                print("PASS Chrome/C++/MySQL: task lifecycle, answer/citation/audit, revocation clears all; API-confirmed archive waiting states and committed receipt; owner isolation; six viewports including 44px controls. No model call; no confirmation UI claim.", flush=True)
             finally:
                 browser.stop()
 

@@ -42,6 +42,11 @@ C++验证引用属于持久任务范围且片段存在；Python另外要求来�
 中断或失败状态。相同终态和结果重放返回既有状态；不同结果409，不创建新业务对象。
 该回答是任务草稿，不是M4交接报告，不提供归档能力。
 
+以上为只读模型回答路径；schema10新增的[归档执行](m3-archive-execution.md)使用独立确认和事务接口。
+其完成结果由同一GET run/result返回kind=archive_operation、result=null和最小archive_operation回执，
+客户端须按kind区分，不能当answer/citations读取。该内容无关回执不要求旧来源继续获外发批准。
+waiting_confirmation/waiting_execution拒绝本页模型start/check/finish，不自动恢复模型执行。
+
 失败时status=failed、result=null；error_code仅可为timeout、budget_exhausted、
 model_invalid、invalid_source、dependency_failed、scope_changed、repeated_tool_error、
 access_denied或cancelled，不接受供应商错误正文。模型检查/结果查询观察到范围失效时
@@ -76,7 +81,7 @@ Python协程被强制取消时不续跑；进程消失
 ## schema7与验证边界
 
 schema7新增agent_runs，扩展agent_tasks状态，不回填虚构运行；当前C++已要求
-[schema9](m3-archive-preview.md#schema9和部署)，不可用旧schema8及更早版本直接启动。
+[schema10](m3-archive-execution.md#schema10和部署)，不可用旧schema9及更早版本直接启动。
 升级须停C++/worker/网关并备份后运行scripts/migrate.sh；MySQL DDL非整批原子事务，
 中途失败恢复备份，不盲目重放；回退需恢复匹配版本备份。只验证隔离测试库，
 原业务库未升级，不要直接替换旧库上的二进制。

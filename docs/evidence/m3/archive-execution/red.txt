@@ -1,0 +1,179 @@
+2026-10-19T13:08:31+0800 aliyun-lou systemd[1]: Started /bin/bash -c /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs; scripts/test-with-mysql.sh -- /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B test/e2e/m3_archive_execution_test.py.
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ creation requires explicit exact-version consent and never claims execution (5.417227ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.789454ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ task list uses cursor and fences late list responses and old buttons (0.770036ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.733685ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ completed answers and fixed sources are text only and rechecked on access (1.83873ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ cancel response loss requires refresh and cannot display stale results (0.745495ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ logout and data invalidation erase draft, answer and fence pending source (0.768948ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✖ waiting archive tasks remain cancellable without automatic execution (1.143706ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✖ completed archive receipt is not described as a model answer or rendered as citations (0.753802ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ audit uses an encoded same-origin GET and never submits a tool operation (29.354608ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.215456ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ empty audit never means the task succeeded or no model was called (0.407261ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ audit refresh clears old rows and latest response wins (0.367142ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ audit late responses and detached buttons cannot survive view or session invalidation (1.751075ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✔ audit denial clears answer, source and audit without automatic retries (0.64327ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ tests 15
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ suites 0
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ pass 13
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ fail 2
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ cancelled 0
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ skipped 0
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ todo 0
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ℹ duration_ms 662.997202
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✖ failing tests:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: test at test/e2e/agent_ui_test.mjs:150:1
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✖ waiting archive tasks remain cancellable without automatic execution (1.143706ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /Unknown state/. Input:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   'Task t · waiting_confirmation. Unknown state; refresh.'
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:154:12)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     generatedMessage: true,
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     code: 'ERR_ASSERTION',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     actual: 'Task t · waiting_confirmation. Unknown state; refresh.',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     expected: /Unknown state/,
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     operator: 'doesNotMatch',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     diff: 'simple'
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   }
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: test at test/e2e/agent_ui_test.mjs:164:1
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]: ✖ completed archive receipt is not described as a model answer or rendered as citations (0.753802ms)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   AssertionError [ERR_ASSERTION]: The input did not match the regular expression /archive|Archive/. Input:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   'Task t · completed. Completed answer draft; not a saved handover report.'
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:169:10)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at async Test.run (node:internal/test_runner/test:1332:7)
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     generatedMessage: true,
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     code: 'ERR_ASSERTION',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     actual: 'Task t · completed. Completed answer draft; not a saved handover report.',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     expected: /archive|Archive/,
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     operator: 'match',
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:     diff: 'simple'
+2026-10-19T13:08:47+0800 aliyun-lou bash[783231]:   }
+2026-10-19T13:08:47+0800 aliyun-lou bash[783273]: 2026-10-19T05:08:47.701760Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 783273
+2026-10-19T13:08:47+0800 aliyun-lou bash[783273]: 2026-10-19T05:08:47.706486Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-19T13:09:03+0800 aliyun-lou bash[783273]: 2026-10-19T05:09:03.336697Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-19T13:09:11+0800 aliyun-lou bash[783273]: 2026-10-19T05:09:11.861482Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-19T13:09:55+0800 aliyun-lou bash[783557]: schema_version=9
+2026-10-19T13:10:18+0800 aliyun-lou bash[783603]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-19T13:10:18+0800 aliyun-lou bash[783603]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-19T13:10:18+0800 aliyun-lou bash[783603]: PASS m3_run_migration_does_not_invent_execution
+2026-10-19T13:10:18+0800 aliyun-lou bash[783603]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-19T13:10:18+0800 aliyun-lou bash[783603]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-19T13:10:20+0800 aliyun-lou bash[783656]: test_execution_checks_owner_role_origin_and_cancel_before_commit (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:21+0800 aliyun-lou bash[783656]: test_execution_concurrent_identical_requests_have_one_commit_and_receipt (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:22+0800 aliyun-lou bash[783656]: test_execution_confirmation_is_separate_and_batch_commit_replays_once (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:23+0800 aliyun-lou bash[783656]: test_execution_database_failure_after_first_move_rolls_back_all_business_state (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:24+0800 aliyun-lou bash[783656]: test_execution_expired_model_run_cannot_publish_new_plan (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:24+0800 aliyun-lou bash[783656]: test_execution_lost_body_restart_and_later_move_do_not_repeat_operation (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:25+0800 aliyun-lou bash[783656]: test_execution_rechecks_location_and_target_policy_after_confirmation (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:26+0800 aliyun-lou bash[783656]: test_execution_reject_old_digest_revision_and_unresolved_targets (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:26+0800 aliyun-lou bash[783656]: test_execution_waiting_releases_slot_and_never_accepts_model_approval (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: test_execution_whole_scope_revocation_and_new_version_block_moves (__main__.ArchiveExecutionE2E) ... FAIL
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_checks_owner_role_origin_and_cancel_before_commit (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 104, in test_execution_checks_owner_role_origin_and_cancel_before_commit
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     self.assertEqual(self.user.request("POST", path+"/decision", self.decision(plan), {"Origin": "https://foreign.invalid"}).status, 403)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: 404 != 403
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_concurrent_identical_requests_have_one_commit_and_receipt (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 203, in test_execution_concurrent_identical_requests_have_one_commit_and_receipt
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, plan)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'e859ae27a813d22ce412dbd018eecf7b'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_confirmation_is_separate_and_batch_commit_replays_once (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 52, in test_execution_confirmation_is_separate_and_batch_commit_replays_once
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, plan)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '8621e32138b6bad8e3b749e894becf02'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_database_failure_after_first_move_rolls_back_all_business_state (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 154, in test_execution_database_failure_after_first_move_rolls_back_all_business_state
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, plan)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '3033d68e9868868d5057e7d6eb391624'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_expired_model_run_cannot_publish_new_plan (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 220, in test_execution_expired_model_run_cannot_publish_new_plan
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     self.assertEqual(self.user.request("PUT", path, body).status, 409)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: 200 != 409
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_lost_body_restart_and_later_move_do_not_repeat_operation (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 176, in test_execution_lost_body_restart_and_later_move_do_not_repeat_operation
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, plan)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': '4fdc82ff6235af81a2f4b8e51c3f9832'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_rechecks_location_and_target_policy_after_confirmation (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 120, in test_execution_rechecks_location_and_target_policy_after_confirmation
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, plan)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'e94044fa602af59817c0c5f02bee2a79'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_reject_old_digest_revision_and_unresolved_targets (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 77, in test_execution_reject_old_digest_revision_and_unresolved_targets
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     self.assertEqual(self.user.request("POST", path+"/decision", wrong).status, 409)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: 404 != 409
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_waiting_releases_slot_and_never_accepts_model_approval (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 41, in test_execution_waiting_releases_slot_and_never_accepts_model_approval
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     self.assertEqual(data(self.user.request("GET", self.tasks_path()+"/"+task["id"]))["state"], "waiting_confirmation")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: 'pending' != 'waiting_confirmation'
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: - pending
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: + waiting_confirmation
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ======================================================================
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAIL: test_execution_whole_scope_revocation_and_new_version_block_moves (__main__.ArchiveExecutionE2E)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Traceback (most recent call last):
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 140, in test_execution_whole_scope_revocation_and_new_version_block_moves
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     confirmed = self.confirm(path, current)
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_archive_execution_test.py", line 34, in confirm
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     return data(self.user.request("POST", path+"/decision", self.decision(plan)))
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: AssertionError: expected HTTP 200, got 404: {'error': {'code': 'route_not_found', 'message': 'route was not found', 'retryable': False}, 'request_id': 'f8ee68f85654179b785289d525b58db5'}
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: ----------------------------------------------------------------------
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: Ran 10 tests in 8.319s
+2026-10-19T13:10:27+0800 aliyun-lou bash[783656]: FAILED (failures=10)
+2026-10-19T13:10:33+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-red.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-19T13:10:33+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-red.service: Failed with result 'exit-code'.
+2026-10-19T13:10:33+0800 aliyun-lou systemd[1]: smartdocs-archive-exec-red.service: Consumed 7.932s CPU time.

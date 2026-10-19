@@ -1,5 +1,6 @@
 #include "agent_tasks.h"
 #include "core/app_error.h"
+#include "core/crypto.h"
 #include "core/id.h"
 #include "db/mysql.h"
 #include "http/jsonbody.h"
@@ -68,6 +69,42 @@ Json PreviewItems(MySqlConnection& db,const std::string& project,const std::stri
         throw AppError(409,"name_conflict","archive target has a name conflict");
     return items;
 }
+std::string Digest(const Json& preview) {
+    const auto canonical=preview.dump(); return Sha256Hex(canonical.data(),canonical.size());
+}
+Json View(MySqlConnection& db,const Json& base,const std::string& state) {
+    Json view=base;
+    view["content_sha256"]=Digest(base); view["decision"]=nullptr;
+    view["operation_id"]=nullptr; view["task_state"]=state;
+    const auto rows=db.Query("SELECT decision,operation_id,result_json FROM archive_decisions WHERE task_id=? AND revision=? FOR UPDATE",
+        {SqlValue(base["task_id"].get<std::string>()),SqlValue(base["revision"].get<uint64_t>())});
+    if(!rows.empty()) {
+        view["decision"]=rows[0].String(0);
+        view["operation_id"]=rows[0].IsNull(1) ? Json(nullptr) : Json(rows[0].String(1));
+        view["state"]=!rows[0].IsNull(2) ? "executed" : rows[0].String(0)=="confirm" ? "confirmed" : "rejected";
+        view["executable"]=view["state"]=="confirmed" && state=="waiting_execution";
+    }
+    return view;
+}
+void Identity(const Json& body,bool decision) {
+    if(decision) RequireExactObject(body,{"plan_id","revision","content_sha256","decision"});
+    else RequireExactObject(body,{"plan_id","revision","operation_id"});
+    Id(body["plan_id"]);
+    if(!body["revision"].is_number_unsigned() || body["revision"]==0 || body["revision"].get<uint64_t>()>4294967295ULL) Invalid();
+    if(!decision) { Id(body["operation_id"]); return; }
+    if(!body["content_sha256"].is_string()) Invalid();
+    const auto hash=body["content_sha256"].get<std::string>();
+    if(hash.size()!=64 || hash.find_first_not_of("0123456789abcdef")!=std::string::npos ||
+        (body["decision"]!="confirm" && body["decision"]!="reject")) Invalid();
+}
+MySqlRow Plan(MySqlConnection& db,const std::string& task) {
+    const auto rows=db.Query("SELECT request_json,preview_json FROM archive_plans WHERE task_id=? FOR UPDATE",{SqlValue(task)});
+    if(rows.empty()) throw AppError(404,"resource_not_found","resource was not found");
+    return rows[0];
+}
+void Match(const Json& body,const Json& preview) {
+    if(body["plan_id"]!=preview["id"] || body["revision"]!=preview["revision"]) Conflict();
+}
 }
 
 nlohmann::json AgentTaskService::SaveArchivePlan(const SessionContext& session,const std::string& project,
@@ -75,7 +112,7 @@ nlohmann::json AgentTaskService::SaveArchivePlan(const SessionContext& session,c
     Validate(body);
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Editor);
-    RequireArchiveTaskScope(db,session,project,task,true);
+    const auto state=RequireArchiveTaskScope(db,session,project,task,true);
     const auto rows=db.Query("SELECT id,revision,request_json,preview_json FROM archive_plans WHERE task_id=? FOR UPDATE",{SqlValue(task)});
     const auto items=PreviewItems(db,project,task,body);
     const uint64_t revision=rows.empty() ? 0 : rows[0].UInt64(1), expected=body["expected_revision"].get<uint64_t>();
@@ -83,7 +120,7 @@ nlohmann::json AgentTaskService::SaveArchivePlan(const SessionContext& session,c
         if(revision==expected+1 && !rows.empty() && Json::parse(rows[0].String(2))==body) {
             auto old=Json::parse(rows[0].String(3));
             if(old["items"]!=items) Conflict();
-            transaction.Commit(); return old;
+            auto view=View(db,old,state); transaction.Commit(); return view;
         }
         Conflict();
     }
@@ -96,16 +133,92 @@ nlohmann::json AgentTaskService::SaveArchivePlan(const SessionContext& session,c
         "ON DUPLICATE KEY UPDATE revision=VALUES(revision),request_json=VALUES(request_json),preview_json=VALUES(preview_json)",
         {SqlValue(task),SqlValue(project),SqlValue(id),SqlValue(revision+1),SqlValue(body.dump()),SqlValue(preview.dump())});
     ProjectRepository().InsertAudit(db,session.user_id,project,"archive.plan.save","archive_plan",id,request_id);
-    transaction.Commit(); return preview;
+    db.Execute("UPDATE agent_tasks SET state='waiting_confirmation' WHERE id=?",{SqlValue(task)});
+    auto view=View(db,preview,"waiting_confirmation"); transaction.Commit(); return view;
 }
 
 nlohmann::json AgentTaskService::GetArchivePlan(const SessionContext& session,const std::string& project,const std::string& task) {
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Reader);
-    RequireArchiveTaskScope(db,session,project,task,false);
-    const auto rows=db.Query("SELECT request_json,preview_json FROM archive_plans WHERE task_id=? FOR SHARE",{SqlValue(task)});
-    if(rows.empty()) throw AppError(404,"resource_not_found","resource was not found");
-    auto preview=Json::parse(rows[0].String(1));
-    if(PreviewItems(db,project,task,Json::parse(rows[0].String(0)))!=preview["items"]) Conflict();
-    transaction.Commit(); return preview;
+    const auto state=RequireArchiveTaskScope(db,session,project,task,false);
+    const auto row=Plan(db,task);
+    const auto preview=Json::parse(row.String(1));
+    auto view=View(db,preview,state);
+    if(view["state"]=="executed") ProjectService::ApprovedArchivePolicy(db,project,preview["policy_revision"].get<uint64_t>());
+    else if(PreviewItems(db,project,task,Json::parse(row.String(0)))!=preview["items"]) Conflict();
+    transaction.Commit(); return view;
+}
+
+nlohmann::json AgentTaskService::DecideArchivePlan(const SessionContext& session,const std::string& project,
+    const std::string& task,const Json& body,const std::string& request_id) {
+    Identity(body,true);
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Editor);
+    const auto state=RequireArchiveTaskScope(db,session,project,task,true);
+    const auto row=Plan(db,task); const auto preview=Json::parse(row.String(1));
+    Match(body,preview);
+    if(body["content_sha256"]!=Digest(preview) || PreviewItems(db,project,task,Json::parse(row.String(0)))!=preview["items"]) Conflict();
+    const bool confirm=body["decision"]=="confirm";
+    if(confirm && preview["has_unresolved"].get<bool>()) Conflict();
+    auto view=View(db,preview,state);
+    if(!view["decision"].is_null()) {
+        if(view["decision"]!=body["decision"]) Conflict();
+        transaction.Commit(); return view;
+    }
+    db.Execute("INSERT INTO archive_decisions(task_id,revision,plan_id,content_sha256,actor_user_id,decision,operation_id) VALUES (?,?,?,?,?,?,?)",
+        {SqlValue(task),SqlValue(body["revision"].get<uint64_t>()),SqlValue(body["plan_id"].get<std::string>()),
+         SqlValue(Digest(preview)),SqlValue(session.user_id),SqlValue(body["decision"].get<std::string>()),confirm ? SqlValue(GenerateId()) : SqlValue::Null()});
+    const std::string next=confirm ? "waiting_execution" : "waiting_confirmation";
+    db.Execute("UPDATE agent_tasks SET state=? WHERE id=?",{SqlValue(next),SqlValue(task)});
+    ProjectRepository().InsertAudit(db,session.user_id,project,confirm ? "archive.confirm" : "archive.reject","archive_plan",body["plan_id"],request_id);
+    view=View(db,preview,next); transaction.Commit(); return view;
+}
+
+nlohmann::json AgentTaskService::ExecuteArchivePlan(const SessionContext& session,const std::string& project,
+    const std::string& task,const Json& body,const std::string& request_id) {
+    Identity(body,false);
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Editor);
+    const auto state=RequireArchiveTaskScope(db,session,project,task,false,true);
+    const auto row=Plan(db,task); const auto preview=Json::parse(row.String(1)); Match(body,preview);
+    const auto decisions=db.Query("SELECT decision,operation_id,content_sha256,actor_user_id,result_json FROM archive_decisions "
+        "WHERE task_id=? AND revision=? FOR UPDATE",{SqlValue(task),SqlValue(body["revision"].get<uint64_t>())});
+    if(decisions.empty()) Conflict();
+    const auto& decision=decisions[0];
+    if(decision.String(0)!="confirm" || decision.IsNull(1) || decision.String(1)!=body["operation_id"] ||
+        decision.String(2)!=Digest(preview) || decision.String(3)!=session.user_id) Conflict();
+    if(!decision.IsNull(4)) { auto result=Json::parse(decision.String(4)); transaction.Commit(); return result; }
+    if(state!="waiting_execution" || preview["has_unresolved"].get<bool>() ||
+        PreviewItems(db,project,task,Json::parse(row.String(0)))!=preview["items"]) Conflict();
+    Json items=Json::array();
+    for(const auto& item:preview["items"]) {
+        db.Execute("UPDATE files SET directory_id=? WHERE id=? AND project_id=?",
+            {SqlValue(item["target_directory_id"].get<std::string>()),SqlValue(item["file_id"].get<std::string>()),SqlValue(project)});
+        items.push_back({{"file_id",item["file_id"]},{"version_id",item["version_id"]},{"source_directory_id",item["source_directory_id"]},
+            {"target_directory_id",item["target_directory_id"]},{"state","moved"}});
+    }
+    ProjectRepository().InsertAudit(db,session.user_id,project,"archive.execute","archive_plan",body["plan_id"],request_id);
+    const auto audit=db.Query("SELECT id FROM audit_records WHERE request_id=? AND action='archive.execute' AND object_id=?",
+        {SqlValue(request_id),SqlValue(body["plan_id"].get<std::string>())});
+    Json result={{"operation_id",body["operation_id"]},{"plan_id",body["plan_id"]},{"revision",body["revision"]},
+        {"status","executed"},{"moved_count",items.size()},{"audit_id",audit.at(0).String(0)},{"items",items}};
+    db.Execute("UPDATE archive_decisions SET result_json=? WHERE task_id=? AND revision=?",
+        {SqlValue(result.dump()),SqlValue(task),SqlValue(body["revision"].get<uint64_t>())});
+    db.Execute("UPDATE agent_tasks SET state='completed' WHERE id=?",{SqlValue(task)});
+    transaction.Commit(); return result;
+}
+
+nlohmann::json CommittedArchiveReceipt(MySqlConnection& db,const std::string& task) {
+    const auto rows=db.Query("SELECT result_json FROM archive_decisions WHERE task_id=? AND result_json IS NOT NULL FOR SHARE",{SqlValue(task)});
+    if(rows.empty()) return nullptr;
+    const auto result=Json::parse(rows[0].String(0)); Json receipt=Json::object();
+    for(const char* key:{"operation_id","plan_id","revision","status","moved_count","audit_id"}) receipt[key]=result.at(key);
+    return receipt;
+}
+nlohmann::json AgentTaskService::ArchiveResult(const SessionContext& session,const std::string& project,const std::string& task) {
+    auto db=pool_.Acquire(); MySqlTransaction transaction(db);
+    projects_.RequireRole(db,session.user_id,project,Role::Reader); LockArchiveTask(db,session,project,task);
+    auto receipt=CommittedArchiveReceipt(db,task);
+    if(receipt.is_null()) throw AppError(404,"resource_not_found","resource was not found");
+    transaction.Commit(); return receipt;
 }

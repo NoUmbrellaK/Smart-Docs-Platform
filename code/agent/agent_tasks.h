@@ -27,6 +27,9 @@ public:
     nlohmann::json SaveArchivePlan(const SessionContext&, const std::string& project, const std::string& task,
         const nlohmann::json& body, const std::string& request_id);
     nlohmann::json GetArchivePlan(const SessionContext&, const std::string& project, const std::string& task);
+    nlohmann::json DecideArchivePlan(const SessionContext&, const std::string&, const std::string&, const nlohmann::json&, const std::string&);
+    nlohmann::json ExecuteArchivePlan(const SessionContext&, const std::string&, const std::string&, const nlohmann::json&, const std::string&);
+    nlohmann::json ArchiveResult(const SessionContext&, const std::string&, const std::string&);
     void RecoverInterrupted();
 private:
     MySqlPool& pool_;
@@ -37,7 +40,9 @@ private:
 void RequireAgentTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
     const std::string& task, const std::string& file="", const std::string& version="");
 // Preview never claims an execution slot. Caller owns membership/transaction locks.
-void RequireArchiveTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
-    const std::string& task, bool writing);
+std::string RequireArchiveTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
+    const std::string& task, bool writing, bool exclusive=false);
+std::string LockArchiveTask(MySqlConnection&, const SessionContext&, const std::string&, const std::string&);
+nlohmann::json CommittedArchiveReceipt(MySqlConnection&, const std::string& task);
 void RegisterAgentRoutes(Router&, std::shared_ptr<AuthService>, std::shared_ptr<AgentTaskService>,
     std::shared_ptr<ProcessingService>, bool secure_cookie, uint64_t max_json_bytes);

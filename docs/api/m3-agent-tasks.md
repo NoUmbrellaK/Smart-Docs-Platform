@@ -51,8 +51,12 @@ GET前缀，无正文：分页发现当前用户在当前项目的任务，不�
 GET `/{task_id}`，无正文：返回上述持久状态和固定ID范围，不返回问题、文件名称或
 片段，避免状态接口成为新的内容出口。项目成员被撤销后连状态也不可读。
 
-POST `/{task_id}/cancel`，空正文：pending/running/interrupted变cancelled，多次
+POST `/{task_id}/cancel`，空正文：pending/running/interrupted/waiting_confirmation/waiting_execution变cancelled，多次
 调用返回相同业务状态。取消不恢复任务、不清除已产生的业务结果。
+
+schema10的[归档确认与执行](m3-archive-execution.md)新增两种等待状态，均不占running槽且重启保留。
+等待任务不允许旧模型执行器继续start/check/finish；归档完成的completed结果类型为archive_operation，
+只提供明确标识的历史操作回执，不伪造回答或报告。详细确认/写入接口另要求编辑权限。
 
 ## 任务绑定工具
 

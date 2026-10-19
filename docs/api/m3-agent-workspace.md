@@ -17,11 +17,13 @@
 4. **Refresh tasks** 从最新一页读取，**Next task page** 用固定游标翻页，每页20条。
    **View task / Refresh task** 重新检查状态；未开始、执行中、完成、失败、中断、取消
    分别展示，不使用假进度百分比。没有定时轮询、自动恢复或后台浏览器重试。
-5. pending/running/interrupted可点击 **Cancel task**。取消后重新查询权威状态；
+5. pending/running/interrupted及waiting_confirmation/waiting_execution可点击 **Cancel task**。取消后重新查询权威状态；
    取消回执不明确则清掉旧操作按钮，提示刷新核对，不能宣称已取消。
 6. completed/failed读取[运行结果接口](m3-read-agent.md)。回答作为纯文本草稿显示，
    不是M4交接报告；没有引用时明确提示。可见模型许可次数与脱敏失败码，不将次数
    等同供应商实际请求/计费。
+   schema10的archive_operation单独展示最小持久归档回执，明确不是模型回答/交接报告，
+   也不承诺文件仍在归档目标。等待确认/等待执行分别说明没有移动文件；当前网页没有归档确认或执行按钮。
 7. 点击引用先重验整个回答依赖，再鉴权读取精确file/version/chunk。显示行范围或
    PDF物理页和固定版本原文链接；不跳到新版、不把回答或原文当HTML执行。
 8. **Load / refresh tool calls** 按需读取[服务端后端请求轨迹](m3-tool-audit.md)，最多64条，
@@ -49,7 +51,7 @@
 ## 部署与验证
 
 新增静态模块`/js/agent.js`已加入C++精确白名单。部署需同时更新静态资源和二进制，
-当前开发分支要求[schema9](m3-archive-preview.md#schema9和部署)；没有迁移业务库或启用CLI常驻服务。
+当前开发分支要求[schema10](m3-archive-execution.md#schema10和部署)；没有迁移业务库或启用CLI常驻服务。
 沿用原生JS和手机单列布局，按钮至少44px，无新依赖或外部脚本。
 [证据](../evidence/m3/task-ui/README.md)区分替身DOM行为测试、真实浏览器业务接口与
 脚本化回答夹具；不把夹具结果当作真实DeepSeek质量或完整Agent闭环。
