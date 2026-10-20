@@ -1,0 +1,27 @@
+TimeoutStopUSec=5s
+RuntimeMaxUSec=10min
+MainPID=931504
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+TasksCurrent=22
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+MemAvailable:    2185552 kB
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
