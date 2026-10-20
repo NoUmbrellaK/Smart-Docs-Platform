@@ -30,6 +30,8 @@ backend_port、显式key、max_calls（1–8）及run_kind。本函数不读环�
   离线评审仍需人工判定，`execution_verified`仍为false。
 
 没有新增批量付费CLI、30项业务结果、真实人工确认或语义评审。冻结任务仍为not_run。
+后续[单案例CLI](../case-cli/README.md)已复用本连接层，提供有截止时间的网页审核现场；
+不是无限期托管，也不改变本文本地协议验证的统计边界。
 
 ## 验证
 

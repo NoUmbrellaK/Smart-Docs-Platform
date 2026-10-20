@@ -1,0 +1,26 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_cli_test.py.
+2026-10-20T16:11:46.456276Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 965828
+2026-10-20T16:11:46.460910Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-20T16:12:01.692634Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-20T16:12:09.901473Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_archive_cli_keeps_http_alive_for_separate_review_then_captures_receipt (__main__.CliTests) ... ok
+test_help_does_not_require_database_or_key (__main__.CliTests) ... ok
+test_interrupt_during_partial_setup_stops_owned_child_and_removes_temp (__main__.CliTests) ... ok
+test_no_opt_in_and_bad_admission_mode_stop_before_artifacts (__main__.CliTests) ... ok
+test_setup_failure_retains_private_diagnostic_without_exception_text (__main__.CliTests) ... ok
+----------------------------------------------------------------------
+Ran 5 tests in 3.986s
+OK
+smartdocs-m5-cli-verified.service: Deactivated successfully.
+smartdocs-m5-cli-verified.service: Consumed 9.050s CPU time.
