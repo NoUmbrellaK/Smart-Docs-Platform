@@ -1,0 +1,23 @@
+Compared 193 tracked files; differences: ['python/requirements-embedding.txt', 'python/requirements-mcp.txt', 'test/e2e/m1_browser_self_test.py']
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df bin/smartdocs-admin
+0757a06e4ca10d81d402fc7a9e48cf18dbeeeb02d1e7a3bb6415f5d366b440c4 test/e2e/m3_archive_execution_test.py
+3cd1f8fa51212b970e0e4409c560342cf98b363b1c54de466430ce2ee0e90ce6 test/e2e/m3_report_mcp_test.py
+82446f781cb552362e431591af67d608d5d351327e9b7c0a564900526d0940d6 resources/js/agent.js
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+LoadState=not-found
+ActiveState=inactive
+MemAvailable:    2235272 kB
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
