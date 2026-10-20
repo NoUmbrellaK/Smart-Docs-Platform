@@ -1,0 +1,119 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_execute_test.py.
+2026-10-20T15:51:32.173041Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 961664
+2026-10-20T15:51:32.272337Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-20T15:51:47.644634Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-20T15:51:55.238786Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_query_runs_real_agent_and_captures_original_before_cleanup (__main__.ExecuteE2E) ... ERROR
+test_report_uses_backend_checklist_without_oracle_and_is_captured (__main__.ExecuteE2E) ... ERROR
+test_archive_stays_unconfirmed_and_keeps_fixture_alive (__main__.ExecuteE2E) ... ERROR
+test_rejected_admission_never_starts_agent_or_needs_key (__main__.ExecuteE2E) ... ok
+test_provider_failure_is_retained_without_retry (__main__.ExecuteE2E) ... ERROR
+test_budget_cannot_be_silently_expanded (__main__.ExecuteE2E) ... ERROR
+test_existing_destination_or_bad_case_fails_before_claim (__main__.ExecuteE2E) ... ERROR
+======================================================================
+ERROR: test_query_runs_real_agent_and_captures_original_before_cleanup (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 88, in test_query_runs_real_agent_and_captures_original_before_cleanup
+    snapshot = self.invoke(prepared, output)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+======================================================================
+ERROR: test_report_uses_backend_checklist_without_oracle_and_is_captured (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 116, in test_report_uses_backend_checklist_without_oracle_and_is_captured
+    snapshot = self.invoke(prepared, output)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+======================================================================
+ERROR: test_archive_stays_unconfirmed_and_keeps_fixture_alive (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 137, in test_archive_stays_unconfirmed_and_keeps_fixture_alive
+    snapshot = self.invoke(prepared, output)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+======================================================================
+ERROR: test_provider_failure_is_retained_without_retry (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 165, in test_provider_failure_is_retained_without_retry
+    snapshot = self.invoke(prepared, output)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+======================================================================
+ERROR: test_budget_cannot_be_silently_expanded (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 178, in test_budget_cannot_be_silently_expanded
+    snapshot = self.invoke(prepared, output, max_calls=1)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+======================================================================
+ERROR: test_existing_destination_or_bad_case_fails_before_claim (__main__.ExecuteE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 191, in test_existing_destination_or_bad_case_fails_before_claim
+    self.invoke(prepared, output)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py", line 50, in invoke
+    return asyncio.run(execute(self.case_id, prepared, {
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_execute.py", line 51, in execute
+    require(current['state'] == 'pending' and current['question'] == case['input'])
+KeyError: 'question'
+----------------------------------------------------------------------
+Ran 7 tests in 13.769s
+FAILED (errors=6)
+smartdocs-m5-execute-check.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-execute-check.service: Failed with result 'exit-code'.
+smartdocs-m5-execute-check.service: Consumed 9.000s CPU time.
