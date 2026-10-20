@@ -1,0 +1,18 @@
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m5-processing-regression.service
+ActiveState=inactive
+SubState=dead
+active
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1100         430           3        1964        2125
+Swap:              0           0           0
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+no_nobody_mysqld_or_server=true
+test_unit_cgroup_removed=true

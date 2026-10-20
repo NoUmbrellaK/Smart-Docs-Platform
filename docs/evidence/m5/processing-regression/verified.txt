@@ -1,0 +1,5 @@
+source_manifest_current_files_verified=164
+Python unique source tests and journal exact match=124; worker exact match=7; explicit search tests=1
+suite_results=124/124,7/7,1/1; failure_error_skip=0; migration_PASS_excluded=20
+server_admin_hashes_unchanged=true
+final_local_document_links_verified=247

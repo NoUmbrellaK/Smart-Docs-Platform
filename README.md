@@ -44,6 +44,9 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 已补[当前源码C++回归](./docs/evidence/m5/cpp-regression/README.md)：150个相关文件与受限副本一致，
 固定161项分两组串行执行，**161/161通过、0失败、0跳过**，无新增OOM；归档二进制哈希与完整日志。
 这是既有构建的当前源码核对与组件/SQL回归，不替代发布候选HTTP、Python、浏览器及中断复验。
+随后补[当前解析与检索HTTP回归](./docs/evidence/m5/processing-regression/README.md)：
+完整Python **124/124**、真实worker **7/7**、版本检索HTTP **1/1**，均0失败/跳过、无新增OOM。
+涵盖中文/扫描PDF、固定来源、重启人工重试及新版排旧；不代表全部HTTP、浏览器或真实向量模型重跑。
 还需完成匹配版本的部署验证及完整业务演示，不能将索引齐全视为全项验收通过。
 不把协议夹具计为业务完成，不自动确认归档，不沿用已消费的三次限定DeepSeek授权；
 整个P0仍未完成。
