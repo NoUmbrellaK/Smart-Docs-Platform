@@ -19,7 +19,7 @@ from smartdocs import search_http, vector_worker, worker
 
 
 @contextmanager
-def tls_gateways(fixture, respond):
+def tls_gateways(fixture, respond, *, encoder_socket=None):
     original_user = fixture.user
     fixture.server.stop()
     fixture.server.start(environment_overrides={
@@ -30,10 +30,10 @@ def tls_gateways(fixture, respond):
             directory = Path(temporary)
             port = ServerProcess._free_port()
             origin = f"https://127.0.0.1:{port}"
-            stack.enter_context(fixture.gateway(respond, origin=origin))
-            # Exercise the real unavailable-socket path, never fabricate a successful vector.
+            stack.enter_context(fixture.gateway(respond, origin=origin, encoder_socket=encoder_socket))
+            # Default exercises real unavailability; opt-in connects the actual private encoder.
             search = search_http.SearchHTTPServer(0, fixture.server.port, origin,
-                partial(vector_worker.request_encoding, str(directory / "absent-encoder.sock")))
+                partial(vector_worker.request_encoding, encoder_socket or str(directory / "absent-encoder.sock")))
             thread = threading.Thread(target=search.serve_forever)
             thread.start()
 

@@ -1,0 +1,44 @@
+2026-10-21T01:29:58+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_tls_hybrid_test.py --nginx /tmp/smartdocs-nginx.DnOIv2/unpacked/usr/sbin/nginx --encoder-socket /tmp/smartdocs-m5-tls-hybrid.dHv16t/encoder.sock.
+2026-10-21T01:30:00+0800 aliyun-lou bash[982052]: 2026-10-20T17:30:00.177077Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 982052
+2026-10-21T01:30:00+0800 aliyun-lou bash[982052]: 2026-10-20T17:30:00.391336Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T01:30:15+0800 aliyun-lou bash[982052]: 2026-10-20T17:30:15.608313Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T01:30:23+0800 aliyun-lou bash[982052]: 2026-10-20T17:30:23.313225Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T01:31:10+0800 aliyun-lou bash[982412]: schema_version=16
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T01:31:38+0800 aliyun-lou bash[982493]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T01:31:43+0800 aliyun-lou bash[982602]: test_tls_real_hybrid_scope_and_new_version (__main__.TLSHybridE2E) ... PASS TLS real vector publication and Chinese vector-only retrieval; internal excluded
+2026-10-21T01:31:45+0800 aliyun-lou bash[982602]: PASS TLS Agent uses real hybrid MCP restricted to task version with saved fixed source
+2026-10-21T01:31:47+0800 aliyun-lou bash[982602]: PASS TLS superseded source excluded; no inherited approval; fixed history and revocation
+2026-10-21T01:31:49+0800 aliyun-lou bash[982602]: {"case": "tls-real-hybrid", "result": "pass", "checks": 3, "document_encoding_batches": 2, "mock_provider_responses": 2, "remote_model_calls": 0, "production_deployment": "not_run"}
+2026-10-21T01:31:49+0800 aliyun-lou bash[982602]: ok
+2026-10-21T01:31:50+0800 aliyun-lou bash[982602]: test_tls_real_gateways_and_revocation (__main__.TLSHybridE2E) ... PASS TLS real worker and search gateway with explicit keyword degradation
+2026-10-21T01:31:52+0800 aliyun-lou bash[982602]: PASS TLS Agent to stdio MCP with four local provider responses and fixed source
+2026-10-21T01:31:52+0800 aliyun-lou bash[982602]: PASS TLS duplicate rejection and revoked scope without another provider response
+2026-10-21T01:31:53+0800 aliyun-lou bash[982602]: {"case": "tls-real-gateways", "result": "pass", "checks": 3, "mock_provider_responses": 4, "remote_model_calls": 0, "retrieval": "keyword_only", "local_embeddings": "not_run", "production_deployment": "not_run"}
+2026-10-21T01:31:53+0800 aliyun-lou bash[982602]: ok
+2026-10-21T01:31:53+0800 aliyun-lou bash[982602]: ----------------------------------------------------------------------
+2026-10-21T01:31:53+0800 aliyun-lou bash[982602]: Ran 2 tests in 14.136s
+2026-10-21T01:31:53+0800 aliyun-lou bash[982602]: OK
+2026-10-21T01:31:55+0800 aliyun-lou systemd[1]: smartdocs-m5-tls-hybrid-recheck.service: Deactivated successfully.
+2026-10-21T01:31:55+0800 aliyun-lou systemd[1]: smartdocs-m5-tls-hybrid-recheck.service: Consumed 10.119s CPU time.
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1543         662          19        1289        1666
+Swap:              0           0           0
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
