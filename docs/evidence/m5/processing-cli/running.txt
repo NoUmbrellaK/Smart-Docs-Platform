@@ -1,0 +1,33 @@
+b0249a2ae8b42711d53609b373ad0deff1fce75278c7657138dba58d436c039b  db/migrations/001_m1_core.sql
+5275cf309775b69c3dd713148896ee3f5ca448d1f0d4696c6345d882ec42cec1  db/migrations/002_zero_based_upload_parts.sql
+89934a527a0f75e00ae35eb81b9f6e7a62d39ca77e3716cfbe6916751c215aac  db/migrations/003_processing_jobs.sql
+ba19a414d8ba91ff7101856e560a19ed4151837bd0929cd3d79ab800ccd58e66  db/migrations/004_document_results.sql
+8901eeef78ae286fed54c02112fc516c9c5b12072c5bad65f6110d9f5c2af840  db/migrations/005_vector_results.sql
+da344aca3f81822805a090f4fc0b48674688e5a335f6bd75c428cd180533e136  db/migrations/006_agent_tasks.sql
+85f214c3d709e760d8e148f6033348eec09c1ff3ebc50789539e6fd3b7c902e4  db/migrations/007_agent_runs.sql
+586014a00b250b4e4f60b30bed822ecf856943f42bba2d57a9196404ec653d37  db/migrations/008_agent_tool_calls.sql
+c837bcbd24beb666d6e433801bf31f1315b1e56328330d28cc3ea5bbe3318051  db/migrations/009_archive_previews.sql
+f60e3b2ee64aaf65c7112730cc003b55481a809d3b60598a1e664e09ab6b4d4e  db/migrations/010_archive_execution.sql
+72c4379f68af2c5d98cd91ee68b30736430b197299a222f8341827b234c8cb42  db/migrations/011_handover_checklists.sql
+fc832182093c081c6de41ac00c947551b7fd4761c951b4f0e8bb47c671d74253  db/migrations/012_agent_tool_sources.sql
+037da33f12eb1df780ade505474464f47ae7c4c6da39c100f25fa88b2bc579a0  db/migrations/013_agent_handover_context.sql
+ff5ff7f4c4f1b1c7b34e86de3d70e8b8ea20f8a491f7f5891dd2c4d22ebf1e94  db/migrations/014_handover_reports.sql
+b60e558a9153b15effb2a8d1871c04adf53d59dce57870d92aa0dedaa3f766d1  db/migrations/015_agent_archive_context.sql
+16105990f6209fa521e62d6995f4c784a418140fcda94e1b2d79fadf020cb0ed  db/migrations/016_write_tool_audit.sql
+TimeoutStopUSec=5s
+RuntimeMaxUSec=8min
+MainPID=984919
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+Python 3.10.12
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1247         781           3        1466        1978
+Swap:              0           0           0

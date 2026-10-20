@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "base_commit": "8b5df03",
+  "test": "test/e2e/m5_processing_cli_test.py",
+  "test_sha256": "e7df4d2e43fe6868cb67d9fc5125cb1d133aa5808bab40f8306ac0ebb507fdd1",
+  "attempts": 1,
+  "tests": 1,
+  "passed": 1,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "check_groups": 3,
+  "test_seconds": 7.487,
+  "remote_model_calls": 0,
+  "memory_high_delta": 0,
+  "oom_delta": 0,
+  "oom_kill_delta": 0,
+  "production_deployment": "not_run",
+  "fixed_business_task_verdict": null,
+  "m5_complete": false
+}
