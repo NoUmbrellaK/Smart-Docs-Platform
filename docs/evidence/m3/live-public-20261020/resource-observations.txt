@@ -1,0 +1,28 @@
+Selected read-only tool output captured during this run, in observation order.
+This is not continuous monitoring and contains no process environments.
+
+Before launch:
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+IPAddressAllow=
+IPAddressDeny=
+LoadState=not-found
+ActiveState=inactive
+
+Running samples (systemctl MemoryCurrent and /proc/meminfo MemAvailable):
+MemoryCurrent=137084928
+MemAvailable:    2261592 kB
+MemoryCurrent=211636224
+MemAvailable:    2207008 kB
+MemoryCurrent=261652480
+MemAvailable:    2193188 kB
+MemoryCurrent=262721536
+MemAvailable:    2193972 kB
+MemoryCurrent=373870592
+MemAvailable:    2119096 kB
+
+The pre-run conversation recorded memory.events high=80521 and max/oom/oom_kill=0.
+The saved raw post-run memory.events and task status are in journal-and-status.txt.
