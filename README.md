@@ -47,6 +47,9 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 随后补[当前解析与检索HTTP回归](./docs/evidence/m5/processing-regression/README.md)：
 完整Python **124/124**、真实worker **7/7**、版本检索HTTP **1/1**，均0失败/跳过、无新增OOM。
 涵盖中文/扫描PDF、固定来源、重启人工重试及新版排旧；不代表全部HTTP、浏览器或真实向量模型重跑。
+最新[文件HTTP与中断复验](./docs/evidence/m5/file-regression/README.md)补齐当前普通版HTTP **9/9、44断言**
+与当前故障版 **20/20轮、305断言**，分布4/4/4/3/3/2，无新增OOM；
+故障版已在限额内单线程增量构建。本轮不包含浏览器、吞吐或整机断电。
 还需完成匹配版本的部署验证及完整业务演示，不能将索引齐全视为全项验收通过。
 不把协议夹具计为业务完成，不自动确认归档，不沿用已消费的三次限定DeepSeek授权；
 整个P0仍未完成。

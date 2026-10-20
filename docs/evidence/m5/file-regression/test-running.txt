@@ -1,0 +1,23 @@
+RuntimeMaxUSec=15min
+MainPID=959587
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1255         280           3        1959        1970
+Swap:              0           0           0
+active
+b805ea1bfb98b6c1f542a89661fcbd3989a92b0d2e296f250d8ced215206f3bf  /tmp/smartdocs-m5-file-invocation.py

@@ -1,0 +1,25 @@
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m5-file-build.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m5-file-regression.service
+ActiveState=inactive
+SubState=dead
+active
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1189         406           3        1898        2036
+Swap:              0           0           0
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+613a1452946656de53e9ffab018b4a4e9859a03e9844fba08cc229968c44d84c  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_test_server
+no_nobody_test_server_or_mysqld=true
+test_build_cgroups_removed=true

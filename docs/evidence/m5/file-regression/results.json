@@ -1,0 +1,843 @@
+{
+  "source_head": "771c231957ba33a640e7b63f48ec313020fcea7f",
+  "scope": "current HTTP and interruption assertions only; not full M1 runner",
+  "http": {
+    "assertions": 44,
+    "failed": 0,
+    "fixture_sha256": {
+      "plain.txt": "f70a82717519db67e9facba5b58e58bd3408ecbbee615c53a9489f80b99e3fcd",
+      "sample.pdf": "96b602f6d4b99855125ade8fba314e07461f871926e74b8a6bfc4b842acee008"
+    },
+    "passed": 9,
+    "scenarios": [
+      {
+        "assertions": 10,
+        "id": "T-01",
+        "name": "ID substitution and role/project authorization",
+        "status": "pass"
+      },
+      {
+        "assertions": 4,
+        "id": "T-02",
+        "name": "Chunk replay idempotence and conflict",
+        "status": "pass"
+      },
+      {
+        "assertions": 4,
+        "id": "T-03",
+        "name": "Restart resume preserves confirmed parts and hash",
+        "status": "pass"
+      },
+      {
+        "assertions": 3,
+        "id": "T-04",
+        "name": "Idempotent complete and hidden partials",
+        "status": "pass"
+      },
+      {
+        "assertions": 9,
+        "id": "T-05",
+        "name": "Full/single Range and PDF fragment behavior",
+        "status": "pass"
+      },
+      {
+        "assertions": 2,
+        "id": "T-06",
+        "name": "Historical and current version URLs remain fixed",
+        "status": "pass"
+      },
+      {
+        "assertions": 2,
+        "deferred": [
+          "stale parsing/index publication is M2"
+        ],
+        "id": "T-07",
+        "name": "Stale upload cannot replace current",
+        "status": "pass"
+      },
+      {
+        "assertions": 7,
+        "deferred": [
+          "index/report effects are M2/M4"
+        ],
+        "id": "T-08",
+        "name": "Move/delete retention/restore/permission changes",
+        "status": "pass"
+      },
+      {
+        "assertions": 3,
+        "deferred": [
+          "parsing, metadata retrieval, and vector fallback are M2"
+        ],
+        "id": "T-09",
+        "name": "Truthful visible M1 processing status",
+        "status": "pass"
+      }
+    ],
+    "schema_version": 1,
+    "transport": "loopback_tcp"
+  },
+  "interruption_summary": {
+    "assertions": 305,
+    "fault_distribution": {
+      "AfterAssembledFsync": 4,
+      "AfterDatabaseCommit": 3,
+      "AfterObjectRename": 4,
+      "AfterPartTempFsync": 4,
+      "BeforeDatabaseCommit": 3,
+      "BeforeHttpResponse": 2
+    },
+    "passed": 20,
+    "rounds": 20,
+    "scope": "existing HTTP and interruption assertions only"
+  },
+  "interruption_rounds": [
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterPartTempFsync",
+      "final_sha256": "97abb55415a587bfd54e87b3d3addec316cc9c62b1a3b0338e3f884686f6b7c3",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "251b193cd01a00bd919102d1d9d7f4a1a1b31cc613a6cfd45231c5daae96bf2d",
+        "half_published_download": false,
+        "http_current_sha256": "251b193cd01a00bd919102d1d9d7f4a1a1b31cc613a6cfd45231c5daae96bf2d",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "489889710da48cf06f87f6cf263d4a65",
+        "processing_job_id": "fccc91f3b36b5adf222be656c0677af2",
+        "version_id": "1a8e6f9e65a0d6f4b12afede2671db1f"
+      },
+      "round": 1,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterPartTempFsync",
+      "final_sha256": "11afd1fdc05b592b6eeca60c1da10681146e7fc004286d8fa9fa50bcdd800376",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "7bc09c8e1006175527bb72b8a76a840a29f0fbcb11a775a61ca5bfccc93b813e",
+        "half_published_download": false,
+        "http_current_sha256": "7bc09c8e1006175527bb72b8a76a840a29f0fbcb11a775a61ca5bfccc93b813e",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "ba633634b24f7716a56bc0cfc736d655",
+        "processing_job_id": "6d31e08fcebe519dff75b98dc2682b9d",
+        "version_id": "73cd0304fe1277555d21a4919c3e01af"
+      },
+      "round": 2,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterPartTempFsync",
+      "final_sha256": "686e117dca85a6fa03034324f9b5ef2f2cc2141a1457ccb7b870c73ba6fe5ad7",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "a9da69283425ccb2a5e4add204862fbbb13b5561ba10e309e33a3b6db2b9fdab",
+        "half_published_download": false,
+        "http_current_sha256": "a9da69283425ccb2a5e4add204862fbbb13b5561ba10e309e33a3b6db2b9fdab",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "5e753cc9d181ab2410f65dc14b2edab8",
+        "processing_job_id": "4038a35f5f2da6684cc4fc7ec802695a",
+        "version_id": "772e9e93e5a3bdd13fe6487d33b80e4c"
+      },
+      "round": 3,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterPartTempFsync",
+      "final_sha256": "2fa16a4f0b422f5e23a5e7b8856c740f1d52eba773c2878c0c52580de1b22390",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "2e5ed5f14af76b540aa70d5f880efd04dc86235493e90c02409a7a83a99f7a63",
+        "half_published_download": false,
+        "http_current_sha256": "2e5ed5f14af76b540aa70d5f880efd04dc86235493e90c02409a7a83a99f7a63",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "19f13eafdf1066cc774baf095693f201",
+        "processing_job_id": "9ddeeb663cd5f6770b15c094342b6f92",
+        "version_id": "54b6c373655b1e33b95c04d728241bc5"
+      },
+      "round": 4,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterAssembledFsync",
+      "final_sha256": "04d9c122f80dc08319542d02ddc09e8a357cbc7e24c607bf9f0992ff01f21b9f",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "5b1cc4ef6d96b32de2dc20d859d90debc42a4c506f790043cba00615e2d25887",
+        "half_published_download": false,
+        "http_current_sha256": "5b1cc4ef6d96b32de2dc20d859d90debc42a4c506f790043cba00615e2d25887",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "e432a84a8683d71285892a20668218f3",
+        "processing_job_id": "72d869f8d15262c6400b2398c6d41007",
+        "version_id": "eae7acb07f84777ead6b691888a3d459"
+      },
+      "round": 5,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterAssembledFsync",
+      "final_sha256": "fc1c7c0a79835d8ad292ec17b6c0292b274b72b012d517b4933113f17c3e3f3c",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "c5562fbb420a2ccc83226e4b4bc16094b89512a20e589eb0f3297c2237f40cd1",
+        "half_published_download": false,
+        "http_current_sha256": "c5562fbb420a2ccc83226e4b4bc16094b89512a20e589eb0f3297c2237f40cd1",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "f9cfb663873664a2375990127c54bbf3",
+        "processing_job_id": "f47fae21d603069bd95dd330a044176b",
+        "version_id": "a29cdce7fb816f36933e87f66aad8c0c"
+      },
+      "round": 6,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterAssembledFsync",
+      "final_sha256": "cb72903512843f88a68453831f7f5cc593fedd565114a22771f3e43a0703746d",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "5b5abd031a748ad0e2fce4112f7c231e5e459d9bf838e5ace22031c1c92a5dc0",
+        "half_published_download": false,
+        "http_current_sha256": "5b5abd031a748ad0e2fce4112f7c231e5e459d9bf838e5ace22031c1c92a5dc0",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "b878667b00f2ceebfc8db6067cabf54b",
+        "processing_job_id": "d8afc0a095c43dd2110bade53c16c244",
+        "version_id": "20986ed79ac354fc94812a6092dadadf"
+      },
+      "round": 7,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterAssembledFsync",
+      "final_sha256": "1cea5c8cb72be4e25d69eaaf60e6c5c20f96c2a8ae83894dec1b016fd5f469ce",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "53715ba1949e6beb06040572ab91a184448baf9e33e3a5c83bd6975516e7ac45",
+        "half_published_download": false,
+        "http_current_sha256": "53715ba1949e6beb06040572ab91a184448baf9e33e3a5c83bd6975516e7ac45",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "a0dfbb947b858f710086d10cdf4d29c7",
+        "processing_job_id": "35e81f67580a9d3d94a2883d19c1d379",
+        "version_id": "d9918f71dfeba2ca49a1c30a5f4a98d3"
+      },
+      "round": 8,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterObjectRename",
+      "final_sha256": "af259530a0b733bd06e46b5f0398dfb970c04f0b5d9511cfce4f09f9231236d8",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "a99c42ad5ed0eb2bb4117c2774da2574460a6a437bf91cec4807cfd6dcc860cd",
+        "half_published_download": false,
+        "http_current_sha256": "a99c42ad5ed0eb2bb4117c2774da2574460a6a437bf91cec4807cfd6dcc860cd",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "e701d70e89448b1c7db8f170ab52145e",
+        "processing_job_id": "6c8282e244cc909d204a5fadebb10923",
+        "version_id": "813e01fa290ccc63be7dad76c9e042e0"
+      },
+      "round": 9,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterObjectRename",
+      "final_sha256": "42527471659b00b7b6ba3fbd77d85199ef55f9e23557b7717179850b6b7a09a7",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "e6ac5dfe75d594d0ea45e9a42205d9ffa0450a425ac0c52674c913923fcd2444",
+        "half_published_download": false,
+        "http_current_sha256": "e6ac5dfe75d594d0ea45e9a42205d9ffa0450a425ac0c52674c913923fcd2444",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "7e075fb2c8afe1487777b7cd07a0b007",
+        "processing_job_id": "8dd8bb2dcc45005a80bd59e626a171ff",
+        "version_id": "b2a62e76600cca598a819c9c1eaa028c"
+      },
+      "round": 10,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterObjectRename",
+      "final_sha256": "e461222369c14fc8617fc8527ed7eb0d8671e0dcced4c15f6348cb148d9f45f6",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "85ef81df758cafcb5fc738b9b175c9eef0ff400ecd9f496796e9bffc8953620e",
+        "half_published_download": false,
+        "http_current_sha256": "85ef81df758cafcb5fc738b9b175c9eef0ff400ecd9f496796e9bffc8953620e",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "b900a4783d0e6a588dcb589d4917a2fd",
+        "processing_job_id": "215d6aeac4767aa870551d18a12cd751",
+        "version_id": "2387a32a828005698da994fbd71af28b"
+      },
+      "round": 11,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterObjectRename",
+      "final_sha256": "3717d179d01b98f8207ab8689c45ba3f8876b4fc2221b046992a0f29868a3a50",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "e2c9307f70969b46bb7f4db145f650c0bd6e168ce5f1a9da208c90e2db76d195",
+        "half_published_download": false,
+        "http_current_sha256": "e2c9307f70969b46bb7f4db145f650c0bd6e168ce5f1a9da208c90e2db76d195",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "c4a4d8f104336aace81ee1991784e4cb",
+        "processing_job_id": "0b3915d2709bd724fc61b77f93fe71f9",
+        "version_id": "bc52d1880475e27d54a6fd9a1ca8b2d4"
+      },
+      "round": 12,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "BeforeDatabaseCommit",
+      "final_sha256": "7679ac05fe3bb316f6bd37f721a6c400872805ef1c284ae1ff0835fd095971b7",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "6efce018f583cfa0751bc6a4dc4e6f7da9d95994f4ea2dd002d4eda2db403a25",
+        "half_published_download": false,
+        "http_current_sha256": "6efce018f583cfa0751bc6a4dc4e6f7da9d95994f4ea2dd002d4eda2db403a25",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "a79f8ee7c2e2856cdd88b66bb047db1d",
+        "processing_job_id": "5c8107967a7cfa9cd5e1ad337d9f6c87",
+        "version_id": "3a13c012e4b771db550f47e73cd35cce"
+      },
+      "round": 13,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "BeforeDatabaseCommit",
+      "final_sha256": "0f1a18e18194ebc52564297d9fd4f313362a8cbea1a44354401d7b61ac68254b",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "b8e3cb25370d41ed1206a75be9a41836507be9fe935007c024f186d83f43b796",
+        "half_published_download": false,
+        "http_current_sha256": "b8e3cb25370d41ed1206a75be9a41836507be9fe935007c024f186d83f43b796",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "3891a59d3723e282fe7dc08bb12caf6e",
+        "processing_job_id": "0af1fbc3b08fb68dee64feb327d2945a",
+        "version_id": "e9b4c878ce489576725d30dafd889965"
+      },
+      "round": 14,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 15,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "BeforeDatabaseCommit",
+      "final_sha256": "4b2597c20927cf006b6d06eeb7543f7008e9911d640d9732ff4f3bd7c079a71f",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 0,
+        "database_target_versions": 0,
+        "expected_current_sha256": "27ea62c9812b573088fb1801fb29cc0bd599881cb702b2231b202fafcde80b84",
+        "half_published_download": false,
+        "http_current_sha256": "27ea62c9812b573088fb1801fb29cc0bd599881cb702b2231b202fafcde80b84",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "2b45de6bb62def7f04cfbb6b493c81d7",
+        "processing_job_id": "0c55af5b218daefa876c037eabdd1443",
+        "version_id": "a66952b593bea1afe4590887b20d7768"
+      },
+      "round": 15,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "interrupted"
+    },
+    {
+      "assertions": 16,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterDatabaseCommit",
+      "final_sha256": "3e102b3c92f1d037df569da3613735afb1a008c6cf300c87cb9e8ffa0a1aa55e",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 1,
+        "database_target_versions": 1,
+        "expected_current_sha256": "3e102b3c92f1d037df569da3613735afb1a008c6cf300c87cb9e8ffa0a1aa55e",
+        "half_published_download": false,
+        "http_current_sha256": "3e102b3c92f1d037df569da3613735afb1a008c6cf300c87cb9e8ffa0a1aa55e",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "5b44563bce4555993e34895f6d91cde7",
+        "processing_job_id": "c9a268a74b6696e7bf80306a277553c8",
+        "version_id": "82813002a8e40524768bc14853dc9e91"
+      },
+      "round": 16,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "completed"
+    },
+    {
+      "assertions": 16,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterDatabaseCommit",
+      "final_sha256": "4a066378faad79097cbb0839f58c21edd0a19d9bbc73cd317a356bbbb3afc892",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 1,
+        "database_target_versions": 1,
+        "expected_current_sha256": "4a066378faad79097cbb0839f58c21edd0a19d9bbc73cd317a356bbbb3afc892",
+        "half_published_download": false,
+        "http_current_sha256": "4a066378faad79097cbb0839f58c21edd0a19d9bbc73cd317a356bbbb3afc892",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "a92abc6a305598233b5fef46b13f66fa",
+        "processing_job_id": "b4bf5eaa319a4c1d4fe391984a455765",
+        "version_id": "520fe20116521fd41cee5b8f182326d4"
+      },
+      "round": 17,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "completed"
+    },
+    {
+      "assertions": 16,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "AfterDatabaseCommit",
+      "final_sha256": "0959c1f539447a8f821004a3ec46c841b6080cff56b010fca28ae2598161b037",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 1,
+        "database_target_versions": 1,
+        "expected_current_sha256": "0959c1f539447a8f821004a3ec46c841b6080cff56b010fca28ae2598161b037",
+        "half_published_download": false,
+        "http_current_sha256": "0959c1f539447a8f821004a3ec46c841b6080cff56b010fca28ae2598161b037",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "09102b51ccf59a6c09c862375e835fd3",
+        "processing_job_id": "3f181fd93cd860922ddf615c54294a96",
+        "version_id": "3a3b83db6b402ad5f34542882dca7eb3"
+      },
+      "round": 18,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "completed"
+    },
+    {
+      "assertions": 16,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "BeforeHttpResponse",
+      "final_sha256": "130a2849e9dc15e2f21f6f3d59e78a69f6d6e0b043231e4abba84605e005bdfb",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 1,
+        "database_target_versions": 1,
+        "expected_current_sha256": "130a2849e9dc15e2f21f6f3d59e78a69f6d6e0b043231e4abba84605e005bdfb",
+        "half_published_download": false,
+        "http_current_sha256": "130a2849e9dc15e2f21f6f3d59e78a69f6d6e0b043231e4abba84605e005bdfb",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "0947050518e14edc8ac3bdfe7a760bf3",
+        "processing_job_id": "52c9b9f99c6d90969f4d8be2162d4fa4",
+        "version_id": "a40ddf228b8aa8fd23310589398af91e"
+      },
+      "round": 19,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "completed"
+    },
+    {
+      "assertions": 16,
+      "confirmed_parts_after_restart": [
+        0,
+        1,
+        2
+      ],
+      "duplicate_version_count": 0,
+      "fault_point": "BeforeHttpResponse",
+      "final_sha256": "924a3834c3d7aa9e2e475289fab22d90e5b093008f814dbfa4dcefaec70a9504",
+      "half_published_download": false,
+      "process_exit": 86,
+      "publication_observation_after_restart": {
+        "database_completed_bindings": 1,
+        "database_target_versions": 1,
+        "expected_current_sha256": "924a3834c3d7aa9e2e475289fab22d90e5b093008f814dbfa4dcefaec70a9504",
+        "half_published_download": false,
+        "http_current_sha256": "924a3834c3d7aa9e2e475289fab22d90e5b093008f814dbfa4dcefaec70a9504",
+        "http_status": 200
+      },
+      "restart": "ready",
+      "result_ids": {
+        "file_id": "4ab32816045a6761ee8d2f6f9ecb50c8",
+        "processing_job_id": "ac5221f9dcc52d4a54bbfead1869b1ca",
+        "version_id": "ed7d547f4b38444f1f97906062846bf7"
+      },
+      "round": 20,
+      "singleton_graph": {
+        "completed_bindings": 1,
+        "files": 1,
+        "processing_jobs": 2,
+        "target_versions": 1,
+        "upload_tasks": 1,
+        "versions": 2
+      },
+      "status": "pass",
+      "task_state_after_restart": "completed"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+HTTP=9/9; assertions=44; interruption=20/20; assertions=305; migrations_excluded=10
+fault_distribution=4/4/4/3/3/2; exact_round_sequence_and_sha256=20; graph_and_publication_checks=20
+source_manifest_verified=124; post_build_binary_hashes_unchanged=3; invocation_identical=true
+missing_private_socket_guard=expected_exit1; no_test_service_started_by_guard=true
+final_local_document_links_verified=255
