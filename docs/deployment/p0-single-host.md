@@ -165,3 +165,8 @@ T-01–T-20及30项业务任务统计见[验收索引](../evidence/m5/acceptance
 包含自签证书校验、登录Cookie/Origin、分片上传、下载/Range及内部路由遮蔽。
 搜索/Agent两端只用本地接收器确认分流；不替代真实网关、编码、外部域名/CA、
 systemd整体启动或生产上线验证。该测试不安装代理服务，不读取已有DeepSeek key。
+
+随后[HTTPS真实网关组合](../evidence/m5/tls-gateways/README.md)接入真实搜索/Agent服务类、
+stdio MCP及解析worker，单次1/1场景通过；固定引用、重复执行与撤销批准拦截已有证据。
+仅模型HTTP transport为本地替代，实际encoder缺席并验证关键词降级；
+仍不代表各CLI常驻安装、真实Hybrid、真实模型、归档确认或完整部署演示通过。

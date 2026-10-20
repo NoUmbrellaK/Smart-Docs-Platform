@@ -1,0 +1,27 @@
+{
+  "baseline": "adc5092",
+  "date": "2026-10-21",
+  "case": "tls-real-gateways",
+  "attempts": 1,
+  "passed_scenarios": 1,
+  "failed_scenarios": 0,
+  "skipped_scenarios": 0,
+  "check_groups": 3,
+  "mock_provider_responses": 4,
+  "remote_model_calls": 0,
+  "retrieval": "keyword_only",
+  "local_embeddings": "not_run",
+  "production_deployment": "not_run",
+  "fixed_business_tasks_completed": 0,
+  "proxy_regression": {
+    "attempts": 1,
+    "passed_scenarios": 1,
+    "failed_scenarios": 0,
+    "check_groups": 6,
+    "uploaded_bytes": 78000,
+    "remote_model_calls": 0,
+    "gateway_business": "not_run"
+  },
+  "gateways_test_sha256": "ebd9000655104d6c5703c026db0f97c6d73c57106c3dd3c6079bbe36023a0a80",
+  "proxy_test_sha256": "9594544bf9cf06bff5b34038478efb98b8f7636fc1fee6a1100228e52e8da852"
+}

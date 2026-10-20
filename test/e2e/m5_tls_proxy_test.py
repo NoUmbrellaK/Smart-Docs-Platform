@@ -21,9 +21,10 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class TLSClient(HttpClient):
-    def __init__(self, port, certificate):
+    def __init__(self, port, certificate, *, timeout=10):
         super().__init__(port)
         self.context = ssl.create_default_context(cafile=str(certificate))
+        self.timeout = timeout
 
     def request(self, method, path, body=None, headers=None):
         headers = dict(headers or {})
@@ -36,7 +37,7 @@ class TLSClient(HttpClient):
             body = json.dumps(body).encode()
             headers.setdefault("Content-Type", "application/json")
         connection = http.client.HTTPSConnection(
-            "127.0.0.1", self.port, context=self.context, timeout=10)
+            "127.0.0.1", self.port, context=self.context, timeout=self.timeout)
         try:
             connection.request(method, path, body, headers)
             raw = connection.getresponse()

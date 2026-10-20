@@ -1,0 +1,89 @@
+c4f821112afbf433b5aa2babc470d51b07da2354256667c8689a68bdcff1e8b3  python/smartdocs/__init__.py
+8bc28a204caa462e87940c173d65ee8ac8382ace9ecbd4de980ab63fc76a14a0  python/smartdocs/agent_cli.py
+a5b8c2a094cdc29673b798dc62da7e0305f362e83a0fadd10ac6ac12848f2ab5  python/smartdocs/agent_http.py
+acdba33460ccf266a0e67cbb02a051d7d14dceb542e472634215f2cf66d4e760  python/smartdocs/agent_runner.py
+7976ffc44df13a3c26e054ecae97a024a5c82e11c89e6a73b6eb4423ead163c3  python/smartdocs/audit_summary.py
+b924288f5539c5a3287e71205594f47deb7026db6dfb7669ede073450908c9ba  python/smartdocs/deepseek.py
+19696be235ec8695068097bed6b730171b627b71e7bec6e01b19aeff068fb94b  python/smartdocs/embedding_service.py
+5dfaf6bf2f4b0c2b63fdb075c4d222a20f5f6191c94a8087b5a9853e8b95ba8f  python/smartdocs/embeddings.py
+ae010be5e53010885ed7e3d42ced2729169e5427099e9b0c3d74a669d181aaaf  python/smartdocs/mcp_read.py
+bdcaadf09980d7742ec55e4107d059ad088ab9f84f17e252eb050b44cd63dd21  python/smartdocs/pdf_parser.py
+c0342d991b6397a6d80917e06539a898402a1ef852a3cba2bef55317667544e2  python/smartdocs/pdf_worker.py
+224a866b94b6d5a4a8f3e0c80902d8809b7a2f1715698ee3ff29356990048a46  python/smartdocs/resident_embeddings.py
+9e9896bd1743d62479e195b9fabb8a96fc43e07d1f512ad6250680175c3b1710  python/smartdocs/resident_service.py
+410f75e9ff69e08653e13f97e67bdd66ed463988b8d56164d1c574a54dede802  python/smartdocs/search.py
+7f35e7fb55a4d14dc3dcbe8bdc8686687e33cd5043eb9be503cff669bc9a4524  python/smartdocs/search_http.py
+7c760e01d1ec7c32feb77d079e7e53094d58430026300a667842fe79ae06861a  python/smartdocs/text_parser.py
+97ef8370896ad7029abef8c64e1954725a70a902f72389525a5c66bc30388a15  python/smartdocs/vector_worker.py
+5042b089c042872a3757d99fcabc8adc9e9a87db9c8ffcd3c2c3bb7ffc5cca5d  python/smartdocs/worker.py
+caf6748b0af125c21c868cc0c9f59d98c15c0812804a75bf22b1b068ba8def34  test/e2e/m2_embeddings_test.py
+6981bfa618094298ec7b842a7e51ebe23287d6eafd56fbeda019bda959e4e794  test/e2e/m2_resident_embeddings_test.py
+4eaebbc693facd57958d9af0db1582b74a713fcf807449b567cdda542c0a4e03  test/e2e/m2_resident_recovery_test.py
+9af8f4b8bf2538ae868b8620b3f9b5f8e2ba420acdf1b8d851b8f08517927c13  test/e2e/m2_resident_service_test.py
+2ea624656de6fb73b93e04c97bdba9afbfebb35bf56be3c70570aa5e46a509aa  test/e2e/m2_search_version_test.py
+8986dfef8c086df93d38691002f7fe3e8d1ff00e56a475290320600ade09b41a  test/e2e/m2_sources_browser_test.py
+f9e0a4b50d60aff7f3f802d062d182cdfc60e62b768e54f7bf65fae246895534  test/e2e/m2_vector_worker_test.py
+4fffa93abf1de58308a170ef00ae8c67e52924404871cd41cbd6e0f89e1ab3f8  test/e2e/m2_worker_test.py
+4e75017fdefad9251ba6e6543f48f2313727ab8d1372b6bddf11a6ff3ff998f2  test/e2e/m3_agent_browser_test.py
+5271936e2b763c3471e666f68db2fba2fc1c149d9c9bce64c79e731acbeccf12  test/e2e/m3_agent_http_test.py
+6d1c8bf2454eeff2a52b46e1c8792cd89ad456f73bcac79be9201f93699cd297  test/e2e/m3_archive_agent_test.py
+0757a06e4ca10d81d402fc7a9e48cf18dbeeeb02d1e7a3bb6415f5d366b440c4  test/e2e/m3_archive_execution_test.py
+a75e34ce68019207bd755e03e21dc5bda26d4162af149bd2c16924f3631d29ff  test/e2e/m3_archive_mcp_test.py
+30fe16ef5b00ff07fecf409a0752e9dd41c782dde815d222f1148f5dd951c06a  test/e2e/m3_archive_preview_test.py
+5d2f8faff4078731884311025bc6e1c343e6256fc93028a8095277ee52082126  test/e2e/m3_archive_resume_test.py
+1687acbbd698e42b8ff4ffcbcf8a7dff097581ff67826a818702fd39643c4f23  test/e2e/m3_backup_restore_test.py
+ce7048199cb9aebd1c4098a0fe3502650898929c4c65cf8b495e011922dd4471  test/e2e/m3_deepseek_test.py
+4cb4a58fcc63d84ac2528b2f46d539f9c6b545249fc28de8c32d9e757b6511de  test/e2e/m3_directory_browser_test.py
+e69e0a05bf746c172267108b36746e5df4ab600aa2c9c0c6d41a5eb725c38016  test/e2e/m3_execute_browser_test.py
+58f98ba4c1a3f0afd13eef901b96c28eca18e82321c7013dd0a54431a0806dc6  test/e2e/m3_fixed_inputs_test.py
+e5f71aee84d71ec7b9e9060fb2210a6af7ea19dc9aa251865af59b3911f416f1  test/e2e/m3_handover_checklist_test.py
+2386f7699727cd7f132c62f4a6a672f63dc009aa2a9d4280f03d862fbf8b5232  test/e2e/m3_handover_context_test.py
+3068c42aab7ec24f28501776f2268594d5e594b687816f33fd5ed728438037c7  test/e2e/m3_handover_report_test.py
+62d835998972bf75c8c96d186bb5721e885aaae4b03225d8f12e9f75aff5bdc8  test/e2e/m3_hybrid_test.py
+e10cd89688137dde82756df10ecfce916dc34119ef4da36f602fb62747caf427  test/e2e/m3_injection_boundary_test.py
+f31c3631701d49af1e361117dd7666bc3406b5df160f86295836eacf790d506d  test/e2e/m3_mcp_contract_matrix_test.py
+89e6e246e458025586d485f10e749b47760f64a276597608f332586742d8c8b3  test/e2e/m3_mcp_read_test.py
+13f2a2a30ead0357c8a86b2a31aadade488fc2f09b5f75affa2e1f9548e81c27  test/e2e/m3_model_sources_test.py
+9493332652602eced0b9ef031befca751ba7531cf3ecfbd4e23e283ba013d4b1  test/e2e/m3_report_browser_test.py
+3cd1f8fa51212b970e0e4409c560342cf98b363b1c54de466430ce2ee0e90ce6  test/e2e/m3_report_mcp_test.py
+02701791d60f2efaede43a519e0c7a85b18f72672355b70e47ad2f649b86e6d7  test/e2e/m3_settings_browser_test.py
+e036ee297e840189f8994fedbd2b5ba108bf8f64d5910b0f1a3e22b691a95fec  test/e2e/m3_task_list_test.py
+7043bd3a1fae0f568e2f8b19eae04d42e386a2498e91dc0325809d571b41a93f  test/e2e/m3_task_mode_browser_test.py
+ac5f78137e4a8913388f89991851333095fc0c3d08e986aa859dae45d1c92ceb  test/e2e/m3_tool_audit_test.py
+1bf35647e5a749b4f772d48e81280a36d5e5b636e0be49b0be3bf3272e3cd6cf  test/e2e/m3_tool_timeout_test.py
+e9d6dfe650a7e7245eb57105a18965650a26f00cd9bcc750376e8cb228812161  test/e2e/m3_write_audit_browser_test.py
+dc15f114f419a685ebf0d3138828b640ab2d6d19cb9726d016af32f494c8518a  test/e2e/m3_write_tool_audit_test.py
+ebd9000655104d6c5703c026db0f97c6d73c57106c3dd3c6079bbe36023a0a80  test/e2e/m5_tls_gateways_test.py
+9594544bf9cf06bff5b34038478efb98b8f7636fc1fee6a1100228e52e8da852  test/e2e/m5_tls_proxy_test.py
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+70c002df0571675ada1eab1562a37c745d10b08d53b37d4a280bb230ed772baf  /tmp/smartdocs-nginx.DnOIv2/unpacked/usr/sbin/nginx
+RuntimeMaxUSec=10min
+MainPID=977740
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+TasksCurrent=33
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1264         127           3        2102        1960
+Swap:              0           0           0
