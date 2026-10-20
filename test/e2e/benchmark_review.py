@@ -26,6 +26,8 @@ def digest(value):
 
 def prepare(source):
     require(isinstance(source, dict))
+    if 'capture' in source:
+        require(isinstance(source['capture'], dict) and source['capture'].get('complete') is True)
     manifest = json.loads((FIXTURES / 'tasks.json').read_text())
     case = next((case for case in manifest['tasks'] if case['id'] == source.get('case_id')), None)
     require(case is not None)

@@ -1,0 +1,26 @@
+Read-only observation while smartdocs-m5-capture-final.service was running.
+The later smartdocs-m5-capture-verified invocation used the same resource/network arguments.
+RuntimeMaxUSec=15min
+MainPID=947198
+Slice=smartdocsvectorcheck.slice
+TasksCurrent=20
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+mysql=active

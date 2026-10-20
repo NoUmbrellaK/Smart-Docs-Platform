@@ -1,0 +1,36 @@
+Oct 20 22:27:16 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_capture_test.py.
+Oct 20 22:27:17 aliyun-lou test-with-mysql.sh[945919]: 2026-10-20T14:27:17.260326Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 945919
+Oct 20 22:27:17 aliyun-lou test-with-mysql.sh[945919]: 2026-10-20T14:27:17.265319Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 22:27:32 aliyun-lou test-with-mysql.sh[945919]: 2026-10-20T14:27:32.476725Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 22:27:40 aliyun-lou test-with-mysql.sh[945919]: 2026-10-20T14:27:40.909856Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 22:28:29 aliyun-lou test-with-mysql.sh[946368]: schema_version=16
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:28:58 aliyun-lou test-with-mysql.sh[946581]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:29:00 aliyun-lou test-with-mysql.sh[946682]: test_capture_admission_rejection_preserves_absent_execution (__main__.CaptureE2E) ... ok
+Oct 20 22:29:02 aliyun-lou test-with-mysql.sh[946682]: test_capture_answer_retains_actual_original_and_duplicate_denominator (__main__.CaptureE2E) ... FAIL
+Oct 20 22:29:03 aliyun-lou test-with-mysql.sh[946682]: test_capture_archive_preview_never_confirms_or_moves (__main__.CaptureE2E) ... ok
+Oct 20 22:29:05 aliyun-lou test-with-mysql.sh[946682]: test_capture_failed_run_keeps_failure_not_a_synthetic_answer (__main__.CaptureE2E) ... ok
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: test_capture_report_and_dependency_revocation (__main__.CaptureE2E) ... ok
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: ======================================================================
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: FAIL: test_capture_answer_retains_actual_original_and_duplicate_denominator (__main__.CaptureE2E)
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: ----------------------------------------------------------------------
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: Traceback (most recent call last):
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_capture_test.py", line 44, in test_capture_answer_retains_actual_original_and_duplicate_denominator
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]:     data(actor.request('POST', path + '/run/finish', {'status': 'completed',
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_http_test.py", line 193, in data
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]:     raise AssertionError(f"expected HTTP {status}, got {response.status}: {detail}")
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: AssertionError: expected HTTP 200, got 400: {'error': {'code': 'invalid_source', 'message': 'source is invalid', 'retryable': False}, 'request_id': '7e564f51511e5d0eec47ef701bcb04c5'}
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: ----------------------------------------------------------------------
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: Ran 5 tests in 10.168s
+Oct 20 22:29:08 aliyun-lou test-with-mysql.sh[946682]: FAILED (failures=1)
+Oct 20 22:29:13 aliyun-lou systemd[1]: smartdocs-m5-capture-http.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 22:29:13 aliyun-lou systemd[1]: smartdocs-m5-capture-http.service: Failed with result 'exit-code'.
+Oct 20 22:29:13 aliyun-lou systemd[1]: smartdocs-m5-capture-http.service: Consumed 8.559s CPU time.

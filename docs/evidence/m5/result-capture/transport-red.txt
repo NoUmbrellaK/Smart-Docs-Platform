@@ -1,0 +1,27 @@
+Oct 20 22:29:46 aliyun-lou systemd[1]: Started /usr/bin/python3 -B -m unittest discover -s test/python -p test_benchmark_capture.py -v.
+Oct 20 22:29:46 aliyun-lou python3[946819]: test_failure_and_changed_reads_cannot_be_reviewed_as_complete (test_benchmark_capture.BenchmarkCaptureTest) ... test_path_validation_does_not_follow_supplied_urls (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Oct 20 22:29:46 aliyun-lou python3[946819]: test_preserves_result_and_sources_without_credentials_or_auto_grading (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Oct 20 22:29:46 aliyun-lou python3[946819]: test_private_exclusive_output_and_size_bound (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Oct 20 22:29:46 aliyun-lou python3[946819]: test_rejected_admission_does_not_issue_requests_or_create_a_run (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Oct 20 22:29:46 aliyun-lou python3[946819]: ======================================================================
+Oct 20 22:29:46 aliyun-lou python3[946819]: ERROR: test_failure_and_changed_reads_cannot_be_reviewed_as_complete (test_benchmark_capture.BenchmarkCaptureTest) (failure='incomplete-body')
+Oct 20 22:29:46 aliyun-lou python3[946819]: ----------------------------------------------------------------------
+Oct 20 22:29:46 aliyun-lou python3[946819]: Traceback (most recent call last):
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 95, in test_failure_and_changed_reads_cannot_be_reviewed_as_complete
+Oct 20 22:29:46 aliyun-lou python3[946819]:     result = self.capture()
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 71, in capture
+Oct 20 22:29:46 aliyun-lou python3[946819]:     return self.tool.capture('Q01', self.prepared, META, run_kind='transport_fixture')
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_capture.py", line 58, in capture
+Oct 20 22:29:46 aliyun-lou python3[946819]:     state = result['task'] = first(path)
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_capture.py", line 53, in first
+Oct 20 22:29:46 aliyun-lou python3[946819]:     value = read(url)
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_capture.py", line 45, in read
+Oct 20 22:29:46 aliyun-lou python3[946819]:     response = prepared['actor'].request('GET', url)
+Oct 20 22:29:46 aliyun-lou python3[946819]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 51, in request
+Oct 20 22:29:46 aliyun-lou python3[946819]:     raise http.client.IncompleteRead(b'SECRET RESPONSE BODY')
+Oct 20 22:29:46 aliyun-lou python3[946819]: http.client.IncompleteRead: IncompleteRead(20 bytes read)
+Oct 20 22:29:46 aliyun-lou python3[946819]: ----------------------------------------------------------------------
+Oct 20 22:29:46 aliyun-lou python3[946819]: Ran 5 tests in 0.030s
+Oct 20 22:29:46 aliyun-lou python3[946819]: FAILED (errors=1)
+Oct 20 22:29:46 aliyun-lou systemd[1]: smartdocs-m5-capture-boundary-red.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 22:29:46 aliyun-lou systemd[1]: smartdocs-m5-capture-boundary-red.service: Failed with result 'exit-code'.

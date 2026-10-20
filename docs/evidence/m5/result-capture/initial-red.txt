@@ -1,0 +1,46 @@
+Oct 20 22:24:25 aliyun-lou systemd[1]: Started /usr/bin/python3 -B -m unittest discover -s test/python -p test_benchmark_capture.py -v.
+Oct 20 22:24:25 aliyun-lou python3[945348]: test_failure_and_changed_reads_cannot_be_reviewed_as_complete (test_benchmark_capture.BenchmarkCaptureTest) ... FAIL
+Oct 20 22:24:25 aliyun-lou python3[945348]: test_path_validation_does_not_follow_supplied_urls (test_benchmark_capture.BenchmarkCaptureTest) ... FAIL
+Oct 20 22:24:25 aliyun-lou python3[945348]: test_preserves_result_and_sources_without_credentials_or_auto_grading (test_benchmark_capture.BenchmarkCaptureTest) ... FAIL
+Oct 20 22:24:25 aliyun-lou python3[945348]: test_private_exclusive_output_and_size_bound (test_benchmark_capture.BenchmarkCaptureTest) ... FAIL
+Oct 20 22:24:25 aliyun-lou python3[945348]: test_rejected_admission_does_not_issue_requests_or_create_a_run (test_benchmark_capture.BenchmarkCaptureTest) ... FAIL
+Oct 20 22:24:25 aliyun-lou python3[945348]: ======================================================================
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAIL: test_failure_and_changed_reads_cannot_be_reviewed_as_complete (test_benchmark_capture.BenchmarkCaptureTest)
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Traceback (most recent call last):
+Oct 20 22:24:25 aliyun-lou python3[945348]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 58, in setUp
+Oct 20 22:24:25 aliyun-lou python3[945348]:     self.assertTrue(script.is_file(), 'read-only result collector not implemented')
+Oct 20 22:24:25 aliyun-lou python3[945348]: AssertionError: False is not true : read-only result collector not implemented
+Oct 20 22:24:25 aliyun-lou python3[945348]: ======================================================================
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAIL: test_path_validation_does_not_follow_supplied_urls (test_benchmark_capture.BenchmarkCaptureTest)
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Traceback (most recent call last):
+Oct 20 22:24:25 aliyun-lou python3[945348]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 58, in setUp
+Oct 20 22:24:25 aliyun-lou python3[945348]:     self.assertTrue(script.is_file(), 'read-only result collector not implemented')
+Oct 20 22:24:25 aliyun-lou python3[945348]: AssertionError: False is not true : read-only result collector not implemented
+Oct 20 22:24:25 aliyun-lou python3[945348]: ======================================================================
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAIL: test_preserves_result_and_sources_without_credentials_or_auto_grading (test_benchmark_capture.BenchmarkCaptureTest)
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Traceback (most recent call last):
+Oct 20 22:24:25 aliyun-lou python3[945348]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 58, in setUp
+Oct 20 22:24:25 aliyun-lou python3[945348]:     self.assertTrue(script.is_file(), 'read-only result collector not implemented')
+Oct 20 22:24:25 aliyun-lou python3[945348]: AssertionError: False is not true : read-only result collector not implemented
+Oct 20 22:24:25 aliyun-lou python3[945348]: ======================================================================
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAIL: test_private_exclusive_output_and_size_bound (test_benchmark_capture.BenchmarkCaptureTest)
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Traceback (most recent call last):
+Oct 20 22:24:25 aliyun-lou python3[945348]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 58, in setUp
+Oct 20 22:24:25 aliyun-lou python3[945348]:     self.assertTrue(script.is_file(), 'read-only result collector not implemented')
+Oct 20 22:24:25 aliyun-lou python3[945348]: AssertionError: False is not true : read-only result collector not implemented
+Oct 20 22:24:25 aliyun-lou python3[945348]: ======================================================================
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAIL: test_rejected_admission_does_not_issue_requests_or_create_a_run (test_benchmark_capture.BenchmarkCaptureTest)
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Traceback (most recent call last):
+Oct 20 22:24:25 aliyun-lou python3[945348]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_benchmark_capture.py", line 58, in setUp
+Oct 20 22:24:25 aliyun-lou python3[945348]:     self.assertTrue(script.is_file(), 'read-only result collector not implemented')
+Oct 20 22:24:25 aliyun-lou python3[945348]: AssertionError: False is not true : read-only result collector not implemented
+Oct 20 22:24:25 aliyun-lou python3[945348]: ----------------------------------------------------------------------
+Oct 20 22:24:25 aliyun-lou python3[945348]: Ran 5 tests in 0.002s
+Oct 20 22:24:25 aliyun-lou python3[945348]: FAILED (failures=5)
+Oct 20 22:24:25 aliyun-lou systemd[1]: smartdocs-m5-capture-red.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 22:24:25 aliyun-lou systemd[1]: smartdocs-m5-capture-red.service: Failed with result 'exit-code'.

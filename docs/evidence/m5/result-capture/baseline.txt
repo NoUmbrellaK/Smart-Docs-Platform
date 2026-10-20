@@ -1,0 +1,13 @@
+Oct 20 22:19:26 aliyun-lou systemd[1]: Started /usr/bin/python3 -B -m unittest discover -s test/python -p test_benchmark_review.py -v.
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_cli_private_exclusive_files_no_raw_output_and_strict_json (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_empty_citations_and_denied_admission_remain_explicit (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_incomplete_or_inconsistent_assessment_cannot_be_business_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_missing_report_and_removed_changed_or_reordered_rows_are_rejected (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_prepare_preserves_every_occurrence_without_semantic_auto_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_report_receipt_mismatch_cannot_replace_actual_citation_denominator (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids (test_benchmark_review.BenchmarkReviewTest) ... ok
+Oct 20 22:19:26 aliyun-lou python3[944942]: ----------------------------------------------------------------------
+Oct 20 22:19:26 aliyun-lou python3[944942]: Ran 8 tests in 0.251s
+Oct 20 22:19:26 aliyun-lou python3[944942]: OK
+Oct 20 22:19:27 aliyun-lou systemd[1]: smartdocs-m5-capture-baseline.service: Deactivated successfully.

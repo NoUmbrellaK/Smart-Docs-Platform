@@ -1,0 +1,33 @@
+RuntimeMaxUSec=infinity
+MainPID=0
+Result=success
+ExecMainStatus=0
+Slice=
+TasksCurrent=[not set]
+IPAddressAllow=
+IPAddressDeny=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+KillMode=control-group
+ActiveState=inactive
+SubState=dead
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+active
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
