@@ -1,0 +1,7 @@
+source_head=1b2b20fadac3c0143e33097e486b74e45b37606e
+source_unique_TEST_CASE=161
+group_1: selected=81; exact_order_PASS=81; one_case_results=81; failed=0; skipped=0; migration_PASS_excluded=10; terminal=success
+group_2: selected=80; exact_order_PASS=80; one_case_results=80; failed=0; skipped=0; migration_PASS_excluded=10; terminal=success
+exact_source_union=161; duplicate_CPP_PASS=0; substring_collisions=0; total_migration_PASS_excluded=20
+all_three_safe_binary_hashes_unchanged=true
+current_worktree_manifest_sha256_verified=150; selection_inputs_identical=true

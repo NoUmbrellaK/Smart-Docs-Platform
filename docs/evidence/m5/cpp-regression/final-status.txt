@@ -1,0 +1,25 @@
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m5-cpp-group1.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=smartdocs-m5-cpp-group2.service
+ActiveState=inactive
+SubState=dead
+active
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1136         385           3        1972        2089
+Swap:              0           0           0
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+9584468edf20b090773a9efb55820a36a537c42c00312ff0543d139406b28491  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs_tests
+no_nobody_mysqld=true
+test_unit_cgroups_removed=true

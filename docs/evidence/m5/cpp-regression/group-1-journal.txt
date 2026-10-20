@@ -1,0 +1,180 @@
+Oct 20 22:51:03 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /bin/bash -c set -eu; while IFS= read -r case_name; do stdbuf -oL -eL bin/smartdocs_tests "--filter=$case_name" || exit "$?"; done < /tmp/smartdocs-m5-cpp-group-1-selection.txt.
+Oct 20 22:51:04 aliyun-lou test-with-mysql.sh[950704]: 2026-10-20T14:51:04.293737Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 950704
+Oct 20 22:51:04 aliyun-lou test-with-mysql.sh[950704]: 2026-10-20T14:51:04.298974Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 22:51:19 aliyun-lou test-with-mysql.sh[950704]: 2026-10-20T14:51:19.534014Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 22:51:28 aliyun-lou test-with-mysql.sh[950704]: 2026-10-20T14:51:28.342947Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 22:52:17 aliyun-lou test-with-mysql.sh[951027]: schema_version=16
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:52:45 aliyun-lou test-with-mysql.sh[951093]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:52:46 aliyun-lou test-with-mysql.sh[951230]: PASS agent_sources_only_fixed_positions_deduplicate_and_ignore_embedded_instructions
+Oct 20 22:52:46 aliyun-lou test-with-mysql.sh[951230]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951231]: PASS auth_project_membership_is_project_scoped_and_directories_are_checked
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951231]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951236]: PASS authorization_role_matrix_is_explicit
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951236]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951237]: PASS binary_body_preserves_crlf_and_zero_bytes
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951237]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951238]: PASS config_accepts_private_mysql_socket
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951238]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951239]: PASS config_rejects_missing_mysql_password
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951239]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951240]: PASS config_uses_documented_defaults
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951240]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951241]: PASS config_worker_rejects_weak_or_malformed_credentials
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951241]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951242]: PASS document_result_accepts_python_identity_and_unicode_locations
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951242]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951243]: PASS document_result_contiguous_chunks_preserve_newlines_and_four_byte_unicode
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951243]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951244]: PASS document_result_pdf_requires_complete_explicit_page_coverage
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951244]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951245]: PASS document_result_rejects_forged_identity_types_counts_and_locations
+Oct 20 22:53:00 aliyun-lou test-with-mysql.sh[951245]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:14 aliyun-lou test-with-mysql.sh[951246]: PASS file_download_authorizes_and_rejects_deleted_files_before_object_open
+Oct 20 22:53:14 aliyun-lou test-with-mysql.sh[951246]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:28 aliyun-lou test-with-mysql.sh[951248]: PASS file_download_http_serves_ranges_safe_disposition_pdf_and_errors
+Oct 20 22:53:28 aliyun-lou test-with-mysql.sh[951248]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:42 aliyun-lou test-with-mysql.sh[951252]: PASS file_metadata_http_routes_expose_lists_and_protected_content
+Oct 20 22:53:42 aliyun-lou test-with-mysql.sh[951252]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:53:55 aliyun-lou test-with-mysql.sh[951253]: PASS file_metadata_versions_open_only_the_exact_authorized_object
+Oct 20 22:53:55 aliyun-lou test-with-mysql.sh[951253]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951255]: PASS file_mutation_http_routes_enforce_origin_json_limit_and_audit_request_id
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951255]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951258]: PASS file_store_detects_part_order_size_and_digest_mismatches
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951258]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951259]: PASS file_store_streams_parts_into_an_immutable_object
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951259]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951260]: PASS http_connection_bounds_et_reads_and_rearms_queued_bytes
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951260]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951261]: PASS http_connection_reports_not_ready_before_database_bootstrap
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951261]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951262]: PASS http_connection_streams_only_the_allowlisted_static_shell
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951262]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951263]: PASS http_response_file_serializes_headers_without_buffering_file
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951263]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951264]: PASS http_response_move_assignment_closes_replaced_descriptor_once
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951264]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951265]: PASS ids_are_lower_hex_and_unique
+Oct 20 22:54:08 aliyun-lou test-with-mysql.sh[951265]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:21 aliyun-lou test-with-mysql.sh[951266]: PASS m3_range_rejects_invalid_bounds_and_never_claims_pending_is_empty
+Oct 20 22:54:21 aliyun-lou test-with-mysql.sh[951266]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:35 aliyun-lou test-with-mysql.sh[951268]: PASS m3_remote_metadata_discovers_approved_unparsed_and_does_not_inherit_approval
+Oct 20 22:54:35 aliyun-lou test-with-mysql.sh[951268]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:54:48 aliyun-lou test-with-mysql.sh[951271]: PASS m3_remote_routes_reuse_membership_project_delete_and_origin_checks
+Oct 20 22:54:48 aliyun-lou test-with-mysql.sh[951271]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:55:02 aliyun-lou test-with-mysql.sh[951296]: PASS m3_remote_search_is_bounded_paginated_and_cannot_accept_identity_or_bypass
+Oct 20 22:55:02 aliyun-lou test-with-mysql.sh[951296]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:55:16 aliyun-lou test-with-mysql.sh[951360]: PASS m3_run_checks_all_dependencies_before_first_and_later_model_calls
+Oct 20 22:55:16 aliyun-lou test-with-mysql.sh[951360]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:55:31 aliyun-lou test-with-mysql.sh[951399]: PASS m3_run_model_budget_deadline_cancel_and_restart_block_late_results
+Oct 20 22:55:31 aliyun-lou test-with-mysql.sh[951399]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:55:48 aliyun-lou test-with-mysql.sh[951400]: PASS m3_task_caps_active_work_and_restart_never_claims_completion
+Oct 20 22:55:48 aliyun-lou test-with-mysql.sh[951400]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951407]: PASS m3_task_requires_real_confirmation_exact_scope_and_owner
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951407]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951428]: PASS mysql_application_is_ready_with_schema_and_secure_storage
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951428]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951429]: PASS mysql_application_rejects_symlink_storage_root_at_startup
+Oct 20 22:56:01 aliyun-lou test-with-mysql.sh[951429]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:02 aliyun-lou test-with-mysql.sh[951430]: PASS mysql_pool_connection_failure_does_not_publish_null_handles
+Oct 20 22:56:02 aliyun-lou test-with-mysql.sh[951430]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:14 aliyun-lou test-with-mysql.sh[951431]: PASS mysql_schema_allows_zero_part_upload_tasks
+Oct 20 22:56:14 aliyun-lou test-with-mysql.sh[951431]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:28 aliyun-lou test-with-mysql.sh[951437]: PASS mysql_schema_rejects_duplicate_upload_part_number
+Oct 20 22:56:28 aliyun-lou test-with-mysql.sh[951437]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:28 aliyun-lou test-with-mysql.sh[951460]: PASS mysql_schema_version_is_sixteen
+Oct 20 22:56:28 aliyun-lou test-with-mysql.sh[951460]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:41 aliyun-lou test-with-mysql.sh[951461]: PASS mysql_transaction_rolls_back_without_commit
+Oct 20 22:56:41 aliyun-lou test-with-mysql.sh[951461]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:41 aliyun-lou test-with-mysql.sh[951479]: PASS password_verification_rejects_wrong_password
+Oct 20 22:56:41 aliyun-lou test-with-mysql.sh[951479]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:56:54 aliyun-lou test-with-mysql.sh[951480]: PASS processing_attempts_are_fenced_across_restart_retry_and_cancel
+Oct 20 22:56:54 aliyun-lou test-with-mysql.sh[951480]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:57:13 aliyun-lou test-with-mysql.sh[951482]: PASS processing_concurrent_enqueue_cannot_overfill_queue
+Oct 20 22:57:13 aliyun-lou test-with-mysql.sh[951482]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:57:26 aliyun-lou test-with-mysql.sh[951487]: PASS processing_document_missing_chunk_is_not_a_source
+Oct 20 22:57:26 aliyun-lou test-with-mysql.sh[951487]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:57:40 aliyun-lou test-with-mysql.sh[951513]: PASS processing_document_vector_applicability_follows_exact_version_approval
+Oct 20 22:57:40 aliyun-lou test-with-mysql.sh[951513]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:57:53 aliyun-lou test-with-mysql.sh[951533]: PASS processing_http_reuses_project_roles_and_same_origin
+Oct 20 22:57:53 aliyun-lou test-with-mysql.sh[951533]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:58:07 aliyun-lou test-with-mysql.sh[951541]: PASS processing_hybrid_degrades_and_validates_query_vectors
+Oct 20 22:58:07 aliyun-lou test-with-mysql.sh[951541]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:58:21 aliyun-lou test-with-mysql.sh[951543]: PASS processing_hybrid_rechecks_revocation_and_vector_attempt_before_returning
+Oct 20 22:58:21 aliyun-lou test-with-mysql.sh[951543]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:59:02 aliyun-lou test-with-mysql.sh[951553]: PASS processing_hybrid_scan_limit_discards_vector_lane_without_silent_partial_scan
+Oct 20 22:59:02 aliyun-lou test-with-mysql.sh[951553]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:59:21 aliyun-lou test-with-mysql.sh[951578]: PASS processing_old_failure_does_not_change_new_version_state
+Oct 20 22:59:21 aliyun-lou test-with-mysql.sh[951578]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:59:35 aliyun-lou test-with-mysql.sh[951584]: PASS processing_publication_checks_authoritative_source_hash_and_size
+Oct 20 22:59:35 aliyun-lou test-with-mysql.sh[951584]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 22:59:49 aliyun-lou test-with-mysql.sh[951603]: PASS processing_publication_is_atomic_immutable_and_keyword_indexed
+Oct 20 22:59:49 aliyun-lou test-with-mysql.sh[951603]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:00:08 aliyun-lou test-with-mysql.sh[951604]: PASS processing_queue_capacity_preserves_file_and_reports_busy_failure
+Oct 20 23:00:08 aliyun-lou test-with-mysql.sh[951604]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:00:22 aliyun-lou test-with-mysql.sh[951607]: PASS processing_search_enforces_roles_input_limits_and_same_origin
+Oct 20 23:00:22 aliyun-lou test-with-mysql.sh[951607]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:00:37 aliyun-lou test-with-mysql.sh[951618]: PASS processing_search_keyword_returns_exact_sources_and_explicit_limits
+Oct 20 23:00:37 aliyun-lou test-with-mysql.sh[951618]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:00:51 aliyun-lou test-with-mysql.sh[951647]: PASS processing_search_metadata_discovers_unparsed_and_literal_names_with_pagination
+Oct 20 23:00:51 aliyun-lou test-with-mysql.sh[951647]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:01:32 aliyun-lou test-with-mysql.sh[951654]: PASS processing_stale_deleted_unavailable_jobs_are_not_claimed
+Oct 20 23:01:32 aliyun-lou test-with-mysql.sh[951654]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:01:45 aliyun-lou test-with-mysql.sh[951690]: PASS processing_vectors_reject_malformed_or_out_of_order_results_and_rollback_faults
+Oct 20 23:01:45 aliyun-lou test-with-mysql.sh[951690]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:01:59 aliyun-lou test-with-mysql.sh[951716]: PASS processing_vectors_revoke_reapprove_and_retry_fence_old_attempts
+Oct 20 23:01:59 aliyun-lou test-with-mysql.sh[951716]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:18 aliyun-lou test-with-mysql.sh[951717]: PASS processing_vectors_share_queue_capacity_and_bound_version_window_count
+Oct 20 23:02:18 aliyun-lou test-with-mysql.sh[951717]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951720]: PASS processing_worker_result_body_is_bounded_before_buffering
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951720]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951727]: PASS range_parses_closed_open_and_suffix_forms_with_clamping
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951727]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951728]: PASS range_rejects_every_multi_range_with_not_supported
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951728]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951729]: PASS request_connection_close_token_is_honored
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951729]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951730]: PASS router_does_not_treat_query_as_path
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951730]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951731]: PASS router_rejects_invalid_or_dangerous_path_segments
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951731]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951732]: PASS sha256_matches_known_vector
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951732]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951733]: PASS timer_callback_can_reuse_its_identifier
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951733]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951734]: PASS tokens_have_requested_random_byte_length
+Oct 20 23:02:31 aliyun-lou test-with-mysql.sh[951734]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:02:47 aliyun-lou test-with-mysql.sh[951735]: PASS upload_complete_http_response_replays_stable_result_ids
+Oct 20 23:02:47 aliyun-lou test-with-mysql.sh[951735]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:03:00 aliyun-lou test-with-mysql.sh[951755]: PASS upload_complete_rechecks_name_version_and_transaction_state
+Oct 20 23:03:00 aliyun-lou test-with-mysql.sh[951755]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:03:14 aliyun-lou test-with-mysql.sh[951759]: PASS upload_part_concurrent_identical_puts_create_one_confirmation
+Oct 20 23:03:14 aliyun-lou test-with-mysql.sh[951759]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:03:28 aliyun-lou test-with-mysql.sh[951764]: PASS upload_part_http_streams_and_replays_identical_content
+Oct 20 23:03:28 aliyun-lou test-with-mysql.sh[951764]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:03:40 aliyun-lou test-with-mysql.sh[951771]: PASS upload_recovery_accepts_completed_create_file_after_supported_mutation
+Oct 20 23:03:40 aliyun-lou test-with-mysql.sh[951771]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:03:54 aliyun-lou test-with-mysql.sh[951792]: PASS upload_recovery_keeps_committed_graph_and_marks_missing_object
+Oct 20 23:03:54 aliyun-lou test-with-mysql.sh[951792]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:07 aliyun-lou test-with-mysql.sh[951794]: PASS upload_recovery_locks_task_named_orphans_before_unlinking
+Oct 20 23:04:07 aliyun-lou test-with-mysql.sh[951794]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:21 aliyun-lou test-with-mysql.sh[951797]: PASS upload_recovery_rejects_completed_graph_that_mismatches_upload_intent
+Oct 20 23:04:21 aliyun-lou test-with-mysql.sh[951797]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951805]: PASS upload_recovery_runs_before_application_readiness_and_rejects_fault_env
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951805]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951826]: PASS upload_validation_rejects_invalid_digests_and_media_types
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951826]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951827]: PASS vector_result_counts_unicode_codepoints_not_bytes
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951827]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951828]: PASS webserver_sets_status_flags_nonblocking
+Oct 20 23:04:34 aliyun-lou test-with-mysql.sh[951828]: RESULT 1 passed, 0 failed, 0 skipped
+Oct 20 23:04:38 aliyun-lou systemd[1]: smartdocs-m5-cpp-group1.service: Deactivated successfully.
+Oct 20 23:04:38 aliyun-lou systemd[1]: smartdocs-m5-cpp-group1.service: Consumed 33.428s CPU time.

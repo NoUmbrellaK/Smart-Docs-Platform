@@ -1,0 +1,5 @@
+Oct 20 22:50:35 aliyun-lou systemd[1]: Started /usr/bin/make -j1 bin/server bin/smartdocs-admin bin/smartdocs_tests.
+Oct 20 22:50:35 aliyun-lou make[950657]: make: 'bin/server' is up to date.
+Oct 20 22:50:35 aliyun-lou make[950657]: make: 'bin/smartdocs-admin' is up to date.
+Oct 20 22:50:35 aliyun-lou make[950657]: make: 'bin/smartdocs_tests' is up to date.
+Oct 20 22:50:35 aliyun-lou systemd[1]: smartdocs-m5-cpp-build.service: Deactivated successfully.
