@@ -1,0 +1,11 @@
+5c24e0309b99975b31f9bb8d8ecd0b0edd93cc99ecca35aeb7fd91c7e9dc0073  test/e2e/m5_systemd_units_test.py
+f3c502ef8e143d1d3040a3d1f6c1cdfdd5d0735a3e656275484de4fa17074a0c  docs/deployment/m1-single-host.md
+980cd168b182aea8243409c97465aa12f3c5cec3058fd4aed7ce393c729bdbc2  docs/deployment/m2-local-worker.md
+41d81ea4b380acde9ef5701a3954c67091059d79640277adca982fb7f01034ef  docs/deployment/m2-vector-worker.md
+dfa32cbe26077f76be354b0da5ad28d7e932188d4d241cb7923593525e18c62e  docs/deployment/m2-hybrid-search.md
+ff987ead8725924521032d553d9e3bf9ad5c385b58f61223947600fe73b65c76  docs/api/m3-agent-http.md
+TasksCurrent=0
+active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1207         972           3        1315        2018
+Swap:              0           0           0
