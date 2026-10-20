@@ -1,0 +1,54 @@
+2026-10-21T00:20:48+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/benchmark_cli.py --case Q08 --admission-only --output /tmp/smartdocs-m5-admission.t8qMSb/Q08 --code-revision 113f94e1453db92c0685d2777951b3e48308c7ee --environment Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only --max-calls 1 --hold-seconds 0.
+2026-10-21T00:20:49+0800 aliyun-lou bash[967154]: 2026-10-20T16:20:49.093163Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 967154
+2026-10-21T00:20:49+0800 aliyun-lou bash[967154]: 2026-10-20T16:20:49.191159Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T00:21:04+0800 aliyun-lou bash[967154]: 2026-10-20T16:21:04.403955Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T00:21:12+0800 aliyun-lou bash[967154]: 2026-10-20T16:21:12.093695Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T00:21:57+0800 aliyun-lou bash[967317]: schema_version=16
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T00:22:26+0800 aliyun-lou bash[967405]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T00:22:29+0800 aliyun-lou bash[967508]: {"case_id": "Q08", "run_kind": "admission_rejection", "state": "rejected", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+2026-10-21T00:22:35+0800 aliyun-lou systemd[1]: smartdocs-m5-admission-q08.service: Deactivated successfully.
+2026-10-21T00:22:35+0800 aliyun-lou systemd[1]: smartdocs-m5-admission-q08.service: Consumed 7.412s CPU time.
+2026-10-21T00:23:36+0800 aliyun-lou systemd[1]: Started /bin/bash -c set -eu; for case_id in Q09 A09; do /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/benchmark_cli.py --case "$case_id" --admission-only --output "/tmp/smartdocs-m5-admission.t8qMSb/$case_id" --code-revision 113f94e1453db92c0685d2777951b3e48308c7ee --environment "Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only" --max-calls 1 --hold-seconds 0; done.
+2026-10-21T00:23:37+0800 aliyun-lou bash[967563]: 2026-10-20T16:23:37.865061Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 967563
+2026-10-21T00:23:37+0800 aliyun-lou bash[967563]: 2026-10-20T16:23:37.869879Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T00:23:53+0800 aliyun-lou bash[967563]: 2026-10-20T16:23:53.177177Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T00:24:01+0800 aliyun-lou bash[967563]: 2026-10-20T16:24:01.489152Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T00:24:47+0800 aliyun-lou bash[967748]: schema_version=16
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T00:25:16+0800 aliyun-lou bash[967818]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T00:25:18+0800 aliyun-lou bash[967904]: {"case_id": "Q09", "run_kind": "admission_rejection", "state": "rejected", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+2026-10-21T00:25:27+0800 aliyun-lou bash[967925]: 2026-10-20T16:25:27.325095Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 967925
+2026-10-21T00:25:27+0800 aliyun-lou bash[967925]: 2026-10-20T16:25:27.329748Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T00:25:42+0800 aliyun-lou bash[967925]: 2026-10-20T16:25:42.635492Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T00:25:50+0800 aliyun-lou bash[967925]: 2026-10-20T16:25:50.251384Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T00:26:36+0800 aliyun-lou bash[968070]: schema_version=16
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T00:27:04+0800 aliyun-lou bash[968140]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T00:27:06+0800 aliyun-lou bash[968223]: {"case_id": "A09", "run_kind": "admission_rejection", "state": "rejected", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+2026-10-21T00:27:12+0800 aliyun-lou systemd[1]: smartdocs-m5-admission-rest.service: Deactivated successfully.
+2026-10-21T00:27:12+0800 aliyun-lou systemd[1]: smartdocs-m5-admission-rest.service: Consumed 15.114s CPU time.

@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "dataset": "smartdocs-p0-synthetic-v1",
+  "updated_on": "2026-10-21",
+  "scope": "fixed_30_observations_separate_from_frozen_inputs",
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "denominator": 30,
+  "admission_observations": 3,
+  "model_tasks_not_run": 27,
+  "business_verdicts_recorded": 0,
+  "business_completion_rate": null,
+  "citations_observed": 0,
+  "citation_accuracy": null,
+  "tasks": [
+    {
+      "case_id": "Q01",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q02",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q03",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q04",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q05",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q06",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q07",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "Q08",
+      "category": "query",
+      "execution": "admission_rejected",
+      "business_verdict": null,
+      "evidence": "admission-results/results.json",
+      "admission_http": 404
+    },
+    {
+      "case_id": "Q09",
+      "category": "query",
+      "execution": "admission_rejected",
+      "business_verdict": null,
+      "evidence": "admission-results/results.json",
+      "admission_http": 404
+    },
+    {
+      "case_id": "Q10",
+      "category": "query",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A01",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A02",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A03",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A04",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A05",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A06",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A07",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A08",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "A09",
+      "category": "archive",
+      "execution": "admission_rejected",
+      "business_verdict": null,
+      "evidence": "admission-results/results.json",
+      "admission_http": 403
+    },
+    {
+      "case_id": "A10",
+      "category": "archive",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H01",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H02",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H03",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H04",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H05",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H06",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H07",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H08",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H09",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    },
+    {
+      "case_id": "H10",
+      "category": "handover",
+      "execution": "not_run",
+      "business_verdict": null,
+      "evidence": null,
+      "admission_http": null
+    }
+  ]
+}

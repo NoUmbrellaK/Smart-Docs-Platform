@@ -1,0 +1,38 @@
+TimeoutStopUSec=5s
+RuntimeMaxUSec=15min
+Result=success
+ExecMainStartTimestamp=Wed 2026-10-21 00:20:48 CST
+ExecMainStatus=0
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=active
+SubState=running
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+TasksMax=256
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/benchmark_cli.py --case Q08 --admission-only --output /tmp/smartdocs-m5-admission.t8qMSb/Q08 --code-revision 113f94e1453db92c0685d2777951b3e48308c7ee --environment Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only --max-calls 1 --hold-seconds 0.
+2026-10-20T16:20:49.093163Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 967154
+2026-10-20T16:20:49.191159Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-20T16:21:04.403955Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-20T16:21:12.093695Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1274         133           3        2087        1951
+Swap:              0           0           0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0

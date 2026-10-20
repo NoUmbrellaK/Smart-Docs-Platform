@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "kind": "public_projection_not_raw_snapshot",
+  "cases": [
+    {
+      "case_id": "Q08",
+      "metadata": {
+        "code_revision": "113f94e1453db92c0685d2777951b3e48308c7ee",
+        "recorded_at": "2026-10-20T16:22:27.366419+00:00",
+        "environment": "Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only",
+        "model": "no model",
+        "evidence_path": "/tmp/smartdocs-m5-admission.t8qMSb/Q08"
+      },
+      "admission_http": 404,
+      "capture_complete": true,
+      "execution": {
+        "outcome": null,
+        "max_model_calls": 0,
+        "automatic_retry": false,
+        "automatic_confirmation": false
+      },
+      "review_summary": {
+        "case_id": "Q08",
+        "category": "query",
+        "declared_run_kind": "admission_rejection",
+        "business_verdict": null,
+        "live_provider_declared": false,
+        "execution_verified": false,
+        "citations_total": 0,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "09ec53979e5ce1267c0bab4cca2b8b7609600f364a215d86b1c4145a07a17d86"
+      },
+      "cli_summary": {
+        "case_id": "Q08",
+        "run_kind": "admission_rejection",
+        "state": "rejected",
+        "business_verdict": null,
+        "capture_complete": true,
+        "review_wait": "not_requested"
+      },
+      "fixture_sha256": {
+        "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+        "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+      },
+      "private_artifacts": {
+        "initial/snapshot.json": {
+          "sha256": "24244bd9479df45648b9563d83f9136aab52d215950cdb781fdfebab55910cec",
+          "bytes": 2127,
+          "mode": "0o600"
+        },
+        "summary.json": {
+          "sha256": "2e9950b1b51e6f9e112775e78ac3cceb1e3d473f08809c27557f81912bb17fbf",
+          "bytes": 173,
+          "mode": "0o600"
+        },
+        "review.json": {
+          "sha256": "e7538f0ea40e16cdd813e91c5a81f276b1b55a94fc34fab8582ccef053e8b02b",
+          "bytes": 3265,
+          "mode": "0o600"
+        }
+      }
+    },
+    {
+      "case_id": "Q09",
+      "metadata": {
+        "code_revision": "113f94e1453db92c0685d2777951b3e48308c7ee",
+        "recorded_at": "2026-10-20T16:25:17.692128+00:00",
+        "environment": "Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only",
+        "model": "no model",
+        "evidence_path": "/tmp/smartdocs-m5-admission.t8qMSb/Q09"
+      },
+      "admission_http": 404,
+      "capture_complete": true,
+      "execution": {
+        "outcome": null,
+        "max_model_calls": 0,
+        "automatic_retry": false,
+        "automatic_confirmation": false
+      },
+      "review_summary": {
+        "case_id": "Q09",
+        "category": "query",
+        "declared_run_kind": "admission_rejection",
+        "business_verdict": null,
+        "live_provider_declared": false,
+        "execution_verified": false,
+        "citations_total": 0,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "67cf17298d442842ce19060e99907df3e1b5579673a832d7e2a554ab7be0dbbc"
+      },
+      "cli_summary": {
+        "case_id": "Q09",
+        "run_kind": "admission_rejection",
+        "state": "rejected",
+        "business_verdict": null,
+        "capture_complete": true,
+        "review_wait": "not_requested"
+      },
+      "fixture_sha256": {
+        "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+        "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+      },
+      "private_artifacts": {
+        "initial/snapshot.json": {
+          "sha256": "0780bed14d1bb339aebb5600034add45c81296378aea47d2cc71024cb4a4d54d",
+          "bytes": 1500,
+          "mode": "0o600"
+        },
+        "summary.json": {
+          "sha256": "17673c301f4b2fb80d73c15511a55bd29d698b124c20f6b68643559029a5cf9a",
+          "bytes": 173,
+          "mode": "0o600"
+        },
+        "review.json": {
+          "sha256": "39230b3de25f518f0930dd362d03c02dca4b1ef11ab4232fc3646a72a201cc48",
+          "bytes": 2572,
+          "mode": "0o600"
+        }
+      }
+    },
+    {
+      "case_id": "A09",
+      "metadata": {
+        "code_revision": "113f94e1453db92c0685d2777951b3e48308c7ee",
+        "recorded_at": "2026-10-20T16:27:05.370382+00:00",
+        "environment": "Current ECS: Xeon Platinum 2 vCPU, 3495MiB RAM; bounded slice CPU100%, MemoryHigh1200MiB/Max1600MiB, Swap0, IO5MB/s+200IOPS; isolated MySQL8.0.46 schema16; Python3.10.12; local keyword parsing only, no vectors/model; loopback only",
+        "model": "no model",
+        "evidence_path": "/tmp/smartdocs-m5-admission.t8qMSb/A09"
+      },
+      "admission_http": 403,
+      "capture_complete": true,
+      "execution": {
+        "outcome": null,
+        "max_model_calls": 0,
+        "automatic_retry": false,
+        "automatic_confirmation": false
+      },
+      "review_summary": {
+        "case_id": "A09",
+        "category": "archive",
+        "declared_run_kind": "admission_rejection",
+        "business_verdict": null,
+        "live_provider_declared": false,
+        "execution_verified": false,
+        "citations_total": 0,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "9ee8babcb2bacb402c44b1867f7b0b79fc618cfffb646ef46ff4ecfd88e37186"
+      },
+      "cli_summary": {
+        "case_id": "A09",
+        "run_kind": "admission_rejection",
+        "state": "rejected",
+        "business_verdict": null,
+        "capture_complete": true,
+        "review_wait": "not_requested"
+      },
+      "fixture_sha256": {
+        "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+        "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+      },
+      "private_artifacts": {
+        "initial/snapshot.json": {
+          "sha256": "a89722383f32864963698d9419694aa5666b71afd31dcd47f31cc9339f655971",
+          "bytes": 1669,
+          "mode": "0o600"
+        },
+        "summary.json": {
+          "sha256": "43001b09bab5e8275c6cc2438144864199d862ad0f653770bcd19bec948d3fba",
+          "bytes": 173,
+          "mode": "0o600"
+        },
+        "review.json": {
+          "sha256": "0374d38d8854a73fb03ae2b02e6beaed5daca6eddbdfa3c17084fcf671e2182b",
+          "bytes": 2841,
+          "mode": "0o600"
+        }
+      }
+    }
+  ]
+}
