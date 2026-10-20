@@ -1,0 +1,32 @@
+Package source: https://archive.ubuntu.com/ubuntu/pool/main/n/nginx/nginx-core_1.18.0-6ubuntu14.21_amd64.deb
+Index source: https://archive.ubuntu.com/ubuntu/dists/jammy-security/InRelease
+Packages source: https://archive.ubuntu.com/ubuntu/dists/jammy-security/main/binary-amd64/Packages.xz
+Download directory: /tmp/smartdocs-nginx.DnOIv2
+Package extracted with dpkg-deb -x only; no installation or maintainer scripts.
+
+gpgv --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg InRelease
+gpgv: Signature made Wed Oct 21 00:10:23 2026 CST
+gpgv:                using RSA key F6ECB3762474EDA9D21B7022871920D1991BC93C
+gpgv: Good signature from "Ubuntu Archive Automatic Signing Key (2018) <ftpmaster@ubuntu.com>"
+
+PASS signed-index chain and package SHA256
+Version 1.18.0-6ubuntu14.21
+Filename pool/main/n/nginx/nginx-core_1.18.0-6ubuntu14.21_amd64.deb
+Size 485056
+SHA256 266e0799aeba81e6f0bd2a0a75a96756f12bbfb2b3d6704dec921152c0751c10
+
+9c4a5f05c6e502b73c79532dee5fc3eb853b60260509339d3d7e18a693f20ee2  InRelease
+193e21d53e0d7fbf97fed37314da94d75223d4575b769aa95891d8ea1592471a  Packages.xz
+266e0799aeba81e6f0bd2a0a75a96756f12bbfb2b3d6704dec921152c0751c10  nginx-core_1.18.0-6ubuntu14.21_amd64.deb
+70c002df0571675ada1eab1562a37c745d10b08d53b37d4a280bb230ed772baf  unpacked/usr/sbin/nginx
+Version: 1.18.0-6ubuntu14.21
+Architecture: amd64
+nginx version: nginx/1.18.0 (Ubuntu)
+
+Preparation failures:
+- Cached apt candidate 1.18.0-6ubuntu14.20: configured Aliyun HTTP mirror download
+  remained live without progress; exact apt PID 974361 and child 974369 were
+  explicitly terminated. exec session 46154 ended with exit143; no installation.
+- Official HTTPS path for .20 returned404. Queried official package listing,
+  downloaded .21 and verified the above signed security index chain before use.
+- No system apt index, installed package, nginx service or production listener changed.

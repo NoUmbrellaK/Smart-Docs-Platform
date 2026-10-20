@@ -160,3 +160,8 @@ worker重启将遗留running标interrupted，需手动retry；不自动恢复整
 T-01–T-20及30项业务任务统计见[验收索引](../evidence/m5/acceptance-index.md)。
 本手册的源码/CLI核对记录见[部署接线核对](../evidence/m5/deployment-map/README.md)；
 没有Nginx/TLS、整套常驻服务与真实模型组合的运行证据时，上述清单不能标为完成。
+
+后续[隔离HTTPS接线验证](../evidence/m5/tls-proxy/README.md)已运行实际Nginx与当前C++/临时SQL，
+包含自签证书校验、登录Cookie/Origin、分片上传、下载/Range及内部路由遮蔽。
+搜索/Agent两端只用本地接收器确认分流；不替代真实网关、编码、外部域名/CA、
+systemd整体启动或生产上线验证。该测试不安装代理服务，不读取已有DeepSeek key。

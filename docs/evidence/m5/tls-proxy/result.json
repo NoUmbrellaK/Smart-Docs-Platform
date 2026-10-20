@@ -1,0 +1,9 @@
+{
+  "result": "pass",
+  "checks": 6,
+  "remote_model_calls": 0,
+  "gateway_business": "not_run",
+  "public_tls": "not_run",
+  "uploaded_bytes": 78000,
+  "sha256": "0ef89f812ff0c69e91d7557e5f54d2342e2f013ba30b2e9a882aa59472425e97"
+}
