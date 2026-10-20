@@ -1,0 +1,142 @@
+{
+  "date": "2026-10-21",
+  "base_commit": "d50fb3c",
+  "test_sha256": "37c6690014215b14872c1088dd660bafb965ae98d4f3528e00c45bc0958ccf56",
+  "suite_attempts": 1,
+  "tests": 3,
+  "passed": 3,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_seconds": 4.351,
+  "fixed_task_denominator": 30,
+  "model_tasks_not_run": 27,
+  "human_business_verdicts_recorded": 0,
+  "business_completion_rate": null,
+  "citation_accuracy": null,
+  "results": [
+    {
+      "actual_citations": 0,
+      "admission_http": 404,
+      "business_rows": {
+        "agent_runs": 0,
+        "agent_tasks": 0,
+        "agent_tool_calls": 0,
+        "archive_decisions": 0,
+        "archive_plans": 0,
+        "handover_reports": 0
+      },
+      "case_id": "Q08",
+      "content_hashes_unchanged": true,
+      "contract_checks": "pass",
+      "creation_attempts": 2,
+      "files_after": [
+        {
+          "current_version_id": "d349a446b053fb3b1841cedc7ddf3fde",
+          "directory_id": "aa00eec794029ebf5f06dee1ad22a797",
+          "id": "2762f3efea1fe746175cd80ca1d3b652"
+        }
+      ],
+      "files_before": [
+        {
+          "current_version_id": "d349a446b053fb3b1841cedc7ddf3fde",
+          "directory_id": "aa00eec794029ebf5f06dee1ad22a797",
+          "id": "2762f3efea1fe746175cd80ca1d3b652"
+        }
+      ],
+      "human_review": "not_performed",
+      "ordinary_downloads": [
+        {
+          "fixture": "new_unapproved@2",
+          "http": 200,
+          "sha256": "d70241bab910a056d8cc4c528d48871cddbc4a9bc91b824bed0b5d9db2e6a188"
+        }
+      ],
+      "remote_model_calls": 0,
+      "role": "editor",
+      "setup_admission_http": 404
+    },
+    {
+      "actual_citations": 0,
+      "admission_http": 404,
+      "business_rows": {
+        "agent_runs": 0,
+        "agent_tasks": 0,
+        "agent_tool_calls": 0,
+        "archive_decisions": 0,
+        "archive_plans": 0,
+        "handover_reports": 0
+      },
+      "case_id": "Q09",
+      "content_hashes_unchanged": true,
+      "contract_checks": "pass",
+      "creation_attempts": 2,
+      "files_after": [
+        {
+          "current_version_id": "3f8428e5156154e572790386a569bce8",
+          "directory_id": "8e129ca7039e73e7509251c22e9d7b26",
+          "id": "3c9fdc063f45e0090ae7a993875070a6"
+        }
+      ],
+      "files_before": [
+        {
+          "current_version_id": "3f8428e5156154e572790386a569bce8",
+          "directory_id": "8e129ca7039e73e7509251c22e9d7b26",
+          "id": "3c9fdc063f45e0090ae7a993875070a6"
+        }
+      ],
+      "human_review": "not_performed",
+      "ordinary_downloads": [
+        {
+          "fixture": "internal@1",
+          "http": 200,
+          "sha256": "0a032357d120c1a2eb4ea453c4e1e94f2b6ac28da95af9f9b990e254a2a61c50"
+        }
+      ],
+      "remote_model_calls": 0,
+      "role": "editor",
+      "setup_admission_http": 404
+    },
+    {
+      "actual_citations": 0,
+      "admission_http": 403,
+      "business_rows": {
+        "agent_runs": 0,
+        "agent_tasks": 0,
+        "agent_tool_calls": 0,
+        "archive_decisions": 0,
+        "archive_plans": 0,
+        "handover_reports": 0
+      },
+      "case_id": "A09",
+      "content_hashes_unchanged": true,
+      "contract_checks": "pass",
+      "creation_attempts": 2,
+      "files_after": [
+        {
+          "current_version_id": "f8c947cb5e8de579f5151a7087e3ee36",
+          "directory_id": "0c80a41e3ecc27384d56548b75ab4abf",
+          "id": "acb7aafdbcc7180702a8e063e100d8ae"
+        }
+      ],
+      "files_before": [
+        {
+          "current_version_id": "f8c947cb5e8de579f5151a7087e3ee36",
+          "directory_id": "0c80a41e3ecc27384d56548b75ab4abf",
+          "id": "acb7aafdbcc7180702a8e063e100d8ae"
+        }
+      ],
+      "human_review": "not_performed",
+      "ordinary_downloads": [
+        {
+          "fixture": "deployment@2",
+          "http": 200,
+          "sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7"
+        }
+      ],
+      "remote_model_calls": 0,
+      "role": "reader",
+      "setup_admission_http": 403
+    }
+  ]
+}

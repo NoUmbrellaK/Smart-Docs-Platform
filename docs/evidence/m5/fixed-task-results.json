@@ -11,6 +11,7 @@
   "admission_observations": 3,
   "model_tasks_not_run": 27,
   "business_verdicts_recorded": 0,
+  "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
   "citations_observed": 0,
   "citation_accuracy": null,
@@ -77,7 +78,9 @@
       "execution": "admission_rejected",
       "business_verdict": null,
       "evidence": "admission-results/results.json",
-      "admission_http": 404
+      "admission_http": 404,
+      "objective_contract_checks": "pass",
+      "supplemental_evidence": "admission-business/results.json"
     },
     {
       "case_id": "Q09",
@@ -85,7 +88,9 @@
       "execution": "admission_rejected",
       "business_verdict": null,
       "evidence": "admission-results/results.json",
-      "admission_http": 404
+      "admission_http": 404,
+      "objective_contract_checks": "pass",
+      "supplemental_evidence": "admission-business/results.json"
     },
     {
       "case_id": "Q10",
@@ -165,7 +170,9 @@
       "execution": "admission_rejected",
       "business_verdict": null,
       "evidence": "admission-results/results.json",
-      "admission_http": 403
+      "admission_http": 403,
+      "objective_contract_checks": "pass",
+      "supplemental_evidence": "admission-business/results.json"
     },
     {
       "case_id": "A10",

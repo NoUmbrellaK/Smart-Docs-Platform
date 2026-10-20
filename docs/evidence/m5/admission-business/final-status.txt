@@ -1,0 +1,11 @@
+37c6690014215b14872c1088dd660bafb965ae98d4f3528e00c45bc0958ccf56  test/e2e/m5_admission_business_test.py
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+    PID COMMAND
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+TasksCurrent=0
+active
