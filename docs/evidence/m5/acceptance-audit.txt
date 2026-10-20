@@ -1,0 +1,28 @@
+checked_at_utc=2026-10-20T14:46:39.469013+00:00
+source_head=c5f106d1a8b46f9b5dddb478502e4a32618ac801
+unique_ordered_requirements=20/20
+existing_local_links=69
+named_test_symbols_found=20
+historical_M1: HTTP9/9; interruptions20/20; assertions305; distribution4/4/4/3/3/2; clean_ed14dcf
+historical_markers_verified=m3/task-scope/cpp-group-1-journal.txt
+historical_markers_verified=m3/task-scope/cpp-group-2-journal.txt
+historical_markers_verified=m3/provider-reasons/matrix.txt
+historical_markers_verified=m3/provider-reasons/regression.txt
+historical_markers_verified=m4/boundary-recheck/journal-and-status.txt
+historical_markers_verified=m4/functional-gate/journal-and-status.txt
+historical_markers_verified=m3/json-output/regression.txt
+historical_markers_verified=m3/vector-restore/verified.txt
+historical_markers_verified=m3/injection-boundary/run.txt
+historical_live_trace: model_requests4; output_cap512; search_counts0/0/1/1; completed
+frozen30=unchanged_not_run
+scope_diff={"base": "ed14dcf", "head": "c5f106d", "paths": ["code/upload", "code/file", "code/auth", "code/http", "code/server"], "changed": ["code/file/file_repository.cpp", "code/file/file_service.cpp", "code/http/httpresponse.cpp", "code/http/httpresponse.h", "code/upload/upload_repository.cpp"]}
+scope_diff={"base": "e72e0ab", "head": "c5f106d", "paths": ["code/processing", "python/smartdocs/worker.py", "python/smartdocs/pdf_parser.py", "python/smartdocs/text_parser.py", "resources/js/search.js"], "changed": ["code/processing/document_search.cpp", "code/processing/processing_routes.cpp", "code/processing/processing_service.cpp", "code/processing/processing_service.h"]}
+scope_diff={"base": "ab620f5", "head": "c5f106d", "paths": ["code/agent", "python/smartdocs"], "changed": []}
+scope_diff={"base": "7555af9", "head": "c5f106d", "paths": ["python/smartdocs", "code/agent"], "changed": []}
+No product tests, services, provider requests, credential reads or deployments were performed by this audit.
+Final check after adding audit/backlinks:
+README.md local_links=166
+docs/evidence/m3/stage-gate-audit.md local_links=37
+docs/evidence/m5/acceptance-index.md local_links=70
+total_existing_local_links=273
+requirements=20/20; frozen30=not_run; tracked_edits=docs_only
