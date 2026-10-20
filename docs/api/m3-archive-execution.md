@@ -119,4 +119,4 @@ waiting_execution方案上，可点击 **Adjust this plan manually**。进入编
 网页任务模式选择、个人报告网页和五工具契约已有后续交付，见[M3阶段核对](../evidence/m3/stage-gate-audit.md)；
 生产部署及固定业务评测尚未完成。
 网页验证的初始提案是夹具，不代表模型分类质量；人工调整不等于模型重新分类。
-M3功能阶段已关闭，M4及完整目标仍未关闭，见[M4阶段核对](../evidence/m4/stage-gate-audit.md)。
+M3、M4功能阶段已关闭，M5及完整目标仍未完成，见[M4阶段核对](../evidence/m4/stage-gate-audit.md)。

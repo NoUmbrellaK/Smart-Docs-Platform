@@ -1,0 +1,68 @@
+Oct 20 22:07:49 aliyun-lou systemd[1]: Started /bin/sh -c set -e; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_handover_report_test.py; scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_report_browser_test.py.
+Oct 20 22:07:51 aliyun-lou sh[942326]: 2026-10-20T14:07:51.465209Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 942326
+Oct 20 22:07:51 aliyun-lou sh[942326]: 2026-10-20T14:07:51.663317Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 22:08:06 aliyun-lou sh[942326]: 2026-10-20T14:08:06.996010Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 22:08:15 aliyun-lou sh[942326]: 2026-10-20T14:08:15.010297Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 22:09:01 aliyun-lou sh[942683]: schema_version=16
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:09:30 aliyun-lou sh[942830]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:09:32 aliyun-lou sh[943204]: test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:34 aliyun-lou sh[943204]: test_report_checklist_and_membership_changes_restrict_content (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:36 aliyun-lou sh[943204]: test_report_concurrent_replay_and_changed_body_do_not_duplicate (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:38 aliyun-lou sh[943204]: test_report_dependency_change_before_save_and_soft_delete_after_save (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:39 aliyun-lou sh[943204]: test_report_empty_evidence_is_explicitly_uncertain_not_found (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:41 aliyun-lou sh[943204]: test_report_interrupted_task_cannot_first_save (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:42 aliyun-lou sh[943204]: test_report_invalid_shape_operation_and_cancel_do_not_create_draft (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:45 aliyun-lou sh[943204]: test_report_lost_body_restart_and_expired_run_replays_original (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:47 aliyun-lou sh[943204]: test_report_missing_fixed_chunk_blocks_saved_content (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:49 aliyun-lou sh[943204]: test_report_new_version_does_not_silently_replace_fixed_source (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:51 aliyun-lou sh[943204]: test_report_no_model_admission_and_expired_execution_cannot_save (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:53 aliyun-lou sh[943204]: test_report_reader_save_exact_replay_private_read_and_safe_markdown (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:55 aliyun-lou sh[943204]: test_report_unadmitted_or_forged_citation_cannot_save (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:57 aliyun-lou sh[943204]: test_report_uncited_dependency_revocation_blocks_all_content_and_replay (__main__.HandoverReportE2E) ... ok
+Oct 20 22:09:57 aliyun-lou sh[943204]: ----------------------------------------------------------------------
+Oct 20 22:09:57 aliyun-lou sh[943204]: Ran 14 tests in 26.503s
+Oct 20 22:09:57 aliyun-lou sh[943204]: OK
+Oct 20 22:10:01 aliyun-lou sh[943432]: 2026-10-20T14:10:01.249989Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 943432
+Oct 20 22:10:01 aliyun-lou sh[943432]: 2026-10-20T14:10:01.255093Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 22:10:16 aliyun-lou sh[943432]: 2026-10-20T14:10:16.472064Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 22:10:23 aliyun-lou sh[943432]: 2026-10-20T14:10:23.888672Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 22:11:09 aliyun-lou sh[943586]: schema_version=16
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:11:38 aliyun-lou sh[943708]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:11:57 aliyun-lou sh[943809]: test_browser_private_report_sources_download_and_revocation (__main__.ReportBrowser) ... ok
+Oct 20 22:11:57 aliyun-lou sh[943809]: ----------------------------------------------------------------------
+Oct 20 22:11:57 aliyun-lou sh[943809]: Ran 1 test in 18.888s
+Oct 20 22:11:57 aliyun-lou sh[943809]: OK
+Oct 20 22:11:59 aliyun-lou systemd[1]: smartdocs-m4-report-gate.service: Deactivated successfully.
+Oct 20 22:11:59 aliyun-lou systemd[1]: smartdocs-m4-report-gate.service: Consumed 19.953s CPU time.
+MainPID=0
+Result=success
+ActiveState=inactive
+TasksCurrent=0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+MemAvailable:    2222620 kB
+active
+total 200
+-rw------- 1 nobody nogroup 123209 Oct 20 22:11 report-1280.png
+-rw------- 1 nobody nogroup  77385 Oct 20 22:11 report-360.png

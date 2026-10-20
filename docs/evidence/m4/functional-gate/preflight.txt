@@ -1,0 +1,18 @@
+6a36ffc77a969688675f8c20c2c846501c93052c
+DIFF python/requirements-embedding.txt
+DIFF python/requirements-mcp.txt
+DIFF test/e2e/m1_browser_self_test.py
+compared=226
+missing python/requirements-embedding.txt
+missing python/requirements-mcp.txt
+exists test/e2e/m1_browser_self_test.py
+c56a390195e27e7e6e43a3ccd9383051867ed79edae160cb5418953eec14a865  bin/server
+ddd035b9d6310ae899d1b4311f600e83119c2201392d000ed7862e94875222f8  bin/smartdocs-admin
+024a2e8fa4c1712049fd159dc781e4fe0e2de5869646cf5e04e58fd5b93db97d  /tmp/smartdocs-safe.h4SzvX/repo/bin/server
+cd621a9ee335b9dedcdae8676f1a2e0403fe2aeb04ecb09d88f47205d2daf2df  /tmp/smartdocs-safe.h4SzvX/repo/bin/smartdocs-admin
+3068c42aab7ec24f28501776f2268594d5e594b687816f33fd5ed728438037c7  test/e2e/m3_handover_report_test.py
+9493332652602eced0b9ef031befca751ba7531cf3ecfbd4e23e283ba013d4b1  test/e2e/m3_report_browser_test.py
+c240e666f1d816b111dd615371a15241a279705f6be509fafbea1042450e76f7  code/agent/handover_reports.cpp
+ba5ecbacbe9f80d617e1b5645442ccecd80a436e49974e1aa899c951b604ad67  resources/js/agent.js
+ resources/js/agent.js | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
