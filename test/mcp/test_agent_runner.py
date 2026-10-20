@@ -148,6 +148,108 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         async with create_connected_server_and_client_session(create_server(self.context)) as client:
             return await self.agent.run_task(self.context,client,model)
 
+    async def test_private_rejection_trace_identifies_validation_stage_without_model_text(self):
+        # Losing the rejection branch, echoing model text, or relaxing validation must fail this.
+        import tempfile
+        from pathlib import Path
+        import httpx
+        from smartdocs.agent_cli import run_session
+        from smartdocs.deepseek import DeepSeekModel, open_audit
+        from smartdocs.audit_summary import summarize
+        cases = [
+            (reply('```json\n{"answer":"PRIVATE-BODY","citations":[]}\n```'), 'final_json', 'stop'),
+            (reply('{"answer":"PRIVATE-BODY","citations":[],"extra":true}'), 'final_shape', 'stop'),
+            (reply('PRIVATE-BODY', finish='length'), 'tool_batch', 'length'),
+            (reply('PRIVATE-BODY', finish='PRIVATE-REASON'), 'tool_batch', 'other'),
+            (reply('PRIVATE-BODY', finish=['PRIVATE-REASON']), 'tool_batch', 'other'),
+            (reply({'PRIVATE-BODY': True}), 'content_shape', 'stop'),
+            (reply(calls=[call(ident='PRIVATE-ID!')]), 'tool_call_id', 'tool_calls'),
+            (reply(calls=[{'type':'PRIVATE-TYPE'}]), 'tool_call_shape', 'tool_calls'),
+            (reply(calls=[call(ident=str(i)) for i in range(6)]), 'tool_batch', 'tool_calls'),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for index, (response, stage, finish) in enumerate(cases):
+                with self.subTest(stage=stage, index=index):
+                    path=Path(directory)/f'{index}.jsonl'
+                    with open_audit(path,TASK) as audit:
+                        audit({'event':'task_start'})
+                        model=DeepSeekModel('PRIVATE-KEY',audit,transport=httpx.MockTransport(
+                            lambda request: httpx.Response(200,stream=httpx.ByteStream(json.dumps(response).encode()))))
+                        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                            outcome=await run_session(self.context,client,model,audit)
+                        audit({'event':'task_outcome',**outcome})
+                    self.assertEqual(outcome,{'state':'failed','error_code':'model_invalid'})
+                    records=[json.loads(line) for line in path.read_text().splitlines()]
+                    diagnostics=[e for e in records if e['event']=='model_rejection']
+                    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+                    diagnostic=diagnostics[0]
+                    self.assertEqual((diagnostic['sequence'],diagnostic['stage'],diagnostic['finish_reason']),
+                                     (1,stage,finish))
+                    self.assertEqual(diagnostic['content_kind'],'null' if index>=6 else 'other' if index==5 else 'string')
+                    self.assertEqual(diagnostic['tool_call_count'],5 if index==8 else 1 if index>=6 else None)
+                    value=summarize(path)
+                    self.assertTrue(value['trace_complete'])
+                    self.assertEqual(value['model_rejection']['stage'],stage)
+                    self.assertEqual(value['model']['attempts'],1)
+                    self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value))
+                    self.assertIsNone(self.result)
+        self.assertFalse(any('/tools/' in path for path,_ in self.requests))
+
+    async def test_fourth_response_rejection_keeps_prior_tools_and_usage_without_replay(self):
+        import tempfile
+        from pathlib import Path
+        import httpx
+        from smartdocs.agent_cli import run_session
+        from smartdocs.deepseek import DeepSeekModel, open_audit
+        from smartdocs.audit_summary import summarize
+        # Synthetic failure, not a reconstruction of the unretained A31 response.
+        responses=iter([
+            reply(calls=[call(arguments={'mode':'metadata','query':'missing'},ident='first')]),
+            reply(calls=[call(arguments={'mode':'metadata','query':''},ident='second')]),
+            reply(calls=[call('read_document_version',{'file_id':FILE,'version_id':VERSION},ident='third')]),
+            reply('PRIVATE-MALFORMED-FINAL'),
+        ])
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'trace.jsonl'
+            with open_audit(path,TASK) as audit:
+                audit({'event':'task_start'})
+                model=DeepSeekModel('PRIVATE-KEY',audit,transport=httpx.MockTransport(
+                    lambda request: httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))))
+                async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                    outcome=await run_session(self.context,client,model,audit)
+                audit({'event':'task_outcome',**outcome})
+            self.assertEqual(outcome,{'state':'failed','error_code':'model_invalid'})
+            value=summarize(path)
+            self.assertTrue(value['trace_complete'])
+            self.assertEqual(value['model_rejection'],{'sequence':4,'stage':'final_json',
+                'finish_reason':'stop','content_kind':'string','tool_calls_kind':'absent','tool_call_count':None})
+            self.assertEqual(value['model']['attempts'],4)
+            self.assertEqual(value['model']['usage_total'],{'prompt_tokens':80,'completion_tokens':40,'total_tokens':120})
+            self.assertEqual(value['tools']['search_documents']['results'],2)
+            self.assertEqual(value['tools']['read_document_version']['results'],1)
+            records=[json.loads(line) for line in path.read_text().splitlines()]
+            searches=[e for e in records if e['event']=='tool_result' and e['tool']=='search_documents']
+            self.assertEqual([e['item_count'] for e in searches],[0,1])
+            self.assertTrue(searches[1]['query_changed'])
+            self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value))
+            self.assertEqual(self.calls,4)
+            self.assertIsNone(self.result)
+
+    async def test_rejection_audit_failure_stops_without_retry_or_response_echo(self):
+        from smartdocs.agent_cli import run_session
+        events=[]
+        def audit(event):
+            events.append(event)
+            if event['event']=='model_rejection': raise OSError('PRIVATE-AUDIT-ERROR')
+        async def model(**kwargs): return reply('PRIVATE-BODY')
+        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+            outcome=await run_session(self.context,client,model,audit)
+        self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+        self.assertEqual(self.calls,1)
+        self.assertEqual(len(events),1)
+        self.assertNotIn('PRIVATE',json.dumps(events)+json.dumps(outcome))
+        self.assertFalse(any('/tools/' in path for path,_ in self.requests))
+
     async def test_malformed_checklist_stops_before_model_and_budget_admission(self):
         self.start_context={'revision':True,'items':[]}
         calls=[]

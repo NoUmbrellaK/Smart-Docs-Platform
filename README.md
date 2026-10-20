@@ -29,7 +29,9 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 已拆出[未领取任务的资料装载入口](./docs/evidence/m3/fixed-pending/README.md)，供后续执行驱动复用，不再把已读取/取消的预检任务当作真实Agent初始任务。装载器增量完成后已按用户要求停止，当时未运行已批准的API测试。
 
-用户2026-10-20恢复工作后执行了[一次限定DeepSeek公开合成资料测试](./docs/evidence/m3/live-public-20261020/README.md)：**0/1**，4次请求、8635 token。空搜索后模型改查并读取正文，但第4次响应后本地执行器返回`model_invalid`，回答/引用闭环未通过；原始回答未留存，具体格式拒绝原因尚不能确定。没有自动重跑、提高限额或新增OOM；临时服务已退出，原业务MySQL正常。下一步先补离线拒绝原因诊断，任何再次收费测试须另获明确限定批准；M3/P0仍未验收。
+用户2026-10-20恢复工作后执行了[一次限定DeepSeek公开合成资料测试](./docs/evidence/m3/live-public-20261020/README.md)：**0/1**，4次请求、8635 token。空搜索后模型改查并读取正文，但第4次响应后本地执行器返回`model_invalid`，回答/引用闭环未通过；原始回答未留存，具体格式拒绝原因尚不能确定。没有自动重跑、提高限额或新增OOM；临时服务已退出，原业务MySQL正常。该次授权已用，任何再次收费测试须另获明确限定批准；M3/P0仍未验收。
+
+已补[模型结果拒绝的私有诊断](./docs/evidence/m3/rejection-diagnostics/README.md)：复用既有审计记录固定校验阶段、响应形状和调用序号，不保存正文/异常文本，不放宽JSON/引用校验或重试。最终MCP/执行器 **107/107**、Python **114/114**，含前三轮工具成功而第四轮拒绝的离线配对检查；无API调用、生产部署或新增OOM。本增量只解决诊断缺口，不能恢复上次原始回答或证明实际错误已修复；下一次真实定位仍须另获明确限定批准。
 
 当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema16](./docs/api/m3-tool-audit.md#schema16和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema15及更早数据库。
 

@@ -1,0 +1,53 @@
+The five files below matched the execution copy byte-for-byte using cmp.
+Successful transient final unit had already been garbage-collected at this later check.
+Its generic defaults below (Nice=0, UMask=0022, infinity, empty Slice, etc.) are NOT
+the execution settings. See the launch parameters in README and the retained RED
+unit properties at the end. Final terminal status was captured before collection
+in final-regression.txt.
+
+9fbd096ad0d6b882f076b146a8605fe18439e8ec334c581bfb1aae180e960adf  python/smartdocs/agent_runner.py
+8bc28a204caa462e87940c173d65ee8ac8382ace9ecbd4de980ab63fc76a14a0  python/smartdocs/agent_cli.py
+7976ffc44df13a3c26e054ecae97a024a5c82e11c89e6a73b6eb4423ead163c3  python/smartdocs/audit_summary.py
+772bb69bb94f2e3cd1100e5f908a98b20bfe9e68540e5824b6eaf67bc8deaa80  test/mcp/test_agent_runner.py
+8bd9fd3f60eef6633a406c594130d513cd6160e7b12f010d807e31b5812191cb  test/mcp/test_audit_summary.py
+TimeoutStopUSec=1min 30s
+RuntimeMaxUSec=infinity
+MainPID=0
+Result=success
+ExecMainStatus=0
+Slice=
+IPAddressAllow=
+IPAddressDeny=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+
+Follow-up: final unit
+MainPID=0
+LoadState=not-found
+ActiveState=inactive
+
+Follow-up: retained RED unit
+TimeoutStopUSec=5s
+RuntimeMaxUSec=2min
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+LoadState=loaded
+ActiveState=failed

@@ -76,6 +76,33 @@ stdout只输出简短任务状态，不输出回答或原文；回答和报告�
 正文、文件名、会话、密钥或思维过程。task_outcome只记录经白名单校验的状态/错误码。
 模型响应成功不等于业务任务完成；进程在attempt后消失表示结果未知，不自动续跑。
 
+### 模型结果拒绝诊断
+
+在受控CLI/HTTP执行路径中，执行器产生 `model_invalid`、且尚未尝试保存报告/提案/完成结果时，
+私有轨迹可增加一条 `model_rejection`。它不新增数据库错误码、不改变普通网页/CLI返回，
+也不放宽JSON、引用或工具校验；不保存原始响应、工具参数、ID、异常文本或隐藏推理。
+
+| 字段 | 含义 |
+| --- | --- |
+| `sequence` | 本次运行的模型调用序号；汇总时必须匹配最后一个已有result的模型attempt |
+| `stage` | 执行器最后进入的校验阶段，不等于已证明的模型根因 |
+| `finish_reason` | 仅stop/tool_calls/length/content_filter；缺失或null为missing，其余值为other |
+| `content_kind` | absent/null/string/other，仅正文形状，不记录长度或正文 |
+| `tool_calls_kind` | absent/null/list/other |
+| `tool_call_count` | 非list为null；list计数封顶5，5表示至少5项，合法批次最多4项 |
+
+阶段固定为：model_call、response_size、choices_shape、message_shape、content_shape、
+final_mode、final_json、final_shape、tool_batch、tool_call_shape、tool_call_id、
+tool_arguments_shape、mixed_write_batch、internal_error。
+例如final_json表示最终正文JSON解析阶段异常，不自动判定是Markdown围栏；
+tool_batch需结合finish_reason与形状判断，length不等于授权提高输出预算。
+model_call意味着适配器未成功交回响应；internal_error是未进一步细分的阶段，
+不能将其描述为已确认的响应格式问题。
+
+未知内容仅归类，不回显；诊断落盘失败收敛为dependency_failed，不重试模型。
+写入已尝试或完成请求已构造时仍只走原有回执协调，不为追加诊断改变不确定写入处理。
+旧轨迹缺少该事件时不猜测回填；本增量无法恢复2026-10-20真实失败的原始回答。
+
 这是受控本地运行证据，尚不是数据库可查询、可分页的完整模型/MCP任务审计API；
 C++现提供[后端请求轨迹](m3-tool-audit.md)，不能等同本地模型usage或MCP耗时。
 平台完整调用摘要、生产内部HTTP认证和审计保留策略仍待后续接入。
@@ -113,6 +140,9 @@ PYTHONPATH=python /path/to/mcp-venv/bin/python -B -m smartdocs.audit_summary /pr
   正式记录应先确认写入进程已退出，本命令不锁定或停止写入者。
 - `cost_estimate`始终为null：未自动获取当前价格、峰谷档或供应商账单，不把未知用量算成免费。
   需结合执行时核实的价目、缓存覆盖与供应商账单另算，缺失数据标不可得。
+- `model_rejection`为通过白名单及序号校验的私有诊断，旧轨迹或未记录时为null。
+  拒绝重复、孤立、错误序号、未知字段/枚举、非法计数，以及诊断后继续工具/模型调用或
+  声称completed的矛盾轨迹。没有终态仍为不完整；诊断不增加调用数或token用量。
 
 有效但不完整轨迹退出0并显式标不完整；无法读取/格式不符退出2，输出固定错误码，
 不回显路径、原始错误正文、密钥或未知字段。仅提供本地统计，不代表完整平台审计API已完成。

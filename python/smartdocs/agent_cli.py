@@ -50,7 +50,7 @@ async def run_session(context, client, model, audit, *, resume_archive=False):
             except (OSError,ValueError): raise RunError("dependency_failed") from None
             return reply
     if resume_archive: return await resume_confirmed_archive(context,Tools())
-    return await run_task(context,Tools(),model)
+    return await run_task(context,Tools(),model,audit=audit)
 
 
 def safe_outcome(outcome):

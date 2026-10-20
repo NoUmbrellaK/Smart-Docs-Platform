@@ -1,0 +1,102 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_private_rejection_trace_identifies_validation_stage_without_model_text test_agent_runner.AgentRunnerTests.test_rejection_audit_failure_stops_without_retry_or_response_echo test_audit_summary.AuditSummaryTests.test_rejection_metadata_is_paired_allowlisted_and_not_business_success -v.
+test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) ... test_rejection_audit_failure_stops_without_retry_or_response_echo (test_agent_runner.AgentRunnerTests) ... FAIL
+test_rejection_metadata_is_paired_allowlisted_and_not_business_success (test_audit_summary.AuditSummaryTests) ... ERROR
+======================================================================
+ERROR: test_rejection_metadata_is_paired_allowlisted_and_not_business_success (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 93, in test_rejection_metadata_is_paired_allowlisted_and_not_business_success
+    value=self.summary.summarize(self.path)
+  File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py", line 132, in summarize
+    raise ValueError('audit unavailable or invalid') from None
+ValueError: audit unavailable or invalid
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='final_json', index=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='final_shape', index=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_batch', index=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_batch', index=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_batch', index=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='content_shape', index=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_call_id', index=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_call_shape', index=7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) (stage='tool_batch', index=8)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 184, in test_private_rejection_trace_identifies_validation_stage_without_model_text
+    self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
+AssertionError: 0 != 1 : validation rejection missing from private trace
+======================================================================
+FAIL: test_rejection_audit_failure_stops_without_retry_or_response_echo (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 207, in test_rejection_audit_failure_stops_without_retry_or_response_echo
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+----------------------------------------------------------------------
+Ran 3 tests in 1.562s
+FAILED (failures=10, errors=1)
+smartdocs-m3-rejection-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-rejection-red.service: Failed with result 'exit-code'.
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed

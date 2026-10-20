@@ -1,0 +1,11 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_private_rejection_trace_identifies_validation_stage_without_model_text test_agent_runner.AgentRunnerTests.test_rejection_audit_failure_stops_without_retry_or_response_echo test_audit_summary.AuditSummaryTests.test_rejection_metadata_is_paired_allowlisted_and_not_business_success -v.
+test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) ... ok
+test_rejection_audit_failure_stops_without_retry_or_response_echo (test_agent_runner.AgentRunnerTests) ... ok
+test_rejection_metadata_is_paired_allowlisted_and_not_business_success (test_audit_summary.AuditSummaryTests) ... ok
+----------------------------------------------------------------------
+Ran 3 tests in 1.551s
+OK
+smartdocs-m3-rejection-green.service: Deactivated successfully.
+Result=success
+ExecMainStatus=0
+ActiveState=inactive

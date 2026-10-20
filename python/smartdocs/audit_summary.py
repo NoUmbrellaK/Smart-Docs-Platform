@@ -6,6 +6,7 @@ import re
 import stat
 
 from .agent_cli import safe_outcome
+from .agent_runner import REJECTION_STAGES, FINISH_REASONS
 from .deepseek import MODEL, usage_counts
 from .search_http import strict_json
 
@@ -64,6 +65,7 @@ def summarize(path):
         task = identifier(first.get('task_id'))
         models, tools, request_ids = {}, {}, set()
         outcome = None
+        rejection = None
         for index, event in enumerate(records):
             if (not isinstance(event, dict) or event.get('task_id') != task or outcome is not None):
                 raise ValueError('invalid audit')
@@ -73,6 +75,22 @@ def summarize(path):
                 continue
             if kind == 'task_outcome':
                 outcome = safe_outcome(event)
+                if rejection is not None and outcome['state'] not in {'failed','unknown','cancelled','interrupted'}:
+                    raise ValueError('invalid audit')
+                continue
+            if rejection is not None: raise ValueError('invalid audit')
+            if kind == 'model_rejection':
+                fields={'sequence','stage','finish_reason','content_kind','tool_calls_kind','tool_call_count'}
+                if set(event)!=fields|{'event','task_id','time_unix_ms'}: raise ValueError('invalid audit')
+                sequence=integer(event.get('sequence'),8,1)
+                if sequence!=len(models) or models[sequence]['result'] is None: raise ValueError('invalid audit')
+                for key,allowed in (('stage',REJECTION_STAGES),('finish_reason',FINISH_REASONS),
+                                    ('content_kind',{'absent','null','string','other'}),
+                                    ('tool_calls_kind',{'absent','null','list','other'})):
+                    if not isinstance(event[key],str) or event[key] not in allowed: raise ValueError('invalid audit')
+                if event['tool_calls_kind']=='list': integer(event['tool_call_count'],5)
+                elif event['tool_call_count'] is not None: raise ValueError('invalid audit')
+                rejection={key:event[key] for key in fields}
                 continue
             if kind not in {'model_attempt', 'model_result', 'tool_attempt', 'tool_result'}:
                 raise ValueError('invalid audit')
@@ -127,7 +145,8 @@ def summarize(path):
             'truncated_tail': truncated, 'outcome': outcome,
             'model': {**model_counts, 'usage_known_calls': len(known), 'usage_unknown_calls': unknown,
                       'usage_observed': observed, 'usage_total': observed if complete and not unknown else None},
-            'tools': tool_counts, 'cost_estimate': None, 'business_acceptance': 'not_evaluated'}
+            'tools': tool_counts, 'model_rejection': rejection,
+            'cost_estimate': None, 'business_acceptance': 'not_evaluated'}
     except (OSError, ValueError, TypeError, KeyError, RecursionError):
         raise ValueError('audit unavailable or invalid') from None
 

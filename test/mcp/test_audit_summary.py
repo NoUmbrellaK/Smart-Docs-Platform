@@ -84,6 +84,34 @@ class AuditSummaryTests(unittest.TestCase):
                 self.assertIsNone(value['model']['usage_total'])
                 self.assertIsNone(value['cost_estimate'])
 
+    def test_rejection_metadata_is_paired_allowlisted_and_not_business_success(self):
+        diagnostic={'event':'model_rejection','sequence':1,'stage':'final_json',
+                    'finish_reason':'stop','content_kind':'string','tool_calls_kind':'absent',
+                    'tool_call_count':None}
+        records=events()[:3]+[diagnostic,{'event':'task_outcome','state':'failed','error_code':'model_invalid'}]
+        self.write(records)
+        value=self.summary.summarize(self.path)
+        self.assertTrue(value['trace_complete'])
+        self.assertEqual(value['model_rejection'],{k:v for k,v in diagnostic.items() if k!='event'})
+        self.assertEqual(value['model']['usage_total'],USAGE)
+        self.assertEqual(value['business_acceptance'],'not_evaluated')
+        for update in ({'stage':'PRIVATE'}, {'finish_reason':['PRIVATE']},
+                       {'content_kind':'PRIVATE'}, {'tool_calls_kind':'PRIVATE'},
+                       {'tool_call_count':True}, {'tool_call_count':1}, {'sequence':2},
+                       {'response':'PRIVATE'}):
+            changed=copy.deepcopy(records); changed[3].update(update); self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        for changed in (records[:3]+[diagnostic,diagnostic]+records[-1:],
+                        records[:1]+[diagnostic]+records[1:3]+records[-1:],
+                        records[:-1]+[{'event':'task_outcome','state':'completed'}],
+                        records[:-1]+events()[3:5]+records[-1:]):
+            self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        self.write(records[:-1])
+        self.assertFalse(self.summary.summarize(self.path)['trace_complete'])
+        self.write(events())
+        self.assertIsNone(self.summary.summarize(self.path)['model_rejection'])
+
     def test_partial_usage_and_interrupted_attempt_preserve_lower_bound(self):
         records = events()[:-1]
         records.append({**events()[1], 'sequence': 2, 'request_id': 'c' * 32})
