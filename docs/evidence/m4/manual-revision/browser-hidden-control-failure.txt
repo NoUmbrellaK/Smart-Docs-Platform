@@ -1,0 +1,34 @@
+Oct 20 21:58:35 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+Oct 20 21:58:36 aliyun-lou test-with-mysql.sh[939651]: 2026-10-20T13:58:36.524771Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 939651
+Oct 20 21:58:36 aliyun-lou test-with-mysql.sh[939651]: 2026-10-20T13:58:36.722588Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 21:58:52 aliyun-lou test-with-mysql.sh[939651]: 2026-10-20T13:58:52.068961Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 21:58:59 aliyun-lou test-with-mysql.sh[939651]: 2026-10-20T13:58:59.724921Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 21:59:46 aliyun-lou test-with-mysql.sh[939925]: schema_version=16
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:00:15 aliyun-lou test-with-mysql.sh[940019]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... FAIL
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: ======================================================================
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: FAIL: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser)
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: ----------------------------------------------------------------------
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: Traceback (most recent call last):
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_browser_test.py", line 111, in test_browser_task_lifecycle_and_fixed_citations
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]:     self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: AssertionError: {'overflow': False, 'small': True, 'width': 360} != {'width': 360, 'overflow': False, 'small': False}
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: - {'overflow': False, 'small': True, 'width': 360}
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: ?                              ^^^
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: + {'overflow': False, 'small': False, 'width': 360}
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: ?                              ^^^^
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: ----------------------------------------------------------------------
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: Ran 1 test in 7.999s
+Oct 20 22:00:23 aliyun-lou test-with-mysql.sh[940107]: FAILED (failures=1)
+Oct 20 22:00:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser-verified.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 22:00:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser-verified.service: Failed with result 'exit-code'.
+Oct 20 22:00:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser-verified.service: Consumed 10.832s CPU time.

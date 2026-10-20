@@ -69,7 +69,7 @@ class AgentBrowser(TaskListE2E):
                 # Seed a validated persisted answer through the real protocol. No model was called.
                 run = self.tasks_path()+"/"+second["id"]+"/run"
                 data(self.user.request("POST", run+"/start"))
-                data(self.user.request("POST", run+"/check"))
+                data(self.user.request("POST", run+"/check", {"tool_request_ids": []}))
                 tools = self.tasks_path()+"/"+second["id"]+"/tools"
                 hits = data(self.user.request("POST", tools+"/search",
                                              {"mode": "keyword", "query": "SOURCE"}))
@@ -107,7 +107,8 @@ class AgentBrowser(TaskListE2E):
                         "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
                     geometry = browser.inspect('''const p=document.querySelector('#agent-workspace');
                         return {width:innerWidth, overflow:p.scrollWidth>p.clientWidth,
-                        small:[...p.querySelectorAll('button, textarea, summary')].some(n=>n.getBoundingClientRect().height<44)};''')
+                        small:[...p.querySelectorAll('button, textarea, summary')].filter(n=>n.getClientRects().length)
+                          .some(n=>n.getBoundingClientRect().height<44)};''')
                     self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
                     if width in (360, 1280):
                         raw = browser.command("GET", "/element/"+browser.find("#agent-workspace")+"/screenshot")
@@ -118,13 +119,18 @@ class AgentBrowser(TaskListE2E):
                 browser.click('//div[@id="agent-detail"]//button[text()="Load / refresh tool calls"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-detail-status").textContent.includes("task_scope_changed")')
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-detail").children.length + document.querySelector("#agent-source").children.length + document.querySelector("#agent-audit").children.length'), 0)
-                # Only the proposal is seeded. Decisions and execution use real UI clicks.
+                # Only the initial proposal is seeded. Revisions, decisions and execution use UI clicks.
                 self.policy(job, True)
                 base = f'/api/v1/projects/{self.project["id"]}'
                 target = data(self.user.request("POST", base+"/directories", {
                     "parent_id": self.project["root_directory_id"], "name": "Archive target"}), 201)
+                revised_parent = data(self.user.request("POST", base+"/directories", {
+                    "parent_id": self.project["root_directory_id"], "name": "Other branch"}), 201)
+                revised_target = data(self.user.request("POST", base+"/directories", {
+                    "parent_id": revised_parent["id"], "name": "Archive target"}), 201)
                 data(self.user.request("PUT", base+"/archive-policy", {"expected_revision": 0,
-                    "targets": [{"directory_id": target["id"], "name": target["name"]}], "confirm_remote_ai": True}))
+                    "targets": [{"directory_id": d["id"], "name": d["name"]} for d in (target, revised_target)],
+                    "confirm_remote_ai": True}))
                 archive = self.create_task(job)
                 archive_path = self.tasks_path()+"/"+archive["id"]+"/archive-plan"
                 proposal = {"expected_revision": 0, "policy_revision": 1, "items": [{
@@ -154,12 +160,36 @@ class AgentBrowser(TaskListE2E):
                 browser.click('//div[@id="agent-archive"]//button[text()="Reject this revision"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-archive").textContent.includes("Rejected. A new revision")')
                 self.assertEqual(data(self.user.request("GET", archive_path))["decision"], "reject")
-                self.assertEqual(browser.inspect('return document.querySelectorAll("#agent-archive button").length'), 0)
-                proposal["expected_revision"] = preview["revision"]
-                preview = data(self.user.request("PUT", archive_path, proposal))
-                browser.click('//div[@id="agent-detail"]//button[text()="View archive plan"]', using="xpath")
+                self.assertFalse(browser.inspect('return [...document.querySelectorAll("#agent-archive button")].some(b=>/Confirm|Execute/.test(b.textContent))'))
+                browser.click('//div[@id="agent-archive"]//button[text()="Adjust this plan manually"]', using="xpath")
+                browser.wait('return document.querySelectorAll("#agent-archive select").length === 1')
+                self.assertEqual(browser.inspect('return [...document.querySelector("#agent-archive select").options].slice(1).map(o=>o.textContent).sort()'),
+                                 sorted("Archive target · "+d["id"] for d in (target, revised_target)))
+                browser.click('#agent-archive select option[value="'+revised_target["id"]+'"]')
+                browser.fill("#agent-archive textarea", "Human correction <script>not confirmation</script>")
+                self.assertEqual(browser.inspect('return document.querySelector("#agent-archive select").value'), revised_target["id"])
+                for width in (360, 375, 390, 414, 768, 1280):
+                    browser.command("POST", "/goog/cdp/execute", {"cmd": "Emulation.setDeviceMetricsOverride",
+                        "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
+                    geometry = browser.inspect('''const p=document.querySelector('#agent-archive');
+                        return {width:innerWidth, overflow:p.scrollWidth>p.clientWidth,
+                        small:[...p.querySelectorAll('button, select, textarea')].some(n=>n.getBoundingClientRect().height<44)};''')
+                    self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
+                    if width in (360, 1280):
+                        raw = browser.command("GET", "/element/"+browser.find("#agent-archive")+"/screenshot")
+                        (output/f"edit-{width}.png").write_bytes(base64.b64decode(raw, validate=True))
+                browser.click('//div[@id="agent-archive"]//button[text()="Save new revision"]', using="xpath")
                 browser.wait('return !!document.querySelector("#agent-archive input[type=checkbox]")')
+                changed = data(self.user.request("GET", archive_path))
+                self.assertEqual((changed["id"], changed["revision"], changed["decision"], changed["operation_id"]),
+                                 (preview["id"], preview["revision"]+1, None, None))
+                self.assertEqual((changed["items"][0]["target_directory_id"], changed["items"][0]["reason"]),
+                                 (revised_target["id"], "Human correction <script>not confirmation</script>"))
+                self.assertEqual((changed["items"][0]["file_id"], changed["items"][0]["version_id"]),
+                                 (job["file_id"], job["version_id"]))
+                preview = changed
                 self.assertFalse(browser.inspect('return document.querySelector("#agent-archive input").checked'))
+                self.assertTrue(browser.inspect('return [...document.querySelectorAll("#agent-archive button")].find(b=>b.textContent==="Confirm this revision").disabled'))
                 browser.click("#agent-archive input")
                 browser.click('//div[@id="agent-archive"]//button[text()="Confirm this revision"]', using="xpath")
                 browser.wait('return [...document.querySelectorAll("#agent-archive button")].some(b => b.textContent === "Execute confirmed revision")')
@@ -173,7 +203,7 @@ class AgentBrowser(TaskListE2E):
                 self.assertEqual(file_directory(), self.project["root_directory_id"])
                 browser.click('//div[@id="agent-archive"]//button[text()="Execute confirmed revision"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-archive-status").textContent.includes("Committed archive receipt")')
-                self.assertEqual(file_directory(), target["id"])
+                self.assertEqual(file_directory(), revised_target["id"])
                 browser.click('//div[@id="agent-detail"]//button[text()="Check archive receipt"]', using="xpath")
                 browser.wait('return document.querySelector("#agent-archive-status").textContent.includes("Committed archive receipt")')
                 self.assertIn(confirmed["operation_id"], browser.inspect('return document.querySelector("#agent-archive").textContent'))
@@ -185,7 +215,8 @@ class AgentBrowser(TaskListE2E):
                         "params": {"width": width, "height": 1000, "deviceScaleFactor": 1, "mobile": False}})
                     geometry = browser.inspect('''const p=document.querySelector('#agent-workspace');
                         return {width:innerWidth, overflow:p.scrollWidth>p.clientWidth,
-                        small:[...p.querySelectorAll('button, textarea')].some(n=>n.getBoundingClientRect().height<44)};''')
+                        small:[...p.querySelectorAll('button, textarea')].filter(n=>n.getClientRects().length)
+                          .some(n=>n.getBoundingClientRect().height<44)};''')
                     self.assertEqual(geometry, {"width": width, "overflow": False, "small": False})
                     if width in (360, 1280):
                         raw = browser.command("GET", "/element/"+browser.find("#agent-workspace")+"/screenshot")
@@ -194,7 +225,7 @@ class AgentBrowser(TaskListE2E):
                 sign_in("agent-browser-reader")
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-list").children.length'), 0)
                 self.assertEqual(browser.inspect('return document.querySelector("#agent-question").value'), "")
-                print("PASS Chrome/C++/MySQL: task lifecycle, answer/citation/audit, revocation clears all; real UI rejection, new revision, unchecked consent, confirmation without movement, separate execution, read-only receipt; owner isolation; six viewports including 44px controls. Proposals/answers are fixtures; no model call.", flush=True)
+                print("PASS Chrome/C++/MySQL: task lifecycle, answer/citation/audit, revocation clears all; real UI rejection, manual target/reason editing and PUT new revision, unchecked consent, confirmation without movement, separate execution, read-only receipt; owner isolation; six viewports including editor 44px controls. Only initial proposals/answers are fixtures; no model call.", flush=True)
             finally:
                 browser.stop()
 

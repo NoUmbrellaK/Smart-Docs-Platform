@@ -1,0 +1,159 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✔ execution requires a fresh explicit pending-task decision and reads the authoritative result (9.853856ms)
+✔ execution never appears on nonpending tasks or reader archive tasks (2.634383ms)
+✔ provider failures display the persisted reason and never offer an automatic restart (1.085348ms)
+✔ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (0.790589ms)
+✔ late execution responses cannot refill switched views or release the in-flight lock early (1.076213ms)
+✔ lost execution response requires read-only refresh and never retries the write (0.757358ms)
+✔ execution consent resets on refresh and stale controls cannot start a task (0.396776ms)
+✔ execution adapter sends only empty JSON to the same origin without redirects or retries (30.79198ms)
+✔ execution adapter aborts at its deadline, clears its timer and does not resend (0.704014ms)
+✔ task modes bind only the reviewed server revision and never send metadata bodies (2.297566ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (21.769405ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (1.467646ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.43766ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (0.804033ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (0.825754ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.873945ms)
+✔ report stale loads cannot survive logout, project, role or task changes (0.816135ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.154771ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (1.382774ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (3.991247ms)
+✖ manual archive revision preserves immutable identities and requires fresh consent after save (5.145942ms)
+✖ manual revision supports unresolved targets but blocks invalid reason and forged target (0.469911ms)
+✖ manual revision rejects unavailable or changed policy and cannot outlive role or task changes (0.52616ms)
+✖ manual revision has no controls for readers terminal tasks or executed plans (1.360014ms)
+✖ manual revision writes once and discards late outcomes without releasing the lock early (0.519985ms)
+✖ manual revision HTTP adapter uses encoded task path and PUT without confirmation fields (0.67552ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (1.004335ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.69507ms)
+✔ archive readers and terminal tasks have no write controls (0.868739ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.483263ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.564633ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.624027ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.551528ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.565586ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.549223ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.666281ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (2.252796ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.605746ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.626932ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.543325ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.520033ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.606112ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.693602ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.642532ms)
+✔ waiting archive tasks remain cancellable without automatic execution (1.305422ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.60959ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.479422ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (1.046411ms)
+✔ write tool audit names and waiting status never imply completed file moves (0.556577ms)
+✔ empty audit never means the task succeeded or no model was called (0.500611ms)
+✔ audit refresh clears old rows and latest response wins (0.38338ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.300435ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.493498ms)
+ℹ tests 53
+ℹ suites 0
+ℹ pass 47
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 249.736636
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:385:1
+✖ manual archive revision preserves immutable identities and requires fresh consent after save (5.145942ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(editButton(view))
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:387:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:399:1
+✖ manual revision supports unresolved targets but blocks invalid reason and forged target (0.469911ms)
+  AssertionError [ERR_ASSERTION]: missing visible action: Adjust this plan manually
+      at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:348:10)
+      at openEditor (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:373:21)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:400:36)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:409:1
+✖ manual revision rejects unavailable or changed policy and cannot outlive role or task changes (0.52616ms)
+  AssertionError [ERR_ASSERTION]: missing visible action: Adjust this plan manually
+      at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:348:10)
+      at openEditor (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:373:21)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:412:72)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:424:1
+✖ manual revision has no controls for readers terminal tasks or executed plans (1.360014ms)
+  AssertionError [ERR_ASSERTION]: missing visible action: Adjust this plan manually
+      at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:348:10)
+      at openEditor (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:373:21)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:432:9)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:436:1
+✖ manual revision writes once and discards late outcomes without releasing the lock early (0.519985ms)
+  AssertionError [ERR_ASSERTION]: missing visible action: Adjust this plan manually
+      at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:348:10)
+      at openEditor (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:373:21)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:440:11)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:452:1
+✖ manual revision HTTP adapter uses encoded task path and PUT without confirmation fields (0.67552ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:454:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+smartdocs-m4-edit-red-assertions.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m4-edit-red-assertions.service: Failed with result 'exit-code'.

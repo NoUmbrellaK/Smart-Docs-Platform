@@ -1,0 +1,5 @@
+Oct 20 21:54:11 aliyun-lou systemd[1]: Started /usr/bin/python3 -B -c import tempfile; from pathlib import Path; from m1_browser_test import Browser,dependencies; binaries,sandbox=dependencies(version_timeout=120); profile=tempfile.mkdtemp(prefix="smartdocs-start-diagnostic-"); browser=Browser(binaries,sandbox,profile,Path("/tmp/smartdocs-m4-edit.QuejBp/start-only.log")); print("startup-only; no application login or credentials",flush=True); browser.start(); print("SESSION_STARTED",flush=True); browser.stop().
+Oct 20 21:54:11 aliyun-lou python3[937366]: startup-only; no application login or credentials
+Oct 20 21:54:15 aliyun-lou python3[937366]: SESSION_STARTED
+Oct 20 21:54:16 aliyun-lou systemd[1]: smartdocs-m4-browser-start-diagnostic.service: Deactivated successfully.
+Oct 20 21:54:16 aliyun-lou systemd[1]: smartdocs-m4-browser-start-diagnostic.service: Consumed 1.197s CPU time.

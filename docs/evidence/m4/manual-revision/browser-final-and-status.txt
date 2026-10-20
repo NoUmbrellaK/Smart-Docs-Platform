@@ -1,0 +1,45 @@
+Oct 20 22:01:30 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+Oct 20 22:01:31 aliyun-lou test-with-mysql.sh[940528]: 2026-10-20T14:01:31.093685Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 940528
+Oct 20 22:01:31 aliyun-lou test-with-mysql.sh[940528]: 2026-10-20T14:01:31.187324Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 22:01:46 aliyun-lou test-with-mysql.sh[940528]: 2026-10-20T14:01:46.420625Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 22:01:54 aliyun-lou test-with-mysql.sh[940528]: 2026-10-20T14:01:54.017654Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 22:02:41 aliyun-lou test-with-mysql.sh[940844]: schema_version=16
+Oct 20 22:03:09 aliyun-lou test-with-mysql.sh[940909]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 22:03:10 aliyun-lou test-with-mysql.sh[940909]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 22:03:21 aliyun-lou test-with-mysql.sh[941012]: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... PASS Chrome/C++/MySQL: task lifecycle, answer/citation/audit, revocation clears all; real UI rejection, manual target/reason editing and PUT new revision, unchecked consent, confirmation without movement, separate execution, read-only receipt; owner isolation; six viewports including editor 44px controls. Only initial proposals/answers are fixtures; no model call.
+Oct 20 22:03:21 aliyun-lou test-with-mysql.sh[941012]: ok
+Oct 20 22:03:21 aliyun-lou test-with-mysql.sh[941012]: ----------------------------------------------------------------------
+Oct 20 22:03:21 aliyun-lou test-with-mysql.sh[941012]: Ran 1 test in 11.737s
+Oct 20 22:03:21 aliyun-lou test-with-mysql.sh[941012]: OK
+Oct 20 22:03:24 aliyun-lou systemd[1]: smartdocs-m4-edit-browser-visible.service: Deactivated successfully.
+Oct 20 22:03:24 aliyun-lou systemd[1]: smartdocs-m4-edit-browser-visible.service: Consumed 13.604s CPU time.
+MainPID=0
+Result=success
+ActiveState=inactive
+TasksCurrent=0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+MemAvailable:    2210652 kB
+active
+total 708
+-rw------- 1 nobody nogroup 131255 Oct 20 22:03 agent-1280.png
+-rw------- 1 nobody nogroup  71106 Oct 20 22:03 agent-360.png
+-rw------- 1 nobody nogroup 118508 Oct 20 22:03 archive-1280.png
+-rw------- 1 nobody nogroup  68216 Oct 20 22:03 archive-360.png
+-rw------- 1 nobody nogroup  38148 Oct 20 22:03 audit-1280.png
+-rw------- 1 nobody nogroup  37377 Oct 20 22:03 audit-360.png
+-rw------- 1 nobody nogroup  53781 Oct 20 22:03 edit-1280.png
+-rw------- 1 nobody nogroup  52894 Oct 20 22:03 edit-360.png
+-rw------- 1 nobody nogroup  64364 Oct 20 22:03 review-1280.png
+-rw------- 1 nobody nogroup  68429 Oct 20 22:03 review-360.png

@@ -81,7 +81,7 @@ MySQL DDL并非整批原子：失败应按匹配备份恢复，不盲目重放�
 当前编辑者/管理员查看waiting_confirmation的preview时，必须勾选默认未选中的同修订确认框，
 再点击 **Confirm this revision**；请求只携带服务端方案ID/修订/摘要和confirm。**Reject this revision**
 独立记录reject，不需要勾选。待定目标只能拒绝、不能确认；已拒绝修订不能就地改为确认，须由
-提案接口生成新修订。本增量没有新增方案编辑器或模型修订入口。
+提案接口生成新修订。现已增加下述人工调整入口；没有模型自动修订入口。
 
 confirmed且waiting_execution、executable为真时才显示 **Execute confirmed revision**，发送该
 修订和服务器返回的operation_id。确认响应不触发执行；执行成功仅展示固定六字段历史回执，
@@ -93,9 +93,30 @@ confirmed且waiting_execution、executable为真时才显示 **Execute confirmed
 原请求返回才释放，页面失效不会允许重复点击并发写入。读取者和终止任务没有归档写按钮，
 最终授权仍由后端每次重新校验。此锁不跨标签页；跨页面重复操作依赖后端幂等与修订绑定。
 
+### 人工调整并保存新修订
+
+编辑者/管理员在preview或rejected的waiting_confirmation方案，以及confirmed的
+waiting_execution方案上，可点击 **Adjust this plan manually**。进入编辑后清除旧确认按钮，
+重新获取当前获批目录策略，必须与方案policy_revision一致；不自动换用新策略。
+文件、版本和源目录只读，只能选择已批准且不同于源目录的目标，或明确保留“Needs review”，
+并修改非空且最多1000 UTF-8字节的理由。名称按纯文本展示；源目录和目标选项同时显示名称与稳定ID，
+避免不同父目录下的同名目标无法区分。
+
+**Save new revision** 经同源PUT既有方案接口提交
+`{expected_revision, policy_revision, items}`；不发送确认、摘要、operation_id或目录名称。
+服务端仍负责权限、范围、来源位置、同名冲突和修订并发检查。
+成功后仅展示服务器返回的新修订；确认框默认不勾选，必须重新确认，再独立执行。
+保存或取消编辑不触发模型调用、不移动文件；页面明确这是人工调整，不声称模型重新分类。
+
+写入期间沿用既有archiveWriting锁。项目/角色/任务切换、注销与迟到响应均不能恢复旧编辑状态。
+发生冲突、无权访问或未知回包时清除表单，要求刷新权威方案；不自动重放PUT。
+跨标签页并发由后端expected_revision和幂等请求处理，不增加浏览器缓存或自动恢复。
+当前只调整已有项的目标与理由，不增加文件范围、目录创建或自然语言模型续跑。
+
 ## 剩余边界
 
 归档MCP接线、提案后等待、[显式本机继续执行](m3-archive-resume.md)及个人报告后端已交付；
-网页任务模式选择、个人报告网页、生产调度和五工具整体验收尚未交付。
-网页验证的提案是夹具，不代表模型分类质量；见[确认网页证据](../evidence/m3/archive-ui/README.md)。
-完整目标和M3/M4均未关闭。
+网页任务模式选择、个人报告网页和五工具契约已有后续交付，见[M3阶段核对](../evidence/m3/stage-gate-audit.md)；
+生产部署及固定业务评测尚未完成。
+网页验证的初始提案是夹具，不代表模型分类质量；人工调整不等于模型重新分类。
+M3功能阶段已关闭，M4及完整目标仍未关闭，见[M4阶段核对](../evidence/m4/stage-gate-audit.md)。

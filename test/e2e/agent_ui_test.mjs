@@ -367,6 +367,110 @@ function archiveConsent(view) {
   assert.ok(checkbox,"confirmation needs a visible unchecked checkbox"); return checkbox;
 }
 
+const editPolicy={revision:2,remote_ai_approved:true,targets:[
+  {directory_id:"target",name:"Deployment"},{directory_id:"other",name:"<script>Other</script>"}]};
+const editButton=v=>buttons(v.get("agent-archive")).find(b=>b.textContent==="Adjust this plan manually");
+const openEditor=v=>clickNamed(v,"agent-archive","Adjust this plan manually");
+const saveRevision=v=>buttons(v.get("agent-archive")).find(b=>b.textContent==="Save new revision");
+const editFields=v=>descendants(v.get("agent-archive")).filter(n=>["SELECT","TEXTAREA"].includes(n.tagName));
+async function editing(overrides={},plan=archivePlan,role="editor") {
+  const writes=[];
+  const view=await archiveSetup({getArchivePolicy:async()=>structuredClone(editPolicy),
+    saveArchivePlan:async(p,t,body)=>{writes.push([p,t,body]);return {...archivePlan,revision:4,
+      items:body.items.map(i=>({...archivePlan.items[0],...i})),has_unresolved:body.items.some(i=>!i.target_directory_id)};},
+    ...overrides},plan,role);
+  await openArchive(view);
+  return {...view,writes};
+}
+test("manual archive revision preserves immutable identities and requires fresh consent after save",async()=>{
+  const view=await editing();await clickNamed(view,"agent-archive","Reject this revision");
+  assert.ok(editButton(view));await openEditor(view);
+  const [target,reason]=editFields(view);
+  assert.deepEqual(target.children.map(n=>n.value),["","target","other"]);
+  target.value="other";reason.value="Human correction";
+  await saveRevision(view).fire();
+  assert.deepEqual(view.writes,[["p","t",{expected_revision:3,policy_revision:2,items:[{
+    file_id:"f",version_id:"v",source_directory_id:"source",target_directory_id:"other",reason:"Human correction"}]}]]);
+  assert.equal(archiveConsent(view).checked,false);
+  assert.equal(view.events.filter(e=>e[0]==="execute").length,0);
+  assert.equal(view.events.filter(e=>e[0]==="decision").length,1);
+  assert.match(text(view.get("agent-archive")),/Revision 4/);
+});
+test("manual revision supports unresolved targets but blocks invalid reason and forged target",async()=>{
+  const view=await editing();await openEditor(view);const [target,reason]=editFields(view);
+  for(const value of ["","   ","中".repeat(334),"bad\u0000reason"]) {
+    reason.value=value;await saveRevision(view).fire();assert.equal(view.writes.length,0);
+  }
+  reason.value="Needs review";target.value="unapproved";await saveRevision(view).fire();assert.equal(view.writes.length,0);
+  target.value="";await saveRevision(view).fire();
+  assert.equal(view.writes[0][2].items[0].target_directory_id,null);
+  assert.equal(buttons(view.get("agent-archive")).some(b=>b.textContent==="Confirm this revision"),false);
+});
+test("manual revision distinguishes same-name targets and displays source identity",async()=>{
+  const view=await editing({getArchivePolicy:async()=>({...editPolicy,targets:[
+    {directory_id:"target",name:"Same name"},{directory_id:"other",name:"Same name"}]})});
+  await openEditor(view);const [target,reason]=editFields(view);
+  assert.deepEqual(target.children.slice(1).map(n=>n.textContent),["Same name · target","Same name · other"]);
+  assert.match(text(view.get("agent-archive")),/Original directory · source/);
+  target.value="other";reason.value="Human choice of the other same-name directory";
+  await saveRevision(view).fire();assert.equal(view.writes[0][2].items[0].target_directory_id,"other");
+});
+test("manual revision rejects unavailable or changed policy and cannot outlive role or task changes",async()=>{
+  for(const policy of [{...editPolicy,revision:3},{...editPolicy,remote_ai_approved:false},
+    {...editPolicy,targets:[]},{...editPolicy,targets:[editPolicy.targets[0],editPolicy.targets[0]]}]) {
+    const view=await editing({getArchivePolicy:async()=>policy});await openEditor(view);
+    assert.equal(saveRevision(view),undefined);assert.equal(view.writes.length,0);
+  }
+  for(const invalidate of [v=>v.panel.invalidate(),v=>v.panel.setProject(null),v=>v.panel.setProject("p","reader"),
+    v=>v.panel.setProject("other","editor"),v=>v.panel.view("other")]) {
+    const view=await editing();await openEditor(view);const old=saveRevision(view);
+    await invalidate(view);await old.fire();assert.equal(view.writes.length,0);
+    const late=deferred(),pending=await editing({getArchivePolicy:()=>late.promise});
+    const loading=openEditor(pending);await invalidate(pending);late.resolve(editPolicy);await loading;
+    assert.equal(saveRevision(pending),undefined);
+  }
+});
+test("manual revision has no controls for readers terminal tasks or executed plans",async()=>{
+  for(const [role,state,planState] of [["reader","waiting_confirmation","preview"],["editor","cancelled","preview"],
+    ["editor","interrupted","preview"],["editor","completed","executed"]]) {
+    const view=await editing({}, {...archivePlan,task_state:state,state:planState},role);
+    assert.equal(editButton(view),undefined);
+  }
+  const view=await editing({}, {...archivePlan,state:"confirmed",task_state:"waiting_execution",
+    decision:"confirm",operation_id:archiveReceipt.operation_id,executable:true});
+  await openEditor(view);await saveRevision(view).fire();
+  assert.equal(archiveConsent(view).checked,false);
+  assert.equal(buttons(view.get("agent-archive")).some(b=>b.textContent==="Execute confirmed revision"),false);
+});
+test("manual revision writes once and discards late outcomes without releasing the lock early",async()=>{
+  for(const fail of [false,true]) {
+    const late=deferred();let writes=0;
+    const view=await editing({saveArchivePlan:()=>{writes++;return late.promise;}});
+    await openEditor(view);const save=saveRevision(view),sending=save.fire();
+    await save.fire();view.panel.setProject(null);view.panel.setProject("p","editor");
+    await view.panel.view("t");assert.equal(view.get("agent-detail").children.length,0);await save.fire();
+    assert.equal(view.panel.archiveWriting,true);assert.equal(writes,1);
+    if(fail) late.reject(new Error("late secret")); else late.resolve({...archivePlan,revision:4});
+    await sending;assert.equal(view.panel.archiveWriting,false);assert.equal(view.get("agent-archive").children.length,0);
+    assert.doesNotMatch(view.get("agent-archive-status").textContent,/late secret/);
+  }
+  const view=await editing({saveArchivePlan:async()=>{throw new Error("response lost");}});
+  await openEditor(view);const old=saveRevision(view);await old.fire();await old.fire();
+  assert.equal(saveRevision(view),undefined);assert.match(view.get("agent-archive-status").textContent,/refresh|Refresh/);
+});
+test("manual revision HTTP adapter uses encoded task path and PUT without confirmation fields",async()=>{
+  const api=await import(new URL("../../resources/js/api.js",import.meta.url));
+  assert.equal(typeof api.saveArchivePlan,"function");
+  const original=globalThis.fetch,calls=[],body={expected_revision:3,policy_revision:2,items:[]};
+  globalThis.fetch=async(...args)=>{calls.push(args);return new Response(JSON.stringify({data:{...archivePlan,revision:4}}));};
+  try {
+    await api.saveArchivePlan("p/x","t?x",body);
+    assert.equal(calls.length,1);assert.equal(calls[0][0],"/api/v1/projects/p%2Fx/agent-tasks/t%3Fx/archive-plan");
+    assert.equal(calls[0][1].method,"PUT");assert.equal(calls[0][1].credentials,"same-origin");
+    assert.deepEqual(JSON.parse(calls[0][1].body),body);
+  } finally {globalThis.fetch=original;}
+});
+
 test("archive review displays bound items as text and requires a separate explicit confirmation and execution",async()=>{
   const view=await archiveSetup(); assert.equal(view.events.length,0); await openArchive(view);
   const box=view.get("agent-archive"), content=text(box);

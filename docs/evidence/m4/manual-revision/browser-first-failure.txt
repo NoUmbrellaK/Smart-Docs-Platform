@@ -1,0 +1,36 @@
+Oct 20 21:48:50 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_agent_browser_test.py.
+Oct 20 21:48:51 aliyun-lou test-with-mysql.sh[936322]: 2026-10-20T13:48:51.313692Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 936322
+Oct 20 21:48:51 aliyun-lou test-with-mysql.sh[936322]: 2026-10-20T13:48:51.318173Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Oct 20 21:49:06 aliyun-lou test-with-mysql.sh[936322]: 2026-10-20T13:49:06.548566Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Oct 20 21:49:18 aliyun-lou test-with-mysql.sh[936322]: 2026-10-20T13:49:18.234419Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Oct 20 21:50:05 aliyun-lou test-with-mysql.sh[936551]: schema_version=16
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_run_migration_does_not_invent_execution
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_tool_audit_migration_does_not_invent_history
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_source_migration_does_not_invent_model_context
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_checklist_context_migration_does_not_invent_selection
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Oct 20 21:50:33 aliyun-lou test-with-mysql.sh[936684]: PASS m3_archive_context_migration_does_not_invent_selection
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser) ... ERROR
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: ======================================================================
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: ERROR: test_browser_task_lifecycle_and_fixed_citations (__main__.AgentBrowser)
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: ----------------------------------------------------------------------
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: Traceback (most recent call last):
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_agent_browser_test.py", line 31, in test_browser_task_lifecycle_and_fixed_citations
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:     browser.start()
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:     value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:     return webdriver_value(response.status, response.read())
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]:     raise RuntimeError(f'WebDriver {safe}')
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: RuntimeError: WebDriver session not created
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: ----------------------------------------------------------------------
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: Ran 1 test in 108.306s
+Oct 20 21:52:22 aliyun-lou test-with-mysql.sh[936807]: FAILED (errors=1)
+Oct 20 21:52:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 21:52:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser.service: Failed with result 'exit-code'.
+Oct 20 21:52:27 aliyun-lou systemd[1]: smartdocs-m4-edit-browser.service: Consumed 8.980s CPU time.

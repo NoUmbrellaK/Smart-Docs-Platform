@@ -426,7 +426,87 @@ export class AgentPanel {
     } else if (plan.state === "confirmed" && plan.task_state === "waiting_execution" && plan.executable) {
       actions.append(this.button("Execute confirmed revision", () => write(true)));
     } else if (plan.state === "rejected") box.append(this.node("p", "Rejected. A new revision is required before confirmation."));
+    if ((["preview", "rejected"].includes(plan.state) && plan.task_state === "waiting_confirmation") ||
+        (plan.state === "confirmed" && plan.task_state === "waiting_execution"))
+      actions.append(this.button("Adjust this plan manually", () => {
+        if (ready()) return this.editArchive(plan, directories, project, id, token);
+      }));
     box.append(actions);
+  }
+  async editArchive(plan, directories, project, id, token) {
+    this.clearArchive(); const request = this.archiveGeneration;
+    const current = () => token === this.detailGeneration && request === this.archiveGeneration;
+    const ready = () => current() && !this.busy && !this.creating && !this.archiveWriting &&
+      ["editor", "admin"].includes(this.role);
+    this.status("archive", "Checking the approved directory policy…");
+    try {
+      const policy = await this.api.getArchivePolicy(project);
+      if (!ready()) return;
+      if (policy?.remote_ai_approved !== true || policy.revision !== plan.policy_revision ||
+          !Array.isArray(policy.targets) || !policy.targets.length || policy.targets.length > 100 ||
+          policy.targets.some(t => !t || typeof t.directory_id !== "string" || !t.directory_id ||
+            typeof t.name !== "string" || !t.name) ||
+          new Set(policy.targets.map(t => t.directory_id)).size !== policy.targets.length)
+        throw new Error("Archive policy changed or is unavailable. Refresh the plan; no automatic policy upgrade.");
+      const box = this.get("agent-archive"), fields = [];
+      box.append(this.node("p", `Manually adjust revision ${plan.revision}. Saving creates a new unconfirmed revision; it does not call a model or move files.`));
+      const list = this.node("div"); list.className = "task-list"; box.append(list);
+      for (const item of plan.items) {
+        const card = this.node("article"); card.className = "task-card";
+        const source = directories.find(d => d.id === item.source_directory_id);
+        card.append(this.node("p", `${item.name} · File ${item.file_id} · Version ${item.version_id} · From ${source ? source.name + " · " : ""}${item.source_directory_id}`));
+        const target = this.node("select"), reason = this.node("textarea");
+        const unset = this.node("option", "Needs review — no target"); unset.value = ""; target.append(unset);
+        for (const directory of policy.targets.filter(t => t.directory_id !== item.source_directory_id)) {
+          const option = this.node("option", `${directory.name} · ${directory.directory_id}`); option.value = directory.directory_id; target.append(option);
+        }
+        if (item.target_directory_id && !policy.targets.some(t => t.directory_id === item.target_directory_id))
+          throw new Error("Archive target changed. Refresh the plan.");
+        target.value = item.target_directory_id || ""; reason.value = item.reason; reason.rows = 3;
+        reason.maxLength = 1000;
+        const targetLabel = this.node("label", "Approved target directory"), reasonLabel = this.node("label", "Reason (up to 1000 UTF-8 bytes)");
+        targetLabel.append(target); reasonLabel.append(reason); card.append(targetLabel, reasonLabel); list.append(card);
+        fields.push({item, target, reason});
+      }
+      const actions = this.node("div"); actions.className = "task-actions"; box.append(actions);
+      actions.append(this.button("Discard edits / refresh plan", () => {
+        if (ready()) return this.loadArchive(project, id, token);
+      }), this.button("Save new revision", async () => {
+        if (!ready()) return;
+        const items = fields.map(({item, target, reason}) => ({file_id:item.file_id, version_id:item.version_id,
+          source_directory_id:item.source_directory_id, target_directory_id:target.value || null, reason:reason.value}));
+        if (items.some(i => !i.reason.trim() || new TextEncoder().encode(i.reason).length > 1000 ||
+            /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(i.reason) ||
+            (i.target_directory_id !== null && (i.target_directory_id === i.source_directory_id ||
+              !policy.targets.some(t => t.directory_id === i.target_directory_id))))) {
+          this.status("archive", "Choose an approved target or Needs review, and enter a nonempty reason of at most 1000 UTF-8 bytes.");
+          return;
+        }
+        this.archiveWriting = true; this.clearArchive(); this.controls();
+        const writing = this.archiveGeneration;
+        const stillCurrent = () => token === this.detailGeneration && writing === this.archiveGeneration;
+        this.status("archive", "Saving a new unconfirmed revision…");
+        try {
+          const saved = await this.api.saveArchivePlan(project, id, {
+            expected_revision:plan.revision, policy_revision:plan.policy_revision, items});
+          if (!stillCurrent()) return;
+          if (saved?.id !== plan.id || saved.task_id !== id || saved.project_id !== project ||
+              saved.revision !== plan.revision + 1 || saved.state !== "preview" ||
+              saved.task_state !== "waiting_confirmation" || saved.operation_id !== null || saved.decision !== null)
+            throw new Error("Unexpected revision response.");
+          this.renderArchive(saved, directories, project, id, token, writing);
+          this.status("detail", `Task ${id} · New revision saved, awaiting fresh confirmation. No files moved.`);
+        } catch (error) {
+          if (stillCurrent()) {
+            this.clearArchive();
+            this.status("archive", `${this.errorText(error)} Outcome may be unknown. Refresh the plan; no automatic retry.`);
+          }
+        } finally { this.archiveWriting = false; this.controls(); }
+      }));
+      this.status("archive", "Manual adjustment only. Review the saved revision before confirming it separately.");
+    } catch (error) {
+      if (current()) { this.clearArchive(); this.status("archive", this.errorText(error)); }
+    }
   }
   async audit(project, id, token) {
     if (token !== this.detailGeneration || this.busy || this.creating || this.archiveWriting) return;

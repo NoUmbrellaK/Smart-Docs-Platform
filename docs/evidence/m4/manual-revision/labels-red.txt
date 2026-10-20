@@ -1,0 +1,35 @@
+Oct 20 21:53:45 aliyun-lou systemd[1]: Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-name-pattern=distinguishes same-name test/e2e/agent_ui_test.mjs.
+Oct 20 21:53:46 aliyun-lou node[937261]: ✖ manual revision distinguishes same-name targets and displays source identity (8.899887ms)
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ tests 1
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ suites 0
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ pass 0
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ fail 1
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ cancelled 0
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ skipped 0
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ todo 0
+Oct 20 21:53:46 aliyun-lou node[937261]: ℹ duration_ms 76.362077
+Oct 20 21:53:46 aliyun-lou node[937261]: ✖ failing tests:
+Oct 20 21:53:46 aliyun-lou node[937261]: test at test/e2e/agent_ui_test.mjs:409:1
+Oct 20 21:53:46 aliyun-lou node[937261]: ✖ manual revision distinguishes same-name targets and displays source identity (8.899887ms)
+Oct 20 21:53:46 aliyun-lou node[937261]:   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+Oct 20 21:53:46 aliyun-lou node[937261]:   + actual - expected
+Oct 20 21:53:46 aliyun-lou node[937261]:   
+Oct 20 21:53:46 aliyun-lou node[937261]:     [
+Oct 20 21:53:46 aliyun-lou node[937261]:   +   'Same name',
+Oct 20 21:53:46 aliyun-lou node[937261]:   +   'Same name'
+Oct 20 21:53:46 aliyun-lou node[937261]:   -   'Same name · target',
+Oct 20 21:53:46 aliyun-lou node[937261]:   -   'Same name · other'
+Oct 20 21:53:46 aliyun-lou node[937261]:     ]
+Oct 20 21:53:46 aliyun-lou node[937261]:   
+Oct 20 21:53:46 aliyun-lou node[937261]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:413:10)
+Oct 20 21:53:46 aliyun-lou node[937261]:       at async Test.run (node:internal/test_runner/test:1332:7)
+Oct 20 21:53:46 aliyun-lou node[937261]:       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+Oct 20 21:53:46 aliyun-lou node[937261]:     generatedMessage: true,
+Oct 20 21:53:46 aliyun-lou node[937261]:     code: 'ERR_ASSERTION',
+Oct 20 21:53:46 aliyun-lou node[937261]:     actual: [ 'Same name', 'Same name' ],
+Oct 20 21:53:46 aliyun-lou node[937261]:     expected: [ 'Same name · target', 'Same name · other' ],
+Oct 20 21:53:46 aliyun-lou node[937261]:     operator: 'deepStrictEqual',
+Oct 20 21:53:46 aliyun-lou node[937261]:     diff: 'simple'
+Oct 20 21:53:46 aliyun-lou node[937261]:   }
+Oct 20 21:53:46 aliyun-lou systemd[1]: smartdocs-m4-edit-label-red.service: Main process exited, code=exited, status=1/FAILURE
+Oct 20 21:53:46 aliyun-lou systemd[1]: smartdocs-m4-edit-label-red.service: Failed with result 'exit-code'.

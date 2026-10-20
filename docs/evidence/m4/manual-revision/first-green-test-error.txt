@@ -1,0 +1,80 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
+✔ execution requires a fresh explicit pending-task decision and reads the authoritative result (6.493928ms)
+✔ execution never appears on nonpending tasks or reader archive tasks (2.481282ms)
+✔ provider failures display the persisted reason and never offer an automatic restart (1.013756ms)
+✔ in-flight execution keeps refresh and cancellation usable without allowing duplicate starts (0.756162ms)
+✔ late execution responses cannot refill switched views or release the in-flight lock early (1.135368ms)
+✔ lost execution response requires read-only refresh and never retries the write (0.791423ms)
+✔ execution consent resets on refresh and stale controls cannot start a task (0.413995ms)
+✔ execution adapter sends only empty JSON to the same origin without redirects or retries (52.003778ms)
+✔ execution adapter aborts at its deadline, clears its timer and does not resend (0.765385ms)
+✔ task modes bind only the reviewed server revision and never send metadata bodies (2.407017ms)
+✔ missing, unapproved, malformed or denied contexts cannot silently become question tasks (1.923287ms)
+✔ context refresh revokes consent, clears old metadata and ignores obsolete responses (1.478191ms)
+✔ mode changes cannot release a creation lock or bypass unknown creation outcome (0.421334ms)
+✔ task context GET adapters encode project identity and use same-origin credentials (0.815062ms)
+✔ report displays private draft, all statuses, distinct scope and untrusted content as text (0.900428ms)
+✔ report citation rechecks whole report dependencies and clears all old content on denial (0.89409ms)
+✔ report stale loads cannot survive logout, project, role or task changes (0.903651ms)
+✔ report identity mismatch and removed citation never expose mismatched content (1.280001ms)
+✔ report download uses fresh authenticated blob, discards late data and clears denial (4.607052ms)
+✔ report HTTP adapters bind encoded task identity, avoid caches and reject failed downloads (3.920716ms)
+✔ manual archive revision preserves immutable identities and requires fresh consent after save (2.906119ms)
+✔ manual revision supports unresolved targets but blocks invalid reason and forged target (0.600075ms)
+✔ manual revision rejects unavailable or changed policy and cannot outlive role or task changes (4.205553ms)
+✔ manual revision has no controls for readers terminal tasks or executed plans (1.457827ms)
+✖ manual revision writes once and discards late outcomes without releasing the lock early (1.105011ms)
+✔ manual revision HTTP adapter uses encoded task path and PUT without confirmation fields (0.489869ms)
+✔ archive review displays bound items as text and requires a separate explicit confirmation and execution (0.784732ms)
+✔ archive reject cannot execute and unresolved targets cannot be confirmed (0.818936ms)
+✔ archive readers and terminal tasks have no write controls (0.697315ms)
+✔ archive delayed loads and stale actions cannot survive task refresh logout or role change (1.874391ms)
+✔ archive write lock survives invalidation and duplicate clicks until the actual request settles (0.62973ms)
+✔ cancellation remains locked across invalidation until the real request settles (0.973962ms)
+✔ archive conflict clears sensitive snapshot and invalidates held confirmation buttons (0.736466ms)
+✔ archive receipt remains readable after revoked plan and ignores non-receipt fields (0.753884ms)
+✔ archive lost execution response offers only explicit read recovery and no automatic write retry (0.598528ms)
+✔ archive stale load cannot overwrite a newer preview and reloading resets consent (0.431218ms)
+✔ archive HTTP adapter preserves encoded identity and exact bound write payloads (1.616669ms)
+✔ creation requires explicit exact-version consent and never claims execution (0.53025ms)
+✔ edits reset consent, UTF-8 limit blocks sends, and duplicate clicks cannot recreate (0.516116ms)
+✔ task list uses cursor and fences late list responses and old buttons (0.512648ms)
+✔ file and project invalidation cannot unlock an in-flight non-idempotent create (0.492257ms)
+✔ completed answers and fixed sources are text only and rechecked on access (0.586776ms)
+✔ cancel response loss requires refresh and cannot display stale results (0.43873ms)
+✔ logout and data invalidation erase draft, answer and fence pending source (0.51114ms)
+✔ waiting archive tasks remain cancellable without automatic execution (0.799162ms)
+✔ completed archive receipt is not described as a model answer or rendered as citations (0.485246ms)
+✔ audit uses an encoded same-origin GET and never submits a tool operation (0.553283ms)
+✔ audit is user-loaded, expandable, redacted and distinguishes zero time from unknown (0.994156ms)
+✔ write tool audit names and waiting status never imply completed file moves (0.498209ms)
+✔ empty audit never means the task succeeded or no model was called (1.420213ms)
+✔ audit refresh clears old rows and latest response wins (0.379897ms)
+✔ audit late responses and detached buttons cannot survive view or session invalidation (1.23657ms)
+✔ audit denial clears answer, source and audit without automatic retries (0.430761ms)
+ℹ tests 53
+ℹ suites 0
+ℹ pass 52
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 255.97104
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:436:1
+✖ manual revision writes once and discards late outcomes without releasing the lock early (1.105011ms)
+  AssertionError [ERR_ASSERTION]: missing visible action: View archive plan
+      at clickNamed (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:348:10)
+      at openArchive (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:364:42)
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:442:38)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+smartdocs-m4-edit-green.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m4-edit-green.service: Failed with result 'exit-code'.
