@@ -1,0 +1,22 @@
+TimeoutStopUSec=5s
+RuntimeMaxUSec=10min
+MainPID=928482
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+ActiveState=active
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+MemAvailable:    2212464 kB
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_deepseek_test.py.
+2026-10-20T13:14:04.051165Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 928488
+2026-10-20T13:14:04.058101Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.

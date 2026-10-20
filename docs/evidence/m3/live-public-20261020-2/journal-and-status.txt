@@ -1,0 +1,49 @@
+Started /tmp/smartdocs-safe.h4SzvX/repo/scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_deepseek_test.py.
+2026-10-20T13:14:04.051165Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 928488
+2026-10-20T13:14:04.058101Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-20T13:14:19.392633Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-20T13:14:27.722410Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_live_public_task (__main__.DeepSeekE2E) ... LIVE_PROVIDER_TRACE [{"event": "task_start", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502148773}, {"request_id": "2bfa726eccd1450982e0501e9b875645", "sequence": 1, "model": "deepseek-flash", "event": "model_attempt", "request_bytes": 3611, "max_tokens": 512, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502149383}, {"request_id": "2bfa726eccd1450982e0501e9b875645", "sequence": 1, "model": "deepseek-flash", "event": "model_result", "reason": "success", "usage": {"prompt_tokens": 1059, "completion_tokens": 114, "total_tokens": 1173, "prompt_cache_hit_tokens": 896, "prompt_cache_miss_tokens": 163}, "duration_ms": 1206, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150590}, {"sequence": 1, "tool": "search_documents", "event": "tool_attempt", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150591}, {"sequence": 1, "tool": "search_documents", "event": "tool_result", "status": "success", "duration_ms": 16, "item_count": 0, "chunk_count": 0, "query_changed": false, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150608}, {"sequence": 2, "tool": "search_documents", "event": "tool_attempt", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150608}, {"sequence": 2, "tool": "search_documents", "event": "tool_result", "status": "success", "duration_ms": 84, "item_count": 0, "chunk_count": 0, "query_changed": false, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150693}, {"request_id": "55fde5dfd57e46c9b962042cdd2ea7d8", "sequence": 2, "model": "deepseek-flash", "event": "model_attempt", "request_bytes": 5263, "max_tokens": 512, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502150700}, {"request_id": "55fde5dfd57e46c9b962042cdd2ea7d8", "sequence": 2, "model": "deepseek-flash", "event": "model_result", "reason": "success", "usage": {"prompt_tokens": 1542, "completion_tokens": 116, "total_tokens": 1658, "prompt_cache_hit_tokens": 1152, "prompt_cache_miss_tokens": 390}, "duration_ms": 1216, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151917}, {"sequence": 3, "tool": "search_documents", "event": "tool_attempt", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151918}, {"sequence": 3, "tool": "search_documents", "event": "tool_result", "status": "success", "duration_ms": 12, "item_count": 1, "chunk_count": 0, "query_changed": true, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151930}, {"sequence": 4, "tool": "search_documents", "event": "tool_attempt", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151931}, {"sequence": 4, "tool": "search_documents", "event": "tool_result", "status": "success", "duration_ms": 8, "item_count": 0, "chunk_count": 0, "query_changed": true, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151940}, {"request_id": "b6186ae84566407c8cde18faf742ae6c", "sequence": 3, "model": "deepseek-flash", "event": "model_attempt", "request_bytes": 7883, "max_tokens": 512, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502151976}, {"request_id": "b6186ae84566407c8cde18faf742ae6c", "sequence": 3, "model": "deepseek-flash", "event": "model_result", "reason": "success", "usage": {"prompt_tokens": 2372, "completion_tokens": 131, "total_tokens": 2503, "prompt_cache_hit_tokens": 1536, "prompt_cache_miss_tokens": 836}, "duration_ms": 1317, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502153294}, {"sequence": 5, "tool": "read_document_version", "event": "tool_attempt", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502153371}, {"sequence": 5, "tool": "read_document_version", "event": "tool_result", "status": "success", "duration_ms": 10, "item_count": null, "chunk_count": 1, "query_changed": false, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502153382}, {"request_id": "7e68c9291e0747d0b46aac8f9853a4ed", "sequence": 4, "model": "deepseek-flash", "event": "model_attempt", "request_bytes": 9764, "max_tokens": 512, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502153472}, {"request_id": "7e68c9291e0747d0b46aac8f9853a4ed", "sequence": 4, "model": "deepseek-flash", "event": "model_result", "reason": "success", "usage": {"prompt_tokens": 3061, "completion_tokens": 243, "total_tokens": 3304, "prompt_cache_hit_tokens": 2432, "prompt_cache_miss_tokens": 629}, "duration_ms": 1905, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502155377}, {"event": "model_rejection", "sequence": 4, "stage": "final_json", "finish_reason": "stop", "content_kind": "string", "tool_calls_kind": "absent", "tool_call_count": null, "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502155471}, {"event": "task_outcome", "state": "failed", "error_code": "model_invalid", "task_id": "4922a0e8335236f8c117d2371767670f", "time_unix_ms": 1792502155633}]
+FAIL
+======================================================================
+FAIL: test_live_public_task (__main__.DeepSeekE2E)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_deepseek_test.py", line 40, in test_live_public_task
+    self.assertEqual(outcome["state"],"completed",outcome)
+AssertionError: 'failed' != 'completed'
+- failed
++ completed
+ : {'state': 'failed', 'error_code': 'model_invalid'}
+----------------------------------------------------------------------
+Ran 1 test in 8.903s
+FAILED (failures=1)
+smartdocs-m3-provider-live-20261020-2.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-provider-live-20261020-2.service: Failed with result 'exit-code'.
+smartdocs-m3-provider-live-20261020-2.service: Consumed 8.324s CPU time.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed
+SubState=failed
+ActiveEnterTimestamp=Tue 2026-10-20 21:14:04 CST
+InactiveEnterTimestamp=Tue 2026-10-20 21:15:58 CST
+TasksCurrent=0
+low 0
+high 80521
+max 0
+oom 0
+oom_kill 0
+active
+MemAvailable:    2252064 kB
