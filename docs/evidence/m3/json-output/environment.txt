@@ -1,0 +1,25 @@
+TimeoutStopUSec=5s
+RuntimeMaxUSec=5min
+MainPID=929896
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+ActiveState=active
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+MemAvailable:    2197088 kB
+b924288f5539c5a3287e71205594f47deb7026db6dfb7669ede073450908c9ba  python/smartdocs/deepseek.py
+acdba33460ccf266a0e67cbb02a051d7d14dceb542e472634215f2cf66d4e760  python/smartdocs/agent_runner.py
+2951d8921414cd738b5a33eaabc648603daa4eaba38d2d3ed5446952d2bbf55c  test/mcp/test_deepseek.py
+666a5a34c3bcdd48136031dff0f0e66da9b53b3d961cee3061bc544a56cee623  test/mcp/test_agent_runner.py

@@ -35,6 +35,8 @@ M1 的[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./d
 
 用户另行批准后的[第二次限定真实测试](./docs/evidence/m3/live-public-20261020-2/README.md)仍 **0/1**：4次请求、8638 token，明确定位第4次正常结束的响应在`final_json`阶段被拒绝；搜索/改查/正文读取成功，回答及引用检查未执行。没有重跑或新增OOM，两次合计0/2（非30项业务评测）。下一步离线验证官方JSON输出约束，保留严格解析和引用门禁；当前未改生产行为，M3/P0仍未验收。
 
+现已实现[普通问答的JSON输出约束](./docs/evidence/m3/json-output/README.md)：发送官方json_object参数，仅问答增加裸JSON与不足证据格式示例，报告/归档请求保持原样；不改严格解析、引用、预算或重试。完整MCP/执行器 **109/109**、Python **114/114**离线通过，无新增OOM、API调用或生产部署。真实组合效果尚未验证，前两次失败不改记成功；第三次限定测试仍需明确批准，M3/P0未验收。
+
 当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema16](./docs/api/m3-tool-audit.md#schema16和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema15及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前五工具、分模式有界执行、受控供应商适配器、网页入口及五类后端请求轨迹已接通；真实供应商验证、生产部署、完整MCP/模型审计和固定任务评测仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。

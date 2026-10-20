@@ -1,0 +1,32 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_deepseek.DeepSeekTests.test_json_output_constraint_is_sent_only_for_read_answers test_agent_runner.AgentRunnerTests.test_json_transport_preserves_multistep_tools_and_strict_final_citations -v.
+test_json_output_constraint_is_sent_only_for_read_answers (test_deepseek.DeepSeekTests) ... test_json_transport_preserves_multistep_tools_and_strict_final_citations (test_agent_runner.AgentRunnerTests) ... FAIL
+======================================================================
+FAIL: test_json_output_constraint_is_sent_only_for_read_answers (test_deepseek.DeepSeekTests) (names=['search_documents', 'read_document_version'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 75, in test_json_output_constraint_is_sent_only_for_read_answers
+    self.assertEqual(body.get('response_format'),expected)
+AssertionError: None != {'type': 'json_object'}
+======================================================================
+FAIL: test_json_transport_preserves_multistep_tools_and_strict_final_citations (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 437, in test_json_transport_preserves_multistep_tools_and_strict_final_citations
+    self.assertEqual(body.get('response_format'),{'type':'json_object'})
+AssertionError: None != {'type': 'json_object'}
+----------------------------------------------------------------------
+Ran 2 tests in 0.724s
+FAILED (failures=2)
+smartdocs-m3-json-output-red.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m3-json-output-red.service: Failed with result 'exit-code'.
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed

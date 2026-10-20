@@ -416,6 +416,34 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(seen[0][1]["content"],"find public deployment instructions")
         self.assertNotIn(self.context["session_token"],json.dumps(seen))
 
+    async def test_json_transport_preserves_multistep_tools_and_strict_final_citations(self):
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        requests=[]
+        responses=iter([
+            reply(calls=[call(arguments={'mode':'metadata','query':'missing'},ident='first')]),
+            reply(calls=[call(arguments={'mode':'keyword','query':'deployment'},ident='second')]),
+            reply(calls=[call('read_document_version',{'file_id':FILE,'version_id':VERSION},ident='third')]),
+            reply(json.dumps({'answer':'Run documented checks.','citations':[CITATION]})),
+        ])
+        def receive(request):
+            requests.append(json.loads(request.content))
+            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))
+        outcome=await self.run_model(DeepSeekModel('test-secret',lambda _:None,transport=httpx.MockTransport(receive)))
+        self.assertEqual(outcome,{'state':'completed'})
+        self.assertEqual(self.result,{'answer':'Run documented checks.','citations':[CITATION]})
+        self.assertEqual(len(requests),4)
+        for body in requests:
+            self.assertEqual(body.get('response_format'),{'type':'json_object'})
+            self.assertEqual(body['max_tokens'],512)
+            self.assertEqual({t['function']['name'] for t in body['tools']},{'search_documents','read_document_version'})
+        system=requests[0]['messages'][0]['content']
+        example, _=json.JSONDecoder().raw_decode(system[system.index('{"answer"'):])
+        self.assertEqual(set(example),{'answer','citations'})
+        self.assertIsInstance(example['answer'],str)
+        self.assertEqual(example['citations'],[])
+        self.assertNotIn(self.context['session_token'],json.dumps(requests))
+
     async def test_revocation_prevents_next_model_request_and_discards_old_context(self):
         seen=[]
         async def model(messages,**kwargs):

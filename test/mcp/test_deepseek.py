@@ -61,6 +61,22 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
                 self.assertNotIn("secret-provider-body",str(caught.exception))
         self.assertEqual(len(self.requests),5)
 
+    async def test_json_output_constraint_is_sent_only_for_read_answers(self):
+        # Missing response_format leaves the real provider in its default text mode.
+        for names, expected in [
+            (['search_documents','read_document_version'], {'type':'json_object'}),
+            (['search_documents','read_document_version','save_handover_report'], None),
+            (['search_documents','read_document_version','create_archive_plan'], None),
+        ]:
+            with self.subTest(names=names):
+                tools=[{'type':'function','function':{'name':name,'parameters':{'type':'object'}}} for name in names]
+                await self.model()(**{**ARGS,'tools':tools,'max_tokens':1280})
+                body=json.loads(self.requests[-1].content)
+                self.assertEqual(body.get('response_format'),expected)
+                self.assertEqual(body['tools'],tools)
+                self.assertEqual(body['max_tokens'],512 if expected else 1280)
+                self.assertEqual(body['thinking'],{'type':'disabled'})
+
     async def test_whole_request_deadline_cancels_transport(self):
         cancelled=asyncio.Event()
         async def slow(request):

@@ -25,6 +25,10 @@ Final content must be JSON with exactly answer (plain text) and citations (array
 file_id, version_id, chunk_id from actual tool output). Cite key factual claims; otherwise state
 insufficient evidence. Do not invent sources, successful writes, or hidden reasoning."""
 
+READ_FINAL_SYSTEM = """For the final answer, return only the JSON object, without Markdown fences or surrounding prose.
+Example when evidence is insufficient: {"answer": "Insufficient evidence in the searched scope.", "citations": []}
+When evidence exists, cite its actual file_id, version_id and chunk_id from tool output."""
+
 REPORT_SYSTEM = """For this handover task, the final-answer JSON instruction above is replaced:
 finish by calling save_handover_report alone, using the supplied report_operation_id unchanged.
 Save every checklist item with status, notes and observed citations; include limitations and recommendations.
@@ -299,6 +303,8 @@ async def run_task(context, client, model, *, audit=None):
             messages.append({'role':'user','content':encoded({'report_operation_id':report_operation}).decode('utf-8')})
             check_context = {'handover_checklist_revision': checklist['revision']}
             messages.append({'role':'user','content':encoded({'handover_checklist':checklist}).decode('utf-8')})
+        if report_operation is None and archive_context is None:
+            messages[0]['content'] += '\n'+READ_FINAL_SYSTEM
         schemas = {name:schema for name,schema in SCHEMAS.items()
                    if name in READ_TOOLS or (name==REPORT_TOOL and report_operation is not None)
                    or (name==CREATE_ARCHIVE_TOOL and archive_context is not None)}

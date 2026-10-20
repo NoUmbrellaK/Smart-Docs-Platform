@@ -68,7 +68,8 @@ class DeepSeekModel:
                      and tool['function'].get('name') in {REPORT_TOOL,CREATE_ARCHIVE_TOOL} for tool in tools)
         output_tokens = max_tokens if structured_write else min(max_tokens,512)
         body=encoded({"model":MODEL,"messages":messages,"tools":tools,"stream":False,
-            "thinking":{"type":"disabled"},"max_tokens":output_tokens,"temperature":0})
+            "thinking":{"type":"disabled"},"max_tokens":output_tokens,"temperature":0,
+            **({} if structured_write else {"response_format":{"type":"json_object"}})})
         if len(body)>65536: raise RunError("budget_exhausted")
         self._calls+=1; self._active=True
         request_id=uuid.uuid4().hex; start=time.monotonic(); usage=None; reason="provider_unavailable"
