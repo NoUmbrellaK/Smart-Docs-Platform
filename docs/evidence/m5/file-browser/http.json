@@ -1,0 +1,76 @@
+{
+  "assertions": 44,
+  "failed": 0,
+  "fixture_sha256": {
+    "plain.txt": "f70a82717519db67e9facba5b58e58bd3408ecbbee615c53a9489f80b99e3fcd",
+    "sample.pdf": "96b602f6d4b99855125ade8fba314e07461f871926e74b8a6bfc4b842acee008"
+  },
+  "passed": 9,
+  "scenarios": [
+    {
+      "assertions": 10,
+      "id": "T-01",
+      "name": "ID substitution and role/project authorization",
+      "status": "pass"
+    },
+    {
+      "assertions": 4,
+      "id": "T-02",
+      "name": "Chunk replay idempotence and conflict",
+      "status": "pass"
+    },
+    {
+      "assertions": 4,
+      "id": "T-03",
+      "name": "Restart resume preserves confirmed parts and hash",
+      "status": "pass"
+    },
+    {
+      "assertions": 3,
+      "id": "T-04",
+      "name": "Idempotent complete and hidden partials",
+      "status": "pass"
+    },
+    {
+      "assertions": 9,
+      "id": "T-05",
+      "name": "Full/single Range and PDF fragment behavior",
+      "status": "pass"
+    },
+    {
+      "assertions": 2,
+      "id": "T-06",
+      "name": "Historical and current version URLs remain fixed",
+      "status": "pass"
+    },
+    {
+      "assertions": 2,
+      "deferred": [
+        "stale parsing/index publication is M2"
+      ],
+      "id": "T-07",
+      "name": "Stale upload cannot replace current",
+      "status": "pass"
+    },
+    {
+      "assertions": 7,
+      "deferred": [
+        "index/report effects are M2/M4"
+      ],
+      "id": "T-08",
+      "name": "Move/delete retention/restore/permission changes",
+      "status": "pass"
+    },
+    {
+      "assertions": 3,
+      "deferred": [
+        "parsing, metadata retrieval, and vector fallback are M2"
+      ],
+      "id": "T-09",
+      "name": "Truthful visible M1 processing status",
+      "status": "pass"
+    }
+  ],
+  "schema_version": 1,
+  "transport": "loopback_tcp"
+}

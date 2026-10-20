@@ -1,0 +1,25 @@
+2026-10-21T00:41:44+0800 aliyun-lou bash[970634]: 2026-10-20T16:41:44.324545Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 970634
+2026-10-21T00:41:44+0800 aliyun-lou bash[970634]: 2026-10-20T16:41:44.329006Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T00:41:59+0800 aliyun-lou bash[970634]: 2026-10-20T16:41:59.635387Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T00:42:08+0800 aliyun-lou bash[970634]: 2026-10-20T16:42:08.539928Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T00:43:01+0800 aliyun-lou bash[970921]: schema_version=16
+2026-10-21T00:43:29+0800 aliyun-lou bash[970996]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T00:43:29+0800 aliyun-lou bash[970996]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T00:43:30+0800 aliyun-lou bash[970996]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T00:43:35+0800 aliyun-lou bash[971121]: M1 HTTP: 9/9 scenarios, 44 assertions
+2026-10-21T00:43:45+0800 aliyun-lou bash[971143]: m1_browser_failed: TimeoutExpired; no browser evidence accepted
+2026-10-21T00:43:46+0800 aliyun-lou bash[971120]: Traceback (most recent call last):
+2026-10-21T00:43:46+0800 aliyun-lou bash[971120]:   File "<string>", line 23, in <module>
+2026-10-21T00:43:46+0800 aliyun-lou bash[971120]:   File "/usr/lib/python3.10/subprocess.py", line 526, in run
+2026-10-21T00:43:47+0800 aliyun-lou bash[971120]:     raise CalledProcessError(retcode, process.args,
+2026-10-21T00:43:47+0800 aliyun-lou bash[971120]: subprocess.CalledProcessError: Command '['/usr/bin/python3', '-B', 'test/e2e/m1_browser_test.py', '--server-bin', '/tmp/smartdocs-safe.h4SzvX/repo/bin/server', '--log-dir', '/tmp/smartdocs-m5-browser.wXnVyU/runtime-1bconhz4/browser-logs', '--context-file', '/tmp/smartdocs-m5-browser.wXnVyU/runtime-1bconhz4/context.json', '--pdf', 'test/fixtures/m1/sample.pdf', '--output', '/tmp/smartdocs-m5-browser.wXnVyU/browser.json']' returned non-zero exit status 1.
+2026-10-21T00:43:48+0800 aliyun-lou systemd[1]: smartdocs-m5-file-browser.service: Main process exited, code=exited, status=1/FAILURE
+2026-10-21T00:43:48+0800 aliyun-lou systemd[1]: smartdocs-m5-file-browser.service: Failed with result 'exit-code'.
+2026-10-21T00:43:48+0800 aliyun-lou systemd[1]: smartdocs-m5-file-browser.service: Consumed 8.038s CPU time.

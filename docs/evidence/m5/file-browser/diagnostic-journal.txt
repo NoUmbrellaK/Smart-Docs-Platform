@@ -1,0 +1,200 @@
+2026-10-21T00:49:07+0800 aliyun-lou bash[972267]: 2026-10-20T16:49:07.764406Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 972267
+2026-10-21T00:49:08+0800 aliyun-lou bash[972267]: 2026-10-20T16:49:08.075299Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-21T00:49:23+0800 aliyun-lou bash[972267]: 2026-10-20T16:49:23.436700Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-21T00:49:31+0800 aliyun-lou bash[972267]: 2026-10-20T16:49:31.412396Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-21T00:50:18+0800 aliyun-lou bash[972514]: schema_version=16
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_run_migration_does_not_invent_execution
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_source_migration_does_not_invent_model_context
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-10-21T00:50:47+0800 aliyun-lou bash[972613]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-10-21T00:50:52+0800 aliyun-lou bash[972730]: M1 HTTP: 9/9 scenarios, 44 assertions
+2026-10-21T00:50:53+0800 aliyun-lou bash[972752]: WD_START GET status
+2026-10-21T00:50:53+0800 aliyun-lou bash[972752]: WD_FAIL GET status ConnectionRefusedError seconds=0.001
+2026-10-21T00:50:53+0800 aliyun-lou bash[972752]: WD_START GET status
+2026-10-21T00:50:53+0800 aliyun-lou bash[972752]: WD_END GET status seconds=0.001
+2026-10-21T00:50:53+0800 aliyun-lou bash[972752]: WD_START POST session
+2026-10-21T00:50:56+0800 aliyun-lou bash[972752]: WD_END POST session seconds=2.843
+2026-10-21T00:50:56+0800 aliyun-lou bash[972752]: WD_START POST timeouts
+2026-10-21T00:50:56+0800 aliyun-lou bash[972752]: WD_END POST timeouts seconds=0.001
+2026-10-21T00:50:56+0800 aliyun-lou bash[972752]: WD_START POST url
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST url seconds=0.858
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.090
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.008
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST clear
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST clear seconds=0.025
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.170
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST clear
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST clear seconds=0.017
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.057
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.013
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.047
+2026-10-21T00:50:57+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.257
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.072
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.039
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.010
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST refresh
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST refresh seconds=0.217
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.032
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.024
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.023
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.052
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.003
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST log
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST log seconds=0.009
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.104
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.060
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.010
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST log
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST log seconds=0.006
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST log
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST log seconds=0.002
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.005
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.015
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.005
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.068
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:58+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.015
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_START POST log
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_END POST log seconds=0.001
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_START GET text
+2026-10-21T00:50:59+0800 aliyun-lou bash[972752]: WD_END GET text seconds=0.010
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST clear
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST clear seconds=0.016
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.061
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.038
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.041
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:01+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.007
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.041
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.017
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.011
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.020
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.006
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST clear
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST clear seconds=0.044
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.042
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.007
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.066
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.182
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:02+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.006
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.012
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_START POST actions
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_END POST actions seconds=0.256
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.009
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:04+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.058
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.005
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:05+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.055
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.004
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:06+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.040
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.005
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST clear
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST clear seconds=0.021
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST value
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST value seconds=0.029
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.004
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST click
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST click seconds=0.090
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.007
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:07+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.003
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.009
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_START POST actions
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_END POST actions seconds=0.255
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.006
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:09+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.048
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.004
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:10+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.029
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_START POST sync
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_END POST sync seconds=0.004
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_START POST element
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_END POST element seconds=0.005
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_START GET screenshot
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_END GET screenshot seconds=0.052
+2026-10-21T00:51:11+0800 aliyun-lou bash[972752]: WD_START DELETE other
+2026-10-21T00:51:12+0800 aliyun-lou bash[972752]: WD_END DELETE other seconds=0.390
+2026-10-21T00:51:13+0800 aliyun-lou bash[972752]: M1 browser: 2/2 scenarios; 20 assertions
+2026-10-21T00:51:13+0800 aliyun-lou bash[972729]: BROWSER_RUN_COMPLETE
+2026-10-21T00:51:14+0800 aliyun-lou systemd[1]: smartdocs-m5-file-browser-diagnostic.service: Deactivated successfully.
+2026-10-21T00:51:14+0800 aliyun-lou systemd[1]: smartdocs-m5-file-browser-diagnostic.service: Consumed 15.847s CPU time.

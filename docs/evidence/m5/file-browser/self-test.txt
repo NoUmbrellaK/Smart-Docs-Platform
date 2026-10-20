@@ -1,0 +1,7 @@
+Command: nice -n 10 python3 -B test/e2e/m1_browser_self_test.py
+Working directory: /root/Smart-Docs-Platform/.worktrees/m1-file-business
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 1.381s
+
+OK

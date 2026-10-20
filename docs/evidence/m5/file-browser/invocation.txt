@@ -1,0 +1,27 @@
+import json, os, re, subprocess, sys, tempfile
+from pathlib import Path
+root = Path.cwd()
+if not re.fullmatch(r"/tmp/smartdocs-mysql\.[^/]+/mysql.sock", os.environ.get("SMARTDOCS_MYSQL_SOCKET", "")):
+    raise RuntimeError("isolated MySQL wrapper required")
+output = Path("/tmp/smartdocs-m5-browser.wXnVyU")
+with tempfile.TemporaryDirectory(prefix="runtime-", dir=output) as temporary:
+    scratch = Path(temporary)
+    for name in ("storage", "storage/objects", "storage/staging"):
+        (scratch / name).mkdir(mode=0o700)
+    os.environ.update(SMARTDOCS_STORAGE_ROOT=str(scratch/"storage"),
+        SMARTDOCS_MAX_FILE_BYTES="1048576", SMARTDOCS_CHUNK_BYTES="16",
+        SMARTDOCS_MAX_JSON_BYTES="65536", SMARTDOCS_MYSQL_POOL_SIZE="4",
+        SMARTDOCS_THREAD_COUNT="4", SMARTDOCS_PASSWORD_ITERATIONS="1000",
+        SMARTDOCS_LOG_LEVEL="0", SMARTDOCS_SECURE_COOKIE="false",
+        SMARTDOCS_E2E_PASSWORD="m5-browser-test-only")
+    context = scratch/"context.json"
+    subprocess.run([sys.executable, "-B", "test/e2e/m1_http_test.py",
+        "--server-bin", str(root/"bin/server"), "--admin-bin", str(root/"bin/smartdocs-admin"),
+        "--log-dir", str(scratch/"http-logs"), "--context-file", str(context),
+        "--evidence-file", str(output/"http.json"),
+        "--plain", "test/fixtures/m1/plain.txt", "--pdf", "test/fixtures/m1/sample.pdf"], check=True)
+    subprocess.run([sys.executable, "-B", "test/e2e/m1_browser_test.py",
+        "--server-bin", str(root/"bin/server"), "--log-dir", str(scratch/"browser-logs"),
+        "--context-file", str(context), "--pdf", "test/fixtures/m1/sample.pdf",
+        "--output", str(output/"browser.json")], check=True)
+print("BROWSER_RUN_COMPLETE", flush=True)
