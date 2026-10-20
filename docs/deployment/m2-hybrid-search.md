@@ -1,7 +1,7 @@
 # M2 同源混合检索入口
 
-这是部署模板，不代表当前机器已经安装生产常驻服务。复用
-[向量 worker / 隔离编码服务](m2-vector-worker.md)与 schema 5，
+这是部署模板，不代表当前机器已经安装生产常驻服务。完整接线见[P0统一入口](p0-single-host.md)。
+复用[向量 worker / 隔离编码服务](m2-vector-worker.md)；schema5是历史M2基线，当前C++要求schema16，
 不新增依赖、数据库或远程模型调用。工作台的 Hybrid 模式调用 Python 网关，
 名称/关键词模式和固定版本来源读取仍直接调用 C++。
 

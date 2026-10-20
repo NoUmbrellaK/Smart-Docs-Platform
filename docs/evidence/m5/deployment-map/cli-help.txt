@@ -1,0 +1,75 @@
+COMMAND: /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.worker --help
+usage: worker.py [-h] [--once]
+
+Trusted single local document worker
+
+options:
+  -h, --help  show this help message and exit
+  --once
+EXIT=0
+COMMAND: /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.vector_worker --help
+usage: vector_worker.py [-h] [--once]
+
+Trusted local vector task coordinator
+
+options:
+  -h, --help  show this help message and exit
+  --once
+EXIT=0
+COMMAND: /tmp/smartdocs-safe.h4SzvX/venv/bin/python -B -m smartdocs.search_http --help
+usage: search_http.py [-h] [--port PORT] [--backend-port BACKEND_PORT]
+
+Private loopback adapter behind the same-origin reverse proxy, not a public
+web server.
+
+options:
+  -h, --help            show this help message and exit
+  --port PORT
+  --backend-port BACKEND_PORT
+EXIT=0
+COMMAND: /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m smartdocs.agent_http --help
+usage: agent_http.py [-h] [--port PORT] [--backend-port BACKEND_PORT]
+                     --runtime-dir RUNTIME_DIR --audit-dir AUDIT_DIR
+                     [--max-model-calls {1,2,3,4,5,6,7,8}]
+
+Private same-origin Agent execution adapter. Not a public server or automatic
+scheduler.
+
+options:
+  -h, --help            show this help message and exit
+  --port PORT
+  --backend-port BACKEND_PORT
+  --runtime-dir RUNTIME_DIR
+  --audit-dir AUDIT_DIR
+  --max-model-calls {1,2,3,4,5,6,7,8}
+EXIT=0
+COMMAND: /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m smartdocs.agent_cli --help
+usage: agent_cli.py [-h] --context CONTEXT --audit AUDIT
+                    [--max-model-calls {1,2,3,4,5,6,7,8}]
+                    [--encoder-socket ENCODER_SOCKET] [--resume-archive]
+
+Trusted local Agent entry; not a public server or a task-creation API.
+
+options:
+  -h, --help            show this help message and exit
+  --context CONTEXT
+  --audit AUDIT
+  --max-model-calls {1,2,3,4,5,6,7,8}
+  --encoder-socket ENCODER_SOCKET
+                        optional trusted local query encoder socket
+  --resume-archive      execute only an already confirmed archive plan; no
+                        model or API key
+EXIT=0
+COMMAND: /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m smartdocs.mcp_read --help
+usage: mcp_read.py [-h] --context CONTEXT [--encoder-socket ENCODER_SOCKET]
+
+Private MCP stdio debugger; writes require a bound task. Never public.
+
+options:
+  -h, --help            show this help message and exit
+  --context CONTEXT     owner-only 0600 JSON context file; no token in argv
+  --encoder-socket ENCODER_SOCKET
+                        optional trusted private local encoder socket; never a
+                        model argument
+EXIT=0
+PASS: 6 CLI help commands; no service start, no credentials in environment

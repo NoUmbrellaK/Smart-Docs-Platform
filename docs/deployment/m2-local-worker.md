@@ -1,6 +1,6 @@
 # M2 本机 Python worker
 
-本手册描述可选的解析 worker 部署，不表示当前 ECS 已安装生产 worker。沿用 [M1 部署基线](m1-single-host.md)，M2基线为schema5，当前M3开发分支要求[schema13](../api/m3-handover-context.md#schema13和部署)（同时阅读[处理 API](../api/m2-processing-api.md)）。[本地搜索 API](../api/m2-search-api.md)已接通；C++ 向量任务另由[向量调度与隔离编码服务](m2-vector-worker.md)处理，工作台 Hybrid 需部署[同源检索网关](m2-hybrid-search.md)。[M2功能阶段已验收](../evidence/m2/stage-audit.md)，Agent仍在M3开发中。编码器仍须隔离运行，不得加载到本手册限制512MiB地址空间的解析worker内；历史RSS测量不能代替总资源限制。
+本手册描述解析 worker 部署，不表示当前 ECS 已安装生产 worker。当前完整部署先看[P0统一入口](p0-single-host.md)；沿用 [M1 部署基线](m1-single-host.md)，M2历史基线为schema5，当前代码要求[schema16](../api/m3-tool-audit.md#schema16和部署)（同时阅读[处理 API](../api/m2-processing-api.md)）。[本地搜索 API](../api/m2-search-api.md)已接通；C++ 向量任务另由[向量调度与隔离编码服务](m2-vector-worker.md)处理，工作台 Hybrid 需部署[同源检索网关](m2-hybrid-search.md)。M1–M4功能阶段已关闭，M5/P0尚未验收，见[验收索引](../evidence/m5/acceptance-index.md)。编码器仍须隔离运行，不得加载到本手册限制512MiB地址空间的解析worker内；历史RSS测量不能代替总资源限制。
 
 ## 身份与凭据
 
@@ -36,8 +36,8 @@ location ^~ /internal/ { return 404; }
 ```ini
 [Unit]
 Description=Smart Docs local document worker
-After=smartdocs.service
-Requires=smartdocs.service
+After=smart-docs.service
+Requires=smart-docs.service
 
 [Service]
 Type=simple
