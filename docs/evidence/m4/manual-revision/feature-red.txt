@@ -64,9 +64,9 @@ Started /tmp/smartdocs-safe.h4SzvX/bin/node --test test/e2e/agent_ui_test.mjs.
 test at test/e2e/agent_ui_test.mjs:385:1
 ✖ manual archive revision preserves immutable identities and requires fresh consent after save (5.145942ms)
   AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
-  
+
     assert.ok(editButton(view))
-  
+
       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:387:10)
       at async Test.run (node:internal/test_runner/test:1332:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
@@ -141,10 +141,10 @@ test at test/e2e/agent_ui_test.mjs:452:1
 ✖ manual revision HTTP adapter uses encoded task path and PUT without confirmation fields (0.67552ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'undefined'
   - 'function'
-  
+
       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:454:10)
       at async Test.run (node:internal/test_runner/test:1332:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {

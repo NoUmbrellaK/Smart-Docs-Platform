@@ -13,14 +13,14 @@ Oct 20 21:53:46 aliyun-lou node[937261]: test at test/e2e/agent_ui_test.mjs:409:
 Oct 20 21:53:46 aliyun-lou node[937261]: ✖ manual revision distinguishes same-name targets and displays source identity (8.899887ms)
 Oct 20 21:53:46 aliyun-lou node[937261]:   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
 Oct 20 21:53:46 aliyun-lou node[937261]:   + actual - expected
-Oct 20 21:53:46 aliyun-lou node[937261]:   
+Oct 20 21:53:46 aliyun-lou node[937261]:
 Oct 20 21:53:46 aliyun-lou node[937261]:     [
 Oct 20 21:53:46 aliyun-lou node[937261]:   +   'Same name',
 Oct 20 21:53:46 aliyun-lou node[937261]:   +   'Same name'
 Oct 20 21:53:46 aliyun-lou node[937261]:   -   'Same name · target',
 Oct 20 21:53:46 aliyun-lou node[937261]:   -   'Same name · other'
 Oct 20 21:53:46 aliyun-lou node[937261]:     ]
-Oct 20 21:53:46 aliyun-lou node[937261]:   
+Oct 20 21:53:46 aliyun-lou node[937261]:
 Oct 20 21:53:46 aliyun-lou node[937261]:       at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:413:10)
 Oct 20 21:53:46 aliyun-lou node[937261]:       at async Test.run (node:internal/test_runner/test:1332:7)
 Oct 20 21:53:46 aliyun-lou node[937261]:       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
