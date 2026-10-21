@@ -1,0 +1,56 @@
+{
+  "case_id": "H01",
+  "code_revision": "7bc4d5196759eae2f35212be0e732e9793dc3744",
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_kind": "live_provider",
+  "admission_http": 201,
+  "run_result": {
+    "error_code": "model_invalid",
+    "model_calls": 1,
+    "result": null,
+    "state": "failed"
+  },
+  "capture_complete": true,
+  "provider_attempts": 1,
+  "provider_results": 1,
+  "provider_model": "deepseek-flash",
+  "max_tokens_observed": [
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 2008,
+    "completion_tokens": 426,
+    "total_tokens": 2434,
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 2008
+  },
+  "provider_duration_ms": 2103,
+  "rejection": {
+    "event": "model_rejection",
+    "sequence": 1,
+    "stage": "tool_batch",
+    "finish_reason": "tool_calls",
+    "content_kind": "string",
+    "tool_calls_kind": "list",
+    "tool_call_count": 5
+  },
+  "tool_calls_dispatched": 0,
+  "citations_total": 0,
+  "report_saved": false,
+  "archive_saved_or_executed": false,
+  "automatic_retry": false,
+  "automatic_confirmation": false,
+  "business_verdict": null,
+  "human_review": "not_performed",
+  "citation_accuracy": null,
+  "billing_amount": null,
+  "private_artifacts": {
+    "initial/audit.jsonl": "9caff2082b31a1fe80f5d71e30ce3347ed6442dfd8a9255c743877dcd185f829",
+    "initial/snapshot.json": "7a4916d11a91810d60f6ade4ab50d35b16d3243237e6e4f156f9ae41cbae3b9d",
+    "review.json": "93495371b1941a98baeb0a977c4a001bc40e660256b0c506d45f5a2287e185a1",
+    "summary.json": "fc9e257384a9d2eea692a988a0fc50aade2ee55e2842b7d52a78f2c5be06c506"
+  }
+}

@@ -1,0 +1,4 @@
+PASS evidence: one paired provider attempt/result, 2560 cap, 2434 tokens, failed/model_invalid, >=5 saturated count
+PASS ledger: 30 unique cases = 3 admission + 1 failed live + 26 not_run; no human verdicts or citations
+PASS frozen fixture hashes; local Markdown link targets: 276
+PASS credential-pattern scan of new evidence (no secret file read)

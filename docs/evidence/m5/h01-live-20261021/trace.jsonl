@@ -1,0 +1,5 @@
+{"event":"task_start","task_id":"085795e170a343e5fd4cdd664193b422","time_unix_ms":1792563538116}
+{"request_id":"84e1b6dde95d42df9a647bb726470100","sequence":1,"model":"deepseek-flash","event":"model_attempt","request_bytes":7220,"max_tokens":2560,"task_id":"085795e170a343e5fd4cdd664193b422","time_unix_ms":1792563538696}
+{"request_id":"84e1b6dde95d42df9a647bb726470100","sequence":1,"model":"deepseek-flash","event":"model_result","reason":"success","usage":{"prompt_tokens":2008,"completion_tokens":426,"total_tokens":2434,"prompt_cache_hit_tokens":0,"prompt_cache_miss_tokens":2008},"duration_ms":2103,"task_id":"085795e170a343e5fd4cdd664193b422","time_unix_ms":1792563540800}
+{"event":"model_rejection","sequence":1,"stage":"tool_batch","finish_reason":"tool_calls","content_kind":"string","tool_calls_kind":"list","tool_call_count":5,"task_id":"085795e170a343e5fd4cdd664193b422","time_unix_ms":1792563540801}
+{"event":"task_outcome","state":"failed","error_code":"model_invalid","task_id":"085795e170a343e5fd4cdd664193b422","time_unix_ms":1792563540870}

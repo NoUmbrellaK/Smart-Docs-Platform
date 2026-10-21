@@ -9,7 +9,10 @@
   },
   "denominator": 30,
   "admission_observations": 3,
-  "model_tasks_not_run": 27,
+  "model_tasks_not_run": 26,
+  "model_tasks_attempted": 1,
+  "model_tasks_completed": 0,
+  "model_tasks_failed": 1,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
@@ -185,10 +188,13 @@
     {
       "case_id": "H01",
       "category": "handover",
-      "execution": "not_run",
+      "execution": "failed",
       "business_verdict": null,
-      "evidence": null,
-      "admission_http": null
+      "evidence": "h01-live-20261021/result.json",
+      "admission_http": 201,
+      "error_code": "model_invalid",
+      "provider_requests": 1,
+      "total_tokens": 2434
     },
     {
       "case_id": "H02",
