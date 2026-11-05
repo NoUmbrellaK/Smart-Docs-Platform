@@ -1,0 +1,10 @@
+PASS:10 public/private events; completed authoritative state and full capture; no report/archive/retry
+PASS:2 requests <=6, each max_tokens512;4303 tokens=3883 input+420 output; no rejection
+PASS:first response batches metadata0/keyword1 results, second saves answer; no independent body-read or hybrid request
+PASS:one current design@1 reference matches fixed body/SHA/IDs and lines1-5
+PASS:literal missing-report answer includes keyword-only limitations and rejects project-wide absence conclusion
+LIMIT:selected-version counts called project coverage; unsearched_files is readiness count, not exhaustive reading; exact query words not independently captured
+PASS:private0700/0600 nobody ownership, four artifact hashes,37 runtime/source fingerprints
+PASS:30 cases=8 completed+3 admission observations+19 not-run;16 attempts,56requests/264704tokens,26citations
+PASS:history preserved, null human business/citation rates; document links and secret-pattern scan clear
+SCOPE:offline evidence checks, no new API/key access, not full product regression or hybrid acceptance

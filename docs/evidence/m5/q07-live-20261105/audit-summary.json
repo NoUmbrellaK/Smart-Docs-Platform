@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "task_id": "fdf3cbd6e9c74ac5990721176adfe4f8",
+  "trace_complete": true,
+  "truncated_tail": false,
+  "outcome": {
+    "state": "completed"
+  },
+  "model": {
+    "attempts": 2,
+    "results": 2,
+    "unresolved": 0,
+    "duration_ms_observed": 2957,
+    "usage_known_calls": 2,
+    "usage_unknown_calls": 0,
+    "usage_observed": {
+      "prompt_tokens": 3883,
+      "completion_tokens": 420,
+      "total_tokens": 4303,
+      "prompt_cache_hit_tokens": 2304,
+      "prompt_cache_miss_tokens": 1579
+    },
+    "usage_total": {
+      "prompt_tokens": 3883,
+      "completion_tokens": 420,
+      "total_tokens": 4303,
+      "prompt_cache_hit_tokens": 2304,
+      "prompt_cache_miss_tokens": 1579
+    }
+  },
+  "tools": {
+    "search_documents": {
+      "attempts": 2,
+      "results": 2,
+      "unresolved": 0,
+      "duration_ms_observed": 26
+    }
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "cost_estimate": null,
+  "business_acceptance": "not_evaluated"
+}

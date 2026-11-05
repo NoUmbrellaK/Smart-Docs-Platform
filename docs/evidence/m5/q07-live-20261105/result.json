@@ -1,0 +1,132 @@
+{
+  "case_id": "Q07",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "5044f672d956556e72b1a565ab61e9a0e5ddf27a",
+    "recorded_at": "2026-11-05T13:45:31.338307+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q07 first attempt, frozen requirements@1/design@1 synthetic fixtures only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q07-live.Qdj8HP/Q07"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 6
+        },
+        "request_id": "0a06daa02d59258e1c941cf6426ab2f3",
+        "sequence": 1,
+        "started_at": "2026-11-05 13:45:36.017727",
+        "status": "success",
+        "task_id": "fdf3cbd6e9c74ac5990721176adfe4f8",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 18
+        },
+        "request_id": "03fb4b6c536d55b7cd74fc2510582ec6",
+        "sequence": 2,
+        "started_at": "2026-11-05 13:45:36.031682",
+        "status": "success",
+        "task_id": "fdf3cbd6e9c74ac5990721176adfe4f8",
+        "tool": "search_documents"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    512,
+    512
+  ],
+  "usage": {
+    "prompt_tokens": 3883,
+    "completion_tokens": 420,
+    "total_tokens": 4303,
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 1579
+  },
+  "review_summary": {
+    "case_id": "Q07",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "ef1ea605d14e057391146bd91a32ee3c2b06c1c06d7444956e9deb488568f818"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "ff352d08d1649e8b27dd218a3d206e90216511ece5052898d746a85c82f3d31d",
+    "initial/audit.jsonl": "e82a26cd762a0a3bbe0e447ac707baf37ff603539032703b3b5b107600576042",
+    "summary.json": "a937cd8654b9855869a36417d9834c435f8b4b2b646b1194d3388c392d36e435",
+    "review.json": "6f3183ed5a4afc45bf370f91d30634d73e9edae93ad0712ae443a176c2120c51"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "design@1",
+      "reference": {
+        "file_id": "7a6444e94b1719f884d95495ff1d1134",
+        "version_id": "571adcff1e7a8b1fb4aa2937ef06331b",
+        "chunk_id": "57dabfd832efc4a48c01c1a49bb172660f1a4bad0b6bb9825597ff7adb20d503"
+      },
+      "line_start": 1,
+      "line_end": 5,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    0
+  ],
+  "answer_checks": {
+    "method": "AI-assisted literal/source inspection; not human semantic acceptance",
+    "states_not_found_with_search_limitations": true,
+    "does_not_assert_project_or_organization_wide_absence": true,
+    "describes_design_candidate_not_audit_report": true,
+    "keyword_only_and_vector_pending_disclosed": true,
+    "selected_version_count": 2,
+    "known_wording_issue": "Answer labels selected-version coverage as project coverage and repeats unsearched_files=0 without explaining this is index readiness rather than all relevant documents inspected.",
+    "exact_query_text_independently_verified": false,
+    "exact_query_text_note": "Backend audit records mode/query_bytes only. Query words in answer are model self-description, not independently captured request text."
+  },
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
