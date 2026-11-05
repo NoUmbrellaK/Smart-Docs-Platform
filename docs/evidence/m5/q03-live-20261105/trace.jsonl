@@ -1,0 +1,10 @@
+{"event":"task_start","task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883617611}
+{"request_id":"08a2d8d225bf40afb7f5dac985cd32a8","sequence":1,"model":"deepseek-flash","event":"model_attempt","request_bytes":5298,"max_tokens":512,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883618205}
+{"request_id":"08a2d8d225bf40afb7f5dac985cd32a8","sequence":1,"model":"deepseek-flash","event":"model_result","reason":"success","usage":{"prompt_tokens":1408,"completion_tokens":117,"total_tokens":1525,"prompt_cache_hit_tokens":1024,"prompt_cache_miss_tokens":384},"duration_ms":1626,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883619831}
+{"sequence":1,"tool":"search_documents","event":"tool_attempt","task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883619903}
+{"sequence":1,"tool":"search_documents","event":"tool_result","status":"success","duration_ms":110,"item_count":0,"chunk_count":0,"query_changed":false,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883620013}
+{"sequence":2,"tool":"search_documents","event":"tool_attempt","task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883620103}
+{"sequence":2,"tool":"search_documents","event":"tool_result","status":"success","duration_ms":18,"item_count":1,"chunk_count":0,"query_changed":true,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883620122}
+{"request_id":"b318327b20324ea7a8c5722609cff6e9","sequence":2,"model":"deepseek-flash","event":"model_attempt","request_bytes":8167,"max_tokens":512,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883620129}
+{"request_id":"b318327b20324ea7a8c5722609cff6e9","sequence":2,"model":"deepseek-flash","event":"model_result","reason":"success","usage":{"prompt_tokens":2326,"completion_tokens":297,"total_tokens":2623,"prompt_cache_hit_tokens":1024,"prompt_cache_miss_tokens":1302},"duration_ms":2150,"task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883622279}
+{"event":"task_outcome","state":"completed","task_id":"5f200bd2cc0f81e1a9fbad96d28f22a4","time_unix_ms":1793883622345}

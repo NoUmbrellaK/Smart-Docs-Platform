@@ -1,0 +1,139 @@
+{
+  "case_id": "Q03",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "59c9b33ffb66832a1d02380eb96c05e1686a2988",
+    "recorded_at": "2026-11-05T13:00:15.857497+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q03 missing filename then deployment/rollback synthetic fixtures only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q03-live.CptQos/Q03"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 99,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 15
+        },
+        "request_id": "0760f35b85628fc8dd284a6d6578815b",
+        "sequence": 1,
+        "started_at": "2026-11-05 13:00:19.909459",
+        "status": "success",
+        "task_id": "5f200bd2cc0f81e1a9fbad96d28f22a4",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 30
+        },
+        "request_id": "9a3798f76929edc70528df0ba6f4083f",
+        "sequence": 2,
+        "started_at": "2026-11-05 13:00:20.107827",
+        "status": "success",
+        "task_id": "5f200bd2cc0f81e1a9fbad96d28f22a4",
+        "tool": "search_documents"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    512,
+    512
+  ],
+  "usage": {
+    "prompt_tokens": 3734,
+    "completion_tokens": 414,
+    "total_tokens": 4148,
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 1686
+  },
+  "review_summary": {
+    "case_id": "Q03",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "66d567b9d9a56c3555d442b740b49da7f19508d16b41da7b94eb6fb2fc78a126"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "61e7ba4a8821f27fa5668b8d8799d716159541b44eac62c4d5d537a2d169e254",
+    "initial/audit.jsonl": "3f9042479699a9d407f2bb50086786da0f138d71a07759b366e51ac9ef08946d",
+    "summary.json": "875b6996a34cf57df5c5de91f35c913258c2f614608af6c209be1bf9fbf04630",
+    "review.json": "be51dcd4c359fb09b4675c66f27938be7de6249fd4940dc75068f8758b81bd45"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "deployment@2",
+      "reference": {
+        "file_id": "561e9cf9e1119d1e0327e0cba1d1eea6",
+        "version_id": "56ff64537b0f52979f85b34015ef4f77",
+        "chunk_id": "68bf8b8183de6eb5eeff498be45dd9605b210cf8a930b5d39c0cff09b829f2fa"
+      },
+      "line_start": 1,
+      "line_end": 5,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    0
+  ],
+  "procedural_checks": {
+    "first_search_mode": "metadata",
+    "first_query_bytes": 15,
+    "first_search_item_count": 0,
+    "second_search_item_count": 1,
+    "second_query_changed": true,
+    "second_search_decided_after_first_result": false,
+    "read_document_version_calls": 0,
+    "required_dynamic_then_read_sequence_met": false,
+    "exact_first_query_proven": false
+  },
+  "answer_checks": {
+    "method": "AI-assisted literal/source inspection; not human semantic acceptance",
+    "startup_order_present": true,
+    "keyword_only_limitation_present": true,
+    "selected_version_count": 2,
+    "known_wording_issue": "Answer groups facts from three paragraphs as the same paragraph; source chunk actually spans lines1-5."
+  },
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
