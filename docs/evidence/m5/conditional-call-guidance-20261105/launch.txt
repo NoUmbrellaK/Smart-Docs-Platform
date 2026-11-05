@@ -1,0 +1,23 @@
+Running as unit: smartdocs-m5-conditional-regression-20261105.service
+RuntimeMaxUSec=10min
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+ActiveState=active
+
+Unit: smartdocs-m5-conditional-regression-20261105
+WorkingDirectory=/tmp/smartdocs-safe.h4SzvX/repo
+PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python
+Command=/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p 'test_*.py' -v
+Slice preflight: TasksCurrent=0 CPUQuotaPerSecUSec=1s
+MemoryHigh=1258291200 MemoryMax=1677721600 MemorySwapMax=0 TasksMax=256
+IOReadBandwidthMax=/dev/vda 5000000 IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200 IOWriteIOPSMax=/dev/vda 200
+memory.events before: low=0 high=82471 max=0 oom=0 oom_kill=0
+MemAvailable before=2049MiB; during samples=1983MiB,1924MiB (not peak measurements)
+Runtime source verification: diff of sorted sha256sum manifests for every *.py under python/ and test/mcp/ returned exit 0, no differences.

@@ -1,0 +1,14 @@
+Running as unit: smartdocs-m5-conditional-final-20261105.service
+RuntimeMaxUSec=10min
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+ActiveState=active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1200         344           3        1949        2009
+Swap:              0           0           0

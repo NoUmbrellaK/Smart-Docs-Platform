@@ -563,7 +563,7 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         responses=iter([
             reply(calls=[call(arguments={'mode':'metadata','query':'missing'},ident='first')]),
             reply(calls=[call(arguments={'mode':'keyword','query':'deployment'},ident='second')]),
-            reply(calls=[call('read_document_version',{'file_id':FILE,'version_id':VERSION},ident='third')]),
+            reply(calls=[call('read_document_version',{'file_id':FILE,'version_id':VERSION,'range':{}},ident='third')]),
             reply(json.dumps({'answer':'Run documented checks.','citations':[CITATION]})),
         ])
         def receive(request):
@@ -573,6 +573,17 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(outcome,{'state':'completed'})
         self.assertEqual(self.result,{'answer':'Run documented checks.','citations':[CITATION]})
         self.assertEqual(len(requests),4)
+        # Verify actual next-request feedback, not the scripted provider's decisions.
+        feedback=[[m for m in body['messages'] if m['role']=='tool'] for body in requests]
+        self.assertEqual([[m['tool_call_id'] for m in rows] for rows in feedback],
+                         [[],['first'],['first','second'],['first','second','third']])
+        self.assertEqual(json.loads(feedback[1][-1]['content'])['data']['items'],[])
+        candidate=json.loads(feedback[2][-1]['content'])['data']['items'][0]
+        self.assertEqual((candidate['file_id'],candidate['version_id']),(FILE,VERSION))
+        chunk=json.loads(feedback[3][-1]['content'])['data']['chunks'][0]
+        self.assertEqual({k:chunk[k] for k in CITATION},CITATION)
+        self.assertEqual([body for path,body in self.requests if path.endswith('/tools/read')],
+                         [{'file_id':FILE,'version_id':VERSION,'range':{}}])
         for body in requests:
             self.assertEqual(body.get('response_format'),{'type':'json_object'})
             self.assertEqual(body['max_tokens'],512)

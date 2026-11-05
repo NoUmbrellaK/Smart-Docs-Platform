@@ -1,0 +1,9 @@
+Final, after review:
+2b363528bc062764e4276d85f4e3a1433df215deaa84bf9727cfdb76189d1075  python/smartdocs/agent_runner.py
+942e1adac9477dc6322ca8dec8d2f5afb9d80eae3f71655307fddccda00706bc  test/mcp/test_agent_runner.py
+9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099  test/fixtures/agent-p0/tasks.json
+5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228  test/fixtures/agent-p0/corpus.json
+
+Initial regression, before review corrections:
+ad9be38a9eed0c228b61e1ad5d3548d19d5a47995012900f0b898d977d797a7e  python/smartdocs/agent_runner.py
+ad0f6806e9c065af0a20fb17d05a3c9c2bc38a51ae9f4bc8f5d6512bedc11bd8  test/mcp/test_agent_runner.py
