@@ -1,0 +1,13 @@
+2026-11-05 offline evidence verification
+Initial check: exit1 at Markdown target verification.txt (this evidence file not yet created).
+All earlier assertions (private/public event and snapshot consistency, usage, hashes,
+permissions, fixtures, ledger, runtime source comparison, regression log) completed before that failure.
+No provider execution was repeated. Final check follows below.
+PASS: 28 public/private events and selected authoritative snapshot fields match
+PASS: 6 provider requests, cap2560, 39220 tokens, 6 dispatches, 2 chunk_id pattern rejections
+PASS: four private artifact hashes/0600 permissions, 0700 directories, frozen fixture hashes
+PASS: 30 cases; four historical H01 attempts; cumulative19 requests/124221 tokens; no invented verdict
+PASS: product/new test match runtime copy; full114-test log retained
+PASS: local Markdown links: 193 ; secret-pattern check clear (not a proof of all possible secrets)
+No model calls, archive confirmation or production changes during verification
+Exit status: 0

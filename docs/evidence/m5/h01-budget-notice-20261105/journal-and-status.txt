@@ -1,0 +1,58 @@
+Nov 05 19:31:29 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import os,pathlib,shlex,runpy,sys,re
+Nov 05 19:31:29 aliyun-lou bash[1197778]: 2026-11-05T11:31:29.655168Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1197778
+Nov 05 19:31:29 aliyun-lou bash[1197778]: 2026-11-05T11:31:29.659822Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 05 19:31:46 aliyun-lou bash[1197778]: 2026-11-05T11:31:46.667248Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 05 19:31:56 aliyun-lou bash[1197778]: 2026-11-05T11:31:56.186692Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 05 19:32:41 aliyun-lou bash[1197938]: schema_version=16
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_run_migration_does_not_invent_execution
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_source_migration_does_not_invent_model_context
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 05 19:33:10 aliyun-lou bash[1198004]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 05 19:33:39 aliyun-lou bash[1198085]: {"case_id": "H01", "run_kind": "live_provider", "state": "failed", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+Nov 05 19:33:40 aliyun-lou systemd[1]: smartdocs-m5-h01-budget-20261105.service: Main process exited, code=exited, status=1/FAILURE
+Nov 05 19:33:40 aliyun-lou systemd[1]: smartdocs-m5-h01-budget-20261105.service: Failed with result 'exit-code'.
+Nov 05 19:33:40 aliyun-lou systemd[1]: smartdocs-m5-h01-budget-20261105.service: Consumed 8.755s CPU time.
+TimeoutStopUSec=5s
+RuntimeMaxUSec=10min
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+ActiveState=failed
+TasksCurrent=0
+CPUQuotaPerSecUSec=1s
+IOReadBandwidthMax=/dev/vda 5000000
+IOWriteBandwidthMax=/dev/vda 5000000
+IOReadIOPSMax=/dev/vda 200
+IOWriteIOPSMax=/dev/vda 200
+MemoryHigh=1258291200
+MemoryMax=1677721600
+MemorySwapMax=0
+active
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1107         380           3        2007        2101
+Swap:              0           0           0
+700 nobody /tmp/smartdocs-m5-h01-budget.QLRdax
+700 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01
+700 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01/initial
+600 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01/initial/snapshot.json
+600 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01/initial/audit.jsonl
+600 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01/summary.json
+600 nobody /tmp/smartdocs-m5-h01-budget.QLRdax/H01/review.json

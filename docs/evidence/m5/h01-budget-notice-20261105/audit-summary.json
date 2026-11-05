@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+  "trace_complete": true,
+  "truncated_tail": false,
+  "outcome": {
+    "state": "failed",
+    "error_code": "budget_exhausted"
+  },
+  "model": {
+    "attempts": 6,
+    "results": 6,
+    "unresolved": 0,
+    "duration_ms_observed": 23623,
+    "usage_known_calls": 6,
+    "usage_unknown_calls": 0,
+    "usage_observed": {
+      "prompt_tokens": 34486,
+      "completion_tokens": 4734,
+      "total_tokens": 39220,
+      "prompt_cache_hit_tokens": 25216,
+      "prompt_cache_miss_tokens": 9270
+    },
+    "usage_total": {
+      "prompt_tokens": 34486,
+      "completion_tokens": 4734,
+      "total_tokens": 39220,
+      "prompt_cache_hit_tokens": 25216,
+      "prompt_cache_miss_tokens": 9270
+    }
+  },
+  "tools": {
+    "read_document_version": {
+      "attempts": 2,
+      "results": 2,
+      "unresolved": 0,
+      "duration_ms_observed": 24
+    },
+    "search_documents": {
+      "attempts": 4,
+      "results": 4,
+      "unresolved": 0,
+      "duration_ms_observed": 209
+    }
+  },
+  "model_rejection": null,
+  "tool_rejections": [
+    {
+      "schema_path": [
+        "properties",
+        "report",
+        "properties",
+        "items",
+        "items",
+        "properties",
+        "citations",
+        "items",
+        "properties",
+        "chunk_id",
+        "pattern"
+      ],
+      "call_index": 7,
+      "reason": "schema_invalid",
+      "tool": "save_handover_report",
+      "sequence": 5
+    },
+    {
+      "schema_path": [
+        "properties",
+        "report",
+        "properties",
+        "items",
+        "items",
+        "properties",
+        "citations",
+        "items",
+        "properties",
+        "chunk_id",
+        "pattern"
+      ],
+      "call_index": 8,
+      "reason": "schema_invalid",
+      "tool": "save_handover_report",
+      "sequence": 6
+    }
+  ],
+  "cost_estimate": null,
+  "business_acceptance": "not_evaluated"
+}

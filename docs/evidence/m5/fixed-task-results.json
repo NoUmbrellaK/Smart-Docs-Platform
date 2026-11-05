@@ -190,14 +190,14 @@
       "category": "handover",
       "execution": "failed",
       "business_verdict": null,
-      "evidence": "h01-diagnostic-run-20261105/result.json",
+      "evidence": "h01-budget-notice-20261105/result.json",
       "admission_http": 201,
       "error_code": "budget_exhausted",
       "provider_requests": 6,
-      "total_tokens": 33652,
-      "attempt_count": 3,
-      "cumulative_provider_requests": 13,
-      "cumulative_total_tokens": 85001,
+      "total_tokens": 39220,
+      "attempt_count": 4,
+      "cumulative_provider_requests": 19,
+      "cumulative_total_tokens": 124221,
       "attempts": [
         {
           "evidence": "h01-live-20261021/result.json",
@@ -219,6 +219,13 @@
           "error_code": "budget_exhausted",
           "provider_requests": 6,
           "total_tokens": 33652
+        },
+        {
+          "evidence": "h01-budget-notice-20261105/result.json",
+          "state": "failed",
+          "error_code": "budget_exhausted",
+          "provider_requests": 6,
+          "total_tokens": 39220
         }
       ]
     },

@@ -1,0 +1,211 @@
+{
+  "case_id": "H01",
+  "attempt_number": 4,
+  "metadata": {
+    "code_revision": "695ac13a68a317b683a61b91e65c8602a1a225a5",
+    "recorded_at": "2026-11-05T11:33:10.775861+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; budget notice H01 attempt <=6 calls x <=8192 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-budget.QLRdax/H01"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_result": {
+    "state": "failed",
+    "error_code": "budget_exhausted",
+    "model_calls": 7,
+    "kind": null
+  },
+  "capture_complete": true,
+  "provider_attempts": 6,
+  "provider_results": 6,
+  "max_tokens_observed": [
+    2560,
+    2560,
+    2560,
+    2560,
+    2560,
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 34486,
+    "completion_tokens": 4734,
+    "total_tokens": 39220,
+    "prompt_cache_hit_tokens": 25216,
+    "prompt_cache_miss_tokens": 9270
+  },
+  "tool_calls_dispatched": 6,
+  "tools_by_name": {
+    "search_documents": 4,
+    "read_document_version": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    2,
+    1,
+    1,
+    0,
+    0
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 64
+        },
+        "request_id": "35cd6a5e3fee57c68d41c4a17fdae7d7",
+        "sequence": 1,
+        "started_at": "2026-11-05 11:33:16.500622",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 10,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 77
+        },
+        "request_id": "759abe724b6d8a74ad31b04d7317e33b",
+        "sequence": 2,
+        "started_at": "2026-11-05 11:33:16.515812",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 39
+        },
+        "request_id": "fab37e6c44bd2152f1a445889991f0c3",
+        "sequence": 3,
+        "started_at": "2026-11-05 11:33:18.019013",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 6
+        },
+        "request_id": "ce9e0421285709c0e077aa05f48ca5ca",
+        "sequence": 4,
+        "started_at": "2026-11-05 11:33:18.034207",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "9093a53374248ad441231822926307ab",
+        "sequence": 5,
+        "started_at": "2026-11-05 11:33:19.119855",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "f48fee6d89f5cf2d4fe800710130db80",
+        "sequence": 6,
+        "started_at": "2026-11-05 11:33:20.567412",
+        "status": "success",
+        "task_id": "80d004b7a1ff6f9240fca687fe01579b",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "model_rejection": null,
+  "tool_rejections": [
+    {
+      "schema_path": [
+        "properties",
+        "report",
+        "properties",
+        "items",
+        "items",
+        "properties",
+        "citations",
+        "items",
+        "properties",
+        "chunk_id",
+        "pattern"
+      ],
+      "call_index": 7,
+      "reason": "schema_invalid",
+      "tool": "save_handover_report",
+      "sequence": 5
+    },
+    {
+      "schema_path": [
+        "properties",
+        "report",
+        "properties",
+        "items",
+        "items",
+        "properties",
+        "citations",
+        "items",
+        "properties",
+        "chunk_id",
+        "pattern"
+      ],
+      "call_index": 8,
+      "reason": "schema_invalid",
+      "tool": "save_handover_report",
+      "sequence": 6
+    }
+  ],
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "2812c9aa024e1c5cd4787b3cff3e7b0d306064906304c73a2f6b22bf9c7535b7"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "56769883a5ac1171ccb905c10bb3770b692c5439624c1b1840ad7a0062c1d44c",
+    "initial/snapshot.json": "15d88e58418ba07d442fca701dcc69cedd22baf8074a5e7e670231b82a5c7494",
+    "summary.json": "fc9e257384a9d2eea692a988a0fc50aade2ee55e2842b7d52a78f2c5be06c506",
+    "review.json": "0a5883e7a8526d7f00d9dffbcecfc4b9080b1d0fcee37cfb0fc0b8e0472efe7a"
+  },
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 4,
+    "completed": 0,
+    "provider_requests": 19,
+    "total_tokens": 124221
+  },
+  "limitations": [
+    "Two save_handover_report calls failed local chunk_id pattern validation before dispatch; argument values were not retained.",
+    "The provider accepted budget-bearing requests and attempted saving, but this single run does not establish reliable task completion or causal effect.",
+    "Search chunk_count excludes nested items[].chunk; zero does not imply no text reached the model.",
+    "No encoder enabled; hybrid request does not prove actual hybrid retrieval.",
+    "Human business and citation review remain unrecorded."
+  ]
+}
