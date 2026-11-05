@@ -1,0 +1,10 @@
+PASS:14 public/private events; authoritative completed, full capture, no report/archive/retry
+PASS:3 requests <=6, max_tokens512 each;6962 tokens=6466 input+496 output, no rejection
+PASS:first response two searches returning0/1; next response range read returns1chunk; batches2/1/0
+PASS:one api@2 citation matches fixed three paragraphs, SHA, exact IDs and lines1-5
+PASS:answer literal next_cursor/null, session/server-project-permission checks, keyword_only and selected-scope disclosure
+LIMIT:AI-assisted source checks, not human acceptance; not hybrid or actual pagination/authorization testing
+PASS:private0700/0600 nobody ownership and four hashes, blank review,37 runtime/source fingerprints
+PASS:30 cases=6 completed+3 admission observations+21 not-run;14 historical attempts,51requests/252920tokens,23citations
+PASS:historical failure evidence preserved, null business rates; links/secret-pattern scan clear
+SCOPE:offline verification, no model call or key access; no complete product regression repeated
