@@ -1,0 +1,9 @@
+PASS exact private/public trace match, private artifact hashes, persisted failure and no session leftovers
+PASS six provider requests <=6, each max_tokens2560 <=8192, actual usage48915; backend admission count7 kept distinct
+PASS 11 dispatched tools in batches4/3/2/1/1/0, no report/archive/citations
+PASS 30 cases unchanged; H01 two failures, cumulative7 requests/51349 tokens; human verdicts remain empty
+PASS runner SHA, frozen hashes, all test/mcp source copies, credential-pattern scan
+PASS local Markdown link targets: 277
+2	0	python/smartdocs/agent_runner.py
+codex/m3-mcp-agent
+git@github.com:NoUmbrellaK/Smart-Docs-Platform.git

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "dataset": "smartdocs-p0-synthetic-v1",
-  "updated_on": "2026-10-21",
+  "updated_on": "2026-11-05",
   "scope": "fixed_30_observations_separate_from_frozen_inputs",
   "fixture_sha256": {
     "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
@@ -190,11 +190,30 @@
       "category": "handover",
       "execution": "failed",
       "business_verdict": null,
-      "evidence": "h01-live-20261021/result.json",
+      "evidence": "h01-batch-retest-20261105/result.json",
       "admission_http": 201,
-      "error_code": "model_invalid",
-      "provider_requests": 1,
-      "total_tokens": 2434
+      "error_code": "budget_exhausted",
+      "provider_requests": 6,
+      "total_tokens": 48915,
+      "attempt_count": 2,
+      "cumulative_provider_requests": 7,
+      "cumulative_total_tokens": 51349,
+      "attempts": [
+        {
+          "evidence": "h01-live-20261021/result.json",
+          "state": "failed",
+          "error_code": "model_invalid",
+          "provider_requests": 1,
+          "total_tokens": 2434
+        },
+        {
+          "evidence": "h01-batch-retest-20261105/result.json",
+          "state": "failed",
+          "error_code": "budget_exhausted",
+          "provider_requests": 6,
+          "total_tokens": 48915
+        }
+      ]
     },
     {
       "case_id": "H02",

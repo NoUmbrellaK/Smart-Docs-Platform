@@ -1,0 +1,214 @@
+{
+  "case_id": "H01",
+  "attempt_number": 2,
+  "metadata": {
+    "code_revision": "d52c8215baf2a2ac36e12a51ca2f583a5ab244d1+agent_runner_sha256:5ab5ffc1ca407249bda04f9a0b2e20a3f27f7e8c51eb6bbb20d9e844bed5a910",
+    "recorded_at": "2026-11-05T10:56:47.851209+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; one H01 attempt <=6 calls x <=8192 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-retest.oSqJcP/H01"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_result": {
+    "error_code": "budget_exhausted",
+    "model_calls": 7,
+    "result": null,
+    "state": "failed"
+  },
+  "capture_complete": true,
+  "provider_attempts": 6,
+  "provider_results": 6,
+  "max_tokens_observed": [
+    2560,
+    2560,
+    2560,
+    2560,
+    2560,
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 45669,
+    "completion_tokens": 3246,
+    "total_tokens": 48915,
+    "prompt_cache_hit_tokens": 35840,
+    "prompt_cache_miss_tokens": 9829
+  },
+  "tool_calls_dispatched": 11,
+  "tools_by_name": {
+    "search_documents": 8,
+    "read_document_version": 3
+  },
+  "dispatched_tools_per_model_response": [
+    4,
+    3,
+    2,
+    1,
+    1,
+    0
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 34
+        },
+        "request_id": "4b8f6f963d13b40ea2e47ed96c30e129",
+        "sequence": 1,
+        "started_at": "2026-11-05 10:56:55.469582",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 25
+        },
+        "request_id": "136c4b909c4c381951c2ee3b9d38306c",
+        "sequence": 2,
+        "started_at": "2026-11-05 10:56:55.486462",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 23
+        },
+        "request_id": "d92e08ecc6b0f0a1c1536fbea8a6c603",
+        "sequence": 3,
+        "started_at": "2026-11-05 10:56:55.522324",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 25
+        },
+        "request_id": "80c45a191b0a9c1445b45c5968fb57fe",
+        "sequence": 4,
+        "started_at": "2026-11-05 10:56:55.536966",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 103,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 33
+        },
+        "request_id": "1d1ea063dc63d95c54c945ff2232aee8",
+        "sequence": 5,
+        "started_at": "2026-11-05 10:56:57.423449",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 102,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 38
+        },
+        "request_id": "fab7b4292e08a6b35faef3be9ed17ae7",
+        "sequence": 6,
+        "started_at": "2026-11-05 10:56:57.723620",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 98,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 20
+        },
+        "request_id": "9cfe8443958d7d404188d72072a617e7",
+        "sequence": 7,
+        "started_at": "2026-11-05 10:56:58.027756",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 2
+        },
+        "request_id": "df71d840e0a8a410a88e78f37952588a",
+        "sequence": 8,
+        "started_at": "2026-11-05 10:56:59.786561",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "d37f06073ec226872d59ac208640a34f",
+        "sequence": 9,
+        "started_at": "2026-11-05 10:56:59.802854",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "e9532a38553186c262b07987c5a92e50",
+        "sequence": 10,
+        "started_at": "2026-11-05 10:57:01.119651",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "4b4fe395626ce8759e4b4d9b2429aab5",
+        "sequence": 11,
+        "started_at": "2026-11-05 10:57:02.656791",
+        "status": "success",
+        "task_id": "346da14ea4a22a0f01bdd1ad997df434",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "model_rejections": 0,
+  "citations_total": 0,
+  "report_saved": false,
+  "archive_saved_or_executed": false,
+  "automatic_retry": false,
+  "automatic_confirmation": false,
+  "business_verdict": null,
+  "human_review": "not_performed",
+  "citation_accuracy": null,
+  "billing_amount": null,
+  "private_artifacts": {
+    "initial/audit.jsonl": "026fe36996edd33916d8e374dcaa8d4f36dceb85dbf81dc7e975d51183987ba5",
+    "initial/snapshot.json": "278852410cb819d067f91fc3029cf68aa188265db157f2cd6c2db2492e6e1263",
+    "review.json": "02b9dcd6fb3b534ff371f345f26803911312cb0af9576cd342f7d2374be5b6bc",
+    "summary.json": "fc9e257384a9d2eea692a988a0fc50aade2ee55e2842b7d52a78f2c5be06c506"
+  }
+}
