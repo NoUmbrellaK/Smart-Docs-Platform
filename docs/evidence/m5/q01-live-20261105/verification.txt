@@ -1,0 +1,10 @@
+2026-11-05; base 0f1369146d0a0352e3f31fbed2f10c6e2ec41a85; read-only Python stdlib comparisons; exit0.
+PASS:10 public/private events; authoritative completed query and backend calls match
+PASS:2 actual requests with512 caps;4232 tokens=3847 input+385 output; no rejection, retry, report or archive tool
+PASS:both searches came from first model response, not evidence of adaptive retry
+PASS:one selected current api@2; same file/different old version; one citation matches fixed IDs, lines1-5, original text and fixture SHA
+PASS:answer literal facts match Q01 and state keyword_only; this is not human semantic acceptance or hybrid-search validation
+PASS:four private hashes unchanged,0700/0600 nobody ownership; blank human review and null rates retained
+PASS:30 cases=2 execution-completed+3 admission observations+25 not-run;9 historical model attempts,38 requests/224420 tokens,18 citations
+PASS:37 source/runtime fingerprints and public links; secret-pattern scan clear (not exhaustive)
+SCOPE:read-only evidence verification; no new model call, key read or fixture rerun
