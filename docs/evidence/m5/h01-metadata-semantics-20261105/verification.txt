@@ -1,0 +1,11 @@
+2026-11-05 read-only evidence verification; exit0.
+PASS: 25 public/private events match; metadata, failed result, backend tools and blank review match
+PASS: 4 requests x cap2560; 21796 tokens; final output2560/finish_reason=length; rejection before dispatch
+PASS: batches1/3/3/0; metadata item_count6 and6 successful range reads; no save/archive or schema rejection
+PASS: four private hashes,0600 files/0700 directories, frozen fixture hashes
+PASS: 30 unique cases; latest completed0/failed1/not_run26; six H01 attempts preserved
+PASS: historical28 requests/176902 tokens, one execution completion, five historical citations; no business/accuracy claim
+PASS: source/runtime fingerprints: 38 ; actual3-test and115-test logs; Markdown targets excluding pending verification.txt: 198
+PASS: secret-pattern scan clear (not exhaustive); verification made no provider calls
+
+The verification record is written after checking all other Markdown targets. git diff --check and final link existence are checked before commit.

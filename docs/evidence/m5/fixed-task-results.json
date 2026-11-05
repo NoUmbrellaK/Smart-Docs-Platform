@@ -11,12 +11,13 @@
   "admission_observations": 3,
   "model_tasks_not_run": 26,
   "model_tasks_attempted": 1,
-  "model_tasks_completed": 1,
-  "model_tasks_failed": 0,
+  "model_tasks_completed": 0,
+  "model_tasks_failed": 1,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
   "citations_observed": 5,
+  "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
     {
@@ -188,17 +189,17 @@
     {
       "case_id": "H01",
       "category": "handover",
-      "execution": "completed",
+      "execution": "failed",
       "business_verdict": null,
-      "evidence": "h01-schema-feedback-20261105/result.json",
+      "evidence": "h01-metadata-semantics-20261105/result.json",
       "admission_http": 201,
-      "error_code": null,
-      "provider_requests": 5,
-      "total_tokens": 30885,
-      "attempt_count": 5,
-      "cumulative_provider_requests": 24,
-      "cumulative_total_tokens": 155106,
-      "expected_item_statuses_match": false,
+      "error_code": "model_invalid",
+      "provider_requests": 4,
+      "total_tokens": 21796,
+      "attempt_count": 6,
+      "cumulative_provider_requests": 28,
+      "cumulative_total_tokens": 176902,
+      "expected_item_statuses_match": null,
       "attempts": [
         {
           "evidence": "h01-live-20261021/result.json",
@@ -234,6 +235,13 @@
           "error_code": null,
           "provider_requests": 5,
           "total_tokens": 30885
+        },
+        {
+          "evidence": "h01-metadata-semantics-20261105/result.json",
+          "state": "failed",
+          "error_code": "model_invalid",
+          "provider_requests": 4,
+          "total_tokens": 21796
         }
       ]
     },

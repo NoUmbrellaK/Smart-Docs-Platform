@@ -1,0 +1,185 @@
+{
+  "case_id": "H01",
+  "attempt_number": 6,
+  "metadata": {
+    "code_revision": "0e0643bf3f2d93ffb4f73c5f86263bcec6b0e97e",
+    "recorded_at": "2026-11-05T12:00:26.458215+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; metadata semantics H01 attempt <=6 calls x <=8192 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-metadata.KPcPYR/H01"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_result": {
+    "state": "failed",
+    "error_code": "model_invalid",
+    "model_calls": 4,
+    "kind": null
+  },
+  "capture_complete": true,
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    2560,
+    2560,
+    2560,
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 18464,
+    "completion_tokens": 3332,
+    "total_tokens": 21796,
+    "prompt_cache_hit_tokens": 10368,
+    "prompt_cache_miss_tokens": 8096
+  },
+  "tool_calls_dispatched": 7,
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 6
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    3,
+    3,
+    0
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 103,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "4c4dc8cb1ba3e927ee6df066e62dfc12",
+        "sequence": 1,
+        "started_at": "2026-11-05 12:00:34.413092",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 102,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "0ae58963b43d3e10044b6087130d00a7",
+        "sequence": 2,
+        "started_at": "2026-11-05 12:00:36.807891",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 91,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "59a58ac319ee65925aa0fb0b33b60c62",
+        "sequence": 3,
+        "started_at": "2026-11-05 12:00:36.917414",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "abd4e1ac1786b792f4f5841ec68b4b1b",
+        "sequence": 4,
+        "started_at": "2026-11-05 12:00:37.017335",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 102,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "5f2f19942434471e27373c7350019256",
+        "sequence": 5,
+        "started_at": "2026-11-05 12:00:39.211466",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "afcadbf3dafbf6521753b60a2b2914ef",
+        "sequence": 6,
+        "started_at": "2026-11-05 12:00:39.414037",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "632082c7f74e3fe301e6ba00c11265c3",
+        "sequence": 7,
+        "started_at": "2026-11-05 12:00:39.429993",
+        "status": "success",
+        "task_id": "9d9c0155335a504ec9159b871c4abe12",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "model_rejection": {
+    "tool_call_count": 1,
+    "finish_reason": "length",
+    "stage": "tool_batch",
+    "sequence": 4,
+    "tool_calls_kind": "list",
+    "content_kind": "string"
+  },
+  "tool_rejections": [],
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "e6c60e589f3dc3fb3077ed7957ae18fa1fb84a59b10b03ddd8ed8a2b4b47a666"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "ace763c4dba13aeada48f8a928bdb2c629e91904cb8c0f679ba178fd4d0facad",
+    "initial/snapshot.json": "5fa1605cf4f9259179f305fb56ca7df2d349fe9ebdd9a465aca90b58a69a93fe",
+    "summary.json": "fc9e257384a9d2eea692a988a0fc50aade2ee55e2842b7d52a78f2c5be06c506",
+    "review.json": "b300d37ca3dd732e8bc50a1babef5536968b5ce2273de2cf953f3d8611377aa4"
+  },
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 6,
+    "completed": 1,
+    "provider_requests": 28,
+    "total_tokens": 176902,
+    "citations_observed": 5
+  },
+  "limitations": [
+    "Final response reached the unchanged 2560 output-token cap; finish_reason=length caused rejection before tool dispatch.",
+    "Metadata enumeration returned six items, followed by six successful range reads. Sanitized audit does not retain read IDs; distinct-document coverage is not proven.",
+    "Final rejected response contained one tool call; its name and raw arguments are not retained, so a save attempt cannot be asserted.",
+    "No report saved or business verdict recorded in this attempt. Five historical citations belong to attempt 5; no human semantic accuracy is claimed.",
+    "No encoder enabled. No automatic retry or archive confirmation."
+  ]
+}
