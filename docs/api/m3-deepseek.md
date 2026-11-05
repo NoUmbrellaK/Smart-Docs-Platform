@@ -128,7 +128,8 @@ model_call意味着适配器未成功交回响应；internal_error是未进一�
 ### 工具派发前拒绝诊断
 
 工具调用外层格式合法、但本地参数校验失败时，记录非终止性的 `tool_rejection`。
-模型仍只收到原有 `invalid_request`，可在原预算内纠正参数；不放宽校验、不自动重试，
+模型收到 `status=invalid_request`，error包含原有code及下列固定reason、静态schema_path，
+可对照本轮已提供的工具schema在原预算内纠正参数；不放宽校验、不自动重试，
 被拒绝调用不进入MCP/C++。重复失败仍按既有规则终止，诊断写入失败则停止为dependency_failed。
 
 - `sequence`：本轮模型响应序号，不是实际派发工具序号。
@@ -139,6 +140,12 @@ model_call意味着适配器未成功交回响应；internal_error是未进一�
 - `schema_path`：schema_invalid时记录首个校验错误的静态schema路径，如
   `["properties","report","properties","items","items","required"]`；其他原因为空数组。
   这是schema位置，不是实例数组下标、具体缺失字段或原文；不记录错误消息、参数值或操作ID。
+
+这两个字段也用于本地拒绝的模型反馈，不返回未知工具名称、实例内容、异常文本或正确ID猜测；
+例如报告引用格式错误可定位至 `properties/report/properties/items/items/properties/citations/items/properties/chunk_id/pattern`。
+修正后仍经过相同schema与操作绑定校验，下一次模型请求前仍重新执行后端范围检查。
+本地反馈不是MCP/C++成功回执，不增加新授权或归档确认；MCP/后端错误继续沿用原通用映射，
+不借此转发上游详细错误。真实模型能否据此正确修复引用，需另外实测，离线脚本不代替该证据。
 
 该事件补足“供应商返回成功但没有工具派发”的定位盲点，不新增数据库错误码。
 旧日志没有该事件时不能推断“没有本地拒绝”，也不能据此恢复2026-11-05 H01的具体错误字段。

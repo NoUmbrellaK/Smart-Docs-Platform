@@ -273,13 +273,18 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
             for index,(invalid,reason,schema_path,tool) in enumerate(cases):
                 with self.subTest(reason=reason,index=index):
                     self.requests=[]
+                    feedback=[]
                     responses=iter([reply(calls=[invalid,call(ident='valid')]),
                                     reply(json.dumps({'answer':'Limited result','citations':[]}))])
+                    def receive(request):
+                        sent=json.loads(request.content)
+                        feedback.extend(json.loads(m['content']) for m in sent['messages']
+                                        if m['role']=='tool' and m['tool_call_id']=='call_1')
+                        return httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))
                     path=Path(directory)/f'{index}.jsonl'
                     with open_audit(path,TASK) as audit:
                         audit({'event':'task_start'})
-                        model=DeepSeekModel('PRIVATE-KEY',audit,transport=httpx.MockTransport(
-                            lambda request: httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))))
+                        model=DeepSeekModel('PRIVATE-KEY',audit,transport=httpx.MockTransport(receive))
                         async with create_connected_server_and_client_session(create_server(self.context)) as client:
                             outcome=await run_session(self.context,client,model,audit)
                         audit({'event':'task_outcome',**outcome})
@@ -295,6 +300,54 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                     self.assertTrue(value['trace_complete'])
                     self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value))
                     self.assertEqual(len([p for p,_ in self.requests if '/tools/' in p]),1)
+                    self.assertEqual(feedback,[{'status':'invalid_request','error':{
+                        'code':'invalid_request','reason':reason,'schema_path':schema_path}}])
+                    self.assertNotIn('PRIVATE',json.dumps(feedback))
+
+    async def test_citation_schema_feedback_reaches_model_but_cannot_bypass_scope_check(self):
+        # Real loop/adapter/MCP; scripted remote repairs only after receiving the schema location.
+        # This checks feedback delivery and gating, not real-model reasoning or semantic accuracy.
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        for revoke in (False,True):
+            with self.subTest(revoke=revoke):
+                self.requests=[]; self.denied=False; self.report_receipt=None
+                arguments=self.report_fixture(); received=[]; events=[]; observed=None
+                async def receive(request):
+                    nonlocal observed
+                    sent=json.loads(request.content); received.append(sent)
+                    if len(received)==1:
+                        response=reply(calls=[call()])
+                    elif len(received)==2:
+                        data=json.loads(next(m['content'] for m in sent['messages'] if m['role']=='tool'))['data']
+                        observed={k:data['items'][0]['chunk'][k] for k in ('file_id','version_id','chunk_id')}
+                        arguments['report']['items'][0]['citations']=[{**observed,'chunk_id':'PRIVATE-BAD-ID'}]
+                        self.denied=revoke
+                        response=reply(calls=[call('save_handover_report',arguments,ident='bad')])
+                    else:
+                        feedback=json.loads(next(m['content'] for m in sent['messages']
+                                                 if m['role']=='tool' and m['tool_call_id']=='bad'))
+                        self.assertEqual(feedback,{'status':'invalid_request','error':{
+                            'code':'invalid_request','reason':'schema_invalid','schema_path':[
+                                'properties','report','properties','items','items','properties',
+                                'citations','items','properties','chunk_id','pattern']}})
+                        self.assertNotIn('PRIVATE',json.dumps(feedback))
+                        self.assertFalse(any(p.endswith('/handover-report') for p,_ in self.requests))
+                        arguments['report']['items'][0]['citations']=[observed]
+                        response=reply(calls=[call('save_handover_report',arguments,ident='corrected')])
+                    return httpx.Response(200,stream=httpx.ByteStream(json.dumps(response).encode()))
+                model=DeepSeekModel('PRIVATE-KEY',events.append,max_calls=3,transport=httpx.MockTransport(receive))
+                outcome=await self.run_model(model)
+                writes=[body for p,body in self.requests if p.endswith('/handover-report')]
+                self.assertEqual(len(received),2 if revoke else 3)
+                self.assertEqual(len(writes),0 if revoke else 1)
+                if revoke:
+                    self.assertEqual(outcome,{'state':'failed','error_code':'scope_changed'})
+                    self.assertIsNone(self.report_receipt)
+                else:
+                    self.assertEqual((outcome['state'],outcome.get('kind')),('completed','handover_report'))
+                    self.assertEqual(writes[0]['report']['items'][0]['citations'],[CITATION])
+                    self.assertFalse(any(p.endswith('/run/finish') for p,_ in self.requests))
 
     async def test_local_write_binding_rejections_are_recorded_without_writes(self):
         from smartdocs.agent_cli import run_session
@@ -309,7 +362,12 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                 arguments=self.report_fixture() if tool=='save_handover_report' else self.archive_fixture()
                 if field=='notes': del arguments['report']['items'][0]['notes']
                 else: arguments[field]=value
-                async def model(messages,**kwargs): return reply(calls=[call(tool,arguments,ident=f'call_{len(messages)}')])
+                async def model(messages,**kwargs):
+                    for message in messages:
+                        if message['role']=='tool':
+                            self.assertEqual(json.loads(message['content']),{'status':'invalid_request','error':{
+                                'code':'invalid_request','reason':reason,'schema_path':schema_path}})
+                    return reply(calls=[call(tool,arguments,ident=f'call_{len(messages)}')])
                 async with create_connected_server_and_client_session(create_server(self.context)) as client:
                     outcome=await run_session(self.context,client,model,events.append)
                 self.assertEqual(outcome['error_code'],'repeated_tool_error')

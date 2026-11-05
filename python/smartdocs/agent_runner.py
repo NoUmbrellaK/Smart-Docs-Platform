@@ -411,7 +411,9 @@ async def run_task(context, client, model, *, audit=None):
                                    'tool':name if name in validators else 'unknown',
                                    'reason':rejection_reason,'schema_path':schema_path})
                         except (OSError, ValueError): raise RunError('dependency_failed') from None
-                    payload = {"status":"invalid_request", "error":{"code":"invalid_request"}}
+                    # Fixed local reason/schema location only; never echo instance values or exceptions.
+                    payload = {"status":"invalid_request", "error":{"code":"invalid_request",
+                               "reason":rejection_reason, "schema_path":schema_path}}
                 else:
                     save_attempted = name == REPORT_TOOL
                     archive_attempted = name == CREATE_ARCHIVE_TOOL
