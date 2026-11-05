@@ -1,0 +1,9 @@
+PASS public/private trace and selected snapshot fields match; 38 events
+PASS 6 successful provider responses; cap2560; 33652 actual usage tokens; no rejection events
+PASS 12 dispatched searches; batches2/2/2/2/2/2; no report/archive; blank human review
+PASS private artifact hashes/modes and frozen fixture hashes
+PASS 30-case ledger; H01 3 attempts/13 requests/85001 tokens; no false business completion
+PASS 191 local documentation link targets
+ M README.md
+ M docs/evidence/m5/fixed-task-results.json
+?? docs/evidence/m5/h01-diagnostic-run-20261105/

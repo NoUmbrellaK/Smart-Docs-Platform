@@ -1,0 +1,251 @@
+{
+  "case_id": "H01",
+  "attempt_number": 3,
+  "metadata": {
+    "code_revision": "5550c6eed4cdc9df2f0bf278f754b07dde9bd283",
+    "recorded_at": "2026-11-05T11:19:56.519728+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; one diagnostic H01 attempt <=6 calls x <=8192 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-diagnostic.q8zYne/H01"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_result": {
+    "state": "failed",
+    "error_code": "budget_exhausted",
+    "model_calls": 7,
+    "kind": null
+  },
+  "capture_complete": true,
+  "provider_attempts": 6,
+  "provider_results": 6,
+  "max_tokens_observed": [
+    2560,
+    2560,
+    2560,
+    2560,
+    2560,
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 32768,
+    "completion_tokens": 884,
+    "total_tokens": 33652,
+    "prompt_cache_hit_tokens": 25984,
+    "prompt_cache_miss_tokens": 6784
+  },
+  "tool_calls_dispatched": 12,
+  "tools_by_name": {
+    "search_documents": 12
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 64
+        },
+        "request_id": "9a64695a7cf9eb13c6a3658504f8c885",
+        "sequence": 1,
+        "started_at": "2026-11-05 11:20:02.657397",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 12
+        },
+        "request_id": "621f024d079261c9cde234bca25b3589",
+        "sequence": 2,
+        "started_at": "2026-11-05 11:20:02.672673",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 97,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 41
+        },
+        "request_id": "0c0a0bf34ff13a56f6a400a5bdbab8c8",
+        "sequence": 3,
+        "started_at": "2026-11-05 11:20:04.047440",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 1
+        },
+        "request_id": "7a841fb2a650253d130338fdfacf9c5f",
+        "sequence": 4,
+        "started_at": "2026-11-05 11:20:04.242314",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 26
+        },
+        "request_id": "6c2e935f585f88482acda4d0ac9977fe",
+        "sequence": 5,
+        "started_at": "2026-11-05 11:20:05.566805",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 34
+        },
+        "request_id": "9c63ae4d744151fa5bec415cfdbdcb24",
+        "sequence": 6,
+        "started_at": "2026-11-05 11:20:05.580961",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 6
+        },
+        "request_id": "675e2fb83b06cb7d31635c67299f0eea",
+        "sequence": 7,
+        "started_at": "2026-11-05 11:20:06.840309",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 6
+        },
+        "request_id": "749b37165d35fb64ea8c16e3e5bc8a9a",
+        "sequence": 8,
+        "started_at": "2026-11-05 11:20:06.854133",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 15
+        },
+        "request_id": "53ae2c6d2d22671ddb2542ce0b9ffbe5",
+        "sequence": 9,
+        "started_at": "2026-11-05 11:20:08.342067",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 15
+        },
+        "request_id": "84990389026aa67c711d554e7c5af56d",
+        "sequence": 10,
+        "started_at": "2026-11-05 11:20:08.356815",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 40
+        },
+        "request_id": "21795b8ca66ce8f299dbe173db16b85c",
+        "sequence": 11,
+        "started_at": "2026-11-05 11:20:09.740347",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 53
+        },
+        "request_id": "2c8612ffd748c2c06734dad5c2f92c0f",
+        "sequence": 12,
+        "started_at": "2026-11-05 11:20:09.755986",
+        "status": "success",
+        "task_id": "b8199913511505491ffc397adb09f007",
+        "tool": "search_documents"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "0d651158852778b76a5e6af0ca9f121d11e2c46d1df116ee009755325b45dff3"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "2176cbe0be2c991cbb53f45f1504e42a17c4496a038b3736c1609bf41c6d695e",
+    "initial/snapshot.json": "cc066f50e85e21bcc1322adcea4f9504677acd86921e1ea9a35151b5ad3e97c8",
+    "summary.json": "fc9e257384a9d2eea692a988a0fc50aade2ee55e2842b7d52a78f2c5be06c506",
+    "review.json": "a746460541a2b8a0574eee2d557d4e1bd632751b58bb01bb42041d2b32cb8412"
+  },
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 3,
+    "completed": 0,
+    "provider_requests": 13,
+    "total_tokens": 85001
+  },
+  "limitations": [
+    "No raw model/tool argument bodies retained; no retrospective diagnosis of attempt 2.",
+    "Search audit chunk_count does not count nested items[].chunk; zero does not prove no text reached model.",
+    "Model sees tool cap but not adapter model-call cap or remaining calls; causal effect requires a separate test.",
+    "No encoder enabled; hybrid request is not evidence of actual hybrid retrieval.",
+    "Human business and citation review remain unrecorded."
+  ]
+}
