@@ -1,0 +1,13 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {exit ($2<524288)}' /proc/meminfo
+chown nobody:nogroup /tmp/smartdocs-m5-h02-live.8yZiJ9
+chmod 0700 /tmp/smartdocs-m5-h02-live.8yZiJ9
+systemd-run --unit=smartdocs-m5-h02-live-20261105 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p LoadCredential=deepseek.env:/root/.config/smart-docs/deepseek.env --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import os,pathlib,shlex,runpy,sys,re
+tokens=shlex.split((pathlib.Path(os.environ["CREDENTIALS_DIRECTORY"])/"deepseek.env").read_text(),comments=True)
+entries=[t.partition("=") for t in tokens if t.startswith("DEEPSEEK_API_KEY=")]
+if len(entries)!=1 or not re.fullmatch(r"[!-~]{1,256}",entries[0][2]): raise SystemExit("invalid credential configuration")
+os.environ["DEEPSEEK_API_KEY"]=entries[0][2]
+sys.argv=["test/e2e/benchmark_cli.py",*sys.argv[1:]]
+runpy.run_path(sys.argv[0],run_name="__main__")' --case H02 --live --output /tmp/smartdocs-m5-h02-live.8yZiJ9/H02 --code-revision 49476888fd0fbd7e08b6daf62033052dba695e95 --environment 'Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; H02 first attempt; five approved synthetic versions requirements@1 design@1 api@2 deployment@2 issues@1; standard six-item checklist; <=6 calls x4096 output; no automatic retry/archive confirmation' --max-calls 6 --hold-seconds 0
+systemctl show smartdocs-m5-h02-live-20261105.service -p LoadState -p MainPID -p ActiveState -p User -p Group -p UMask -p Nice -p NoNewPrivileges -p RuntimeMaxUSec -p TimeoutStopUSec -p KillMode -p Slice

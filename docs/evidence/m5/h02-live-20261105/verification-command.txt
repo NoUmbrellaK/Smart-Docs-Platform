@@ -1,0 +1,128 @@
+set -e
+python3 -B - <<'PY'
+import json,pathlib,hashlib,stat,sys,re,collections
+r=pathlib.Path.cwd(); e=r/'docs/evidence/m5/h02-live-20261105'; p=pathlib.Path('/tmp/smartdocs-m5-h02-live.8yZiJ9/H02')
+sys.path.insert(0,str(r/'test/e2e'))
+from benchmark_review import prepare,summarize
+s=json.loads((p/'initial/snapshot.json').read_text()); review=json.loads((p/'review.json').read_text())
+v=json.loads((e/'result.json').read_text()); a=json.loads((e/'audit-summary.json').read_text())
+trace=[json.loads(x) for x in (e/'trace.jsonl').read_text().splitlines()]
+assert trace==[json.loads(x) for x in (p/'initial/audit.jsonl').read_text().splitlines()] and len(trace)==26
+assert v['metadata']==s['metadata'] and s['metadata']['code_revision']=='49476888fd0fbd7e08b6daf62033052dba695e95'
+assert v['run_result']=={k:s['run_result'].get(k) for k in ('state','error_code','model_calls','kind')}
+assert s['run_result']['state']=='completed' and s['run_result']['kind']=='handover_report' and s['capture']['complete']
+assert not s.get('archive_plan') and 'archive_policy_revision' not in s['task']
+assert v['backend_tool_calls']==s['tool_calls'] and review==prepare(s) and v['review_summary']==summarize(s,review)
+assert s['execution']=={'outcome':{'state':'completed'},'max_model_calls':6,'automatic_retry':False,'automatic_confirmation':False}
+models=[x for x in trace if x['event']=='model_result']; attempts=[x for x in trace if x['event']=='model_attempt']
+assert len(models)==len(attempts)==v['provider_attempts']==v['provider_results']==4
+assert all(x['reason']=='success' for x in models)
+assert [x['max_tokens'] for x in attempts]==v['max_tokens_observed']==[4096]*4
+usage={k:sum(x['usage'][k] for x in models) for k in models[0]['usage']}
+assert usage==v['usage']==a['model']['usage_total']
+assert (usage['prompt_tokens'],usage['completion_tokens'],usage['total_tokens'])==(20365,2250,22615)
+assert [(x['usage']['prompt_tokens'],x['usage']['completion_tokens']) for x in models]==[(2619,80),(3475,464),(6295,180),(7976,1526)]
+assert a['outcome']=={'state':'completed'} and a['trace_complete'] and a['model_rejection'] is None and a['tool_rejections']==[]
+batches=[]
+for x in trace:
+ if x['event']=='model_result':batches.append(0)
+ if x['event']=='tool_attempt':batches[-1]+=1
+assert batches==v['dispatched_tools_per_model_response']==[1,4,2,1]
+returns=[x for x in trace if x['event']=='tool_result']
+expected_tools=['search_documents']+['read_document_version']*5+['search_documents','save_handover_report']
+assert [x['tool'] for x in returns]==expected_tools
+assert [x['tool'] for x in s['tool_calls']['items']]==expected_tools
+assert returns[0]['item_count']==5 and returns[6]['item_count']==2 and all(x['chunk_count']==1 for x in returns[1:6])
+assert s['tool_calls']['items'][0]['parameters']=={'mode':'metadata','query_bytes':0}
+assert s['tool_calls']['items'][6]['parameters']=={'mode':'keyword','query_bytes':12}
+assert all(x['parameters']=={'selector':'range'} for x in s['tool_calls']['items'][1:6])
+assert s['tool_calls']['items'][7]['parameters']=={'item_count':6}
+assert collections.Counter(expected_tools)==v['tools_by_name']
+corpus=json.loads((r/'test/fixtures/agent-p0/corpus.json').read_text())
+case=next(x for x in json.loads((r/'test/fixtures/agent-p0/tasks.json').read_text())['tasks'] if x['id']=='H02')
+mapping=s['fixture_mapping']; report=s['handover_report']; checks=v['report_checks']; body=report['report']
+assert set(mapping)==set(case['scope'])==set(case['present']) and len(mapping)==5
+selected=[{k:mapping[ref][k] for k in ('file_id','version_id')} for ref in case['scope']]
+for versions in (s['task']['versions'],report['selected_versions'],report['source_versions']):
+ assert sorted(versions,key=lambda x:x['file_id'])==sorted(selected,key=lambda x:x['file_id'])
+assert all(x['approved'] and x['project_id']==s['task']['project_id'] for x in mapping.values())
+assert report['state']==checks['report_state']=='draft' and report['version']==checks['report_version']==1
+assert report['checklist']['revision']==checks['checklist_revision']==1
+assert report['checklist']['items']==corpus['checklists']['standard']
+statuses={x['key']:x['status'] for x in body['items']}
+assert statuses==checks['item_statuses']==checks['expected_item_statuses']==case['expected']['statuses']
+assert len(body['items'])==6 and sum(x['required'] for x in body['items'])==5
+assert checks['actual_checklist_counts']=={'total':6,'required':5,'optional':1}
+assert checks['summary_stated_counts']=={'total':6,'required':5,'optional':1,'required_found':4,'required_missing':1,'optional_found':1}
+assert all(t in body['summary'] for t in ('本任务允许范围内','共5个文件','6项交接清单','5项必需','4项找到','1项必需材料','1项可选材料','不足以判断内容完整或业务验收通过','keyword_only'))
+assert all(t in body['limitations'] for t in ('不代表项目或目录整体','未找到','keyword_only','pending','未执行任何移动、归档或共享操作','私有草稿'))
+assert '未执行任何写操作' not in json.dumps(body,ensure_ascii=False)
+missing=next(x for x in body['items'] if x['key']=='test'); assert missing['citations']==[] and '在本次检索范围内未找到' in missing['notes']
+assert len(review['citations'])==len(s['citation_sources'])==checks['citation_count']==checks['captured_source_count']==5
+for row,src,loc in zip(review['citations'],s['citation_sources'],checks['reference_location_checks']):
+ ref=src['reference']; chunk=src['source']['chunk']; key=loc['fixture_source']
+ assert all(row['citation'][k]==ref[k]==chunk[k]==loc['reference'][k] for k in ref)
+ assert all(ref[k]==mapping[key][k] for k in ('file_id','version_id'))
+ name,version=key.split('@'); doc=next(x for x in corpus['documents'] if x['id']==name)
+ vv=next(x for x in doc['versions'] if x['version']==int(version))
+ text='\n\n'.join(vv['paragraphs']); sha=hashlib.sha256(text.encode()).hexdigest()
+ assert text==chunk['text']==row['citation']['text']
+ assert sha==mapping[key]['sha256']==src['source']['source_sha256']==loc['source_sha256']
+ assert src['source']['char_count']==len(text)==loc['char_count'] and src['source']['chunk_count']==1 and src['source']['is_current']
+ assert src['source']['vector_state']=='pending'
+ assert (chunk['line_start'],chunk['line_end'])==(1,3 if name=='issues' else 5)==(loc['line_start'],loc['line_end'])
+ assert loc['matches_returned_chunk'] and loc['matches_fixture_sha256']
+assert [x['char_count'] for x in checks['reference_location_checks']]==[93,86,111,101,34]
+assert v['business_verdict'] is None and v['citation_accuracy'] is None and v['review_summary']['citations_reviewed']==0
+assert checks['exact_keyword_query_independently_captured'] is False
+for name,digest in v['private_artifact_sha256'].items():
+ f=p/name; assert hashlib.sha256(f.read_bytes()).hexdigest()==digest
+ assert stat.S_IMODE(f.stat().st_mode)==0o600 and f.stat().st_uid==65534
+for d in (p.parent,p,p/'initial'):assert stat.S_IMODE(d.stat().st_mode)==0o700 and d.stat().st_uid==65534
+for name,digest in v['fixture_sha256'].items():assert hashlib.sha256((r/'test/fixtures/agent-p0'/name).read_bytes()).hexdigest()==digest
+count=0
+for line in (e/'preflight.txt').read_text().splitlines():
+ m=re.fullmatch(r'([0-9a-f]{64}) (.+)',line)
+ if not m:continue
+ f=pathlib.Path(m[2]);f=f if f.is_absolute() else r/f
+ assert hashlib.sha256(f.read_bytes()).hexdigest()==m[1]
+ if not pathlib.Path(m[2]).is_absolute():assert f.read_bytes()==(pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')/m[2]).read_bytes()
+ count+=1
+assert count==37
+base=r/'docs/evidence/m5'; ledger=json.loads((base/'fixed-task-results.json').read_text())
+assert len(ledger['tasks'])==len({x['case_id'] for x in ledger['tasks']})==ledger['denominator']==30
+assert collections.Counter(x['execution'] for x in ledger['tasks'])=={'completed':10,'admission_rejected':3,'not_run':17}
+assert ledger['model_tasks_completed']==ledger['model_tasks_attempted']==10 and ledger['model_tasks_not_run']==17 and ledger['model_tasks_failed']==0
+calls=tokens=citations=attempt_count=0
+for item in ledger['tasks']:
+ assert item['business_verdict'] is None
+ history=item.get('attempts',[])
+ if not history:continue
+ assert len(history)==item['attempt_count']
+ assert sum(x['provider_requests'] for x in history)==item['cumulative_provider_requests']
+ assert sum(x['total_tokens'] for x in history)==item['cumulative_total_tokens']
+ for attempt in history:
+  saved=json.loads((base/attempt['evidence']).read_text())
+  assert saved['run_result']['state']==attempt['state'] and saved['usage']['total_tokens']==attempt['total_tokens']
+  assert saved['provider_attempts']==attempt['provider_requests']
+  calls+=attempt['provider_requests']; tokens+=attempt['total_tokens']; citations+=saved.get('review_summary',{}).get('citations_total',0); attempt_count+=1
+assert (calls,tokens,citations,attempt_count)==(66,301602,33,19)
+assert ledger['citations_observed']==33 and ledger['business_completion_rate'] is None and ledger['citation_accuracy'] is None
+h=next(x for x in ledger['tasks'] if x['case_id']=='H02');assert h['attempt_count']==1 and h['evidence']=='h02-live-20261105/result.json'
+for f in (r/'README.md',e/'README.md',base/'acceptance-index.md'):
+ for target in re.findall(r'\]\(([^)]+)\)',f.read_text()):
+  if '://' in target or target.startswith('#') or target=='verification.txt':continue
+  assert (f.parent/target.split('#')[0]).exists(),target
+for f in e.iterdir():assert not re.search(r'sk-[A-Za-z0-9_-]{16,}|-----BEGIN '+r'[A-Z ]*'+'PRIVATE KEY-----',f.read_text())
+print('PASS:26 matching public/private events; authoritative completed handover draft v1; full capture, no archive/retry')
+print('PASS:4 requests <=6,4096 output cap;22615tokens=20365 input+2250 output; cache11520/8845')
+print('PASS:batches1/4/2/1;metadata5, five range reads each1, keyword2, one terminal report save; no rejections')
+print('PASS:six statuses match frozen H02, test missing with no invented citation; five other entries found')
+print('PASS:five current citations match fixed IDs/versions/chunks/text/SHA/lines; selected and source dependencies match')
+print('PASS:literal summary counts and scope/keyword-only/content limitations checked; human verdicts remain blank')
+print('LIMIT:exact keyword and result identities not independently captured; no raw provider/full-database capture')
+print('PASS:private0700/0600 nobody ownership,four hashes,37 runtime/source fingerprints; frozen inputs unchanged')
+print('PASS:30cases=10completed+3admission+17not-run;19attempts,66requests/301602tokens,33citations; history preserved')
+print('PASS:links and secret-pattern scan; offline checks only,no API/key access,not full regression/hybrid/human acceptance')
+PY
+git diff --check

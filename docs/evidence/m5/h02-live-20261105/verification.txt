@@ -1,0 +1,10 @@
+PASS:26 matching public/private events; authoritative completed handover draft v1; full capture, no archive/retry
+PASS:4 requests <=6,4096 output cap;22615tokens=20365 input+2250 output; cache11520/8845
+PASS:batches1/4/2/1;metadata5, five range reads each1, keyword2, one terminal report save; no rejections
+PASS:six statuses match frozen H02, test missing with no invented citation; five other entries found
+PASS:five current citations match fixed IDs/versions/chunks/text/SHA/lines; selected and source dependencies match
+PASS:literal summary counts and scope/keyword-only/content limitations checked; human verdicts remain blank
+LIMIT:exact keyword and result identities not independently captured; no raw provider/full-database capture
+PASS:private0700/0600 nobody ownership,four hashes,37 runtime/source fingerprints; frozen inputs unchanged
+PASS:30cases=10completed+3admission+17not-run;19attempts,66requests/301602tokens,33citations; history preserved
+PASS:links and secret-pattern scan; offline checks only,no API/key access,not full regression/hybrid/human acceptance

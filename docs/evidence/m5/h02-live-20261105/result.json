@@ -1,0 +1,305 @@
+{
+  "case_id": "H02",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "49476888fd0fbd7e08b6daf62033052dba695e95",
+    "recorded_at": "2026-11-05T14:13:12.769108+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; H02 first attempt; five approved synthetic versions requirements@1 design@1 api@2 deployment@2 issues@1; standard six-item checklist; <=6 calls x4096 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h02-live.8yZiJ9/H02"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "1206d497e4e0f0dca4809747aee94308",
+        "sequence": 1,
+        "started_at": "2026-11-05 14:13:18.453015",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "72a29184825bcb7ad708ee29d49479d0",
+        "sequence": 2,
+        "started_at": "2026-11-05 14:13:21.151690",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "68dd4d10e1f394bb634d3e889e4e0314",
+        "sequence": 3,
+        "started_at": "2026-11-05 14:13:21.254264",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "999c64abc9639bb74731325c64033d8c",
+        "sequence": 4,
+        "started_at": "2026-11-05 14:13:21.266721",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "fac9e00321f5bb7d1b8832d36c9b3d12",
+        "sequence": 5,
+        "started_at": "2026-11-05 14:13:21.354234",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "dbc794977c95b6abcf4993a3f4767f38",
+        "sequence": 6,
+        "started_at": "2026-11-05 14:13:23.664163",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "mode": "keyword",
+          "query_bytes": 12
+        },
+        "request_id": "9a99ffd52e99c50dd7ae018bf7784d91",
+        "sequence": 7,
+        "started_at": "2026-11-05 14:13:23.676778",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 16,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "51813707bc982ff0fb01937526d3e4b1",
+        "sequence": 8,
+        "started_at": "2026-11-05 14:13:32.004464",
+        "status": "success",
+        "task_id": "c2a445875eb6df5d498fd4f213d859b6",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 5,
+    "source_version_count": 5,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "missing",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "missing",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "citation_count": 5,
+    "captured_source_count": 5,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "bdf2b6193a950953de49820202bc1dcb",
+          "version_id": "a61f7342b822706e5de308fccaf75ca9",
+          "chunk_id": "47203ec3c5712dbd5385cda4b643a35a329cdaf6581cbdc0a72560d1f8f1d673"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 93,
+        "source_sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e",
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "bf73b8abbbbc628523bbbf8fad4bc08c",
+          "version_id": "800272cc7c5cd995b21b8b9cfd875fb4",
+          "chunk_id": "e88b74a3e502ad0582747cef77744863e09a3351ab1b1600c99770a0e29812ff"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 86,
+        "source_sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed",
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "13e696e6623933564b3e4ad28c5885cf",
+          "version_id": "2e2c9e90ef72e496c38c793ac573b6f2",
+          "chunk_id": "de7e2113dbc7bdc8b78eebd476f3cdc7c6381b3abc020c0fcc87cf2d2067ee83"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 111,
+        "source_sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a",
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true
+      },
+      {
+        "fixture_source": "deployment@2",
+        "reference": {
+          "file_id": "52c696be664878c6363932705658e5f8",
+          "version_id": "6b0c7a8d1e137ff3eb6e051514771bd2",
+          "chunk_id": "7af9ac97f8573c3c0ed5ad00d6ef8d36891bc6826c759d39051f46ed84f77618"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 101,
+        "source_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7",
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "ea2070caddde2e05e088e6132d0de237",
+          "version_id": "b85f2598d0cefc33ac919393dd214e2e",
+          "chunk_id": "3fa20593691270e5f9260e05ec69a142b1a794aaaeb6976bfcbd51633059b972"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 34,
+        "source_sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366",
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true
+      }
+    ],
+    "expected_item_statuses_match": true,
+    "actual_checklist_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    },
+    "summary_stated_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1,
+      "required_found": 4,
+      "required_missing": 1,
+      "optional_found": 1
+    },
+    "summary_checklist_count_matches": true,
+    "explicit_task_scope_qualification": true,
+    "explicit_keyword_only_limitation": true,
+    "content_completeness_not_claimed": true,
+    "missing_item_citations_empty": true,
+    "previous_blanket_no_write_claim_present": false,
+    "inspection_method": "AI-assisted report/source inspection; not human semantic acceptance",
+    "exact_keyword_query_independently_captured": false,
+    "limitations": "Backend logs keyword mode and query_bytes=12, not exact query text or returned file identities; report self-description is not independent proof. No raw provider payload or full database before/after capture."
+  },
+  "review_summary": {
+    "case_id": "H02",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 5,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "0bc5bdd8ef1e4a54eaf1a4fa70460debedaf12d92c0d5721f1f1968dde0d97e5"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "93611213899dc439c6eb7eb93d3fcdc2a5ec9cb6ad5bd809717fd99575a85195",
+    "initial/audit.jsonl": "1432a0494415db4803f69ab0cfec8a42026d44411e8eff01ad3c75c06c47b554",
+    "summary.json": "93c3b1df2544709681c15a657d333e7a86e85ff4922b3b40e89529cf9c48b034",
+    "review.json": "6bca20d2575b10727006c71b639eb4b09db86c5243457f3e3735b0829ea1a06c"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 20365,
+    "completion_tokens": 2250,
+    "total_tokens": 22615,
+    "prompt_cache_hit_tokens": 11520,
+    "prompt_cache_miss_tokens": 8845
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "read_document_version": 5,
+    "save_handover_report": 1,
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    4,
+    2,
+    1
+  ],
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 4096,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
