@@ -1,0 +1,10 @@
+PASS:26 matching public/private events; completed handover draft v1/full capture; no archive or retry
+PASS:4 requests <=6,4096 output cap;22409tokens=19955 input+2454 output; cache13440/6515
+PASS:batches1/4/2/1;metadata6, five range reads each1, one status processing/0chunks, one terminal report save
+PASS:six statuses match frozen H03; deployment pending/uncertain with no fabricated citation
+PASS:five current sources match fixed IDs/versions/chunks/text/SHA/lines; six dependencies retain uncited pending version
+PASS:sample 42/40/2 facts and task-scope/unavailable-content/semantic-retrieval limitations inspected
+LIMIT:current-directory wording retained for human review; status payload/IDs not raw-captured; no full provider/database comparison
+PASS:private0700/0600 nobody ownership,four hashes,37 runtime/source fingerprints; frozen inputs unchanged
+PASS:30cases=11completed+3admission+16not-run;20attempts,70requests/324011tokens,38citations; old evidence preserved
+PASS:links and secret-pattern scan; human verdicts blank; offline checks only,no API/key access,not full regression
