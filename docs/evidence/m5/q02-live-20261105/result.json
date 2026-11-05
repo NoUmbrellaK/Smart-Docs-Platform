@@ -1,0 +1,133 @@
+{
+  "case_id": "Q02",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "3b8b074ee1e4df279a7458c6e8f700bab6b391be",
+    "recorded_at": "2026-11-05T12:52:39.532146+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q02 current deployment version synthetic fixture only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q02-live.8mAb7L/Q02"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 35
+        },
+        "request_id": "c4a30d8559812285ec6195559609647f",
+        "sequence": 1,
+        "started_at": "2026-11-05 12:52:44.050370",
+        "status": "success",
+        "task_id": "10e54ef3328334e62e3a2a593dc1d6c1",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "2123e6138482489c4b49bf2f9e7925d2",
+        "sequence": 2,
+        "started_at": "2026-11-05 12:52:44.069258",
+        "status": "success",
+        "task_id": "10e54ef3328334e62e3a2a593dc1d6c1",
+        "tool": "search_documents"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    512,
+    512
+  ],
+  "review_summary": {
+    "case_id": "Q02",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "fda8f743b45e6e1c9aef9feb20f87f8b7ddbae2cd603bc303f59475b79077caf"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "deployment@2",
+      "reference": {
+        "file_id": "de34ad2a9fb4af94ea9684ec100fdd6c",
+        "version_id": "63588869fe06ffb5612aa063d9286d83",
+        "chunk_id": "a2f34b091a4bf03c147e475ea1a340b86b33ee8fab696d29ece4003bae834369"
+      },
+      "line_start": 1,
+      "line_end": 5,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "0cc42a0883df749601fade03d22446dcc8c170c61afcf41d935ad7b5eb4203b6",
+    "initial/audit.jsonl": "34ca84f466072ca5940f83d24729709b040fc2a5ebc8fa35fa389e5734f2c09f",
+    "summary.json": "6faa8a54b74b04ffa70f49720a0836e96e6901599105ce4d3299c21a55399fe0",
+    "review.json": "38983e28c5e1fcc7d345552af98e4c0c46ac0e789a758889ea46d212d7e52a40"
+  },
+  "usage": {
+    "prompt_tokens": 3809,
+    "completion_tokens": 327,
+    "total_tokens": 4136,
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 1761
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "answer_checks": {
+    "method": "AI-assisted inspection plus literal/source checks; not human acceptance",
+    "backup_ORBIT_27_present": true,
+    "backup_hash_check_present": true,
+    "port_8087_present": true,
+    "required_variable_present": true,
+    "old_configuration_absent": true,
+    "keyword_only_limitation_present": true,
+    "citation_matches_selected_current_version": true,
+    "selected_version_count": 1,
+    "source_versions_are_current": true
+  },
+  "tools_by_name": {
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    0
+  ],
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
