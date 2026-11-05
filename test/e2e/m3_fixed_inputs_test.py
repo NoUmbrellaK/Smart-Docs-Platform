@@ -198,6 +198,17 @@ class FixedInputsE2E(ArchivePreviewE2E):
                 empty = data(actor.request('POST', path + '/tools/search',
                     {'mode': 'metadata', 'query': 'legacy-guide.md'}))
                 self.assertEqual(empty['items'], [])
+            if case['id'] == 'H01':
+                # Characterize the existing filename contract, not a replay of unretained model arguments.
+                combined = data(actor.request('POST', path + '/tools/search',
+                    {'mode': 'metadata', 'query': '问题清单 待办 已知问题'}))
+                self.assertEqual(combined['items'], [])
+                self.assertEqual(combined['coverage']['current_files'], 6)
+                self.assertEqual(combined['coverage']['unsearched_files'], 0)
+                simplified = data(actor.request('POST', path + '/tools/search',
+                    {'mode': 'metadata', 'query': '问题'}))
+                self.assertEqual([pair(i) for i in simplified['items']], [pair(loaded['issues@1'])])
+                self.assertNotIn('chunk', simplified['items'][0])
             if checklist:
                 self.assertEqual(started['handover_checklist'],
                                  {'revision': checklist['revision'], 'items': checklist['items']})
@@ -209,15 +220,25 @@ class FixedInputsE2E(ArchivePreviewE2E):
             found = []
             for page in range(1, 4):
                 result = data(actor.request('POST', path + '/tools/search',
-                    {'mode': 'metadata', 'query': '', 'page': page}))
+                    {'mode': 'metadata', 'query': '', 'page': page,
+                     'page_size': 2 if case['id'] == 'H01' else 10}))
                 metadata_pages.append(len(result['items']))
                 found.extend(pair(item) for item in result['items'])
+                self.assertEqual(result['next_page'], page + 1 if result['has_more'] else None)
                 if not result['has_more']:
                     break
             self.assertFalse(result['has_more'])
             self.assertCountEqual(found, body['versions'])
             if case['id'] == 'H05':
                 self.assertEqual(metadata_pages, [10, 1])
+            if case['id'] == 'H01':
+                self.assertEqual(metadata_pages, [2, 2, 2])
+                issues = data(actor.request('POST', path + '/tools/read',
+                    {**pair(loaded['issues@1']), 'range': {}}))
+                self.assertEqual(len(issues['chunks']), 1)
+                self.assertEqual(issues['chunks'][0]['text'], '\n\n'.join(VERSIONS['issues@1'][1]['paragraphs']))
+                print('PASS metadata literal query: combined=0, simplified=1; empty query pages=2/2/2; '
+                      'index-ready counts do not prove result coverage; issues fixed-version body readable', flush=True)
             self.assertEqual(data(actor.request('GET', path + '/run/result'))['model_calls'], 0)
             data(actor.request('POST', path + '/cancel'))
 

@@ -59,6 +59,12 @@ Hybrid只保留最终复查响应，不转发预检查回执。缺少有效回�
 - search_documents：必需 mode（metadata/keyword/hybrid）、query；可选
   directory_id、media_type、page（1–1000）、page_size（1–10）。
   query 最多256字符，C++还执行原有字节限制；metadata允许空查询。
+  metadata按整个query做文件名子串匹配，不把空格分隔词解释成OR候选；多词无结果时可缩短查询。
+  核对资料覆盖范围时可用metadata加空query列举允许范围内文件（不返回正文），
+  在预算内按has_more/next_page翻页，再读取候选版本取得引用；不能完成则注明部分覆盖。
+  coverage中的current_files/keyword_ready_files/unsearched_files描述索引就绪情况，
+  unsearched_files=0不表示模型已查看全部资料或找到了全部相关文件。以上语义已加入工具说明，
+  MCP发现和Agent提供给模型的工具定义共用该说明；没有自动插入检索调用或改变后端匹配规则。
   只访问绑定的 remote-ai/search 或任务 tools/search。配置私有编码器后，hybrid
   复用现有查询协调器：先经相同C++入口校验，再编码查询，再经相同入口重新校验并搜索。
   无编码器、编码失败或向量索引缺失时，保留C++的keyword_only和具体warnings，
