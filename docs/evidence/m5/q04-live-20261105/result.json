@@ -1,0 +1,130 @@
+{
+  "case_id": "Q04",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "45f1641a46f4d070440c1302c4bd7dc9e862d48d",
+    "recorded_at": "2026-11-05T13:25:14.053842+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q04 first attempt, frozen rollback@1 synthetic fixture only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q04-live.ztN3mS/Q04"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 6
+        },
+        "request_id": "fbfe2c0c9640f5c4075156570d92239c",
+        "sequence": 1,
+        "started_at": "2026-11-05 13:25:18.366766",
+        "status": "success",
+        "task_id": "9c2086f68b52735c42104633e35c4e2f",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "6ab55ebb948254b440ec8860514a21f5",
+        "sequence": 2,
+        "started_at": "2026-11-05 13:25:18.382168",
+        "status": "success",
+        "task_id": "9c2086f68b52735c42104633e35c4e2f",
+        "tool": "search_documents"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    512,
+    512
+  ],
+  "usage": {
+    "prompt_tokens": 4034,
+    "completion_tokens": 338,
+    "total_tokens": 4372,
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 1730
+  },
+  "review_summary": {
+    "case_id": "Q04",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "401bc8e56f1e99dbaa2ef21f7b07484ad9194522d3e87df6aa6d0ee07e3206af"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "edbe1763d4224b2cc1717cc364c058db85fc253a2f3933bf622f25e5864d3348",
+    "initial/audit.jsonl": "5ff66605aa1ddb4604691c199849539e7af21468cdf2db8e03edc9e8a60e7f18",
+    "summary.json": "27585eb2f8255154be886307f85184cb13ea582a4e188f5cfc4bed9d24f84dea",
+    "review.json": "4d116008d07fe2f3f9ec7de25dbdbbe240962ab5cf49b64829322304e457ec2e"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "rollback@1",
+      "reference": {
+        "file_id": "5b3d40efdebaf3c820a02cbdb9c82c3c",
+        "version_id": "13d79a546c92c73b78b38f6da98a466c",
+        "chunk_id": "8cc0c1c4b4849c8088bc478e6c9514a81fe6971d619e160348f66b72dad88594"
+      },
+      "line_start": 1,
+      "line_end": 5,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    0
+  ],
+  "answer_checks": {
+    "method": "AI-assisted literal/source inspection; not human semantic acceptance",
+    "stop_uploads_and_archive_writes": true,
+    "restore_files_and_metadata_at_same_backup_point": true,
+    "reject_database_only_restore": true,
+    "check_hashes_permissions_and_reference_versions": true,
+    "keyword_only_limitation_present": true,
+    "selected_version_count": 1
+  },
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

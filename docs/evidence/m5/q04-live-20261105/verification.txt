@@ -1,0 +1,10 @@
+PASS:10 public/private events; authoritative completed, full capture, no report/archive/retry
+PASS:2 requests <=6, max_tokens512 each;4372 tokens=4034 input+338 output, no rejection
+PASS:two searches in first response; no body-read call or dynamic-step claim; Q04 does not mandate either
+PASS:one rollback@1 citation matches original three paragraphs, SHA, exact IDs and lines1-5
+PASS:answer literal stop-writes/same-backup/no-DB-only/hash-permission-reference checks; keyword-only disclosure
+LIMIT:AI-assisted literal/source checks, not human semantic/business acceptance; not hybrid or actual rollback testing
+PASS:private0700/0600 nobody ownership and four hashes, blank review,37 runtime/source fingerprints
+PASS:30 cases=5 completed+3 admission observations+22 not-run;13 historical attempts,48requests/245958tokens,22citations
+PASS:historical failure evidence preserved, null business rates; links/secret-pattern scan clear
+SCOPE:offline evidence verification, no model call or key access; no complete product regression repeated

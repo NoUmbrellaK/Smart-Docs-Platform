@@ -9,14 +9,14 @@
   },
   "denominator": 30,
   "admission_observations": 3,
-  "model_tasks_not_run": 23,
-  "model_tasks_attempted": 4,
-  "model_tasks_completed": 4,
+  "model_tasks_not_run": 22,
+  "model_tasks_attempted": 5,
+  "model_tasks_completed": 5,
   "model_tasks_failed": 0,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 21,
+  "citations_observed": 22,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -101,10 +101,25 @@
     {
       "case_id": "Q04",
       "category": "query",
-      "execution": "not_run",
+      "execution": "completed",
       "business_verdict": null,
-      "evidence": null,
-      "admission_http": null
+      "evidence": "q04-live-20261105/result.json",
+      "admission_http": 201,
+      "error_code": null,
+      "provider_requests": 2,
+      "total_tokens": 4372,
+      "attempt_count": 1,
+      "cumulative_provider_requests": 2,
+      "cumulative_total_tokens": 4372,
+      "attempts": [
+        {
+          "evidence": "q04-live-20261105/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 2,
+          "total_tokens": 4372
+        }
+      ]
     },
     {
       "case_id": "Q05",
