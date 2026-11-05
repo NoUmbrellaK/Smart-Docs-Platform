@@ -302,7 +302,7 @@ async def run_task(context, client, model, *, audit=None):
             report_operation = started.get('report_operation_id')
             if not isinstance(report_operation,str) or not re.fullmatch('[0-9a-f]{32}',report_operation):
                 raise RunError('dependency_failed')
-            output_tokens = min(8192,1024+256*len(checklist['items']))
+            output_tokens = min(8192,1024+512*len(checklist['items']))
             messages[0]['content'] += '\n'+REPORT_SYSTEM
             messages.append({'role':'user','content':encoded({'report_operation_id':report_operation}).decode('utf-8')})
             check_context = {'handover_checklist_revision': checklist['revision']}

@@ -839,20 +839,42 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
     async def test_report_multi_item_budget_reaches_real_provider_adapter(self):
         import httpx
         from smartdocs.deepseek import DeepSeekModel
-        arguments=self.report_fixture()
-        self.start_context['items']=[{'key':f'item_{i}','title':f'Material {i}','description':'Check','required':True} for i in range(6)]
-        arguments['report']['items']=[{'key':f'item_{i}','status':'uncertain','notes':'Review the unavailable source before acceptance.',
-            'citations':[]} for i in range(6)]
-        requests=[]; events=[]
+        for count, budget in ((1,1536),(6,4096),(50,8192)):
+            with self.subTest(items=count):
+                self.state='pending'; self.report_receipt=None; self.requests=[]; self.calls=0
+                arguments=self.report_fixture()
+                self.start_context['items']=[{'key':f'item_{i}','title':f'Material {i}',
+                    'description':'Check','required':True} for i in range(count)]
+                arguments['report']['items']=[{'key':f'item_{i}','status':'uncertain',
+                    'notes':'Review the unavailable source before acceptance.','citations':[]} for i in range(count)]
+                requests=[]; events=[]
+                async def receive(request):
+                    requests.append(json.loads(request.content))
+                    return httpx.Response(200,stream=httpx.ByteStream(json.dumps(
+                        reply(calls=[call('save_handover_report',arguments)])).encode()))
+                model=DeepSeekModel('test-secret',events.append,transport=httpx.MockTransport(receive))
+                outcome=await self.run_model(model)
+                self.assertEqual(outcome.get('kind'),'handover_report')
+                self.assertEqual(len(requests),1)
+                self.assertEqual(requests[0]['max_tokens'],budget)
+                self.assertEqual(events[0]['max_tokens'],budget)
+                saved=[body for path,body in self.requests if path.endswith('/handover-report')]
+                self.assertEqual(saved,[arguments])
+
+    async def test_truncated_report_never_dispatches_save_or_retries(self):
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        arguments=self.report_fixture(); requests=[]
         async def receive(request):
-            sent=json.loads(request.content); requests.append(sent)
-            result=reply(calls=[call('save_handover_report',arguments)]) if sent['max_tokens']==2560 else reply('truncated',finish='length')
-            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(result).encode()))
-        model=DeepSeekModel('test-secret',events.append,transport=httpx.MockTransport(receive))
-        outcome=await self.run_model(model)
-        self.assertEqual(outcome.get('kind'),'handover_report')
-        self.assertEqual(requests[0]['max_tokens'],2560)
-        self.assertEqual(events[0]['max_tokens'],2560)
+            requests.append(json.loads(request.content))
+            # Even syntactically complete arguments are unusable when generation was truncated.
+            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(
+                reply(calls=[call('save_handover_report',arguments)],finish='length')).encode()))
+        model=DeepSeekModel('test-secret',lambda event: None,transport=httpx.MockTransport(receive))
+        self.assertEqual(await self.run_model(model),{'state':'failed','error_code':'model_invalid'})
+        self.assertEqual(len(requests),1)
+        self.assertFalse(any(path.endswith('/handover-report') for path,_ in self.requests))
+        self.assertIsNone(self.report_receipt)
 
     async def test_report_wrong_operation_is_not_dispatched(self):
         arguments=self.report_fixture(); arguments['operation_id']='9'*32
