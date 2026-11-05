@@ -116,6 +116,24 @@ model_call意味着适配器未成功交回响应；internal_error是未进一�
 写入已尝试或完成请求已构造时仍只走原有回执协调，不为追加诊断改变不确定写入处理。
 旧轨迹缺少该事件时不猜测回填；本增量无法恢复2026-10-20真实失败的原始回答。
 
+### 工具派发前拒绝诊断
+
+工具调用外层格式合法、但本地参数校验失败时，记录非终止性的 `tool_rejection`。
+模型仍只收到原有 `invalid_request`，可在原预算内纠正参数；不放宽校验、不自动重试，
+被拒绝调用不进入MCP/C++。重复失败仍按既有规则终止，诊断写入失败则停止为dependency_failed。
+
+- `sequence`：本轮模型响应序号，不是实际派发工具序号。
+- `call_index`：整任务已处理的工具调用序号（1–12，包含本地拒绝），不是CLI的tool_attempt序号。
+- `tool`：本轮获提供的固定工具名；未知/未提供工具统一为unknown，不回显原名称。
+- `reason`：arguments_json、unknown_tool、schema_invalid、operation_mismatch或policy_mismatch。
+  未知工具优先归类unknown_tool；报告操作ID或归档修订绑定不匹配仅在schema通过后判定。
+- `schema_path`：schema_invalid时记录首个校验错误的静态schema路径，如
+  `["properties","report","properties","items","items","required"]`；其他原因为空数组。
+  这是schema位置，不是实例数组下标、具体缺失字段或原文；不记录错误消息、参数值或操作ID。
+
+该事件补足“供应商返回成功但没有工具派发”的定位盲点，不新增数据库错误码。
+旧日志没有该事件时不能推断“没有本地拒绝”，也不能据此恢复2026-11-05 H01的具体错误字段。
+
 这是受控本地运行证据，尚不是数据库可查询、可分页的完整模型/MCP任务审计API；
 C++现提供[后端请求轨迹](m3-tool-audit.md)，不能等同本地模型usage或MCP耗时。
 平台完整调用摘要、生产内部HTTP认证和审计保留策略仍待后续接入。
@@ -156,6 +174,9 @@ PYTHONPATH=python /path/to/mcp-venv/bin/python -B -m smartdocs.audit_summary /pr
 - `model_rejection`为通过白名单及序号校验的私有诊断，旧轨迹或未记录时为null。
   拒绝重复、孤立、错误序号、未知字段/枚举、非法计数，以及诊断后继续工具/模型调用或
   声称completed的矛盾轨迹。没有终态仍为不完整；诊断不增加调用数或token用量。
+- `tool_rejections`为独立列表，旧轨迹未记录时为空，不计为实际工具派发或模型请求。
+  校验模型响应配对、固定类别、递增call_index及schema所属路径，拒绝未知附加字段。
+  它与终止性的model_rejection不同：参数纠正后可继续执行并完成，但仍不代表业务语义验收通过。
 
 有效但不完整轨迹退出0并显式标不完整；无法读取/格式不符退出2，输出固定错误码，
 不回显路径、原始错误正文、密钥或未知字段。仅提供本地统计，不代表完整平台审计API已完成。

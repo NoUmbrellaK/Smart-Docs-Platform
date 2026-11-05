@@ -1,0 +1,13 @@
+Nov 05 19:11:05 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_local_tool_rejections_are_private_recoverable_and_not_dispatched test_agent_runner.AgentRunnerTests.test_local_write_binding_rejections_are_recorded_without_writes test_agent_runner.AgentRunnerTests.test_local_tool_rejection_audit_failure_stops_before_dispatch test_audit_summary.AuditSummaryTests.test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal -v.
+Nov 05 19:11:07 aliyun-lou python[1193019]: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) ... ok
+Nov 05 19:11:07 aliyun-lou python[1193019]: test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) ... ok
+Nov 05 19:11:08 aliyun-lou python[1193019]: test_local_tool_rejection_audit_failure_stops_before_dispatch (test_agent_runner.AgentRunnerTests) ... ok
+Nov 05 19:11:08 aliyun-lou python[1193019]: test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal (test_audit_summary.AuditSummaryTests) ... ok
+Nov 05 19:11:08 aliyun-lou python[1193019]: ----------------------------------------------------------------------
+Nov 05 19:11:08 aliyun-lou python[1193019]: Ran 4 tests in 2.277s
+Nov 05 19:11:08 aliyun-lou python[1193019]: OK
+Nov 05 19:11:08 aliyun-lou systemd[1]: smartdocs-tool-rejection-green-20261105.service: Deactivated successfully.
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive

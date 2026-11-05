@@ -48,6 +48,8 @@ REJECTION_STAGES = {'model_call', 'response_size', 'choices_shape', 'message_sha
                     'final_mode', 'final_json', 'final_shape', 'tool_batch', 'tool_call_shape',
                     'tool_call_id', 'tool_arguments_shape', 'mixed_write_batch', 'internal_error'}
 FINISH_REASONS = {'stop', 'tool_calls', 'length', 'content_filter', 'missing', 'other'}
+TOOL_REJECTION_REASONS = {'arguments_json', 'unknown_tool', 'schema_invalid',
+                          'operation_mismatch', 'policy_mismatch'}
 
 
 def rejection_metadata(response, sequence, stage):
@@ -383,12 +385,32 @@ async def run_task(context, client, model, *, audit=None):
                 if tool_count >= 12: raise RunError("budget_exhausted")
                 tool_count += 1
                 name, raw = call["function"]["name"], call["function"]["arguments"]
+                rejection_reason = None
+                schema_path = []
                 try: arguments = strict_json(raw.encode("utf-8"))
-                except (ValueError, UnicodeError, RecursionError): arguments = None
-                if (name not in validators or not validators[name].is_valid(arguments)
-                        or (name==REPORT_TOOL and arguments['operation_id']!=report_operation)
-                        or (name==CREATE_ARCHIVE_TOOL and (arguments['policy_revision']!=archive_context['revision']
-                                                          or arguments['expected_revision']!=0))):
+                except (ValueError, UnicodeError, RecursionError):
+                    arguments = None
+                    rejection_reason = 'arguments_json'
+                if name not in validators:
+                    rejection_reason = 'unknown_tool'
+                elif rejection_reason is None:
+                    error = next(validators[name].iter_errors(arguments), None)
+                    if error is not None:
+                        rejection_reason = 'schema_invalid'
+                        # Schema-owned keys only, never instance paths, values or error messages.
+                        schema_path = list(error.absolute_schema_path)
+                    elif name == REPORT_TOOL and arguments['operation_id'] != report_operation:
+                        rejection_reason = 'operation_mismatch'
+                    elif name == CREATE_ARCHIVE_TOOL and (arguments['policy_revision'] != archive_context['revision']
+                                                          or arguments['expected_revision'] != 0):
+                        rejection_reason = 'policy_mismatch'
+                if rejection_reason is not None:
+                    if audit is not None:
+                        try:
+                            audit({'event':'tool_rejection','sequence':model_sequence,'call_index':tool_count,
+                                   'tool':name if name in validators else 'unknown',
+                                   'reason':rejection_reason,'schema_path':schema_path})
+                        except (OSError, ValueError): raise RunError('dependency_failed') from None
                     payload = {"status":"invalid_request", "error":{"code":"invalid_request"}}
                 else:
                     save_attempted = name == REPORT_TOOL

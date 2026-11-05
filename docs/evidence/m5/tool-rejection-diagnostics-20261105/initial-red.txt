@@ -1,0 +1,93 @@
+Nov 05 19:09:33 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_local_tool_rejections_are_private_recoverable_and_not_dispatched test_agent_runner.AgentRunnerTests.test_local_write_binding_rejections_are_recorded_without_writes test_agent_runner.AgentRunnerTests.test_local_tool_rejection_audit_failure_stops_before_dispatch test_audit_summary.AuditSummaryTests.test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal -v.
+Nov 05 19:09:36 aliyun-lou python[1192531]: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) ... test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) ... test_local_tool_rejection_audit_failure_stops_before_dispatch (test_agent_runner.AgentRunnerTests) ... FAIL
+Nov 05 19:09:36 aliyun-lou python[1192531]: test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal (test_audit_summary.AuditSummaryTests) ... ERROR
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: ERROR: test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal (test_audit_summary.AuditSummaryTests)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 120, in test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal
+Nov 05 19:09:36 aliyun-lou python[1192531]:     value=self.summary.summarize(self.path)
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py", line 151, in summarize
+Nov 05 19:09:36 aliyun-lou python[1192531]:     raise ValueError('audit unavailable or invalid') from None
+Nov 05 19:09:36 aliyun-lou python[1192531]: ValueError: audit unavailable or invalid
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='arguments_json', index=0)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=1)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='unknown_tool', index=2)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=3)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=4)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) (tool='save_handover_report')
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 309, in test_local_write_binding_rejections_are_recorded_without_writes
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(outcome['error_code'],'repeated_tool_error')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 'model_invalid' != 'repeated_tool_error'
+Nov 05 19:09:36 aliyun-lou python[1192531]: - model_invalid
+Nov 05 19:09:36 aliyun-lou python[1192531]: + repeated_tool_error
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) (tool='create_archive_plan')
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 309, in test_local_write_binding_rejections_are_recorded_without_writes
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(outcome['error_code'],'repeated_tool_error')
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: 'model_invalid' != 'repeated_tool_error'
+Nov 05 19:09:36 aliyun-lou python[1192531]: - model_invalid
+Nov 05 19:09:36 aliyun-lou python[1192531]: + repeated_tool_error
+Nov 05 19:09:36 aliyun-lou python[1192531]: ======================================================================
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAIL: test_local_tool_rejection_audit_failure_stops_before_dispatch (test_agent_runner.AgentRunnerTests)
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Traceback (most recent call last):
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self._callMaybeAsync(method)
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+Nov 05 19:09:36 aliyun-lou python[1192531]:     return self._asyncioTestLoop.run_until_complete(fut)
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+Nov 05 19:09:36 aliyun-lou python[1192531]:     return future.result()
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+Nov 05 19:09:36 aliyun-lou python[1192531]:     ret = await awaitable
+Nov 05 19:09:36 aliyun-lou python[1192531]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 323, in test_local_tool_rejection_audit_failure_stops_before_dispatch
+Nov 05 19:09:36 aliyun-lou python[1192531]:     self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+Nov 05 19:09:36 aliyun-lou python[1192531]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+Nov 05 19:09:36 aliyun-lou python[1192531]: - {'error_code': 'model_invalid', 'state': 'failed'}
+Nov 05 19:09:36 aliyun-lou python[1192531]: ?                 --   ^^^^^^^
+Nov 05 19:09:36 aliyun-lou python[1192531]: + {'error_code': 'dependency_failed', 'state': 'failed'}
+Nov 05 19:09:36 aliyun-lou python[1192531]: ?                   ++++++++++++ ^
+Nov 05 19:09:36 aliyun-lou python[1192531]: ----------------------------------------------------------------------
+Nov 05 19:09:36 aliyun-lou python[1192531]: Ran 4 tests in 1.900s
+Nov 05 19:09:36 aliyun-lou python[1192531]: FAILED (failures=8, errors=1)
+Nov 05 19:09:36 aliyun-lou systemd[1]: smartdocs-tool-rejection-red-20261105.service: Main process exited, code=exited, status=1/FAILURE
+Nov 05 19:09:36 aliyun-lou systemd[1]: smartdocs-tool-rejection-red-20261105.service: Failed with result 'exit-code'.
+MainPID=0
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed

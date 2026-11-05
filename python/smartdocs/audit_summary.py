@@ -6,8 +6,9 @@ import re
 import stat
 
 from .agent_cli import safe_outcome
-from .agent_runner import REJECTION_STAGES, FINISH_REASONS
+from .agent_runner import REJECTION_STAGES, FINISH_REASONS, TOOL_REJECTION_REASONS
 from .deepseek import MODEL, usage_counts
+from .mcp_read import SCHEMAS
 from .search_http import strict_json
 
 
@@ -66,6 +67,7 @@ def summarize(path):
         models, tools, request_ids = {}, {}, set()
         outcome = None
         rejection = None
+        tool_rejections = []
         for index, event in enumerate(records):
             if (not isinstance(event, dict) or event.get('task_id') != task or outcome is not None):
                 raise ValueError('invalid audit')
@@ -79,6 +81,35 @@ def summarize(path):
                     raise ValueError('invalid audit')
                 continue
             if rejection is not None: raise ValueError('invalid audit')
+            if kind == 'tool_rejection':
+                fields = {'sequence', 'call_index', 'tool', 'reason', 'schema_path'}
+                if set(event) != fields | {'event','task_id','time_unix_ms'}: raise ValueError('invalid audit')
+                sequence = integer(event['sequence'], 8, 1)
+                call_index = integer(event['call_index'], 12, 1)
+                if (sequence != len(models) or models[sequence]['result'] is None
+                        or models[sequence]['result']['reason'] != 'success'
+                        or (tool_rejections and call_index <= tool_rejections[-1]['call_index'])):
+                    raise ValueError('invalid audit')
+                name, reason, path = event['tool'], event['reason'], event['schema_path']
+                if (not isinstance(name,str) or name not in TOOLS | {'unknown'}
+                        or not isinstance(reason,str) or reason not in TOOL_REJECTION_REASONS
+                        or (name == 'unknown') != (reason == 'unknown_tool')
+                        or (reason == 'operation_mismatch' and name != 'save_handover_report')
+                        or (reason == 'policy_mismatch' and name != 'create_archive_plan')
+                        or not isinstance(path,list) or len(path) > 32):
+                    raise ValueError('invalid audit')
+                if reason == 'schema_invalid':
+                    if not path: raise ValueError('invalid audit')
+                    node = SCHEMAS[name]
+                    for part in path:
+                        if isinstance(node,dict) and isinstance(part,str) and part in node:
+                            node = node[part]
+                        elif isinstance(node,list) and type(part) is int and 0 <= part < len(node):
+                            node = node[part]
+                        else: raise ValueError('invalid audit')
+                elif path: raise ValueError('invalid audit')
+                tool_rejections.append({key:event[key] for key in fields})
+                continue
             if kind == 'model_rejection':
                 fields={'sequence','stage','finish_reason','content_kind','tool_calls_kind','tool_call_count'}
                 if set(event)!=fields|{'event','task_id','time_unix_ms'}: raise ValueError('invalid audit')
@@ -145,7 +176,7 @@ def summarize(path):
             'truncated_tail': truncated, 'outcome': outcome,
             'model': {**model_counts, 'usage_known_calls': len(known), 'usage_unknown_calls': unknown,
                       'usage_observed': observed, 'usage_total': observed if complete and not unknown else None},
-            'tools': tool_counts, 'model_rejection': rejection,
+            'tools': tool_counts, 'model_rejection': rejection, 'tool_rejections': tool_rejections,
             'cost_estimate': None, 'business_acceptance': 'not_evaluated'}
     except (OSError, ValueError, TypeError, KeyError, RecursionError):
         raise ValueError('audit unavailable or invalid') from None

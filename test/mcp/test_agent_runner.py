@@ -250,6 +250,88 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn('PRIVATE',json.dumps(events)+json.dumps(outcome))
         self.assertFalse(any('/tools/' in path for path,_ in self.requests))
 
+    async def test_local_tool_rejections_are_private_recoverable_and_not_dispatched(self):
+        # Missing diagnostics, leaking an instance/key, or dispatching invalid args must fail.
+        import tempfile
+        from pathlib import Path
+        import httpx
+        from smartdocs.agent_cli import run_session
+        from smartdocs.deepseek import DeepSeekModel, open_audit
+        from smartdocs.audit_summary import summarize
+        malformed=call(); malformed['function']['arguments']='{"PRIVATE":'
+        null=call(); null['function']['arguments']='null'
+        cases=[
+            (malformed,'arguments_json',[],'search_documents'),
+            (null,'schema_invalid',['type'],'search_documents'),
+            (call('PRIVATE-TOOL',{'PRIVATE':'BODY'}),'unknown_tool',[],'unknown'),
+            (call(arguments={'mode':'metadata','query':'PRIVATE','PRIVATE':True}),
+             'schema_invalid',['additionalProperties'],'search_documents'),
+            (call('read_document_version',{'file_id':'PRIVATE','version_id':VERSION}),
+             'schema_invalid',['properties','file_id','pattern'],'read_document_version'),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for index,(invalid,reason,schema_path,tool) in enumerate(cases):
+                with self.subTest(reason=reason,index=index):
+                    self.requests=[]
+                    responses=iter([reply(calls=[invalid,call(ident='valid')]),
+                                    reply(json.dumps({'answer':'Limited result','citations':[]}))])
+                    path=Path(directory)/f'{index}.jsonl'
+                    with open_audit(path,TASK) as audit:
+                        audit({'event':'task_start'})
+                        model=DeepSeekModel('PRIVATE-KEY',audit,transport=httpx.MockTransport(
+                            lambda request: httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))))
+                        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                            outcome=await run_session(self.context,client,model,audit)
+                        audit({'event':'task_outcome',**outcome})
+                    self.assertEqual(outcome['state'],'completed')
+                    records=[json.loads(line) for line in path.read_text().splitlines()]
+                    diagnostics=[e for e in records if e['event']=='tool_rejection']
+                    self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+                    value=summarize(path)
+                    self.assertEqual(value['tool_rejections'],[{'sequence':1,'call_index':1,
+                        'tool':tool,'reason':reason,'schema_path':schema_path}])
+                    self.assertEqual(value['model']['usage_total']['total_tokens'],60)
+                    self.assertEqual(value['tools']['search_documents']['attempts'],1)
+                    self.assertTrue(value['trace_complete'])
+                    self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value))
+                    self.assertEqual(len([p for p,_ in self.requests if '/tools/' in p]),1)
+
+    async def test_local_write_binding_rejections_are_recorded_without_writes(self):
+        from smartdocs.agent_cli import run_session
+        for tool,field,value,reason,schema_path in [
+                ('save_handover_report','operation_id','9'*32,'operation_mismatch',[]),
+                ('create_archive_plan','policy_revision',2,'policy_mismatch',[]),
+                ('create_archive_plan','expected_revision',1,'policy_mismatch',[]),
+                ('save_handover_report','notes',None,'schema_invalid',
+                 ['properties','report','properties','items','items','required'])]:
+            with self.subTest(tool=tool,field=field):
+                self.start_context=None; self.archive_context=None; self.requests=[]; events=[]
+                arguments=self.report_fixture() if tool=='save_handover_report' else self.archive_fixture()
+                if field=='notes': del arguments['report']['items'][0]['notes']
+                else: arguments[field]=value
+                async def model(messages,**kwargs): return reply(calls=[call(tool,arguments,ident=f'call_{len(messages)}')])
+                async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                    outcome=await run_session(self.context,client,model,events.append)
+                self.assertEqual(outcome['error_code'],'repeated_tool_error')
+                self.assertEqual(events,[{'event':'tool_rejection','sequence':i,'call_index':i,
+                    'tool':tool,'reason':reason,'schema_path':schema_path} for i in (1,2)])
+                self.assertFalse(any(p.endswith(('/handover-report','/archive-plan')) for p,_ in self.requests))
+
+    async def test_local_tool_rejection_audit_failure_stops_before_dispatch(self):
+        from smartdocs.agent_cli import run_session
+        events=[]
+        def audit(event):
+            events.append(event)
+            if event['event']=='tool_rejection': raise OSError('PRIVATE-AUDIT-ERROR')
+        async def model(**kwargs): return reply(calls=[call('PRIVATE'),call(ident='valid')])
+        async with create_connected_server_and_client_session(create_server(self.context)) as client:
+            outcome=await run_session(self.context,client,model,audit)
+        self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+        self.assertEqual(self.calls,1)
+        self.assertEqual(len(events),1)
+        self.assertNotIn('PRIVATE',json.dumps(events)+json.dumps(outcome))
+        self.assertFalse(any('/tools/' in path for path,_ in self.requests))
+
     async def test_malformed_checklist_stops_before_model_and_budget_admission(self):
         self.start_context={'revision':True,'items':[]}
         calls=[]

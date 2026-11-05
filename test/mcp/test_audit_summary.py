@@ -112,6 +112,30 @@ class AuditSummaryTests(unittest.TestCase):
         self.write(events())
         self.assertIsNone(self.summary.summarize(self.path)['model_rejection'])
 
+    def test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal(self):
+        diagnostic={'event':'tool_rejection','sequence':1,'call_index':1,'tool':'search_documents',
+                    'reason':'schema_invalid','schema_path':['properties','query','type']}
+        records=events()[:3]+[diagnostic]+events()[3:]
+        self.write(records)
+        try: value=self.summary.summarize(self.path)
+        except ValueError: self.fail('valid recoverable tool rejection is not supported')
+        self.assertTrue(value['trace_complete'])
+        self.assertEqual(value['tool_rejections'],[{k:v for k,v in diagnostic.items() if k!='event'}])
+        self.assertEqual(value['model']['usage_total'],USAGE)
+        for update in ({'sequence':2},{'call_index':True},{'call_index':13},{'reason':'PRIVATE'},
+                       {'tool':'PRIVATE'},{'schema_path':['properties','PRIVATE']},
+                       {'schema_path':['properties','query','type','PRIVATE']},
+                       {'schema_path':[]},{'reason':'arguments_json'}, {'arguments':'PRIVATE'}):
+            changed=copy.deepcopy(records); changed[3].update(update); self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        for changed in (records[:3]+[diagnostic,diagnostic]+records[4:],
+                        records[:1]+[diagnostic]+records[1:3]+records[4:],
+                        records[:2]+[diagnostic]+records[2:3]+records[4:]):
+            self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        self.write(events())
+        self.assertEqual(self.summary.summarize(self.path)['tool_rejections'],[])
+
     def test_partial_usage_and_interrupted_attempt_preserve_lower_bound(self):
         records = events()[:-1]
         records.append({**events()[1], 'sequence': 2, 'request_id': 'c' * 32})

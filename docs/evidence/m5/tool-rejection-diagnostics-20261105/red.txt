@@ -1,0 +1,124 @@
+Nov 05 19:10:14 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_local_tool_rejections_are_private_recoverable_and_not_dispatched test_agent_runner.AgentRunnerTests.test_local_write_binding_rejections_are_recorded_without_writes test_agent_runner.AgentRunnerTests.test_local_tool_rejection_audit_failure_stops_before_dispatch test_audit_summary.AuditSummaryTests.test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal -v.
+Nov 05 19:10:17 aliyun-lou python[1192777]: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) ... test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) ... test_local_tool_rejection_audit_failure_stops_before_dispatch (test_agent_runner.AgentRunnerTests) ... FAIL
+Nov 05 19:10:17 aliyun-lou python[1192777]: test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal (test_audit_summary.AuditSummaryTests) ... FAIL
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='arguments_json', index=0)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=1)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='unknown_tool', index=2)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=3)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejections_are_private_recoverable_and_not_dispatched (test_agent_runner.AgentRunnerTests) (reason='schema_invalid', index=4)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 289, in test_local_tool_rejections_are_private_recoverable_and_not_dispatched
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(len(diagnostics),1,'local tool rejection missing')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: 0 != 1 : local tool rejection missing
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) (tool='save_handover_report')
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 310, in test_local_write_binding_rejections_are_recorded_without_writes
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(events,[{'event':'tool_rejection','sequence':i,'call_index':i,
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: Lists differ: [] != [{'event': 'tool_rejection', 'sequence': 1[241 chars] []}]
+Nov 05 19:10:17 aliyun-lou python[1192777]: Second list contains 2 additional elements.
+Nov 05 19:10:17 aliyun-lou python[1192777]: First extra element 0:
+Nov 05 19:10:17 aliyun-lou python[1192777]: {'event': 'tool_rejection', 'sequence': 1, 'call_index': 1, 'tool': 'save_handover_report', 'reason': 'operation_mismatch', 'schema_path': []}
+Nov 05 19:10:17 aliyun-lou python[1192777]: - []
+Nov 05 19:10:17 aliyun-lou python[1192777]: + [{'call_index': 1,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'event': 'tool_rejection',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'reason': 'operation_mismatch',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'schema_path': [],
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'sequence': 1,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'tool': 'save_handover_report'},
+Nov 05 19:10:17 aliyun-lou python[1192777]: +  {'call_index': 2,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'event': 'tool_rejection',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'reason': 'operation_mismatch',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'schema_path': [],
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'sequence': 2,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'tool': 'save_handover_report'}]
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_write_binding_rejections_are_recorded_without_writes (test_agent_runner.AgentRunnerTests) (tool='create_archive_plan')
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 310, in test_local_write_binding_rejections_are_recorded_without_writes
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(events,[{'event':'tool_rejection','sequence':i,'call_index':i,
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: Lists differ: [] != [{'event': 'tool_rejection', 'sequence': 1[233 chars] []}]
+Nov 05 19:10:17 aliyun-lou python[1192777]: Second list contains 2 additional elements.
+Nov 05 19:10:17 aliyun-lou python[1192777]: First extra element 0:
+Nov 05 19:10:17 aliyun-lou python[1192777]: {'event': 'tool_rejection', 'sequence': 1, 'call_index': 1, 'tool': 'create_archive_plan', 'reason': 'policy_mismatch', 'schema_path': []}
+Nov 05 19:10:17 aliyun-lou python[1192777]: - []
+Nov 05 19:10:17 aliyun-lou python[1192777]: + [{'call_index': 1,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'event': 'tool_rejection',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'reason': 'policy_mismatch',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'schema_path': [],
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'sequence': 1,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'tool': 'create_archive_plan'},
+Nov 05 19:10:17 aliyun-lou python[1192777]: +  {'call_index': 2,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'event': 'tool_rejection',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'reason': 'policy_mismatch',
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'schema_path': [],
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'sequence': 2,
+Nov 05 19:10:17 aliyun-lou python[1192777]: +   'tool': 'create_archive_plan'}]
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_local_tool_rejection_audit_failure_stops_before_dispatch (test_agent_runner.AgentRunnerTests)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self._callMaybeAsync(method)
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+Nov 05 19:10:17 aliyun-lou python[1192777]:     return self._asyncioTestLoop.run_until_complete(fut)
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+Nov 05 19:10:17 aliyun-lou python[1192777]:     return future.result()
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+Nov 05 19:10:17 aliyun-lou python[1192777]:     ret = await awaitable
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 323, in test_local_tool_rejection_audit_failure_stops_before_dispatch
+Nov 05 19:10:17 aliyun-lou python[1192777]:     self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+Nov 05 19:10:17 aliyun-lou python[1192777]: - {'error_code': 'model_invalid', 'state': 'failed'}
+Nov 05 19:10:17 aliyun-lou python[1192777]: ?                 --   ^^^^^^^
+Nov 05 19:10:17 aliyun-lou python[1192777]: + {'error_code': 'dependency_failed', 'state': 'failed'}
+Nov 05 19:10:17 aliyun-lou python[1192777]: ?                   ++++++++++++ ^
+Nov 05 19:10:17 aliyun-lou python[1192777]: ======================================================================
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAIL: test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal (test_audit_summary.AuditSummaryTests)
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 120, in test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal
+Nov 05 19:10:17 aliyun-lou python[1192777]:     try: value=self.summary.summarize(self.path)
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py", line 151, in summarize
+Nov 05 19:10:17 aliyun-lou python[1192777]:     raise ValueError('audit unavailable or invalid') from None
+Nov 05 19:10:17 aliyun-lou python[1192777]: ValueError: audit unavailable or invalid
+Nov 05 19:10:17 aliyun-lou python[1192777]: During handling of the above exception, another exception occurred:
+Nov 05 19:10:17 aliyun-lou python[1192777]: Traceback (most recent call last):
+Nov 05 19:10:17 aliyun-lou python[1192777]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 121, in test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal
+Nov 05 19:10:17 aliyun-lou python[1192777]:     except ValueError: self.fail('valid recoverable tool rejection is not supported')
+Nov 05 19:10:17 aliyun-lou python[1192777]: AssertionError: valid recoverable tool rejection is not supported
+Nov 05 19:10:17 aliyun-lou python[1192777]: ----------------------------------------------------------------------
+Nov 05 19:10:17 aliyun-lou python[1192777]: Ran 4 tests in 1.734s
+Nov 05 19:10:17 aliyun-lou python[1192777]: FAILED (failures=9)
+Nov 05 19:10:17 aliyun-lou systemd[1]: smartdocs-tool-rejection-red2-20261105.service: Main process exited, code=exited, status=1/FAILURE
+Nov 05 19:10:17 aliyun-lou systemd[1]: smartdocs-tool-rejection-red2-20261105.service: Failed with result 'exit-code'.
+Result=exit-code
+ExecMainStatus=1
