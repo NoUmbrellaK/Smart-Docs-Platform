@@ -1,0 +1,11 @@
+2026-11-05; code baseline 5c113bf95bea14b4e049a60c7d7fc78675764497
+Read-only Python stdlib comparisons plus three existing benchmark_review CLI summaries; exit0.
+PASS: private packet SHA-256, root ownership, 0700 directory / 0600 file
+PASS: all22 JSON blocks equal originals: frozen input+expected,8 attempts,3 whole reports,17 citation occurrences
+PASS: all18 report items preserved including missing/uncited items; all source IDs/text/line locations and fixture mapping hashes match
+PASS: three original snapshot/review hashes and nobody-owned0600 permissions unchanged
+PASS: existing review CLI ran readonly for attempts5/7/8; all17 assessments and3 business verdicts remain blank
+PASS: all8 attempts retained;36 requests/220188 tokens unchanged;30 fixed cases/26 not-run; rates remain null
+PASS: no product/test/ledger changes; public links resolve; secret-pattern scan clear (not exhaustive)
+SCOPE: offline artifact verification only; no model/key access, no archive action, no product test rerun
+Final readonly resource check: mysql active; smartdocsvectorcheck.slice TasksCurrent=0, MemoryCurrent=98156544 bytes; MemAvailable=2092304 kB (point-in-time, not peak).

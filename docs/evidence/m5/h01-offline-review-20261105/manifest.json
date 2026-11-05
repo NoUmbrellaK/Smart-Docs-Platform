@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "case_id": "H01",
+  "prepared_on": "2026-11-05",
+  "code_revision": "5c113bf95bea14b4e049a60c7d7fc78675764497",
+  "purpose": "offline_review_materials_not_human_verdict",
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_packet": {
+    "path": "/tmp/smartdocs-m5-h01-review.GV06RG/review-packet.md",
+    "sha256": "bccb8459aebcb2c871ca94aa3832ee731ddeee56a183a50ab998873ee25d8a40",
+    "mode": "0600",
+    "parent_mode": "0700",
+    "temporary_storage": true
+  },
+  "attempts": [
+    {
+      "evidence": "h01-live-20261021/result.json",
+      "state": "failed",
+      "error_code": "model_invalid",
+      "provider_requests": 1,
+      "total_tokens": 2434
+    },
+    {
+      "evidence": "h01-batch-retest-20261105/result.json",
+      "state": "failed",
+      "error_code": "budget_exhausted",
+      "provider_requests": 6,
+      "total_tokens": 48915
+    },
+    {
+      "evidence": "h01-diagnostic-run-20261105/result.json",
+      "state": "failed",
+      "error_code": "budget_exhausted",
+      "provider_requests": 6,
+      "total_tokens": 33652
+    },
+    {
+      "evidence": "h01-budget-notice-20261105/result.json",
+      "state": "failed",
+      "error_code": "budget_exhausted",
+      "provider_requests": 6,
+      "total_tokens": 39220
+    },
+    {
+      "evidence": "h01-schema-feedback-20261105/result.json",
+      "state": "completed",
+      "error_code": null,
+      "provider_requests": 5,
+      "total_tokens": 30885
+    },
+    {
+      "evidence": "h01-metadata-semantics-20261105/result.json",
+      "state": "failed",
+      "error_code": "model_invalid",
+      "provider_requests": 4,
+      "total_tokens": 21796
+    },
+    {
+      "evidence": "h01-report-budget-20261105/result.json",
+      "state": "completed",
+      "error_code": null,
+      "provider_requests": 4,
+      "total_tokens": 21640
+    },
+    {
+      "evidence": "h01-report-facts-20261105/result.json",
+      "state": "completed",
+      "error_code": null,
+      "provider_requests": 4,
+      "total_tokens": 21646
+    }
+  ],
+  "reports": [
+    {
+      "attempt": 5,
+      "evidence": "h01-schema-feedback-20261105/result.json",
+      "private_dir": "/tmp/smartdocs-m5-h01-feedback.Kydw8j/H01",
+      "private_artifact_sha256": {
+        "initial/snapshot.json": "0eddd411b7366ea74d77b6039b69d6f0b0f1a435d9c61a9685e48bb6aad68095",
+        "review.json": "c85b63578e044f8e3c0731c49900ad77a0ccdb0a8a5fbbe90615462dcdcbf321"
+      },
+      "report_items": 6,
+      "citations_total": 5,
+      "citation_pointers": [
+        "/handover_report/report/items/0/citations/0",
+        "/handover_report/report/items/1/citations/0",
+        "/handover_report/report/items/2/citations/0",
+        "/handover_report/report/items/3/citations/0",
+        "/handover_report/report/items/4/citations/0"
+      ],
+      "review_summary": {
+        "case_id": "H01",
+        "category": "handover",
+        "declared_run_kind": "live_provider",
+        "business_verdict": null,
+        "live_provider_declared": true,
+        "execution_verified": false,
+        "citations_total": 5,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "646d4440ab8104d36312095ca01c53c2860d6f345c201166883071702555bbe6"
+      }
+    },
+    {
+      "attempt": 7,
+      "evidence": "h01-report-budget-20261105/result.json",
+      "private_dir": "/tmp/smartdocs-m5-h01-report-budget.e1Oirr/H01",
+      "private_artifact_sha256": {
+        "initial/snapshot.json": "19d9a542fc887bfa393f5964c1c1d46df26a0000e02cdad14b0de6a53d05462c",
+        "review.json": "e8c1286e0361911423eec7e0a26149fa6fcf4d0c0f891ab0c8b84ef0add31573"
+      },
+      "report_items": 6,
+      "citations_total": 6,
+      "citation_pointers": [
+        "/handover_report/report/items/0/citations/0",
+        "/handover_report/report/items/1/citations/0",
+        "/handover_report/report/items/2/citations/0",
+        "/handover_report/report/items/3/citations/0",
+        "/handover_report/report/items/4/citations/0",
+        "/handover_report/report/items/5/citations/0"
+      ],
+      "review_summary": {
+        "case_id": "H01",
+        "category": "handover",
+        "declared_run_kind": "live_provider",
+        "business_verdict": null,
+        "live_provider_declared": true,
+        "execution_verified": false,
+        "citations_total": 6,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "9a19b323a155b2ca49bf06c7e1f01f8016de016cd10c4c8e090d480af5989372"
+      }
+    },
+    {
+      "attempt": 8,
+      "evidence": "h01-report-facts-20261105/result.json",
+      "private_dir": "/tmp/smartdocs-m5-h01-report-facts.JcCy9W/H01",
+      "private_artifact_sha256": {
+        "initial/snapshot.json": "8852979faaec408a7260c727025939b269de11454c751c36374649383bbbc107",
+        "review.json": "a7fdcde84087fa23f2e61669cdfa33bc3943950bf53e5fd095705eb4b4db4225"
+      },
+      "report_items": 6,
+      "citations_total": 6,
+      "citation_pointers": [
+        "/handover_report/report/items/0/citations/0",
+        "/handover_report/report/items/1/citations/0",
+        "/handover_report/report/items/2/citations/0",
+        "/handover_report/report/items/3/citations/0",
+        "/handover_report/report/items/4/citations/0",
+        "/handover_report/report/items/5/citations/0"
+      ],
+      "review_summary": {
+        "case_id": "H01",
+        "category": "handover",
+        "declared_run_kind": "live_provider",
+        "business_verdict": null,
+        "live_provider_declared": true,
+        "execution_verified": false,
+        "citations_total": 6,
+        "citations_reviewed": 0,
+        "citations_correct": 0,
+        "citation_errors": {},
+        "citation_accuracy": null,
+        "snapshot_sha256": "ffd3fe5f9387d15915877ce04111ec60139bf6d7abc68d07718b6bf5bf7f5c0c"
+      }
+    }
+  ],
+  "counts": {
+    "historical_attempts": 8,
+    "reports": 3,
+    "report_items": 18,
+    "citation_occurrences": 17,
+    "citations_reviewed": 0,
+    "fixed_task_denominator": 30,
+    "model_tasks_not_run": 26
+  },
+  "business_completion_rate": null,
+  "citation_accuracy": null,
+  "provider_requests_this_increment": 0,
+  "total_tokens_this_increment": 0,
+  "historical_provider_requests": 36,
+  "historical_total_tokens": 220188
+}
