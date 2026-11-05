@@ -1,0 +1,29 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_runner.AgentRunnerTests.test_report_multi_item_budget_reaches_real_provider_adapter test_agent_runner.AgentRunnerTests.test_truncated_report_never_dispatches_save_or_retries.
+test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... test_truncated_report_never_dispatches_save_or_retries (test_agent_runner.AgentRunnerTests) ... ok
+======================================================================
+FAIL: test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) (items=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 859, in test_report_multi_item_budget_reaches_real_provider_adapter
+    self.assertEqual(requests[0]['max_tokens'],budget)
+AssertionError: 1280 != 1536
+======================================================================
+FAIL: test_report_multi_item_budget_reaches_real_provider_adapter (test_agent_runner.AgentRunnerTests) (items=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 859, in test_report_multi_item_budget_reaches_real_provider_adapter
+    self.assertEqual(requests[0]['max_tokens'],budget)
+AssertionError: 2560 != 4096
+----------------------------------------------------------------------
+Ran 2 tests in 1.261s
+FAILED (failures=2)
+smartdocs-report-budget-red-20261105.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-report-budget-red-20261105.service: Failed with result 'exit-code'.
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0

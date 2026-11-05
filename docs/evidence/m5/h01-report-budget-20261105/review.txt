@@ -1,0 +1,5 @@
+2026-11-05 read-only review by report_budget_review against 086cc9bd76feb466b0d186bbaeebbc661e200580.
+No blocking findings. Only handover coefficient256->512; six items4096, cap8192. Archive/read budgets, counts, timeouts, permissions and validation unchanged.
+Tests exercise real runner/adapter/MCP boundaries with local external receivers; 1/6/50 item budgets and save payload. Removed budget-dependent fake success. Truncated response with otherwise complete arguments is rejected without save/retry.
+Docs match sixth-run evidence. Budget increase is not proof of business acceptance. Reviewer ran no tests/API and made no edits.
+Main agent subsequently confirmed full116/116 tests in80.149s, exit0; known SDK negative-case warnings retained.

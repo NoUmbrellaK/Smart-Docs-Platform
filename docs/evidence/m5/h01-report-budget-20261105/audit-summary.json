@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+  "trace_complete": true,
+  "truncated_tail": false,
+  "outcome": {
+    "state": "completed"
+  },
+  "model": {
+    "attempts": 4,
+    "results": 4,
+    "unresolved": 0,
+    "duration_ms_observed": 17543,
+    "usage_known_calls": 4,
+    "usage_unknown_calls": 0,
+    "usage_observed": {
+      "prompt_tokens": 18483,
+      "completion_tokens": 3157,
+      "total_tokens": 21640,
+      "prompt_cache_hit_tokens": 11520,
+      "prompt_cache_miss_tokens": 6963
+    },
+    "usage_total": {
+      "prompt_tokens": 18483,
+      "completion_tokens": 3157,
+      "total_tokens": 21640,
+      "prompt_cache_hit_tokens": 11520,
+      "prompt_cache_miss_tokens": 6963
+    }
+  },
+  "tools": {
+    "read_document_version": {
+      "attempts": 6,
+      "results": 6,
+      "unresolved": 0,
+      "duration_ms_observed": 157
+    },
+    "save_handover_report": {
+      "attempts": 1,
+      "results": 1,
+      "unresolved": 0,
+      "duration_ms_observed": 496
+    },
+    "search_documents": {
+      "attempts": 1,
+      "results": 1,
+      "unresolved": 0,
+      "duration_ms_observed": 18
+    }
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "cost_estimate": null,
+  "business_acceptance": "not_evaluated"
+}

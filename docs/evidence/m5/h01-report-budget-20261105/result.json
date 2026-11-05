@@ -1,0 +1,302 @@
+{
+  "case_id": "H01",
+  "attempt_number": 7,
+  "metadata": {
+    "code_revision": "74b21a530c13aa4d7d4e024ef9f58cf2d5e9a536",
+    "recorded_at": "2026-11-05T12:14:19.841448+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; report output headroom H01 attempt <=6 calls x actual4096 output within authorized8192; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-report-budget.e1Oirr/H01"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "dd466f666fbcb9d05789e8b03df07033",
+        "sequence": 1,
+        "started_at": "2026-11-05 12:14:26.055765",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "ac022b00027b6a4db37286f1b3181a24",
+        "sequence": 2,
+        "started_at": "2026-11-05 12:14:28.081496",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "cf16be35b4991eea319b8ae17569549b",
+        "sequence": 3,
+        "started_at": "2026-11-05 12:14:28.095516",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "2ff35e0a9ee664d52778b6529cbc6196",
+        "sequence": 4,
+        "started_at": "2026-11-05 12:14:28.186203",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "7a351db03248c5cb09751ae81218b612",
+        "sequence": 5,
+        "started_at": "2026-11-05 12:14:30.247625",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "9643c03c6e8185beb7ab6252a10ff004",
+        "sequence": 6,
+        "started_at": "2026-11-05 12:14:30.261188",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "6b8b6b43a03348c0656b6514f991768d",
+        "sequence": 7,
+        "started_at": "2026-11-05 12:14:30.351608",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 296,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "f51f51f62be752cce0187809bba2a993",
+        "sequence": 8,
+        "started_at": "2026-11-05 12:14:42.592319",
+        "status": "success",
+        "task_id": "07aeee57de7ce8b18feb4277c7f2c53f",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 6,
+    "source_version_count": 6,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "citation_count": 6,
+    "captured_source_count": 6,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "85b0ebcf233dbdb65231394eaa02fb6e",
+          "version_id": "fe701f8140a09594cb65cb9da16c7d7d",
+          "chunk_id": "9e86a739c30b9b52c34965edddaa1f88ca4b928e574ac97d0f4fbe19a188002e"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "e384c8496a35b024f62f8da514c05140",
+          "version_id": "e1079f0ec36f91ca965789b4391d70ea",
+          "chunk_id": "4b23677b26b8be6e64a638abf59b5ae3915032423f6ce20ee4e70af715d7e4f7"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "7819b1080252231373176a2a58814bca",
+          "version_id": "9545398bfd3ed86d5f12d837e59027a9",
+          "chunk_id": "3797f5854d6040e7319ed7af52618cff85d0c38cfa527b6fd54c160ff4416072"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "tests@1",
+        "reference": {
+          "file_id": "2c40dcf2a07da0b3dbf2577211cc6251",
+          "version_id": "c4487f0b48dc950c6cb33d97ade7663c",
+          "chunk_id": "2b7d5321f4755e936ea13ddeded04f1b4cb439446f7a5f4a00dfa5253a606f4c"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "deployment@2",
+        "reference": {
+          "file_id": "ede3731d47a022f2c59e867248646487",
+          "version_id": "4c7fd3290f69592ac2b1ffc46b1373af",
+          "chunk_id": "3b260e7da4ae800b583008efb7274301e5fa5e17f953fe95ca31ab62d0594e95"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "5750b80643a50febfb21285fb9a9181f",
+          "version_id": "ec5be2d3d964a73b0bb24790d4ee2f56",
+          "chunk_id": "9cd19d9a889176e705b7db8d65561fb70112cfc7a97879e8b5f8e4e92942f04f"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 3
+      }
+    ],
+    "expected_item_statuses_match": true,
+    "summary_checklist_count_matches": false,
+    "summary_stated_counts": {
+      "total": 5,
+      "required": 4,
+      "optional": 1
+    },
+    "actual_checklist_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    }
+  },
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 6,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "9a19b323a155b2ca49bf06c7e1f01f8016de016cd10c4c8e090d480af5989372"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "fae0b5e4d2980713b2298f11220592b5a39c7f517b46f159fccae707bf4e3159",
+    "initial/snapshot.json": "19d9a542fc887bfa393f5964c1c1d46df26a0000e02cdad14b0de6a53d05462c",
+    "summary.json": "f36844b3bffe1085b1a46d79c255b5c3fd21290aea72f04388f9c077e409e625",
+    "review.json": "e8c1286e0361911423eec7e0a26149fa6fcf4d0c0f891ab0c8b84ef0add31573"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 18483,
+    "completion_tokens": 3157,
+    "total_tokens": 21640,
+    "prompt_cache_hit_tokens": 11520,
+    "prompt_cache_miss_tokens": 6963
+  },
+  "tool_calls_dispatched": 8,
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 6,
+    "save_handover_report": 1
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    3,
+    3,
+    1
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 7,
+    "completed": 2,
+    "provider_requests": 32,
+    "total_tokens": 198542,
+    "citations_observed": 11
+  },
+  "limitations": [
+    "All six item statuses match frozen expectations, but report summary incorrectly says five items/four required; actual checklist has six/five required.",
+    "Final output2386 is below the previous2560 cap. This run does not establish that increasing the budget caused completion or fixes all truncation.",
+    "Six references match captured stable source locations. No human semantic review/business verdict is recorded.",
+    "No encoder or hybrid search used; this is metadata enumeration plus version reads.",
+    "No automatic retry or archive confirmation."
+  ]
+}

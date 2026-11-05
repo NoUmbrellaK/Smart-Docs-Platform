@@ -1,0 +1,12 @@
+2026-11-05 read-only evidence verification, exit0.
+PASS: 26 public/private events; authoritative completed report and backend tools match
+PASS: 4 requests/cap4096/21640 tokens; output2386 below old2560; 8 dispatches, exactly1 save, no rejection/archive
+PASS: six statuses match expectations; six selected/source versions and stable references match fixture hashes and locations
+PASS: known summary error preserved: stated5/4-required vs actual6/5-required; broad no-write wording retained in private report
+PASS: private hashes/0600 files/0700 directories; six human citation assessments and business verdict remain blank
+PASS: 30 unique cases, latest completed1/failed0/not_run26 plus3 admission observations
+PASS: seven H01 attempts preserved,32 requests/198542 tokens,2 executions completed,11 historical citations; no business-rate claim
+PASS:37 source/runtime fingerprints; RED and116-test GREEN logs; Markdown targets excluding pending verification.txt: 200
+PASS: secret-pattern scan clear (not exhaustive); verification made no provider calls
+
+This record was created after other Markdown targets were checked; its existence and staged diff are checked before commit.
