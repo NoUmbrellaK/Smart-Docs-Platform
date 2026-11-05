@@ -1,0 +1,10 @@
+PASS:14 public/private events; authoritative completed, full capture; no report/archive/retry
+PASS:3 requests <=6, each max_tokens512;7481 tokens=6823 input+658 output; no rejection
+PASS:metadata returns2 candidates, next response two range reads return1chunk each, final answer; batches1/2/0
+PASS:two distinct current conflict_a@1/conflict_b@1 references match fixed text/SHA/IDs and lines1-3
+PASS:literal8091/8092 conflict, missing release evidence and refusal to choose, asks owner for confirmation
+LIMIT:directory-wide inventory wording not proven by selected-version name query; human business/semantic verdict remains blank
+PASS:private0700/0600 nobody ownership, four hashes,37 source/runtime fingerprints
+PASS:30 cases=7 completed+3 admission observations+20 not-run;15 attempts,54requests/260401tokens,25citations
+PASS:historical failures preserved, null business rates, links and secret-pattern scan clear
+SCOPE:offline evidence verification; no new model/key access; not hybrid/configuration testing or full product regression

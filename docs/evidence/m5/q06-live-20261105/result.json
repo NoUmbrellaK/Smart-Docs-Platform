@@ -1,0 +1,156 @@
+{
+  "case_id": "Q06",
+  "attempt_number": 1,
+  "metadata": {
+    "code_revision": "b98b3bdac9b403e3f9068deb52717f91c7c98afb",
+    "recorded_at": "2026-11-05T13:37:06.487308+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q06 first attempt, frozen conflict_a@1/conflict_b@1 synthetic fixtures only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q06-live.LJFAbY/Q06"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 3,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 18
+        },
+        "request_id": "7b65481498d89b56cb00166c0f171528",
+        "sequence": 1,
+        "started_at": "2026-11-05 13:37:11.071462",
+        "status": "success",
+        "task_id": "64701a01adeb7779a704d354d8a2e88e",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "4e4203fb3ca21e9fa4bb0c922b95b255",
+        "sequence": 2,
+        "started_at": "2026-11-05 13:37:12.865954",
+        "status": "success",
+        "task_id": "64701a01adeb7779a704d354d8a2e88e",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 4,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "5863e668d414e711c98a8a81fb2fa69c",
+        "sequence": 3,
+        "started_at": "2026-11-05 13:37:12.878091",
+        "status": "success",
+        "task_id": "64701a01adeb7779a704d354d8a2e88e",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "max_tokens_observed": [
+    512,
+    512,
+    512
+  ],
+  "usage": {
+    "prompt_tokens": 6823,
+    "completion_tokens": 658,
+    "total_tokens": 7481,
+    "prompt_cache_hit_tokens": 3968,
+    "prompt_cache_miss_tokens": 2855
+  },
+  "review_summary": {
+    "case_id": "Q06",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 2,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "adfbd1953dab79ade28c0e96329efdfbfbb4caf728151ea6bf389c421e5baba7"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "799f2853c44318e9b7b78e3185a8f52868ccf032dfd11e0b0ed6cf614ae73ef9",
+    "initial/audit.jsonl": "cdf7cc8df3d55227696e7c41168247c8fbcdff7818dde049941df08eb5b1a430",
+    "summary.json": "80d52767681015a4a79eda722fe6c2f6043a763f675c04f7cd2dde78345fe73b",
+    "review.json": "939fce74e7c06f3bb1e341c64c868e21444de2424992e84e97eac82cb0bf0088"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "conflict_a@1",
+      "reference": {
+        "file_id": "7864a5c03a2554a1c9d82b4fca355672",
+        "version_id": "412cd497a5f7011562b2f671a36f34b5",
+        "chunk_id": "64d52d982813051f9c0368c51417c958c94009830c0f8a1c47819e6e55831812"
+      },
+      "line_start": 1,
+      "line_end": 3,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    },
+    {
+      "fixture_source": "conflict_b@1",
+      "reference": {
+        "file_id": "7df38995fe0c77f77d591790bb6e05a4",
+        "version_id": "3bedb022275db4fc555b5b833862f372",
+        "chunk_id": "7eb5b52486a23383d70482d8554d2ece227982dd605127a2584192b9214df523"
+      },
+      "line_start": 1,
+      "line_end": 3,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 2
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    2,
+    0
+  ],
+  "answer_checks": {
+    "method": "AI-assisted literal/source inspection; not human semantic acceptance",
+    "both_conflicting_ports_present": true,
+    "missing_authoritative_release_evidence_present": true,
+    "refuses_to_choose_port": true,
+    "asks_document_owner_to_confirm": true,
+    "selected_version_count": 2,
+    "known_wording_issue": "Answer describes scope as two current files in a directory and says no other related instructions found; selected-version name search does not establish full directory inventory."
+  },
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
