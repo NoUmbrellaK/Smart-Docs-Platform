@@ -1,0 +1,5 @@
+2026-11-05 read-only review of change from ca55f810c29dde3cffca6e367596d67079336f64, later committed as a064925693b2bd9865afbed431db29813904ba8c.
+Reviewer: schema_feedback_review; no edits, no live API calls; tests inspected, not executed by reviewer.
+Verdict: ready from code review, no Critical/Important/Minor findings; final readiness conditional on main-agent regression.
+Findings: payload adds only existing fixed reason and static schema_path; no instance values, exception messages, unknown names, or inferred replacement IDs. Validation, budgets, repeated-failure stopping, scope checks, operation binding and uncertain-write reconciliation unchanged. Tests traverse real runner, adapter and MCP, reject invalid writes, allow corrected references, and block the next send/write after scope revocation. Documentation distinguishes scripted recovery from real-model success.
+Main-agent full regression subsequently passed115/115 (see offline-tests.txt).

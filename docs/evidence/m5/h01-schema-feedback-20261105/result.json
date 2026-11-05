@@ -1,0 +1,288 @@
+{
+  "case_id": "H01",
+  "attempt_number": 5,
+  "metadata": {
+    "code_revision": "a064925693b2bd9865afbed431db29813904ba8c",
+    "recorded_at": "2026-11-05T11:45:51.276604+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; schema feedback H01 attempt <=6 calls x <=8192 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-feedback.Kydw8j/H01"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 5,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "provider_attempts": 5,
+  "provider_results": 5,
+  "max_tokens_observed": [
+    2560,
+    2560,
+    2560,
+    2560,
+    2560
+  ],
+  "usage": {
+    "prompt_tokens": 28095,
+    "completion_tokens": 2790,
+    "total_tokens": 30885,
+    "prompt_cache_hit_tokens": 19584,
+    "prompt_cache_miss_tokens": 8511
+  },
+  "tool_calls_dispatched": 9,
+  "tools_by_name": {
+    "search_documents": 3,
+    "read_document_version": 5,
+    "save_handover_report": 1
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    2,
+    2,
+    2,
+    1
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 41
+        },
+        "request_id": "fed61cd2d1c6b7d7397934280d30e461",
+        "sequence": 1,
+        "started_at": "2026-11-05 11:45:57.548578",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 10,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 64
+        },
+        "request_id": "380f34733d592c89e16c862ce84dda97",
+        "sequence": 2,
+        "started_at": "2026-11-05 11:45:57.651090",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 98,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 32
+        },
+        "request_id": "6c5e742a924c16bc327d33b467bd16b5",
+        "sequence": 3,
+        "started_at": "2026-11-05 11:45:59.551160",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 101,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "d7c46e9c42f9bb4f023c37919282d753",
+        "sequence": 4,
+        "started_at": "2026-11-05 11:45:59.848220",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "d6c915716fb75298bda2b2c6e480f092",
+        "sequence": 5,
+        "started_at": "2026-11-05 11:46:01.899442",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "9f7d0375dcfc6153f2bc7ab24796115a",
+        "sequence": 6,
+        "started_at": "2026-11-05 11:46:01.912890",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 97,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "8f65d79ae96e0213ee9a7f90a3018f23",
+        "sequence": 7,
+        "started_at": "2026-11-05 11:46:05.055727",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "33ce7b84bce18bdd8efca96aa49ca3bc",
+        "sequence": 8,
+        "started_at": "2026-11-05 11:46:05.351250",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 17,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "aec998e210b45784cd93e8eb6bf7577a",
+        "sequence": 9,
+        "started_at": "2026-11-05 11:46:15.383640",
+        "status": "success",
+        "task_id": "19a9236c654fe696df1ee0bf79ad1049",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 6,
+    "source_version_count": 5,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "missing"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "expected_item_statuses_match": false,
+    "citation_count": 5,
+    "captured_source_count": 5,
+    "issues_fixture_approved": true,
+    "issues_fixture_parse_state": "completed",
+    "issues_in_source_versions": false,
+    "reference_location_checks": [
+      {
+        "reference": {
+          "file_id": "8562d89b702a1b38599bd885fd5fb171",
+          "version_id": "9dfa2a38535a07727103bcf6dad453d5",
+          "chunk_id": "e8ad7ed869e4ad95606aca1585d9dde707d8a4f6ee4d934aa2068ba5f54767e6"
+        },
+        "matches_returned_chunk": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "reference": {
+          "file_id": "bc0caa27d0b2e463507211171bfb3f7d",
+          "version_id": "d28bc075e6254f1b24d9d1ad6107a229",
+          "chunk_id": "4369cd967af335b002edba8ab17673ecddf558b4f0bcaa6187960260d47b5e3f"
+        },
+        "matches_returned_chunk": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "reference": {
+          "file_id": "dec22892d50751de9a74ed80876a6c65",
+          "version_id": "6e11844022bf2fa181ea813bbb3d0216",
+          "chunk_id": "62eea8269b3cacebaa9063689545c31548b496a1e2088d4ead9049fea988475b"
+        },
+        "matches_returned_chunk": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "reference": {
+          "file_id": "e165600d774256c26019b8bc160c5178",
+          "version_id": "f31b1faba1f752a2894b564c356a65d5",
+          "chunk_id": "a79a421fb74777986c1f3dcdea18ee1b9d533b46484e2a324bfdd887f622c98f"
+        },
+        "matches_returned_chunk": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "reference": {
+          "file_id": "da244f930bf834bbad1d08c54e2b20ae",
+          "version_id": "3561ca3c869803d60e663170d827614d",
+          "chunk_id": "663894dd54af834a4e3841466d11b1b21905d5f7ee985fb953eb51d6e7ae1c01"
+        },
+        "matches_returned_chunk": true,
+        "line_start": 1,
+        "line_end": 5
+      }
+    ]
+  },
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 5,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "646d4440ab8104d36312095ca01c53c2860d6f345c201166883071702555bbe6"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "02b554ddb7e6451956bdf4b1a4ea68cf0e56c72c7f8dfe364289ec8db16fbbd0",
+    "initial/snapshot.json": "0eddd411b7366ea74d77b6039b69d6f0b0f1a435d9c61a9685e48bb6aad68095",
+    "summary.json": "f36844b3bffe1085b1a46d79c255b5c3fd21290aea72f04388f9c077e409e625",
+    "review.json": "c85b63578e044f8e3c0731c49900ad77a0ccdb0a8a5fbbe90615462dcdcbf321"
+  },
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 5,
+    "completed": 1,
+    "provider_requests": 24,
+    "total_tokens": 155106
+  },
+  "limitations": [
+    "Execution completed, but fixed H01 expectations remain unmet: issues marked missing although approved and parsed.",
+    "No local tool rejection occurred in this run; completion is not proof that schema feedback caused improvement.",
+    "Five references matched captured chunks; no human semantic assessment or business verdict has been recorded.",
+    "No encoder enabled; hybrid request is not evidence of actual hybrid retrieval.",
+    "Raw model/tool arguments are not retained; no retrospective diagnosis of prior attempts.",
+    "Search audit chunk_count excludes nested items[].chunk."
+  ]
+}

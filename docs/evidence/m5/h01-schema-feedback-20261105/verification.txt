@@ -1,0 +1,10 @@
+2026-11-05 offline evidence verification. Exit status0.
+PASS: 30 public/private events match; authoritative report completion and backend tools match
+PASS: 5 requests x cap2560; 30885 tokens; 9 dispatches including exactly1 save; no local rejection or archive
+PASS: report/checklist revision1, six selected/five source versions; issues missing vs frozen expected found
+PASS: five reference IDs match captured source chunks/fixture hashes/lines1-5; human assessments remain blank
+PASS: four private artifact hashes,0600 files/0700 directories, frozen input hashes
+PASS: 30 unique cases; latest execution completed1/failed0/not_run26 plus3 admission observations
+PASS: five H01 historical attempts preserved; 24 requests/155106 tokens; business verdict/accuracy unclaimed
+PASS: runtime source/test matches; full115-test log; local Markdown links: 196
+PASS: secret-pattern scan clear (not proof of all possible secrets); no new provider call during verification
