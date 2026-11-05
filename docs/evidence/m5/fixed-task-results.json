@@ -16,7 +16,7 @@
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 20,
+  "citations_observed": 21,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -71,15 +71,16 @@
       "category": "query",
       "execution": "completed",
       "business_verdict": null,
-      "evidence": "q03-live-20261105/result.json",
+      "evidence": "q03-conditional-live-20261105/result.json",
       "admission_http": 201,
       "error_code": null,
-      "provider_requests": 2,
-      "total_tokens": 4148,
-      "attempt_count": 1,
-      "cumulative_provider_requests": 2,
-      "cumulative_total_tokens": 4148,
-      "required_dynamic_then_read_sequence_met": false,
+      "provider_requests": 4,
+      "total_tokens": 8882,
+      "attempt_count": 2,
+      "cumulative_provider_requests": 6,
+      "cumulative_total_tokens": 13030,
+      "required_dynamic_then_read_sequence_met": true,
+      "exact_first_query_proven": false,
       "attempts": [
         {
           "evidence": "q03-live-20261105/result.json",
@@ -87,6 +88,13 @@
           "error_code": null,
           "provider_requests": 2,
           "total_tokens": 4148
+        },
+        {
+          "evidence": "q03-conditional-live-20261105/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 4,
+          "total_tokens": 8882
         }
       ]
     },

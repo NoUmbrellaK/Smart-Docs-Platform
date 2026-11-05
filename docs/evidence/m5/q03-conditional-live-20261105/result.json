@@ -1,0 +1,161 @@
+{
+  "case_id": "Q03",
+  "attempt_number": 2,
+  "metadata": {
+    "code_revision": "06158e02018d65f99e038852268932f6b6fe03ae",
+    "recorded_at": "2026-11-05T13:18:37.035033+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; Q03 second attempt after generic conditional-call guidance; unchanged deployment/rollback synthetic fixtures only <=6 calls x512 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-q03-conditional.713l5B/Q03"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 15
+        },
+        "request_id": "6aaef7be0106c4064a275aba6b720c4e",
+        "sequence": 1,
+        "started_at": "2026-11-05 13:18:41.015584",
+        "status": "success",
+        "task_id": "576c3f6eb644ea5f8f14dcec66974823",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "e1b90e74a9ed9bb7944f54dc2362b43e",
+        "sequence": 2,
+        "started_at": "2026-11-05 13:18:42.431311",
+        "status": "success",
+        "task_id": "576c3f6eb644ea5f8f14dcec66974823",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "7a98314e7843ae5783f3d108db0948da",
+        "sequence": 3,
+        "started_at": "2026-11-05 13:18:43.940055",
+        "status": "success",
+        "task_id": "576c3f6eb644ea5f8f14dcec66974823",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    512,
+    512,
+    512,
+    512
+  ],
+  "usage": {
+    "prompt_tokens": 8380,
+    "completion_tokens": 502,
+    "total_tokens": 8882,
+    "prompt_cache_hit_tokens": 4480,
+    "prompt_cache_miss_tokens": 3900
+  },
+  "review_summary": {
+    "case_id": "Q03",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "d5e71e915fb13bb3da060ec5b694223ba127a7eee645bcddf1b6d97b774ffbf7"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "4fc0eca1cfabb367cb3f39064e863768d074a7412d140587e6ed614f6a80a4b9",
+    "initial/audit.jsonl": "e0ce503b1b78ee2c7b84b91e3d1b35d8638a49191b5b2aa52de8c3272a99c3fe",
+    "summary.json": "875b6996a34cf57df5c5de91f35c913258c2f614608af6c209be1bf9fbf04630",
+    "review.json": "55b087cef485565f84f098157056d8f28f740549934a06fc68eba727f74d043d"
+  },
+  "reference_location_checks": [
+    {
+      "fixture_source": "deployment@2",
+      "reference": {
+        "file_id": "25dbd0356f9c83bb95dd04435dadce17",
+        "version_id": "6e028f6f92231640bd93e5f0879c3886",
+        "chunk_id": "7338dedb7e8cca5aae139d700fa2d0996dc99344fde8ce3fe9ab718c8c927c93"
+      },
+      "line_start": 1,
+      "line_end": 5,
+      "matches_returned_chunk": true,
+      "matches_fixture_sha256": true
+    }
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "search_documents": 2,
+    "read_document_version": 1
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    1,
+    1,
+    0
+  ],
+  "procedural_checks": {
+    "first_search_mode": "metadata",
+    "first_query_bytes": 15,
+    "first_search_item_count": 0,
+    "second_search_mode": "metadata",
+    "second_query_bytes": 0,
+    "second_search_item_count": 2,
+    "second_query_changed": true,
+    "second_search_decided_after_first_result": true,
+    "read_document_version_calls": 1,
+    "read_selector": "range",
+    "read_chunk_count": 1,
+    "required_dynamic_then_read_sequence_met": true,
+    "exact_first_query_proven": false,
+    "complete_fixed_procedure_verified": null
+  },
+  "answer_checks": {
+    "method": "AI-assisted literal/source inspection; not human semantic acceptance",
+    "startup_order_present": true,
+    "unread_rollback_limitation_present": true,
+    "selected_version_count": 2,
+    "known_wording_issue": "Answer says project contains only two files; metadata listing is limited to selected task scope, not project-wide evidence."
+  },
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 512,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

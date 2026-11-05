@@ -1,0 +1,10 @@
+PASS:16 public/private trace events, authoritative completed and full capture; no report/archive/retry
+PASS:4 requests <=6, each max_tokens512;8882 tokens=8380 input+502 output; no model/tool rejection
+PASS:separate model responses after empty result, candidate listing and range body read; batches1/1/1/0
+LIMIT:first query recorded only as15bytes; exact filename NOT independently proven; full procedure/business verdict unassigned
+PASS:deployment@2 single citation, fixed source text/SHA/IDs and lines1-5; correct startup order literal
+LIMIT:project-wide two-file wording exceeds task-scope listing proof; AI-assisted inspection, not human acceptance
+PASS:private hashes,0700/0600 nobody ownership; human review still blank;37 source/runtime fingerprints match
+PASS:30 cases=4 completed+3 admission observations+23 not-run;12 historical attempts,46requests/241586tokens,21citations
+PASS:old Q03 failure preserved, latest only observed sequence marked true, null business rates; links/secret-pattern scan clear
+SCOPE:offline evidence verification only; no new model call or key access; no full product regression repeated
