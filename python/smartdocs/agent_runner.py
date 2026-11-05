@@ -34,6 +34,10 @@ When evidence exists, cite its actual file_id, version_id and chunk_id from tool
 REPORT_SYSTEM = """For this handover task, the final-answer JSON instruction above is replaced:
 finish by calling save_handover_report alone, using the supplied report_operation_id unchanged.
 Save every checklist item with status, notes and observed citations; include limitations and recommendations.
+Keep the summary concise and consistent with the item details and handover_checklist_counts.
+Those counts describe checklist entries, not found documents or accepted work; do not confuse them.
+Saving writes a private report draft, but does not move files or share the report. Do not claim no writes
+or a successful save before its receipt; describe the report's draft purpose instead.
 When evidence is insufficient, save an uncertain draft, never invent sources or completeness.
 Do not issue other tools in the same batch as saving. Successful saving is terminal; no follow-up model call."""
 
@@ -304,6 +308,10 @@ async def run_task(context, client, model, *, audit=None):
                 raise RunError('dependency_failed')
             output_tokens = min(8192,1024+512*len(checklist['items']))
             messages[0]['content'] += '\n'+REPORT_SYSTEM
+            required_count = sum(item['required'] for item in checklist['items'])
+            messages.append({'role':'system','content':encoded({'handover_checklist_counts':{
+                'revision':checklist['revision'],'total':len(keys),'required':required_count,
+                'optional':len(keys)-required_count}}).decode('utf-8')})
             messages.append({'role':'user','content':encoded({'report_operation_id':report_operation}).decode('utf-8')})
             check_context = {'handover_checklist_revision': checklist['revision']}
             messages.append({'role':'user','content':encoded({'handover_checklist':checklist}).decode('utf-8')})
