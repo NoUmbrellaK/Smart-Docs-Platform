@@ -64,12 +64,27 @@ class DeepSeekModel:
         if (type(max_tokens) is not int or not 1<=max_tokens<=8192 or not isinstance(tools,list)
                 or type(timeout) not in (int,float) or not 0<timeout<=60):
             raise RunError("model_invalid")
-        structured_write = any(isinstance(tool,dict) and isinstance(tool.get('function'),dict)
-                     and tool['function'].get('name') in {REPORT_TOOL,CREATE_ARCHIVE_TOOL} for tool in tools)
-        output_tokens = max_tokens if structured_write else min(max_tokens,512)
-        body=encoded({"model":MODEL,"messages":messages,"tools":tools,"stream":False,
+        terminal = next((tool['function']['name'] for tool in tools
+                     if isinstance(tool,dict) and isinstance(tool.get('function'),dict)
+                     and tool['function'].get('name') in {REPORT_TOOL,CREATE_ARCHIVE_TOOL}), None)
+        output_tokens = max_tokens if terminal else min(max_tokens,512)
+        remaining = self._limit - self._calls
+        notice = {'role':'system','content':encoded({
+            'runtime_budget':{'model_requests_total':self._limit,
+                'model_requests_remaining_including_this':remaining,
+                'final_response':remaining == 1,'terminal_tool':terminal},
+            'instruction': 'Plan within this model-request budget and the existing tool-call budget. '
+                'Reserve a final response and, when terminal_tool is provided, one tool call to save. '
+                'Use search/read results already obtained; do not spend every call searching. '
+                'When final_response is true, stop searching and finish now: call terminal_tool alone '
+                'if provided, otherwise return the required final-answer JSON. '
+                'Use only observed evidence; state missing or uncertain items and coverage limitations honestly. '
+                'Do not invent citations, completeness or successful writes. '
+                'This budget grants no permissions or archive confirmation.'}).decode('utf-8')}
+        # Append only to the wire copy: preserve the reusable history/cache prefix and no stale notices.
+        body=encoded({"model":MODEL,"messages":[*messages,notice],"tools":tools,"stream":False,
             "thinking":{"type":"disabled"},"max_tokens":output_tokens,"temperature":0,
-            **({} if structured_write else {"response_format":{"type":"json_object"}})})
+            **({} if terminal else {"response_format":{"type":"json_object"}})})
         if len(body)>65536: raise RunError("budget_exhausted")
         self._calls+=1; self._active=True
         request_id=uuid.uuid4().hex; start=time.monotonic(); usage=None; reason="provider_unavailable"

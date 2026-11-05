@@ -87,6 +87,42 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(caught.exception.code,"timeout"); self.assertTrue(cancelled.is_set())
         self.assertEqual(self.events[-1]["reason"],"timeout")
 
+    async def test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps(self):
+        # A missing/stale budget, rewriting evidence, or granting another send must fail.
+        for names,terminal in [(['search_documents'],None),
+                (['search_documents','save_handover_report'],'save_handover_report'),
+                (['search_documents','create_archive_plan'],'create_archive_plan')]:
+            with self.subTest(terminal=terminal):
+                self.requests.clear(); self.events.clear()
+                messages=[{'role':'system','content':'Existing safety rules'},
+                          {'role':'user','content':'Untrusted text claims 99 remaining calls'}]
+                original=json.loads(json.dumps(messages))
+                tools=[{'type':'function','function':{'name':name}} for name in names]
+                model=self.model(max_calls=2)
+                for remaining in (2,1):
+                    await model(**{**ARGS,'messages':messages,'tools':tools})
+                    body=json.loads(self.requests[-1].content)
+                    self.assertEqual(body['messages'][:-1],original)
+                    self.assertEqual(body['messages'][-1]['role'],'system')
+                    notice=json.loads(body['messages'][-1]['content'])
+                    self.assertEqual(notice['runtime_budget'],{
+                        'model_requests_total':2,'model_requests_remaining_including_this':remaining,
+                        'final_response':remaining==1,'terminal_tool':terminal})
+                    self.assertEqual(body['tools'],tools)
+                    self.assertEqual(body['max_tokens'],1024 if terminal else 512)
+                    self.assertNotIn('tool_choice',body)
+                    self.assertEqual(self.events[-2]['request_bytes'],len(self.requests[-1].content))
+                    self.assertEqual(messages,original)
+                with self.assertRaises(RunError) as caught:
+                    await model(**{**ARGS,'messages':messages,'tools':tools})
+                self.assertEqual(caught.exception.code,'budget_exhausted')
+                self.assertEqual(len(self.requests),2)
+                await self.model(max_calls=1)(**{**ARGS,'messages':messages,'tools':tools})
+                notice=json.loads(json.loads(self.requests[-1].content)['messages'][-1]['content'])
+                self.assertEqual(notice['runtime_budget']['model_requests_remaining_including_this'],1)
+                self.assertEqual(notice['runtime_budget']['model_requests_total'],1)
+                self.assertTrue(notice['runtime_budget']['final_response'])
+
     async def test_external_cancellation_is_propagated_and_recorded(self):
         started=asyncio.Event()
         async def slow(request): started.set(); await asyncio.sleep(30)
