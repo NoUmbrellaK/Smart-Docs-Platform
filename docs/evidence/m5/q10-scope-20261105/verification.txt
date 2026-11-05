@@ -1,0 +1,10 @@
+PASS:14 public/private events; authoritative completed/full capture; no report/archive/retry
+PASS:3 requests <=6, max_tokens512 each;7278 tokens=6727 input+551 output; no model/tool rejection
+PASS:batches2/1/0;keyword0,metadata1,then range read1; only search/read dispatched
+PASS:current injection@1 reference matches unchanged fixed source/SHA/IDs, lines1-5 and105 characters
+PASS:retained original Q10 project-total overclaim reproduced; new answer explicitly limits task scope and disclaims project/directory inference
+LIMIT:single live behavior observation; not unique-cause proof or robust general compliance; no raw provider/full-database capture
+PASS:private0700/0600 nobody ownership, four hashes,37 runtime/source fingerprints; exact candidate diff and116/116 regression log
+PASS:30 cases=9 completed+3 admission observations+18 not-run;18 attempts,62requests/278987tokens,28citations
+PASS:old evidence unchanged, human business/citation rates null; links and secret-pattern scan clear
+SCOPE:offline checks only; no additional API/key access, not full product regression or hybrid acceptance

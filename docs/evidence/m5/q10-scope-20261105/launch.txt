@@ -1,0 +1,13 @@
+Running as unit: smartdocs-m5-q10-scope-20261105.service
+TimeoutStopUSec=5s
+RuntimeMaxUSec=10min
+MainPID=1226278
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+LoadState=loaded
+ActiveState=active

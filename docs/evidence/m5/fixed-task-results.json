@@ -16,7 +16,7 @@
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 27,
+  "citations_observed": 28,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -215,14 +215,14 @@
       "category": "query",
       "execution": "completed",
       "business_verdict": null,
-      "evidence": "q10-live-20261105/result.json",
+      "evidence": "q10-scope-20261105/result.json",
       "admission_http": 201,
       "error_code": null,
       "provider_requests": 3,
-      "total_tokens": 7005,
-      "attempt_count": 1,
-      "cumulative_provider_requests": 3,
-      "cumulative_total_tokens": 7005,
+      "total_tokens": 7278,
+      "attempt_count": 2,
+      "cumulative_provider_requests": 6,
+      "cumulative_total_tokens": 14283,
       "attempts": [
         {
           "evidence": "q10-live-20261105/result.json",
@@ -230,6 +230,13 @@
           "error_code": null,
           "provider_requests": 3,
           "total_tokens": 7005
+        },
+        {
+          "evidence": "q10-scope-20261105/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 3,
+          "total_tokens": 7278
         }
       ]
     },

@@ -1,0 +1,33 @@
+MainPID=0
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+Nov 05 22:01:05 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import os,pathlib,shlex,runpy,sys,re
+Nov 05 22:01:07 aliyun-lou bash[1226285]: 2026-11-05T14:01:07.156517Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1226285
+Nov 05 22:01:07 aliyun-lou bash[1226285]: 2026-11-05T14:01:07.347224Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 05 22:01:22 aliyun-lou bash[1226285]: 2026-11-05T14:01:22.688622Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 05 22:01:30 aliyun-lou bash[1226285]: 2026-11-05T14:01:30.520781Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 05 22:02:18 aliyun-lou bash[1226748]: schema_version=16
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_run_migration_does_not_invent_execution
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_source_migration_does_not_invent_model_context
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 05 22:02:47 aliyun-lou bash[1226856]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 05 22:02:58 aliyun-lou bash[1226981]: {"case_id": "Q10", "run_kind": "live_provider", "state": "completed", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+Nov 05 22:03:01 aliyun-lou systemd[1]: smartdocs-m5-q10-scope-20261105.service: Deactivated successfully.
+Nov 05 22:03:01 aliyun-lou systemd[1]: smartdocs-m5-q10-scope-20261105.service: Consumed 8.236s CPU time.
+TasksCurrent=0
+active
+               total        used        free      shared  buff/cache   available
+Mem:            3495        1268         393           3        1832        1942
+Swap:              0           0           0
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0

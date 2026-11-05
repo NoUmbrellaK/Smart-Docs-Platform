@@ -1,0 +1,4 @@
+Verified retained live Q10: one selected version, two local alpha files; original artifact hash matches.
+Traceback (most recent call last):
+  File "<stdin>", line 10, in <module>
+AssertionError: Q10 scope regression: answer claims project total from selected-only search

@@ -1,0 +1,7 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {exit ($2<524288)}' /proc/meminfo
+cmp python/smartdocs/agent_runner.py /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/agent_runner.py
+sha256sum python/smartdocs/agent_runner.py
+systemd-run --unit=smartdocs-m5-scope-regression-20261105 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p 'test_*.py' -v
+systemctl show smartdocs-m5-scope-regression-20261105.service -p MainPID -p ActiveState -p User -p Group -p Slice -p IPAddressAllow -p IPAddressDeny
