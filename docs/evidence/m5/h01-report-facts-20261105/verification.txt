@@ -1,0 +1,12 @@
+2026-11-05 read-only evidence verification, exit0.
+PASS: 26 public/private events; authoritative completed report and backend tools match
+PASS: 4 requests/cap4096/21646 tokens; output2003 below old2560; 8 dispatches, exactly1 save, no rejection/archive
+PASS: six statuses match expectations; six selected/source versions and stable references match fixture hashes and locations
+PASS: summary stated6/5-required matches actual6/5-required; previous blanket no-write claim absent
+PASS: private hashes/0600 files/0700 directories; six human citation assessments and business verdict remain blank
+PASS: 30 unique cases, latest completed1/failed0/not_run26 plus3 admission observations
+PASS: eight H01 attempts preserved,36 requests/220188 tokens,3 executions completed,17 historical citations; no business-rate claim
+PASS:37 source/runtime fingerprints; RED and116-test GREEN logs; Markdown targets excluding pending verification.txt: 201
+PASS: secret-pattern scan clear (not exhaustive); verification made no provider calls
+
+Final wire-check log confirms the strengthened assertion after full regression. This verification record is created afterward; its existence and staged diff checked before commit.

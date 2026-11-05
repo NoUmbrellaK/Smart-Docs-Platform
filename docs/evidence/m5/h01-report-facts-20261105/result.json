@@ -1,0 +1,302 @@
+{
+  "case_id": "H01",
+  "attempt_number": 8,
+  "metadata": {
+    "code_revision": "7b070d8672f9dfb1824b92e32453e05d86857c36",
+    "recorded_at": "2026-11-05T12:28:18.076111+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT/Markdown keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued user authorization 2026-11-05; report checklist facts H01 attempt <=6 calls x actual4096 output within authorized8192; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h01-report-facts.JcCy9W/H01"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "1a4bbcca08cbcd056aed182c48aa9524",
+        "sequence": 1,
+        "started_at": "2026-11-05 12:28:23.443733",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "0ccfc8fbc080e2a2c879dcbe76cdb4ba",
+        "sequence": 2,
+        "started_at": "2026-11-05 12:28:25.199870",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 85,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "62bb2141c8f9b8e945a63dde61eb22dd",
+        "sequence": 3,
+        "started_at": "2026-11-05 12:28:25.214192",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "6955ae67d11cec82e2686aa5e4f14608",
+        "sequence": 4,
+        "started_at": "2026-11-05 12:28:25.307750",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 106,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "5ec9b412f5b60ac4f382135e489ba4ad",
+        "sequence": 5,
+        "started_at": "2026-11-05 12:28:27.555528",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "74cd303d229ac95fc3318cbdb7c48fc7",
+        "sequence": 6,
+        "started_at": "2026-11-05 12:28:27.855513",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "4b6392d26f98ae688f19c8b8ca392aca",
+        "sequence": 7,
+        "started_at": "2026-11-05 12:28:27.958660",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 18,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "f53ddbadcb7f359b6be53f61b0eca6d9",
+        "sequence": 8,
+        "started_at": "2026-11-05 12:28:37.721020",
+        "status": "success",
+        "task_id": "7318627d27ba69081d9ca9d5f8eae6d7",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 6,
+    "source_version_count": 6,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "found",
+      "issues": "found"
+    },
+    "citation_count": 6,
+    "captured_source_count": 6,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "c416e534bb916103516547bcf9aae1c0",
+          "version_id": "59c6f8a239e16267a2dccbb95b7b4399",
+          "chunk_id": "43e6f819900c0a7f4cb77b7c21bfcf2579f4c1c280086ec1b2e2b964caa78c02"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "16dfc5ac80317c070efe56933fcb0fbb",
+          "version_id": "77802515b3e35b541c33fe295f6d461f",
+          "chunk_id": "7cc846b49d7e18e1ca65c6945931af718a7f7ae7c4ff42a516d611d50935996b"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "691349369254f5747502a6033ffc38aa",
+          "version_id": "71b33fdaa4af32bf51b01d8a1999d89d",
+          "chunk_id": "1357fad7ae5edcd312dbd29cbdb51eb9f9e30fdc584d776e67293c3b27b3a075"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "tests@1",
+        "reference": {
+          "file_id": "f2a9f290ac704ad5cebcf94da705c04c",
+          "version_id": "5e938ff9828aba8db95daf58c029cd9d",
+          "chunk_id": "57c3bcb16f7b15dc6b1f8e343a3c37636beeabb49d3daf4a05a90b7f75348bde"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "deployment@2",
+        "reference": {
+          "file_id": "a7ab8f847816ed38fcd9cead7df53ada",
+          "version_id": "62626f4f1a48d65dc68bcfe6fc557c64",
+          "chunk_id": "4eecc8146d642d682e9f90ca8d5d960db52189bd15adc4919d8b3fab79022871"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 5
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "a3a9f220203cd728fffbe28b2ba31058",
+          "version_id": "650561357c70d6c2abc77488a20c1f3c",
+          "chunk_id": "badba0e31c7b6e208cc8b2c0529849374d254ce90f9ba54d9a1153c4f8592fe2"
+        },
+        "matches_returned_chunk": true,
+        "matches_fixture_sha256": true,
+        "line_start": 1,
+        "line_end": 3
+      }
+    ],
+    "expected_item_statuses_match": true,
+    "summary_checklist_count_matches": true,
+    "summary_stated_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    },
+    "actual_checklist_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    },
+    "previous_blanket_no_write_claim_present": false
+  },
+  "review_summary": {
+    "case_id": "H01",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 6,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "ffd3fe5f9387d15915877ce04111ec60139bf6d7abc68d07718b6bf5bf7f5c0c"
+  },
+  "private_artifact_sha256": {
+    "initial/audit.jsonl": "1e2e630e2efb80190f5d91071b272141afd27ceda1cc8365fbe620e1fdbdcd72",
+    "initial/snapshot.json": "8852979faaec408a7260c727025939b269de11454c751c36374649383bbbc107",
+    "summary.json": "f36844b3bffe1085b1a46d79c255b5c3fd21290aea72f04388f9c077e409e625",
+    "review.json": "a7fdcde84087fa23f2e61669cdfa33bc3943950bf53e5fd095705eb4b4db4225"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 18877,
+    "completion_tokens": 2769,
+    "total_tokens": 21646,
+    "prompt_cache_hit_tokens": 10368,
+    "prompt_cache_miss_tokens": 8509
+  },
+  "tool_calls_dispatched": 8,
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 6,
+    "save_handover_report": 1
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    3,
+    3,
+    1
+  ],
+  "model_rejection": null,
+  "tool_rejections": [],
+  "cost_estimate": null,
+  "cumulative": {
+    "attempts": 8,
+    "completed": 3,
+    "provider_requests": 36,
+    "total_tokens": 220188,
+    "citations_observed": 17
+  },
+  "limitations": [
+    "Six item statuses and explicit summary counts match the frozen checklist; prior blanket no-write claim absent in this run.",
+    "These observations do not establish universal semantic correctness or causation. Human business/citation assessment remains blank.",
+    "Review questions: limitations overgeneralizes inability to discover unparsed material; deployment notes contain a backup-drill claim sourced from the separately cited issues item.",
+    "No encoder/hybrid used. No automatic retry or archive confirmation."
+  ]
+}

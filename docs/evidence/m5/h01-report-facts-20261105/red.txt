@@ -1,0 +1,55 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_runner.AgentRunnerTests.test_report_budget_and_checklist_counts_reach_real_provider_adapter.
+test_report_budget_and_checklist_counts_reach_real_provider_adapter (test_agent_runner.AgentRunnerTests) ...
+======================================================================
+FAIL: test_report_budget_and_checklist_counts_reach_real_provider_adapter (test_agent_runner.AgentRunnerTests) (items=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 868, in test_report_budget_and_checklist_counts_reach_real_provider_adapter
+    self.assertEqual(facts,[{'handover_checklist_counts':{'revision':1,
+AssertionError: Lists differ: [] != [{'handover_checklist_counts': {'revision'[43 chars] 1}}]
+Second list contains 1 additional elements.
+First extra element 0:
+{'handover_checklist_counts': {'revision': 1, 'total': 1, 'required': 0, 'optional': 1}}
+- []
++ [{'handover_checklist_counts': {'optional': 1,
++                                 'required': 0,
++                                 'revision': 1,
++                                 'total': 1}}]
+======================================================================
+FAIL: test_report_budget_and_checklist_counts_reach_real_provider_adapter (test_agent_runner.AgentRunnerTests) (items=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 868, in test_report_budget_and_checklist_counts_reach_real_provider_adapter
+    self.assertEqual(facts,[{'handover_checklist_counts':{'revision':1,
+AssertionError: Lists differ: [] != [{'handover_checklist_counts': {'revision'[43 chars] 1}}]
+Second list contains 1 additional elements.
+First extra element 0:
+{'handover_checklist_counts': {'revision': 1, 'total': 6, 'required': 5, 'optional': 1}}
+- []
++ [{'handover_checklist_counts': {'optional': 1,
++                                 'required': 5,
++                                 'revision': 1,
++                                 'total': 6}}]
+======================================================================
+FAIL: test_report_budget_and_checklist_counts_reach_real_provider_adapter (test_agent_runner.AgentRunnerTests) (items=50)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 868, in test_report_budget_and_checklist_counts_reach_real_provider_adapter
+    self.assertEqual(facts,[{'handover_checklist_counts':{'revision':1,
+AssertionError: Lists differ: [] != [{'handover_checklist_counts': {'revision'[45 chars] 0}}]
+Second list contains 1 additional elements.
+First extra element 0:
+{'handover_checklist_counts': {'revision': 1, 'total': 50, 'required': 50, 'optional': 0}}
+- []
++ [{'handover_checklist_counts': {'optional': 0,
++                                 'required': 50,
++                                 'revision': 1,
++                                 'total': 50}}]
+----------------------------------------------------------------------
+Ran 1 test in 0.744s
+FAILED (failures=3)
+smartdocs-report-facts-red-20261105.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-report-facts-red-20261105.service: Failed with result 'exit-code'.
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed

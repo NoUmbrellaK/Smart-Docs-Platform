@@ -1,0 +1,11 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_runner.AgentRunnerTests.test_report_budget_and_checklist_counts_reach_real_provider_adapter.
+test_report_budget_and_checklist_counts_reach_real_provider_adapter (test_agent_runner.AgentRunnerTests) ... ok
+----------------------------------------------------------------------
+Ran 1 test in 0.584s
+OK
+smartdocs-report-facts-wire-20261105.service: Deactivated successfully.
+MainPID=0
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+edd686a898ee71fdba98acb63795fdfb80593eb529304b096fc9d040566fdf1c  test/mcp/test_agent_runner.py
