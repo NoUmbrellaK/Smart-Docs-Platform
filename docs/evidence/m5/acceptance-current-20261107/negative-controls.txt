@@ -1,0 +1,3 @@
+REJECTED in-memory negative control: missing_task
+REJECTED in-memory negative control: filled_verdict
+REJECTED in-memory negative control: wrong_citation_count

@@ -1,0 +1,11 @@
+fixed-task-results.json {"attempts": 40, "citations": 104, "latest_citations": 57, "requests": 137, "tokens": 700807}
+states {"admission_rejected": 3, "completed": 18, "failed": 1, "not_run": 5, "waiting_confirmation": 3}
+not_run ['A01', 'A02', 'A03', 'A04', 'A05']
+failed ['A07']
+supplemental-task-results.json {"attempts": 2, "citations": 2, "latest_citations": 2, "requests": 6, "tokens": 17965}
+states {"completed": 1}
+not_run []
+failed []
+combined {"attempts": 42, "citations": 106, "latest_citations": 59, "requests": 143, "tokens": 718772}
+PASS: all 42 private snapshots/reviews match recorded hashes; all human verdicts/assessments remain blank
+Scope: metadata and integrity reconciliation only, not source-support/semantic acceptance or a new model run

@@ -1,0 +1,7 @@
+91deac0c30ed0c2bd779b294853957a423ee7d2f26f2f5612f1b1606f7b3db4f  docs/evidence/m5/fixed-task-results.json
+bf76d5d20db686d89491c202b34a831f7173accf4fc9519215f459d11750c740  docs/evidence/m5/supplemental-task-results.json
+5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228  test/fixtures/agent-p0/corpus.json
+9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099  test/fixtures/agent-p0/tasks.json
+1f231b12dd1f216f07c7cb2cc4142d4cb77c73e664e24e7a9d4bc6ffec6b03e6  test/fixtures/agent-p0/supplemental-tasks.json
+586bde093f6024b75314439e5e3da7ea166111c0f96841904bf4e3c018e7d764  docs/evidence/m5/acceptance-current-20261107/reconcile.py
+e7c583f44f88f9c4c202e11f692311a068a081b24ff7a315cfea8d2feda07e19  docs/evidence/m5/acceptance-current-20261107/check.py
