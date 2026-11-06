@@ -1,0 +1,16 @@
+set -e
+test "$(git rev-parse HEAD)" = 0df877ef58ae4b4eb557e2df31b19db0d1c69b0c
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+python3 -B docs/evidence/m5/query-budget-20261106/fingerprints.py > docs/evidence/m5/query-budget-20261106/live-preflight.txt
+cmp docs/evidence/m5/query-budget-20261106/postflight.txt docs/evidence/m5/query-budget-20261106/live-preflight.txt
+test ! -e /tmp/smartdocs-m5-s01-budget.sKbXrz/S01
+chown nobody:nogroup /tmp/smartdocs-m5-s01-budget.sKbXrz
+chmod 0700 /tmp/smartdocs-m5-s01-budget.sKbXrz
+systemd-run --unit=smartdocs-m5-s01-budget-live-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p LoadCredential=deepseek.env:/root/.config/smart-docs/deepseek.env --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import os,pathlib,shlex,runpy,sys,re
+tokens=shlex.split((pathlib.Path(os.environ["CREDENTIALS_DIRECTORY"])/"deepseek.env").read_text(),comments=True)
+entries=[t.partition("=") for t in tokens if t.startswith("DEEPSEEK_API_KEY=")]
+if len(entries)!=1 or not re.fullmatch(r"[!-~]{1,256}",entries[0][2]): raise SystemExit("invalid credential configuration")
+os.environ["DEEPSEEK_API_KEY"]=entries[0][2]
+sys.argv=["test/e2e/benchmark_cli.py",*sys.argv[1:]]
+runpy.run_path(sys.argv[0],run_name="__main__")' --case S01 --live --output /tmp/smartdocs-m5-s01-budget.sKbXrz/S01 --code-revision 0df877ef58ae4b4eb557e2df31b19db0d1c69b0c --environment 'Current ECS 2vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes no encoder; isolated schema16 MySQL localhost C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; S01 second attempt; question and expected frozen in7756a7e unchanged; approved synthetic deployment@2 rollback@1 only; expected answers not sent; fixed https://api.deepseek.com/chat/completions; query cap aligned to existing runner1024; <=4 requests x1024 output; no automatic retry/archive confirmation' --max-calls 4 --hold-seconds 0

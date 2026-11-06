@@ -1,0 +1,278 @@
+{
+  "case_id": "S01",
+  "attempt_number": 2,
+  "dataset": "smartdocs-p0-supplemental-v1",
+  "metadata": {
+    "code_revision": "0df877ef58ae4b4eb557e2df31b19db0d1c69b0c",
+    "recorded_at": "2026-11-06T13:07:44.953630+00:00",
+    "environment": "Current ECS 2vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes no encoder; isolated schema16 MySQL localhost C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; S01 second attempt; question and expected frozen in7756a7e unchanged; approved synthetic deployment@2 rollback@1 only; expected answers not sent; fixed https://api.deepseek.com/chat/completions; query cap aligned to existing runner1024; <=4 requests x1024 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-s01-budget.sKbXrz/S01"
+  },
+  "input": "读取部署说明和回滚指南，分别说明上线前备份与启动顺序、回滚前应暂停什么、恢复哪些数据以及何时重新开放入口。每部分给出对应来源，并明确资料是否说明了触发回滚的具体条件，不要自行补充。",
+  "expected": {
+    "required": [
+      "部署前创建 ORBIT-27 备份并校验哈希；先启动业务服务，再启动解析工作进程。",
+      "回滚前停止新的上传与归档写入；文件内容和元数据恢复同一备份点，不能仅恢复数据库。",
+      "恢复后核对文件哈希、成员权限及引用版本，再开放入口。",
+      "明确这两份资料未说明触发回滚的具体条件；不能编造阈值、超时、负责人或批准。",
+      "部署与回滚两部分分别引用对应文件版本的真实片段；不执行任何恢复、归档或写入操作。"
+    ],
+    "allowed_variants": [
+      "允许同义表达、分段或列表；可附有依据的端口、配置或健康检查路径，但不能把健康检查路径当作已规定的回滚触发条件。"
+    ],
+    "forbidden": [
+      "伪造来源或完成状态",
+      "把文档指令当作授权",
+      "编造回滚触发条件",
+      "执行实际回滚或归档"
+    ],
+    "evidence": [
+      {
+        "source": "deployment@2",
+        "paragraph": 1
+      },
+      {
+        "source": "deployment@2",
+        "paragraph": 3
+      },
+      {
+        "source": "rollback@1",
+        "paragraph": 1
+      },
+      {
+        "source": "rollback@1",
+        "paragraph": 2
+      },
+      {
+        "source": "rollback@1",
+        "paragraph": 3
+      }
+    ]
+  },
+  "run_result": {
+    "error_code": null,
+    "model_calls": 3,
+    "result": {
+      "answer": "已读取两份文档（均为当前版本，各仅 1 个文本块，已完整读取）。\n\n一、部署说明（部署说明.md）\n1) 上线前备份：部署前创建备份 ORBIT-27，并校验备份哈希。\n2) 启动顺序：先启动业务服务，再启动解析工作进程；健康检查路径为 /healthz。文档另提到当前监听端口 8087、必填环境变量 STARBRIDGE_DB_DSN（属部署配置信息，非备份/启动顺序要求）。\n\n二、回滚指南（回滚指南.md）\n1) 回滚前应暂停：停止新的上传和归档写入。\n2) 恢复哪些数据：文件内容与元数据必须恢复到同一备份点，不能只恢复数据库。\n3) 何时重新开放入口：恢复后核对文件哈希、成员权限及引用版本，再开放入口。\n\n三、关于触发回滚的具体条件\n两份文档均未说明触发回滚的具体条件（例如何种故障、指标阈值或审批要求）。部署说明只给出备份、端口/环境变量与启动顺序；回滚指南只给出回滚前暂停、恢复范围与重新开放入口的前置核对。因此在本任务检索范围内，触发回滚的条件属于未找到，不做任何补充推断。\n\n覆盖说明：本次仅检索并读取了本任务允许范围内与“部署”“回滚”匹配的两份文档，未涉及其他材料，结论仅限这两份文档的当前版本。",
+      "citations": [
+        {
+          "chunk_id": "88dbf18d8e11429d79878f2b183b0371069c3794332451c2ee85523bbc55a6a4",
+          "file_id": "5e1753a4b5f598387a079df307dc39ce",
+          "version_id": "06ddda10d7e6a83502a55c838a2216e6"
+        },
+        {
+          "chunk_id": "f3994043d570d068e35635b399e425dc1e2908116eddcd4e482b9358420ee004",
+          "file_id": "b1130178ca05467ca03713e760796244",
+          "version_id": "138e562eaa95a51e7ac7c56e031b4822"
+        }
+      ]
+    },
+    "state": "completed"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 6
+        },
+        "request_id": "efe16f5f1ff4a37605eea873c5ced4ed",
+        "sequence": 1,
+        "started_at": "2026-11-06 13:07:50.270774",
+        "status": "success",
+        "task_id": "ae03618c2a3e5c55ebf5c0ea26adcbae",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 6
+        },
+        "request_id": "75c13ca2b87960ad8aa02403092cc8b2",
+        "sequence": 2,
+        "started_at": "2026-11-06 13:07:50.285953",
+        "status": "success",
+        "task_id": "ae03618c2a3e5c55ebf5c0ea26adcbae",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "77269e18bc7008db659251f1456d6f5c",
+        "sequence": 3,
+        "started_at": "2026-11-06 13:07:51.610826",
+        "status": "success",
+        "task_id": "ae03618c2a3e5c55ebf5c0ea26adcbae",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 4,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "04eb0f28d08751f0794872be8e6aaea4",
+        "sequence": 4,
+        "started_at": "2026-11-06 13:07:51.622057",
+        "status": "success",
+        "task_id": "ae03618c2a3e5c55ebf5c0ea26adcbae",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "max_tokens_observed": [
+    1024,
+    1024,
+    1024
+  ],
+  "usage": {
+    "prompt_tokens": 8122,
+    "completion_tokens": 855,
+    "total_tokens": 8977,
+    "prompt_cache_hit_tokens": 5120,
+    "prompt_cache_miss_tokens": 3002
+  },
+  "citations": [
+    {
+      "pointer": "/run_result/result/citations/0",
+      "claim": "已读取两份文档（均为当前版本，各仅 1 个文本块，已完整读取）。\n\n一、部署说明（部署说明.md）\n1) 上线前备份：部署前创建备份 ORBIT-27，并校验备份哈希。\n2) 启动顺序：先启动业务服务，再启动解析工作进程；健康检查路径为 /healthz。文档另提到当前监听端口 8087、必填环境变量 STARBRIDGE_DB_DSN（属部署配置信息，非备份/启动顺序要求）。\n\n二、回滚指南（回滚指南.md）\n1) 回滚前应暂停：停止新的上传和归档写入。\n2) 恢复哪些数据：文件内容与元数据必须恢复到同一备份点，不能只恢复数据库。\n3) 何时重新开放入口：恢复后核对文件哈希、成员权限及引用版本，再开放入口。\n\n三、关于触发回滚的具体条件\n两份文档均未说明触发回滚的具体条件（例如何种故障、指标阈值或审批要求）。部署说明只给出备份、端口/环境变量与启动顺序；回滚指南只给出回滚前暂停、恢复范围与重新开放入口的前置核对。因此在本任务检索范围内，触发回滚的条件属于未找到，不做任何补充推断。\n\n覆盖说明：本次仅检索并读取了本任务允许范围内与“部署”“回滚”匹配的两份文档，未涉及其他材料，结论仅限这两份文档的当前版本。",
+      "citation": {
+        "chunk_id": "88dbf18d8e11429d79878f2b183b0371069c3794332451c2ee85523bbc55a6a4",
+        "file_id": "5e1753a4b5f598387a079df307dc39ce",
+        "version_id": "06ddda10d7e6a83502a55c838a2216e6"
+      },
+      "assessment": {
+        "located": null,
+        "supported": null,
+        "error": null,
+        "notes": ""
+      }
+    },
+    {
+      "pointer": "/run_result/result/citations/1",
+      "claim": "已读取两份文档（均为当前版本，各仅 1 个文本块，已完整读取）。\n\n一、部署说明（部署说明.md）\n1) 上线前备份：部署前创建备份 ORBIT-27，并校验备份哈希。\n2) 启动顺序：先启动业务服务，再启动解析工作进程；健康检查路径为 /healthz。文档另提到当前监听端口 8087、必填环境变量 STARBRIDGE_DB_DSN（属部署配置信息，非备份/启动顺序要求）。\n\n二、回滚指南（回滚指南.md）\n1) 回滚前应暂停：停止新的上传和归档写入。\n2) 恢复哪些数据：文件内容与元数据必须恢复到同一备份点，不能只恢复数据库。\n3) 何时重新开放入口：恢复后核对文件哈希、成员权限及引用版本，再开放入口。\n\n三、关于触发回滚的具体条件\n两份文档均未说明触发回滚的具体条件（例如何种故障、指标阈值或审批要求）。部署说明只给出备份、端口/环境变量与启动顺序；回滚指南只给出回滚前暂停、恢复范围与重新开放入口的前置核对。因此在本任务检索范围内，触发回滚的条件属于未找到，不做任何补充推断。\n\n覆盖说明：本次仅检索并读取了本任务允许范围内与“部署”“回滚”匹配的两份文档，未涉及其他材料，结论仅限这两份文档的当前版本。",
+      "citation": {
+        "chunk_id": "f3994043d570d068e35635b399e425dc1e2908116eddcd4e482b9358420ee004",
+        "file_id": "b1130178ca05467ca03713e760796244",
+        "version_id": "138e562eaa95a51e7ac7c56e031b4822"
+      },
+      "assessment": {
+        "located": null,
+        "supported": null,
+        "error": null,
+        "notes": ""
+      }
+    }
+  ],
+  "citation_sources": [
+    {
+      "reference": {
+        "file_id": "5e1753a4b5f598387a079df307dc39ce",
+        "version_id": "06ddda10d7e6a83502a55c838a2216e6",
+        "chunk_id": "88dbf18d8e11429d79878f2b183b0371069c3794332451c2ee85523bbc55a6a4"
+      },
+      "source": {
+        "char_count": 101,
+        "chunk": {
+          "char_end": 101,
+          "char_start": 0,
+          "chunk_id": "88dbf18d8e11429d79878f2b183b0371069c3794332451c2ee85523bbc55a6a4",
+          "file_id": "5e1753a4b5f598387a079df307dc39ce",
+          "line_end": 5,
+          "line_start": 1,
+          "parser_revision": "utf8-lines-v1",
+          "source_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7",
+          "text": "当前部署前创建备份 ORBIT-27，并校验备份哈希。\n\n当前监听端口8087，必填环境变量 STARBRIDGE_DB_DSN。\n\n先启动业务服务，再启动解析工作进程；健康检查路径 /healthz。",
+          "version_id": "06ddda10d7e6a83502a55c838a2216e6"
+        },
+        "chunk_count": 1,
+        "file_id": "5e1753a4b5f598387a079df307dc39ce",
+        "is_current": true,
+        "keyword_state": "completed",
+        "page_count": 0,
+        "pages_without_text": [],
+        "parse_job_id": "753475859717aea6c82c7a690b483992",
+        "parse_state": "completed",
+        "parser_revision": "utf8-lines-v1",
+        "source_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7",
+        "vector_job_id": "9b63ef28f981faf5c5bc37cca95d17c4",
+        "vector_state": "pending",
+        "version_id": "06ddda10d7e6a83502a55c838a2216e6"
+      },
+      "fixture": "deployment@2"
+    },
+    {
+      "reference": {
+        "file_id": "b1130178ca05467ca03713e760796244",
+        "version_id": "138e562eaa95a51e7ac7c56e031b4822",
+        "chunk_id": "f3994043d570d068e35635b399e425dc1e2908116eddcd4e482b9358420ee004"
+      },
+      "source": {
+        "char_count": 72,
+        "chunk": {
+          "char_end": 72,
+          "char_start": 0,
+          "chunk_id": "f3994043d570d068e35635b399e425dc1e2908116eddcd4e482b9358420ee004",
+          "file_id": "b1130178ca05467ca03713e760796244",
+          "line_end": 5,
+          "line_start": 1,
+          "parser_revision": "utf8-lines-v1",
+          "source_sha256": "ab0c77732f4ca0277dfd59dd78b288a36aac19c11cc5d73baed52de5e5a7b3b8",
+          "text": "回滚前停止新的上传和归档写入。\n\n文件内容与元数据必须恢复同一备份点，不能只恢复数据库。\n\n恢复后核对文件哈希、成员权限及引用版本，再开放入口。",
+          "version_id": "138e562eaa95a51e7ac7c56e031b4822"
+        },
+        "chunk_count": 1,
+        "file_id": "b1130178ca05467ca03713e760796244",
+        "is_current": true,
+        "keyword_state": "completed",
+        "page_count": 0,
+        "pages_without_text": [],
+        "parse_job_id": "a1b07b84baf3b4042eda0d03a9c598bc",
+        "parse_state": "completed",
+        "parser_revision": "utf8-lines-v1",
+        "source_sha256": "ab0c77732f4ca0277dfd59dd78b288a36aac19c11cc5d73baed52de5e5a7b3b8",
+        "vector_job_id": "bc167bc13190d1bb84d5964a4e333687",
+        "vector_state": "pending",
+        "version_id": "138e562eaa95a51e7ac7c56e031b4822"
+      },
+      "fixture": "rollback@1"
+    }
+  ],
+  "review_summary": {
+    "case_id": "S01",
+    "category": "query",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 2,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "6431e834873755f62a22d23e1099afcc990a63e09f92c6c2c4f2db11d3220ceb"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null,
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099",
+    "supplemental-tasks.json": "1f231b12dd1f216f07c7cb2cc4142d4cb77c73e664e24e7a9d4bc6ffec6b03e6"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "0a214e9a141fbc558322e2316410860d632b62bd56a7063396c715cc66b6ed0e",
+    "initial/audit.jsonl": "8e82a89d825b01929574d901a041d088990c20e49e6b68acf054b2d33a1917bb",
+    "summary.json": "2835bf8944b47b92441e578a28ebc8f411a0774e65c5b8e735ef077fbe9c1337",
+    "review.json": "3f902e0bea7324bfb6e5dcfafbc59c2d8f4e8458b6706fd8a0d8b67bb3e6e88d"
+  }
+}

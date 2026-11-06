@@ -1,0 +1,5 @@
+PASS: S01 attempt 2 completed; 3 requests / 8977 tokens; final output 521 within 1024 cap
+PASS: all 2 citations match fixed original text/version/hash/lines; human verdicts remain blank
+PASS: both S01 attempts retained, 6 requests / 17965 tokens; original 30 unchanged
+PASS: latest citation sample 49+2=51, historical 96+2=98; no accuracy claim
+PASS: runtime fingerprints and resource terminal state; offline regression 126/126

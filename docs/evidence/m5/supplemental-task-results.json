@@ -7,16 +7,16 @@
   "denominator": 1,
   "business_completion_rate": null,
   "citation_accuracy": null,
-  "citations_observed": 0,
+  "citations_observed": 2,
   "tasks": [
     {
       "case_id": "S01",
-      "execution": "failed",
-      "error_code": "model_invalid",
+      "execution": "completed",
+      "error_code": null,
       "business_verdict": null,
-      "attempt_count": 1,
-      "cumulative_provider_requests": 3,
-      "cumulative_total_tokens": 8988,
+      "attempt_count": 2,
+      "cumulative_provider_requests": 6,
+      "cumulative_total_tokens": 17965,
       "attempts": [
         {
           "evidence": "s01-live-20261106/result.json",
@@ -25,6 +25,14 @@
           "provider_requests": 3,
           "total_tokens": 8988,
           "citations_total": 0
+        },
+        {
+          "evidence": "query-budget-20261106/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 3,
+          "total_tokens": 8977,
+          "citations_total": 2
         }
       ]
     }
