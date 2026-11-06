@@ -559,17 +559,17 @@
       "category": "handover",
       "execution": "failed",
       "business_verdict": null,
-      "evidence": "report-wording-20261106/result.json",
+      "evidence": "h05-diagnostic-20261106/result.json",
       "admission_http": 201,
-      "error_code": "scope_changed",
-      "provider_requests": 2,
-      "total_tokens": 8129,
-      "attempt_count": 4,
-      "cumulative_provider_requests": 12,
-      "cumulative_total_tokens": 71847,
+      "error_code": "repeated_tool_error",
+      "provider_requests": 4,
+      "total_tokens": 28638,
+      "attempt_count": 5,
+      "cumulative_provider_requests": 16,
+      "cumulative_total_tokens": 100485,
       "expected_item_statuses_match": null,
       "metadata_only_requirement_met": false,
-      "business_observation": "fourth_attempt_status_read_denied_scope_changed_no_report_prompt_candidate_withdrawn_not_human_verdict",
+      "business_observation": "fifth_attempt_metadata_then_three_report_invalid_requests_no_read_or_report_exact_rejection_cause_unretained_not_human_verdict",
       "attempts": [
         {
           "evidence": "h05-live-20261106/result.json",
@@ -598,6 +598,13 @@
           "error_code": "scope_changed",
           "provider_requests": 2,
           "total_tokens": 8129
+        },
+        {
+          "evidence": "h05-diagnostic-20261106/result.json",
+          "state": "failed",
+          "error_code": "repeated_tool_error",
+          "provider_requests": 4,
+          "total_tokens": 28638
         }
       ]
     },

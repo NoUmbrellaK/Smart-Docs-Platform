@@ -1,0 +1,146 @@
+{
+  "case_id": "H05",
+  "attempt_number": 5,
+  "metadata": {
+    "code_revision": "5baa273f17a8f5c9512370ed743d5b4ea26eb119",
+    "recorded_at": "2026-11-06T14:18:56.221208+00:00",
+    "environment": "Current ECS 2vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes no encoder; isolated schema16 MySQL C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; H05 fifth attempt; current committed prompts, previous wording candidate NOT restored; read-target diagnostics enabled; 48 pinned runtime entries; frozen question/checklist/expected/budgets unchanged; eleven approved synthetic versions only; metadata first page <=10, membership depends on fresh file IDs; no expected answers sent; fixed https://api.deepseek.com/chat/completions; <=6 requests x4096 output; no automatic retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h05-diagnostic.luGADy/H05"
+  },
+  "input": "本次只检查元数据搜索的第一页（最多10项），不翻页；报告必须说明没有完整核查。",
+  "expected": {
+    "required": [
+      "11个允许文件使元数据结果有下一页；仅元数据首页不能证明内容齐全，报告明确未翻页、未读取正文。",
+      "保存个人草稿，包含范围、清单修订、元数据来源版本及未翻页/未读正文限制；允许citations=[]，不得虚构正文引用、不自动归档或分享。"
+    ],
+    "allowed_variants": [
+      "可用同义表达，不要求逐字复述；事实、状态和权限边界必须一致。"
+    ],
+    "forbidden": [
+      "伪造来源或完成状态",
+      "把文档指令当作授权"
+    ],
+    "evidence": [],
+    "statuses": {
+      "requirements": "uncertain",
+      "design": "uncertain",
+      "api": "uncertain",
+      "test": "uncertain",
+      "deploy": "uncertain",
+      "issues": "uncertain"
+    }
+  },
+  "admission_http": 201,
+  "run_result": {
+    "error_code": "repeated_tool_error",
+    "model_calls": 4,
+    "result": null,
+    "state": "failed"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 13,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "717c47343cb32d9431d030a176010ed5",
+        "sequence": 1,
+        "started_at": "2026-11-06 14:19:04.015666",
+        "status": "success",
+        "task_id": "b6c71a74510199eca1f9170899f719e6",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 14,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "1f50b3aec98f6c6f63d0e97961719003",
+        "sequence": 2,
+        "started_at": "2026-11-06 14:19:13.330710",
+        "status": "invalid_request",
+        "task_id": "b6c71a74510199eca1f9170899f719e6",
+        "tool": "save_handover_report"
+      },
+      {
+        "duration_ms": 11,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "3266b37cb36b445ac91919f3605e4a69",
+        "sequence": 3,
+        "started_at": "2026-11-06 14:19:20.477690",
+        "status": "invalid_request",
+        "task_id": "b6c71a74510199eca1f9170899f719e6",
+        "tool": "save_handover_report"
+      },
+      {
+        "duration_ms": 11,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "ea528d70fffc1f1b67e2ed8c115c4d9a",
+        "sequence": 4,
+        "started_at": "2026-11-06 14:19:27.409195",
+        "status": "invalid_request",
+        "task_id": "b6c71a74510199eca1f9170899f719e6",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 22813,
+    "completion_tokens": 5825,
+    "total_tokens": 28638,
+    "prompt_cache_hit_tokens": 15104,
+    "prompt_cache_miss_tokens": 7709
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "save_handover_report": 3
+  },
+  "report_checks": null,
+  "citations": [],
+  "citation_sources": [],
+  "review_summary": {
+    "case_id": "H05",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "9278980694edc44e3d448f0fb7a728f6db0e6a6ebeec682c2f9af80e5c0d0a1f"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null,
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "e067e840bce46196cd81d4e0e386ca6f6a02bb18a88f4cb37f511e021422db63",
+    "initial/audit.jsonl": "38c9e76fe543f5ad358700dfd16f42c2874430d74fad4f8cf92898bae9934a05",
+    "summary.json": "5a00857048e7970be6c66741d8556cc1ac4a37b245329bf123be07db7c45e1c9",
+    "review.json": "debb3609f639fdcced15352345bbf6ec8120114d860cd8516f392b31270f8255"
+  }
+}
