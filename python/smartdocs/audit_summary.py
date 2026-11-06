@@ -74,6 +74,8 @@ def summarize(path):
                 raise ValueError('invalid audit')
             integer(event.get('time_unix_ms'), 10**15)
             kind = event.get('event')
+            if 'read_target' in event and (kind!='tool_attempt' or event.get('tool')!='read_document_version'):
+                raise ValueError('invalid audit')
             if index == 0:
                 continue
             correction = models.get(batch_rejection['sequence']+1,{}).get('result') if batch_rejection else None
@@ -145,6 +147,14 @@ def summarize(path):
                 continue
             if kind not in {'model_attempt', 'model_result', 'tool_attempt', 'tool_result'}:
                 raise ValueError('invalid audit')
+            if 'read_target' in event:
+                target=event['read_target']
+                if (not isinstance(target,dict)
+                        or set(target)!={'selector','file_seen','version_pair_seen'}
+                        or not isinstance(target['selector'],str) or target['selector'] not in {'status','chunk','range'}
+                        or any(type(target[key]) is not bool for key in ('file_seen','version_pair_seen'))
+                        or (target['version_pair_seen'] and not target['file_seen'])):
+                    raise ValueError('invalid audit')
             is_model = kind.startswith('model_')
             entries = models if is_model else tools
             sequence = integer(event.get('sequence'), 128, 1)
@@ -165,6 +175,7 @@ def summarize(path):
                     integer(event.get('request_bytes'), 65536, 1)
                     integer(event.get('max_tokens'), 8192, 1)
                 entries[sequence] = {'identity': identity, 'result': None}
+                if 'read_target' in event: entries[sequence]['read_target']=event['read_target']
             else:
                 entry = entries.get(sequence)
                 if not entry or entry['identity'] != identity or entry['result'] is not None:
@@ -192,11 +203,15 @@ def summarize(path):
             keys += ['prompt_cache_hit_tokens', 'prompt_cache_miss_tokens']
         observed = {key: sum(value[key] for value in known) for key in keys}
         unknown = len(models) - len(known)
+        read_targets=[{'sequence':seq,**entry['read_target'],
+                       'status':entry['result']['status'] if entry['result'] is not None else None}
+                      for seq,entry in tools.items() if 'read_target' in entry]
         return {'schema_version': 1, 'task_id': task, 'trace_complete': complete,
             'truncated_tail': truncated, 'outcome': outcome,
             'model': {**model_counts, 'usage_known_calls': len(known), 'usage_unknown_calls': unknown,
                       'usage_observed': observed, 'usage_total': observed if complete and not unknown else None},
             'tools': tool_counts, 'model_rejection': rejection, 'tool_rejections': tool_rejections,
+            **({'read_targets':read_targets} if read_targets else {}),
             **({'model_batch_rejection':batch_rejection} if batch_rejection is not None else {}),
             'cost_estimate': None, 'business_acceptance': 'not_evaluated'}
     except (OSError, ValueError, TypeError, KeyError, RecursionError):

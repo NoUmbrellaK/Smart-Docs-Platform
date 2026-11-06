@@ -1,0 +1,14 @@
+RuntimeMaxUSec=10min
+ExecStart={ path=/tmp/smartdocs-mcp.P7grAI/venv/bin/python ; argv[]=/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import unittest,hashlib; from pathlib import Path; from smartdocs.audit_summary import summarize; suite=unittest.TestSuite([unittest.TestLoader().discover("test/mcp"),unittest.TestLoader().discover("test/python",pattern="test_search_http.py")]); result=unittest.TextTestRunner(verbosity=2).run(suite); assert result.wasSuccessful(); path=Path("/tmp/smartdocs-m5-report-wording.cUs1kn/H05/initial/audit.jsonl"); before=path.read_bytes(); assert hashlib.sha256(before).hexdigest()=="548aba4c4a8ee0c6a01fb4b8c1371ece95c77fa60f42bc385d2822de46fe066f"; old=summarize(path); assert old["trace_complete"] and old["outcome"]=={"state":"failed","error_code":"scope_changed"}; assert old["model"]["attempts"]==2 and old["model"]["usage_total"]["total_tokens"]==8129; assert "read_targets" not in old and path.read_bytes()==before; print("PASS: original H05 private trace unchanged, 2 requests/8129 tokens, old missing diagnostic remains absent") ; ignore_errors=no ; start_time=[Fri 2026-11-06 22:10:35 CST] ; stop_time=[n/a] ; pid=1322045 ; code=(null) ; status=0/0 }
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m5-read-target-final-20261106.service
+LoadState=loaded
+ActiveState=active

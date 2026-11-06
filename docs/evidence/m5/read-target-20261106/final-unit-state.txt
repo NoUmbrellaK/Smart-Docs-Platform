@@ -1,0 +1,6 @@
+Result=success
+ExecMainStatus=0
+TasksCurrent=[not set]
+LoadState=not-found
+ActiveState=inactive
+SubState=dead

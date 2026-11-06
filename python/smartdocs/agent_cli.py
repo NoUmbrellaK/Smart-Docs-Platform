@@ -6,6 +6,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -18,12 +19,20 @@ from .mcp_read import load_context
 
 async def run_session(context, client, model, audit, *, resume_archive=False):
     last_query=None; sequence=0
+    seen_versions=set()  # Diagnostic observations only, never an authorization cache.
     class Tools:
         async def call_tool(self,name,arguments):
             nonlocal last_query,sequence
             start=time.monotonic(); sequence+=1
             base={"sequence":sequence,"tool":name}
-            try: audit({**base,"event":"tool_attempt"})
+            attempt={**base,"event":"tool_attempt"}
+            if name=='read_document_version':
+                pair=(arguments['file_id'],arguments['version_id'])
+                attempt['read_target']={
+                    'selector':'chunk' if 'chunk_id' in arguments else 'range' if 'range' in arguments else 'status',
+                    'file_seen':any(file==pair[0] for file,version in seen_versions),
+                    'version_pair_seen':pair in seen_versions}
+            try: audit(attempt)
             except (OSError,ValueError): raise RunError("dependency_failed") from None
             try:
                 reply=await client.call_tool(name,arguments)
@@ -48,6 +57,17 @@ async def run_session(context, client, model, audit, *, resume_archive=False):
                 event["query_changed"]=last_query is not None and query!=last_query; last_query=query
             try: audit(event)
             except (OSError,ValueError): raise RunError("dependency_failed") from None
+            if (name in {'search_documents','read_document_version'}
+                    and status in {'success','processing','unavailable'}
+                    and payload.get('task_id')==context['task_id']
+                    and isinstance(payload.get('source_request_id'),str)
+                    and re.fullmatch('[0-9a-f]{32}',payload['source_request_id'])):
+                # Fixed envelope positions, never recurse into document text or arbitrary metadata.
+                items=data.get('items',[]) if name=='search_documents' else [data]
+                for item in items if isinstance(items,list) else []:
+                    if (isinstance(item,dict) and all(isinstance(item.get(key),str)
+                            and re.fullmatch('[0-9a-f]{32}',item[key]) for key in ('file_id','version_id'))):
+                        seen_versions.add((item['file_id'],item['version_id']))
             return reply
     if resume_archive: return await resume_confirmed_archive(context,Tools())
     return await run_task(context,Tools(),model,audit=audit)

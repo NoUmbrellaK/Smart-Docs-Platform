@@ -1,0 +1,8 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_runner.AgentRunnerTests.test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids test_agent_runner.AgentRunnerTests.test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch test_audit_summary.AuditSummaryTests.test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization.
+test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids (test_agent_runner.AgentRunnerTests) ... ok
+test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch (test_agent_runner.AgentRunnerTests) ... ok
+test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests) ... ok
+----------------------------------------------------------------------
+Ran 3 tests in 1.375s
+OK
+smartdocs-m5-read-target-green-20261106.service: Deactivated successfully.

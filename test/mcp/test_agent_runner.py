@@ -891,6 +891,64 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(events[-1]["status"],"dependency_failed")
         self.assertNotIn("private-protocol-error",json.dumps(events))
 
+    async def test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids(self):
+        from smartdocs.agent_cli import run_session
+        for file, version, selector, seen_file, seen_pair in [
+                (FILE, VERSION, {}, True, True),
+                (FILE, '9'*32, {'range': {}}, True, False),
+                ('8'*32, VERSION, {'chunk_id': CHUNK}, False, False)]:
+            with self.subTest(selector=selector):
+                self.state='pending'; self.requests=[]; self.calls=0
+                self.search_result={'items':[{'file_id':FILE,'version_id':VERSION,'name':'PRIVATE-NAME',
+                    'text':json.dumps({'file_id':'8'*32,'version_id':VERSION})}]}
+                self.read_results=[(404, {'code':'resource_not_found','message':'PRIVATE-ERROR'})]
+                events=[]; count=0; messages_seen=[]
+                async def model(messages, **kwargs):
+                    nonlocal count
+                    count+=1; messages_seen.extend(copy.deepcopy(messages))
+                    if count==1: return reply(calls=[call()])
+                    return reply(calls=[call('read_document_version',
+                        {'file_id':file,'version_id':version,**selector},'read')])
+                async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                    outcome=await run_session(self.context,client,model,events.append)
+                self.assertEqual(outcome, {'state':'failed','error_code':'scope_changed'})
+                attempts=[e for e in events if e['event']=='tool_attempt' and e['tool']=='read_document_version']
+                self.assertEqual([e.get('read_target') for e in attempts], [{
+                    'selector':'chunk' if 'chunk_id' in selector else 'range' if 'range' in selector else 'status',
+                    'file_seen':seen_file,'version_pair_seen':seen_pair}])
+                self.assertEqual(count,2)
+                self.assertEqual(len([p for p,b in self.requests if p.endswith('/tools/read')]),1)
+                self.assertNotIn('read_target',json.dumps(messages_seen))
+                for private in (FILE,VERSION,CHUNK,'8'*32,'9'*32,'PRIVATE',self.context['session_token']):
+                    self.assertNotIn(private,json.dumps(events))
+
+    async def test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch(self):
+        from smartdocs.agent_cli import run_session
+        for fail_audit, parse_state in ((False,'completed'),(False,'pending'),(False,'failed'),(True,'completed')):
+            self.state='pending'; self.requests=[]; self.calls=0
+            self.read_results=[(200, {'file_id':FILE,'version_id':VERSION,'parse_state':parse_state}),
+                               (404, {'code':'resource_not_found'})]
+            events=[]; count=0
+            async def model(**kwargs):
+                nonlocal count
+                count+=1
+                return reply(calls=[call('read_document_version',
+                    {'file_id':FILE,'version_id':VERSION},f'read_{count}')])
+            def audit(event):
+                if fail_audit and event.get('read_target'): raise OSError('PRIVATE-AUDIT-ERROR')
+                events.append(event)
+            async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                outcome=await run_session(self.context,client,model,audit)
+            attempts=[e.get('read_target') for e in events if e['event']=='tool_attempt']
+            if fail_audit:
+                self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+                self.assertEqual([p for p,b in self.requests if p.endswith('/tools/read')],[])
+            else:
+                self.assertEqual(outcome,{'state':'failed','error_code':'scope_changed'})
+                self.assertEqual(attempts,[{'selector':'status','file_seen':False,'version_pair_seen':False},
+                                           {'selector':'status','file_seen':True,'version_pair_seen':True}])
+        self.assertNotIn('PRIVATE',json.dumps(events))
+
     async def test_model_admission_cumulates_receipts_even_without_final_citations(self):
         count=0
         async def model(messages, **kwargs):

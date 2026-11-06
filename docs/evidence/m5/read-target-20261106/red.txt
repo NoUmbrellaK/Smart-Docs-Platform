@@ -1,0 +1,72 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_runner.AgentRunnerTests.test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids test_agent_runner.AgentRunnerTests.test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch test_audit_summary.AuditSummaryTests.test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization.
+test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids (test_agent_runner.AgentRunnerTests) ... test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch (test_agent_runner.AgentRunnerTests) ... FAIL
+test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests) ... FAIL
+======================================================================
+FAIL: test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids (test_agent_runner.AgentRunnerTests) (selector={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 916, in test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids
+    self.assertEqual([e.get('read_target') for e in attempts], [{
+AssertionError: Lists differ: [None] != [{'selector': 'status', 'file_seen': True, 'version_pair_seen': True}]
+First differing element 0:
+None
+{'selector': 'status', 'file_seen': True, 'version_pair_seen': True}
+- [None]
++ [{'file_seen': True, 'selector': 'status', 'version_pair_seen': True}]
+======================================================================
+FAIL: test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids (test_agent_runner.AgentRunnerTests) (selector={'range': {}})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 916, in test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids
+    self.assertEqual([e.get('read_target') for e in attempts], [{
+AssertionError: Lists differ: [None] != [{'selector': 'range', 'file_seen': True, 'version_pair_seen': False}]
+First differing element 0:
+None
+{'selector': 'range', 'file_seen': True, 'version_pair_seen': False}
+- [None]
++ [{'file_seen': True, 'selector': 'range', 'version_pair_seen': False}]
+======================================================================
+FAIL: test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids (test_agent_runner.AgentRunnerTests) (selector={'chunk_id': 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 916, in test_read_target_diagnostic_distinguishes_pair_mismatch_without_logging_ids
+    self.assertEqual([e.get('read_target') for e in attempts], [{
+AssertionError: Lists differ: [None] != [{'selector': 'chunk', 'file_seen': False, 'version_pair_seen': False}]
+First differing element 0:
+None
+{'selector': 'chunk', 'file_seen': False, 'version_pair_seen': False}
+- [None]
++ [{'file_seen': False, 'selector': 'chunk', 'version_pair_seen': False}]
+======================================================================
+FAIL: test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 948, in test_read_target_observation_is_per_session_and_audit_failure_prevents_dispatch
+    self.assertEqual(attempts,[{'selector':'status','file_seen':False,'version_pair_seen':False},
+AssertionError: Lists differ: [None, None] != [{'selector': 'status', 'file_seen': False[95 chars]rue}]
+First differing element 0:
+None
+{'selector': 'status', 'file_seen': False, 'version_pair_seen': False}
+- [None, None]
++ [{'file_seen': False, 'selector': 'status', 'version_pair_seen': False},
++  {'file_seen': True, 'selector': 'status', 'version_pair_seen': True}]
+======================================================================
+FAIL: test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 95, in test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization
+    self.assertEqual(value.get('read_targets'),[{'sequence':1,'selector':'status',
+AssertionError: None != [{'sequence': 1, 'selector': 'status', 'f[67 chars]ed'}]
+----------------------------------------------------------------------
+Ran 3 tests in 1.113s
+FAILED (failures=5)
+smartdocs-m5-read-target-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-read-target-red-20261106.service: Failed with result 'exit-code'.

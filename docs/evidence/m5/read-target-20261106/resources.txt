@@ -1,0 +1,10 @@
+Final read-only observation after final test completion:
+memory.events:
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
+pids.current: 0
+MemAvailable: 1589024 kB
+Compared with pre-run baseline: high 82471, max/oom/oom_kill 0; unchanged.

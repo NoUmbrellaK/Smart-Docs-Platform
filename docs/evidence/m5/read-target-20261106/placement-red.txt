@@ -1,0 +1,21 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_audit_summary.AuditSummaryTests.test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization.
+test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests) ...
+======================================================================
+FAIL: test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests) (misplaced_at=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 113, in test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization
+    with self.assertRaises(ValueError): self.summary.summarize(self.path)
+AssertionError: ValueError not raised
+======================================================================
+FAIL: test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization (test_audit_summary.AuditSummaryTests) (misplaced_at=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 113, in test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization
+    with self.assertRaises(ValueError): self.summary.summarize(self.path)
+AssertionError: ValueError not raised
+----------------------------------------------------------------------
+Ran 1 test in 0.315s
+FAILED (failures=2)
+smartdocs-m5-read-target-placement-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-read-target-placement-red-20261106.service: Failed with result 'exit-code'.

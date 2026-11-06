@@ -84,6 +84,36 @@ class AuditSummaryTests(unittest.TestCase):
                 self.assertIsNone(value['model']['usage_total'])
                 self.assertIsNone(value['cost_estimate'])
 
+    def test_read_target_diagnostics_are_optional_allowlisted_and_not_authorization(self):
+        records=events()
+        records[3].update(tool='read_document_version',read_target={
+            'selector':'status','file_seen':True,'version_pair_seen':False})
+        records[4].update(tool='read_document_version',status='access_denied')
+        records[5].update(state='failed',error_code='scope_changed')
+        self.write(records)
+        value=self.summary.summarize(self.path)
+        self.assertEqual(value.get('read_targets'),[{'sequence':1,'selector':'status',
+            'file_seen':True,'version_pair_seen':False,'status':'access_denied'}])
+        self.assertEqual(value['business_acceptance'],'not_evaluated')
+        for bad in (None, {}, {'selector':'PRIVATE'}, {'selector':'range','file_seen':1,'version_pair_seen':False},
+                    {'selector':'chunk','file_seen':False,'version_pair_seen':True},
+                    {**records[3]['read_target'],'file_id':'PRIVATE'}):
+            broken=copy.deepcopy(records); broken[3]['read_target']=bad
+            self.write(broken)
+            with self.assertRaisesRegex(ValueError,'audit unavailable or invalid'):
+                self.summary.summarize(self.path)
+        broken=copy.deepcopy(records); broken[3]['tool']='search_documents'; broken[4]['tool']='search_documents'
+        self.write(broken)
+        with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        for index in (0,2,4,5):
+            with self.subTest(misplaced_at=index):
+                broken=copy.deepcopy(records)
+                broken[index]['read_target']=records[3]['read_target']
+                self.write(broken)
+                with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        self.write(events())
+        self.assertNotIn('read_targets',self.summary.summarize(self.path))
+
     def test_rejection_metadata_is_paired_allowlisted_and_not_business_success(self):
         diagnostic={'event':'model_rejection','sequence':1,'stage':'final_json',
                     'finish_reason':'stop','content_kind':'string','tool_calls_kind':'absent',

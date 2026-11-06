@@ -1,0 +1,14 @@
+RuntimeMaxUSec=10min
+ExecStart={ path=/tmp/smartdocs-mcp.P7grAI/venv/bin/python ; argv[]=/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import unittest; suite=unittest.TestSuite([unittest.TestLoader().discover("test/mcp"),unittest.TestLoader().discover("test/python",pattern="test_search_http.py")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful()) ; ignore_errors=no ; start_time=[Fri 2026-11-06 22:02:16 CST] ; stop_time=[n/a] ; pid=1320684 ; code=(null) ; status=0/0 }
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m5-read-target-full-20261106.service
+LoadState=loaded
+ActiveState=active
