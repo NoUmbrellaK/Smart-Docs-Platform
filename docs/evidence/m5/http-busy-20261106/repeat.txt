@@ -1,0 +1,25 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import unittest; names=["test_agent_http.AgentHttpTests.test_busy_response_survives_split_body_after_early_response","test_search_http.SearchHttpTests.test_busy_response_survives_split_body_after_early_response"]; result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names*10)); raise SystemExit(not result.wasSuccessful()).
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... ok
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... ok
+----------------------------------------------------------------------
+Ran 20 tests in 17.988s
+OK
+smartdocs-m5-busy-repeat-20261106.service: Deactivated successfully.

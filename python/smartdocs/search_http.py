@@ -7,8 +7,10 @@ import json
 import os
 import re
 import resource
+import socket
 from socketserver import ThreadingMixIn
 import threading
+import time
 from urllib.parse import urlsplit
 
 from .search import search_documents
@@ -82,10 +84,24 @@ class SearchHTTPServer(ThreadingMixIn, HTTPServer):
         request.settimeout(5)
         if not self.slots.acquire(blocking=False):
             try:
+                deadline = time.monotonic() + .25
+                request.settimeout(.25)
                 body = self.busy_response
                 request.sendall(b"HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\n"
                     b"Cache-Control: no-store\r\nContent-Type: application/json\r\nContent-Length: "
                     +str(len(body)).encode()+b"\r\n\r\n"+body)
+                # RFC 9112 staged close: do not reset a client still sending its body.
+                request.shutdown(socket.SHUT_WR)
+                # ponytail: accept loop drains at most 250ms/64KiB, no extra workers.
+                # Discard only; rejected input must never reach a business handler.
+                remaining = 65536
+                while remaining:
+                    timeout = deadline - time.monotonic()
+                    if timeout <= 0: break
+                    request.settimeout(timeout)
+                    chunk = request.recv(min(4096, remaining))
+                    if not chunk: break
+                    remaining -= len(chunk)
             except OSError:
                 pass
             finally:

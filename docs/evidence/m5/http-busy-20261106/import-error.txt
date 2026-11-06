@@ -1,0 +1,24 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test.mcp.test_agent_http.AgentHttpTests.test_busy_response_survives_split_body_after_early_response test.python.test_search_http.SearchHttpTests.test_busy_response_survives_split_body_after_early_response.
+mcp (unittest.loader._FailedTest) ... ERROR
+python (unittest.loader._FailedTest) ... ERROR
+======================================================================
+ERROR: mcp (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: mcp
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test.mcp'
+======================================================================
+ERROR: python (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: python
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+ModuleNotFoundError: No module named 'test.python'
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+FAILED (errors=2)
+smartdocs-m5-busy-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-busy-red-20261106.service: Failed with result 'exit-code'.

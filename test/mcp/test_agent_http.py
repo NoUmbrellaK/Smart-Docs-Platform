@@ -153,6 +153,31 @@ class AgentHttpTests(unittest.TestCase):
             self.assertEqual(status, 503); self.assertEqual(json.loads(raw)['error']['code'], 'agent_busy')
         self.assertEqual(self.runs, [])
 
+    def test_busy_response_survives_split_body_after_early_response(self):
+        with contextlib.ExitStack() as stack:
+            for _ in range(2):
+                client = stack.enter_context(socket.create_connection(('127.0.0.1', self.port), timeout=5))
+                client.sendall(b'POST ')
+            conn = http.client.HTTPConnection('127.0.0.1', self.port, timeout=2)
+            stack.callback(conn.close)
+            def body():
+                # Wait for the real early response without consuming it. The body
+                # is still in flight, split across two client writes.
+                self.assertIn(b' 503 ', conn.sock.recv(4096, socket.MSG_PEEK))
+                yield b'{'
+                time.sleep(.02)  # Deliberately delayed second TCP write, not a readiness wait.
+                yield b'}'
+            try:
+                conn.request('POST', PATH, body(), {'Content-Length': '2'})
+                response = conn.getresponse()
+                self.assertEqual(response.status, 503)
+                self.assertEqual(json.loads(response.read())['error']['code'], 'agent_busy')
+            except OSError as error:
+                self.fail(f'early busy close lost the HTTP response: {type(error).__name__}')
+        self.assertEqual(self.reads, [])
+        self.assertEqual(self.runs, [])
+        self.assertEqual(list(self.runtime.iterdir()), [])
+
     def test_insecure_state_directories_or_empty_key_rejected_before_listening(self):
         bad = self.root/'bad'; bad.mkdir(); bad.chmod(0o755)
         link = self.root/'link'; link.symlink_to(self.runtime)

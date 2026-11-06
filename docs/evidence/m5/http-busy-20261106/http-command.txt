@@ -1,0 +1,4 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+install -m0644 python/smartdocs/search_http.py /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/search_http.py
+systemd-run --unit=smartdocs-m5-busy-green-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=120 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/mcp:/tmp/smartdocs-safe.h4SzvX/repo/test/python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_http test_search_http

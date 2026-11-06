@@ -6,6 +6,7 @@ import importlib.util
 import json
 import socket
 import threading
+import time
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -176,6 +177,56 @@ class SearchHttpTests(unittest.TestCase):
                        "https://docs.example.test?x", "https://docs.example.test\r\nX:evil"]:
             with self.subTest(origin=origin), self.assertRaises(ValueError):
                 self.module.SearchHTTPServer(0, 1316, origin, self.encode)
+
+    def test_busy_response_survives_split_body_after_early_response(self):
+        with contextlib.ExitStack() as stack:
+            for _ in range(2):
+                client = stack.enter_context(socket.create_connection(('127.0.0.1', self.port), timeout=5))
+                client.sendall(b'POST ')
+            conn = http.client.HTTPConnection('127.0.0.1', self.port, timeout=2)
+            stack.callback(conn.close)
+            def body():
+                self.assertIn(b' 503 ', conn.sock.recv(4096, socket.MSG_PEEK))
+                yield b'{'
+                time.sleep(.02)  # Exercise an in-flight body, not an atomic request write.
+                yield b'}'
+            try:
+                conn.request('POST', PATH, body(), {'Content-Length': '2'})
+                response = conn.getresponse()
+                self.assertEqual(response.status, 503)
+                self.assertEqual(json.loads(response.read())['error']['code'], 'search_busy')
+            except OSError as error:
+                self.fail(f'early busy close lost the HTTP response: {type(error).__name__}')
+        self.assertEqual(self.calls, [])
+        self.assertEqual(self.encoded, 0)
+
+    def test_busy_drain_cannot_be_extended_by_idle_or_trickling_peer(self):
+        for trickle in (False, True):
+            with self.subTest(trickle=trickle), contextlib.ExitStack() as stack:
+                # Hold the two admission slots deterministically for this boundary test.
+                for _ in range(2):
+                    self.assertTrue(self.gateway.slots.acquire(timeout=2))
+                    stack.callback(self.gateway.slots.release)
+                peer = stack.enter_context(socket.create_connection(('127.0.0.1', self.port), timeout=2))
+                self.assertIn(b' 503 ', peer.recv(4096))
+                stop = threading.Event()
+                def send():
+                    while not stop.wait(.01):
+                        try: peer.sendall(b'x')
+                        except OSError: break
+                sender = threading.Thread(target=send)
+                if trickle: sender.start()
+                try:
+                    start = time.monotonic()
+                    status, _, body = self.request()
+                    self.assertEqual(status, 503)
+                    self.assertEqual(json.loads(body)['error']['code'], 'search_busy')
+                    self.assertLess(time.monotonic()-start, 1, 'busy peer stalled the accept loop')
+                finally:
+                    stop.set()
+                    if trickle: sender.join(2)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(self.encoded, 0)
 
 
 if __name__ == "__main__": unittest.main()

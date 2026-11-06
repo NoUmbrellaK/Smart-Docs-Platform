@@ -1,0 +1,71 @@
+RuntimeMaxUSec=2min
+ExecMainStatus=1
+ExecStart={ path=/tmp/smartdocs-mcp.P7grAI/venv/bin/python ; argv[]=/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test.mcp.test_agent_http.AgentHttpTests.test_busy_response_survives_split_body_after_early_response test.python.test_search_http.SearchHttpTests.test_busy_response_survives_split_body_after_early_response ; ignore_errors=no ; start_time=[Fri 2026-11-06 21:45:52 CST] ; stop_time=[Fri 2026-11-06 21:45:52 CST] ; pid=1317303 ; code=exited ; status=1 }
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m5-busy-red-20261106.service
+ActiveState=failed
+
+RuntimeMaxUSec=2min
+ExecMainStatus=1
+ExecStart={ path=/tmp/smartdocs-mcp.P7grAI/venv/bin/python ; argv[]=/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_http.AgentHttpTests.test_busy_response_survives_split_body_after_early_response test_search_http.SearchHttpTests.test_busy_response_survives_split_body_after_early_response ; ignore_errors=no ; start_time=[Fri 2026-11-06 21:46:25 CST] ; stop_time=[Fri 2026-11-06 21:46:27 CST] ; pid=1317365 ; code=exited ; status=1 }
+Slice=smartdocsvectorcheck.slice
+IPAddressAllow=::1/128 127.0.0.0/8
+IPAddressDeny=::/0 0.0.0.0/0
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/mcp:/tmp/smartdocs-safe.h4SzvX/repo/test/python
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m5-busy-red2-20261106.service
+ActiveState=failed
+
+RuntimeMaxUSec=infinity
+ExecMainStatus=0
+Slice=
+IPAddressAllow=
+IPAddressDeny=
+Environment=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+Id=smartdocs-m5-busy-green-20261106.service
+ActiveState=inactive
+
+RuntimeMaxUSec=infinity
+ExecMainStatus=0
+Slice=
+IPAddressAllow=
+IPAddressDeny=
+Environment=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+Id=smartdocs-m5-busy-full-20261106.service
+ActiveState=inactive
+
+RuntimeMaxUSec=infinity
+ExecMainStatus=0
+Slice=
+IPAddressAllow=
+IPAddressDeny=
+Environment=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+Id=smartdocs-m5-busy-repeat-20261106.service
+ActiveState=inactive

@@ -1,0 +1,52 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v test_agent_http.AgentHttpTests.test_busy_response_survives_split_body_after_early_response test_search_http.SearchHttpTests.test_busy_response_survives_split_body_after_early_response.
+test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests) ... FAIL
+test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests) ... FAIL
+======================================================================
+FAIL: test_busy_response_survives_split_body_after_early_response (test_agent_http.AgentHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 171, in test_busy_response_survives_split_body_after_early_response
+    conn.request('POST', PATH, body(), {'Content-Length': '2'})
+  File "/usr/lib/python3.10/http/client.py", line 1312, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1358, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1307, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1106, in _send_output
+    self.send(chunk)
+  File "/usr/lib/python3.10/http/client.py", line 1028, in send
+    self.sock.sendall(data)
+BrokenPipeError: [Errno 32] Broken pipe
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_http.py", line 176, in test_busy_response_survives_split_body_after_early_response
+    self.fail(f'early busy close lost the HTTP response: {type(error).__name__}')
+AssertionError: early busy close lost the HTTP response: BrokenPipeError
+======================================================================
+FAIL: test_busy_response_survives_split_body_after_early_response (test_search_http.SearchHttpTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_search_http.py", line 194, in test_busy_response_survives_split_body_after_early_response
+    conn.request('POST', PATH, body(), {'Content-Length': '2'})
+  File "/usr/lib/python3.10/http/client.py", line 1312, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1358, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1307, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/http/client.py", line 1106, in _send_output
+    self.send(chunk)
+  File "/usr/lib/python3.10/http/client.py", line 1028, in send
+    self.sock.sendall(data)
+BrokenPipeError: [Errno 32] Broken pipe
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/python/test_search_http.py", line 199, in test_busy_response_survives_split_body_after_early_response
+    self.fail(f'early busy close lost the HTTP response: {type(error).__name__}')
+AssertionError: early busy close lost the HTTP response: BrokenPipeError
+----------------------------------------------------------------------
+Ran 2 tests in 2.415s
+FAILED (failures=2)
+smartdocs-m5-busy-red2-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-busy-red2-20261106.service: Failed with result 'exit-code'.
