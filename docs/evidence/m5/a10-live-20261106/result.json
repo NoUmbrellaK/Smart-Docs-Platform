@@ -1,0 +1,129 @@
+{
+  "case_id": "A10",
+  "metadata": {
+    "code_revision": "7397f14beea59f665706223bde3f3ca69014c056",
+    "recorded_at": "2026-11-06T11:39:26.913085+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; repeated synthetic tests authorized; A10 first real attempt; unchanged product and collector baseline 7397f14 plus test-only pre-cleanup observer adapted from A07; only approved synthetic ambiguous@1; no expected answers injected; <=6 calls x4096 output; no rerun, no archive confirmation or execution; zero hold, pre-cleanup evidence retained; no additional wire-body observer",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-a10-live.0nIzpW/A10"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "waiting_confirmation",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "output_token_limits": [
+    1280,
+    1280
+  ],
+  "usage": {
+    "prompt_tokens": 5407,
+    "completion_tokens": 419,
+    "total_tokens": 5826,
+    "prompt_cache_hit_tokens": 3840,
+    "prompt_cache_miss_tokens": 1567
+  },
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "a7185d8d5c56ad4077a78289b02ee9e0",
+        "sequence": 1,
+        "started_at": "2026-11-06 11:39:30.756432",
+        "status": "success",
+        "task_id": "4cf2bd139c1c019d818c1523e482e996",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 197,
+        "parameters": {
+          "expected_revision": 0,
+          "item_count": 1,
+          "policy_revision": 1
+        },
+        "request_id": "4ce704a30ca05f392a15d429baba01fa",
+        "sequence": 2,
+        "started_at": "2026-11-06 11:39:32.951984",
+        "status": "waiting_confirmation",
+        "task_id": "4cf2bd139c1c019d818c1523e482e996",
+        "tool": "create_archive_plan"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "archive_checks": {
+    "counts": {
+      "archive_plans": 1,
+      "archive_decisions": 0
+    },
+    "state_before_cleanup": "waiting_confirmation",
+    "files_unchanged": true,
+    "download": {
+      "source": "ambiguous@1",
+      "file_id": "2f310ee65a8f5245fb4561736836ba91",
+      "version_id": "ab35e9c479a202ee8ad0e97d2089bd27",
+      "http": 200,
+      "expected_sha256": "3f023332e3df67608b0ad5c75fb7f77c90116e8cd00de7a8333e19fb7a850a36",
+      "actual_sha256": "3f023332e3df67608b0ad5c75fb7f77c90116e8cd00de7a8333e19fb7a850a36"
+    },
+    "download_hash_unchanged": true,
+    "plan": {
+      "id": "b393b50bdaf1781a381de46c0c0f0126",
+      "revision": 1,
+      "state": "preview",
+      "executable": false,
+      "decision": null,
+      "operation_id": null,
+      "has_unresolved": true,
+      "items": [
+        {
+          "file_id": "2f310ee65a8f5245fb4561736836ba91",
+          "name": "便笺.md",
+          "reason": "便笺全文仅38字符：「下周讨论活动日历配色。没有说明这是项目需求、系统设计、测试还是部署材料。」内容为待办/讨论提醒，未提及需求条目、设计文档、测试用例或部署步骤，无法在 requirements/design/test/deploy 之间做出有证据的归类，故保留待确认（null）。证据仅来自该文件当前版本唯一分块（chunk 640deaf3…），未读取其他材料。",
+          "source_directory_id": "c615dd69f60cacdcae52a2ba54a11ca2",
+          "state": "needs_review",
+          "target_directory_id": null,
+          "target_name": null,
+          "version_id": "ab35e9c479a202ee8ad0e97d2089bd27"
+        }
+      ]
+    }
+  },
+  "review_summary": {
+    "case_id": "A10",
+    "category": "archive",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "92eecae6e4dc230810188136754fc260f05a5851eda9218d8ea8ced7b967e94f"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "A10/initial/snapshot.json": "761563b289ea349e02af22c6e57579965b4921cca411246af645efe61943f198",
+    "A10/initial/audit.jsonl": "d1a816194567676ef595ea6180c652c2129f83dff07a7cdf33a78087c8850e33",
+    "A10/summary.json": "e83537f93bef089e0d6be65cb939bbb6629a12256b659549cd7266235e7027d4",
+    "A10/review.json": "6185f29ccdc3557c99f40efe76caddaf678b2cd51e157032ca96a4bfc62f227d",
+    "probe.json": "c7dec8719fa813e93984cbcf1f6ae90e672748438da3445b117afa7652e4a79d"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

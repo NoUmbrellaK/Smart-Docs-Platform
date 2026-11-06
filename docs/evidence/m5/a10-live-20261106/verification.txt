@@ -1,0 +1,2 @@
+PASS A10: insufficient evidence retained as null target, no confirmation or move; human verdict blank
+PASS private/public hashes, 48 fingerprints, terminal service and complete ledger: [35, 123, 618817, 96]

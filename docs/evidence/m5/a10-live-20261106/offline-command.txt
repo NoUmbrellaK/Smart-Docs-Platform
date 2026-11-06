@@ -1,0 +1,27 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+install -m0644 docs/evidence/m5/a10-live-20261106/observe.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a10_observe.py
+chown nobody:nogroup /tmp/smartdocs-m5-a10-offline.4iCe7U
+chmod 0700 /tmp/smartdocs-m5-a10-offline.4iCe7U
+systemd-run --unit=smartdocs-m5-a10-offline-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import unittest
+from pathlib import Path
+from a10_observe import observe
+from m5_benchmark_capture_test import CaptureE2E
+from benchmark_review import read_private
+class Check(CaptureE2E):
+ def setup_case(self,case_id): return super().setup_case("A10")
+ def collect(self,case_id,prepared,run_kind="transport_fixture"):
+  return super().collect("A10",prepared,run_kind)
+output=Path("/tmp/smartdocs-m5-a10-offline.4iCe7U/probe.json")
+with observe(output):
+ result=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([Check("test_capture_archive_preview_never_confirms_or_moves")]))
+assert result.wasSuccessful()
+probe=read_private(output)
+assert probe["state"]["state"]=="waiting_confirmation"
+assert probe["files_before"]==probe["files_after"]
+assert probe["counts"]=={"archive_plans":1,"archive_decisions":0}
+assert len(probe["downloads"])==1
+assert all(r["http"]==200 and r["expected_sha256"]==r["actual_sha256"] for r in probe["downloads"])
+assert probe["business_verdict"] is None
+print("PASS A10 pre-cleanup observer: waiting state, one plan, no decision or move, original hash unchanged; no provider")'
