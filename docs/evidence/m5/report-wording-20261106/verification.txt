@@ -1,0 +1,6 @@
+PASS:failed H05 attempt4 preserved; 2requests/8129tokens; denied status read, no report/body/citations
+PASS:original30 latest17completed/2failed/3waiting/5notrun/3admission; all human verdicts blank
+PASS:original history38attempts/129requests/642702tokens/96citations; other29cases and old H05 attempts unchanged
+PASS:supplement and old citation packet unchanged; combined40attempts/135requests/660667tokens/98historical51latest citations
+PASS:first offline error retained, repeat126/126; HTTP busy race NOT claimed fixed
+PASS:48 runtime files restored; candidate patch retained; failed unit terminal, no OOM or new model calls

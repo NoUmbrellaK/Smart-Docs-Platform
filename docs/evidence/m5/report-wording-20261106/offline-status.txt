@@ -1,0 +1,14 @@
+Result=exit-code
+ExecMainStatus=1
+ActiveState=failed
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+TasksCurrent=0
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
+MemAvailable:    1596728 kB
+active

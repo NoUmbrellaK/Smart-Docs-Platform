@@ -1,0 +1,3 @@
+Observed failure H07: successful save_handover_report versus denial of any writes.
+Observed failure H05: metadata only, three distinct names called a naming conflict.
+Archived observations reproduced; no new model call or human verdict; no deterministic semantic guard claimed.

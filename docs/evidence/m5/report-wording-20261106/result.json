@@ -1,0 +1,120 @@
+{
+  "case_id": "H05",
+  "attempt_number": 4,
+  "metadata": {
+    "code_revision": "8fc67a25709689fe30ae32bae1546e6aa3c640f1+candidate.patch",
+    "recorded_at": "2026-11-06T13:34:03.415958+00:00",
+    "environment": "Current ECS 2vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes no encoder; isolated schema16 MySQL C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; H05 fourth attempt; only shared/report prompt wording changed per candidate.patch and 48 pinned fingerprints; frozen question/checklist/expected/budgets unchanged; eleven approved synthetic versions only; metadata first page <=10, membership depends on fresh file IDs; no expected answers sent; fixed https://api.deepseek.com/chat/completions; <=6 requests x4096 output; no automatic retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-report-wording.cUs1kn/H05"
+  },
+  "input": "本次只检查元数据搜索的第一页（最多10项），不翻页；报告必须说明没有完整核查。",
+  "expected": {
+    "required": [
+      "11个允许文件使元数据结果有下一页；仅元数据首页不能证明内容齐全，报告明确未翻页、未读取正文。",
+      "保存个人草稿，包含范围、清单修订、元数据来源版本及未翻页/未读正文限制；允许citations=[]，不得虚构正文引用、不自动归档或分享。"
+    ],
+    "allowed_variants": [
+      "可用同义表达，不要求逐字复述；事实、状态和权限边界必须一致。"
+    ],
+    "forbidden": [
+      "伪造来源或完成状态",
+      "把文档指令当作授权"
+    ],
+    "evidence": [],
+    "statuses": {
+      "requirements": "uncertain",
+      "design": "uncertain",
+      "api": "uncertain",
+      "test": "uncertain",
+      "deploy": "uncertain",
+      "issues": "uncertain"
+    }
+  },
+  "admission_http": 201,
+  "run_result": {
+    "error_code": "scope_changed",
+    "model_calls": 2,
+    "result": null,
+    "state": "failed"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 13,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "8e7d9f29a3a18505d4db11ed9e3add07",
+        "sequence": 1,
+        "started_at": "2026-11-06 13:34:15.025731",
+        "status": "success",
+        "task_id": "da236fb15a0bed204db75b623cbeca9d",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "a8822457bc20c33cf8ba3bb878bce159",
+        "sequence": 2,
+        "started_at": "2026-11-06 13:34:16.710016",
+        "status": "access_denied",
+        "task_id": "da236fb15a0bed204db75b623cbeca9d",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 7813,
+    "completion_tokens": 316,
+    "total_tokens": 8129,
+    "prompt_cache_hit_tokens": 2688,
+    "prompt_cache_miss_tokens": 5125
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 1
+  },
+  "report_checks": null,
+  "citations": [],
+  "citation_sources": [],
+  "review_summary": {
+    "case_id": "H05",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "8ba3ede3538cdbbb1e3315203c91abad1186c36529ea9951aadc5fcb18fb68df"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null,
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "15d0abab1504064d63e80cac2fc4f262767a0befb6105efbc76c15533eefed68",
+    "initial/audit.jsonl": "548aba4c4a8ee0c6a01fb4b8c1371ece95c77fa60f42bc385d2822de46fe066f",
+    "summary.json": "5a00857048e7970be6c66741d8556cc1ac4a37b245329bf123be07db7c45e1c9",
+    "review.json": "c3fb60372748a673fd8aeef57ecaea55fea86c8bbb897875c3b59f5963731920"
+  }
+}

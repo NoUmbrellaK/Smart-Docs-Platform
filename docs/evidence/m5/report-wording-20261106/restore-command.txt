@@ -1,0 +1,22 @@
+set -e
+test "$(systemctl show smartdocs-m5-report-wording-live-20261106.service -p ActiveState --value)" = failed
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+install -m0644 python/smartdocs/agent_runner.py /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/agent_runner.py
+python3 -B - <<'PY' > docs/evidence/m5/report-wording-20261106/restored-fingerprints.txt
+import hashlib
+from pathlib import Path
+import re
+import subprocess
+root = Path.cwd()
+runtime = Path('/tmp/smartdocs-safe.h4SzvX/repo')
+assert (root/'python/smartdocs/agent_runner.py').read_bytes() == subprocess.check_output(['git','show','8fc67a2:python/smartdocs/agent_runner.py'])
+entries = re.findall(r'^([0-9a-f]{64}) (.+)$', (root/'docs/evidence/m5/query-budget-20261106/live-postflight.txt').read_text(), re.M)
+assert len(entries) == 48
+for old, name in entries:
+    path = Path(name)
+    raw = (path if path.is_absolute() else root/path).read_bytes()
+    if not path.is_absolute(): assert raw == (runtime/path).read_bytes(), name
+    assert hashlib.sha256(raw).hexdigest() == old, name
+    print(old, name)
+print('PASS:48 original fingerprints restored; no active test processes; candidate retained only as evidence')
+PY

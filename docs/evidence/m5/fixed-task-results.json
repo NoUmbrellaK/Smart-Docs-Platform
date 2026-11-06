@@ -11,8 +11,8 @@
   "admission_observations": 3,
   "model_tasks_not_run": 5,
   "model_tasks_attempted": 22,
-  "model_tasks_completed": 18,
-  "model_tasks_failed": 1,
+  "model_tasks_completed": 17,
+  "model_tasks_failed": 2,
   "model_tasks_waiting_confirmation": 3,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
@@ -557,19 +557,19 @@
     {
       "case_id": "H05",
       "category": "handover",
-      "execution": "completed",
+      "execution": "failed",
       "business_verdict": null,
-      "evidence": "h05-semantics-20261106/result.json",
+      "evidence": "report-wording-20261106/result.json",
       "admission_http": 201,
-      "error_code": null,
+      "error_code": "scope_changed",
       "provider_requests": 2,
-      "total_tokens": 8882,
-      "attempt_count": 3,
-      "cumulative_provider_requests": 10,
-      "cumulative_total_tokens": 63718,
-      "expected_item_statuses_match": true,
-      "metadata_only_requirement_met": true,
-      "business_observation": "third_attempt_metadata_only_and_all_uncertain_observed_not_a_hard_policy_or_human_acceptance",
+      "total_tokens": 8129,
+      "attempt_count": 4,
+      "cumulative_provider_requests": 12,
+      "cumulative_total_tokens": 71847,
+      "expected_item_statuses_match": null,
+      "metadata_only_requirement_met": false,
+      "business_observation": "fourth_attempt_status_read_denied_scope_changed_no_report_prompt_candidate_withdrawn_not_human_verdict",
       "attempts": [
         {
           "evidence": "h05-live-20261106/result.json",
@@ -591,6 +591,13 @@
           "error_code": null,
           "provider_requests": 2,
           "total_tokens": 8882
+        },
+        {
+          "evidence": "report-wording-20261106/result.json",
+          "state": "failed",
+          "error_code": "scope_changed",
+          "provider_requests": 2,
+          "total_tokens": 8129
         }
       ]
     },

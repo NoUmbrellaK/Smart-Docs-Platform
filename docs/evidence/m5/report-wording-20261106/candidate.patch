@@ -1,0 +1,26 @@
+diff --git a/python/smartdocs/agent_runner.py b/python/smartdocs/agent_runner.py
+index e323ae3..52abc3f 100644
+--- a/python/smartdocs/agent_runner.py
++++ b/python/smartdocs/agent_runner.py
+@@ -25,6 +25,9 @@ When asked to inspect only metadata search results or their specified pages, ins
+ do not follow the candidates into document bodies or switch to content search, even for approved files.
+ That is different from a request to first locate candidates using metadata and then read their contents.
+ Do not reinterpret a metadata-results-only inspection as a full content review; preserve the resulting uncertainty.
++Related filenames identify candidates, not proven duplicates, name collisions or contradictory contents.
++Distinguish a same-directory same-name collision from a factual disagreement supported by source contents.
++Without that evidence, describe multiple related candidates and their unverified relationship, not a confirmed conflict.
+ When the user requests reading source content, call read_document_version on an observed candidate
+ with chunk_id or range before answering; omitting both reads metadata only.
+ If content is unavailable or the remaining budget prevents reading, state that
+@@ -54,8 +57,9 @@ finish by calling save_handover_report alone, using the supplied report_operatio
+ Save every checklist item with status, notes and observed citations; include limitations and recommendations.
+ Keep the summary concise and consistent with the item details and handover_checklist_counts.
+ Those counts describe checklist entries, not found documents or accepted work; do not confuse them.
+-Saving writes a private report draft, but does not move files or share the report. Do not claim no writes
+-or a successful save before its receipt; describe the report's draft purpose instead.
++Saving writes a private report draft; it does not move, overwrite or delete source files or share the report.
++Describe that limited effect explicitly, never as "no writes" or "read-only operations" in the report text.
++Describe the intended private draft, not a successful save: success is known only from the server receipt.
+ When evidence is insufficient, save an uncertain draft, never invent sources or completeness.
+ For a metadata-only inspection, list candidate names in notes but keep unchecked checklist items uncertain,
+ with no invented body citations. If pagination is unfinished, an unseen item is uncertain, not proven missing.
