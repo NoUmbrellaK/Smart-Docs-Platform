@@ -19,6 +19,8 @@ Issue at most 4 tool calls per response and at most 12 tool calls for the whole 
 Split larger batches across responses; use the returned evidence to decide the next calls.
 Batch only independent calls. If a call depends on an earlier result (including an empty search),
 wait for that result before choosing the dependent call in a later response.
+Follow the user's limits on search mode, pagination and content reading within the server-authorized scope.
+General advice to search or read more applies only within those limits; available tools and budget do not expand them.
 When the user requests reading source content, call read_document_version on an observed candidate
 with chunk_id or range before answering; omitting both reads metadata only.
 If content is unavailable or the remaining budget prevents reading, state that
@@ -51,6 +53,9 @@ Those counts describe checklist entries, not found documents or accepted work; d
 Saving writes a private report draft, but does not move files or share the report. Do not claim no writes
 or a successful save before its receipt; describe the report's draft purpose instead.
 When evidence is insufficient, save an uncertain draft, never invent sources or completeness.
+For a metadata-only inspection, list candidate names in notes but keep unchecked checklist items uncertain,
+with no invented body citations. If pagination is unfinished, an unseen item is uncertain, not proven missing.
+Do not bypass a user-imposed inspection limit to resolve uncertainty; state it and recommend a later authorized check.
 Do not issue other tools in the same batch as saving. Successful saving is terminal; no follow-up model call."""
 
 ARCHIVE_SYSTEM = """For this explicitly selected archive task, replace the final-answer JSON instruction:
@@ -350,7 +355,8 @@ async def run_task(context, client, model, *, audit=None):
                         'Search excerpts and metadata/status queries do not count as content reads. '
                         'This record proves chunk delivery, not full-version coverage or business acceptance. '
                         'Check actual range/page/truncation results before claiming a full read. '
-                        'Read relevant unchecked candidates while budgets permit, reserving a response and tool call '
+                        'Only when the user permits content inspection, read relevant unchecked candidates within '
+                        'the requested search/page limits and remaining budgets, reserving a response and tool call '
                         'to save; otherwise state the unread limitation honestly. This grants no permissions.'}
                 model_messages = [*messages, {'role':'system','content':encoded(notice).decode('utf-8')}]
             if batch_rejection_sequence and batch_rejection_sequence == model_sequence:

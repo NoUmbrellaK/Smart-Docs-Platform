@@ -1,0 +1,9 @@
+2026-11-06T16:43:27+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_agent_runner.AgentRunnerTests.test_metadata_only_report_round_trip_preserves_question_and_partial_results -v.
+2026-11-06T16:43:28+0800 aliyun-lou python[1258514]: test_metadata_only_report_round_trip_preserves_question_and_partial_results (test_agent_runner.AgentRunnerTests) ... ok
+2026-11-06T16:43:28+0800 aliyun-lou python[1258514]: ----------------------------------------------------------------------
+2026-11-06T16:43:28+0800 aliyun-lou python[1258514]: Ran 1 test in 0.631s
+2026-11-06T16:43:28+0800 aliyun-lou python[1258514]: OK
+2026-11-06T16:43:28+0800 aliyun-lou systemd[1]: smartdocs-m5-metadata-characterize-20261106.service: Deactivated successfully.
+Result=success
+ExecMainStatus=0
+ActiveState=inactive

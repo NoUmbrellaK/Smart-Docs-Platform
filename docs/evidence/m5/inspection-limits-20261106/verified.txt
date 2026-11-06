@@ -1,0 +1,16 @@
+PASS:runner changes are exactly three string constants; control flow/schema/budgets unchanged
+PASS:37 runtime/worktree fingerprints remain equal to test-time evidence
+PASS:frozen corpus/tasks and full real-run ledger unchanged; no simulated run counted
+PASS:pre-change characterization1/1 and candidate regression125/125; terminal no-added-OOM evidence
+PASS:documentation links and credential-pattern scan; no proof of real-model semantic compliance yet
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+TasksCurrent=0
+MemAvailable:    1911816 kB
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
+active

@@ -1,0 +1,50 @@
+set -e
+python3 -B - <<'PY'
+import ast,hashlib,json,pathlib,re,subprocess
+r=pathlib.Path.cwd(); e=r/'docs/evidence/m5/inspection-limits-20261106'
+runtime=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+old=subprocess.check_output(['git','show','2b6f088:python/smartdocs/agent_runner.py'],text=True)
+new=(r/'python/smartdocs/agent_runner.py').read_text()
+class StripStrings(ast.NodeTransformer):
+ def visit_Constant(self,node):
+  if isinstance(node.value,str):node.value=''
+  return node
+assert ast.dump(StripStrings().visit(ast.parse(old)))==ast.dump(StripStrings().visit(ast.parse(new)))
+old_nodes=list(ast.walk(ast.parse(old))); new_nodes=list(ast.walk(ast.parse(new)))
+changes=[(a.value,b.value) for a,b in zip(old_nodes,new_nodes)
+         if isinstance(a,ast.Constant) and isinstance(a.value,str) and a.value!=b.value]
+assert len(changes)==3
+print('PASS:runner changes are exactly three string constants; control flow/schema/budgets unchanged')
+rows=re.findall(r'^([0-9a-f]{64}) (.+)$',(e/'fingerprints-during-test.txt').read_text(),re.M)
+assert len(rows)==37
+for digest,name in rows:
+ p=pathlib.Path(name); paths=[p] if p.is_absolute() else [r/p,runtime/p]
+ assert all(hashlib.sha256(f.read_bytes()).hexdigest()==digest for f in paths),name
+print('PASS:37 runtime/worktree fingerprints remain equal to test-time evidence')
+for name in ('corpus.json','tasks.json'):
+ digest=hashlib.sha256((r/'test/fixtures/agent-p0'/name).read_bytes()).hexdigest()
+ expected=json.loads((e.parent/'fixed-task-results.json').read_text())['fixture_sha256'][name]
+ assert digest==expected
+assert (e.parent/'fixed-task-results.json').read_bytes()==subprocess.check_output(['git','show','2b6f088:docs/evidence/m5/fixed-task-results.json'])
+print('PASS:frozen corpus/tasks and full real-run ledger unchanged; no simulated run counted')
+initial=(e/'characterization.txt').read_text()
+assert 'Ran 1 test in 0.631s' in initial and 'ExecMainStatus=0' in initial
+log=(e/'journal-and-status.txt').read_text()
+assert 'Ran 125 tests in 85.317s' in log
+assert all(x in log for x in ('Result=success','ExecMainStatus=0','ActiveState=inactive','TasksCurrent=0','high 82471','max 0','oom 0','oom_kill 0'))
+assert 'FAILED (' not in log
+print('PASS:pre-change characterization1/1 and candidate regression125/125; terminal no-added-OOM evidence')
+for f in (r/'README.md',e/'README.md',e.parent/'acceptance-index.md'):
+ for target in re.findall(r'\]\(([^)]+)\)',f.read_text()):
+  if '://' in target or target.startswith('#'):continue
+  assert (f.parent/target.split('#')[0]).exists(),target
+for f in e.iterdir():
+ assert not re.search(r'sk-[A-Za-z0-9_-]{16,}|-----BEGIN '+r'[A-Z ]*'+'PRIVATE KEY-----',f.read_text()),f
+print('PASS:documentation links and credential-pattern scan; no proof of real-model semantic compliance yet')
+PY
+systemctl show smartdocs-m5-inspection-limits-20261106.service -p ActiveState -p Result -p ExecMainStatus
+systemctl show smartdocsvectorcheck.slice -p TasksCurrent
+awk '/MemAvailable/{print;exit ($2<524288)}' /proc/meminfo
+cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+systemctl is-active mysql
+git diff --check
