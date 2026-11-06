@@ -11,13 +11,13 @@
   "admission_observations": 3,
   "model_tasks_not_run": 5,
   "model_tasks_attempted": 22,
-  "model_tasks_completed": 17,
-  "model_tasks_failed": 2,
+  "model_tasks_completed": 18,
+  "model_tasks_failed": 1,
   "model_tasks_waiting_confirmation": 3,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 96,
+  "citations_observed": 104,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -557,19 +557,19 @@
     {
       "case_id": "H05",
       "category": "handover",
-      "execution": "failed",
+      "execution": "completed",
       "business_verdict": null,
-      "evidence": "h05-diagnostic-20261106/result.json",
+      "evidence": "h05-rejection-20261106/result.json",
       "admission_http": 201,
-      "error_code": "repeated_tool_error",
+      "error_code": null,
       "provider_requests": 4,
-      "total_tokens": 28638,
-      "attempt_count": 5,
-      "cumulative_provider_requests": 16,
-      "cumulative_total_tokens": 100485,
-      "expected_item_statuses_match": null,
+      "total_tokens": 29467,
+      "attempt_count": 6,
+      "cumulative_provider_requests": 20,
+      "cumulative_total_tokens": 129952,
+      "expected_item_statuses_match": false,
       "metadata_only_requirement_met": false,
-      "business_observation": "fifth_attempt_metadata_then_three_report_invalid_requests_no_read_or_report_exact_rejection_cause_unretained_not_human_verdict",
+      "business_observation": "sixth_attempt_saved_but_read_eight_bodies_despite_metadata_only_request_all_six_found_eight_citations_no_rejection_reproduced_false_no_writes_statement_not_human_verdict",
       "attempts": [
         {
           "evidence": "h05-live-20261106/result.json",
@@ -605,6 +605,13 @@
           "error_code": "repeated_tool_error",
           "provider_requests": 4,
           "total_tokens": 28638
+        },
+        {
+          "evidence": "h05-rejection-20261106/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 4,
+          "total_tokens": 29467
         }
       ]
     },

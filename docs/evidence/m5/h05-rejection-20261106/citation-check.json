@@ -1,0 +1,65 @@
+{
+  "case_id": "H05",
+  "attempt": 6,
+  "references_total": 8,
+  "rows": [
+    {
+      "pointer": "/handover_report/report/items/0/citations/0",
+      "fixture": "requirements@1",
+      "source_sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/1/citations/0",
+      "fixture": "design@1",
+      "source_sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/2/citations/0",
+      "fixture": "api@2",
+      "source_sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/3/citations/0",
+      "fixture": "tests@1",
+      "source_sha256": "ac84e207475cf9fb8ee13dfd48c3ec9e945b49dc0d6ecd358b4a34a3f08dbe56",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/4/citations/0",
+      "fixture": "deployment@2",
+      "source_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/4/citations/1",
+      "fixture": "conflict_a@1",
+      "source_sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/4/citations/2",
+      "fixture": "conflict_b@1",
+      "source_sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    },
+    {
+      "pointer": "/handover_report/report/items/5/citations/0",
+      "fixture": "issues@1",
+      "source_sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366",
+      "captured_reference_and_frozen_source_match": true,
+      "human_semantic_verdict": null
+    }
+  ],
+  "citation_accuracy": null,
+  "note": "All eight checked; source identity/text match is not business or human semantic acceptance."
+}

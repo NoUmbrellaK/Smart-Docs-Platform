@@ -1,0 +1,3 @@
+PASS: private capture/audit/scope/173 fingerprints reconcile; all old attempts and other29 cases preserved
+Original30 states: {'completed': 18, 'admission_rejected': 3, 'not_run': 5, 'waiting_confirmation': 3, 'failed': 1} history attempts/requests/tokens/citations: [40, 137, 700807, 104] latest citations: 57
+PASS: human verdicts blank; test unit terminal/slice empty; no new high/max/OOM; production MySQL active

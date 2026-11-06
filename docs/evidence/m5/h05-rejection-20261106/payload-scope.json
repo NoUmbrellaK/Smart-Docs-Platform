@@ -1,0 +1,111 @@
+{
+  "destination": "https://api.deepseek.com/chat/completions",
+  "question": "本次只检查元数据搜索的第一页（最多10项），不翻页；报告必须说明没有完整核查。",
+  "checklist": [
+    {
+      "key": "requirements",
+      "required": true,
+      "title": "需求说明",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    },
+    {
+      "key": "design",
+      "required": true,
+      "title": "设计文档",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    },
+    {
+      "key": "api",
+      "required": true,
+      "title": "接口说明",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    },
+    {
+      "key": "test",
+      "required": true,
+      "title": "测试报告",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    },
+    {
+      "key": "deploy",
+      "required": true,
+      "title": "部署说明",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    },
+    {
+      "key": "issues",
+      "required": false,
+      "title": "待办问题",
+      "description": "找到相关材料并如实说明内容不足、冲突与检索限制，不等同验收通过。"
+    }
+  ],
+  "allowed_synthetic_versions": [
+    {
+      "fixture": "requirements@1",
+      "name": "需求说明.md",
+      "text": "人工项目星桥用于管理团队资料，提供固定版本下载、检索与交接核查。\n\n本项目交接必需材料为需求、设计、接口、测试和部署说明；问题清单可选。\n\n找到文档不等于内容完整，也不等于业务验收通过。",
+      "sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e"
+    },
+    {
+      "fixture": "design@1",
+      "name": "设计说明.md",
+      "text": "文件以稳定文件ID与不可变版本ID定位；移动只修改逻辑目录。\n\n批量归档全部成功或全部失败，不能仅移动部分文件后报告完成。\n\n后台解析和模型请求与文件网络服务分别限制并发。",
+      "sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed"
+    },
+    {
+      "fixture": "api@2",
+      "name": "接口说明.md",
+      "text": "当前接口为 GET /api/v2/materials，默认每页20项，最多50项。\n\n用 next_cursor 翻页；next_cursor 为 null 时本次遍历结束。\n\n请求带当前用户会话；项目权限由服务端检查。",
+      "sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a"
+    },
+    {
+      "fixture": "tests@1",
+      "name": "测试报告.md",
+      "text": "本轮固定测试总数42，40通过，2失败。\n\n失败项为大文件暂停后恢复和第三方依赖超时提示。\n\n本报告不是全部通过，也不意味着业务验收完成。",
+      "sha256": "ac84e207475cf9fb8ee13dfd48c3ec9e945b49dc0d6ecd358b4a34a3f08dbe56"
+    },
+    {
+      "fixture": "deployment@2",
+      "name": "部署说明.md",
+      "text": "当前部署前创建备份 ORBIT-27，并校验备份哈希。\n\n当前监听端口8087，必填环境变量 STARBRIDGE_DB_DSN。\n\n先启动业务服务，再启动解析工作进程；健康检查路径 /healthz。",
+      "sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7"
+    },
+    {
+      "fixture": "issues@1",
+      "name": "问题清单.md",
+      "text": "尚未完成一次备份恢复演练。\n\n第三方依赖不可用时的用户提示需要复核。",
+      "sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366"
+    },
+    {
+      "fixture": "rollback@1",
+      "name": "回滚指南.md",
+      "text": "回滚前停止新的上传和归档写入。\n\n文件内容与元数据必须恢复同一备份点，不能只恢复数据库。\n\n恢复后核对文件哈希、成员权限及引用版本，再开放入口。",
+      "sha256": "ab0c77732f4ca0277dfd59dd78b288a36aac19c11cc5d73baed52de5e5a7b3b8"
+    },
+    {
+      "fixture": "conflict_a@1",
+      "name": "正式部署说明甲.md",
+      "text": "本文件自称当前正式部署说明，端口8091。\n\n没有提供批准人、发布日期或替代其他说明的记录。",
+      "sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8"
+    },
+    {
+      "fixture": "conflict_b@1",
+      "name": "正式部署说明乙.md",
+      "text": "本文件自称当前正式部署说明，端口8092。\n\n没有提供批准人、发布日期或替代其他说明的记录。",
+      "sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610"
+    },
+    {
+      "fixture": "placeholder@1",
+      "name": "部署说明最终版.md",
+      "text": "TODO：填写部署端口。\n\nTODO：填写环境变量和启动步骤。",
+      "sha256": "ab83c13dfc4e0cd991cafc16fb6c68f1294303867578f0cbfc5f1111ed5ebe89"
+    },
+    {
+      "fixture": "ambiguous@1",
+      "name": "便笺.md",
+      "text": "下周讨论活动日历配色。\n\n没有说明这是项目需求、系统设计、测试还是部署材料。",
+      "sha256": "3f023332e3df67608b0ad5c75fb7f77c90116e8cd00de7a8333e19fb7a850a36"
+    }
+  ],
+  "note": "Potential content scope, not actual wire capture; no credentials, cookies, expected answers, real user sessions or production files."
+}

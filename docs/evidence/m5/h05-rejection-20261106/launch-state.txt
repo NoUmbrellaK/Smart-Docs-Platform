@@ -1,0 +1,16 @@
+RuntimeMaxUSec=10min
+ExecStart={ path=/bin/bash ; argv[]=/bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c import os,pathlib,shlex,runpy,sys,re
+tokens=shlex.split((pathlib.Path(os.environ["CREDENTIALS_DIRECTORY"])/"deepseek.env").read_text(),comments=True)
+entries=[t.partition("=") for t in tokens if t.startswith("DEEPSEEK_API_KEY=")]
+if len(entries)!=1 or not re.fullmatch(r"[!-~]{1,256}",entries[0][2]): raise SystemExit("invalid credential configuration")
+os.environ["DEEPSEEK_API_KEY"]=entries[0][2]
+sys.argv=["test/e2e/benchmark_cli.py",*sys.argv[1:]]
+runpy.run_path(sys.argv[0],run_name="__main__") --case H05 --live --output /tmp/smartdocs-m5-h05-rejection.9mjMWF/H05 --code-revision 4f1109a4adb768810748cf55151cf90865156150 --environment Current ECS 2vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes no encoder; isolated schema16 MySQL C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; H05 sixth attempt; current committed prompts, previous wording candidate NOT restored; read-target and C++ report-rejection diagnostics enabled; combined runtime/source/fixture fingerprints; frozen question/checklist/expected/budgets unchanged; eleven approved synthetic versions only; metadata first page <=10, membership depends on fresh file IDs; no expected answers sent; fixed https://api.deepseek.com/chat/completions; <=6 requests x4096 output; no automatic retry or archive confirmation --max-calls 6 --hold-seconds 0 ; ignore_errors=no ; start_time=[Fri 2026-11-06 22:56:19 CST] ; stop_time=[n/a] ; pid=1331446 ; code=(null) ; status=0/0 }
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+Id=smartdocs-m5-h05-rejection-20261106.service
+ActiveState=active
