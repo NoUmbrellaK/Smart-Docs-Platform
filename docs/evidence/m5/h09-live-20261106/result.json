@@ -1,0 +1,172 @@
+{
+  "case_id": "H09",
+  "metadata": {
+    "code_revision": "63ff594a0c492bceadb7b6c44f336172f4ce91ad",
+    "recorded_at": "2026-11-06T10:16:31.548366+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; synthetic repeated tests authorized; H09 first real attempt; unchanged product 63ff594, existing benchmark_wire observer; original serialized request body hashed before unchanged default sender, forbidden fixture names/body blocked if found, no raw request or key logged; three selected approved alpha versions requirements@1 design@1 api@2 only; present but unselected tests@1 deployment@2 issues@1 names and paragraphs checked locally, never injected into model input; <=6 requests x4096 output; no retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h09-live.QLqF9G/H09"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 3,
+    "kind": "handover_report"
+  },
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "usage": {
+    "prompt_tokens": 12609,
+    "completion_tokens": 1812,
+    "total_tokens": 14421,
+    "prompt_cache_hit_tokens": 7680,
+    "prompt_cache_miss_tokens": 4929
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    3,
+    1
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "c1a54ef5494f991bb92e847f0f4e4853",
+        "sequence": 1,
+        "started_at": "2026-11-06 10:16:37.143832",
+        "status": "success",
+        "task_id": "06cf315c8d5fd66af73ee5f301b78b9b",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "2625d207d6998d7b3034ab78a13e6b65",
+        "sequence": 2,
+        "started_at": "2026-11-06 10:16:38.755183",
+        "status": "success",
+        "task_id": "06cf315c8d5fd66af73ee5f301b78b9b",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "51f5888202db9cd7e578054edff41955",
+        "sequence": 3,
+        "started_at": "2026-11-06 10:16:38.768217",
+        "status": "success",
+        "task_id": "06cf315c8d5fd66af73ee5f301b78b9b",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "f7add9300fb12efebe37a4ab83cf7b59",
+        "sequence": 4,
+        "started_at": "2026-11-06 10:16:38.858061",
+        "status": "success",
+        "task_id": "06cf315c8d5fd66af73ee5f301b78b9b",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 13,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "71e0f25386c1f833af0ba4a2ce923376",
+        "sequence": 5,
+        "started_at": "2026-11-06 10:16:46.085172",
+        "status": "success",
+        "task_id": "06cf315c8d5fd66af73ee5f301b78b9b",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 3,
+    "save_handover_report": 1
+  },
+  "wire_checks": [
+    {
+      "sequence": 1,
+      "request_bytes": 12336,
+      "sha256": "a98d3d17edf3a817ef0bd68d8ea0a5ee52ae15643065a42f3214caf05aa20f06",
+      "restricted_matches": 0,
+      "forwarded": true
+    },
+    {
+      "sequence": 2,
+      "request_bytes": 14328,
+      "sha256": "5eb2e755ac7593bcaeb9d2e073b2fd47ec70b7fee7736c3afe4d2f513053259b",
+      "restricted_matches": 0,
+      "forwarded": true
+    },
+    {
+      "sequence": 3,
+      "request_bytes": 20753,
+      "sha256": "2b63f3ca26a6d308526c23ffd0fe2e201a3fd1f60697be840364bb21371d058f",
+      "restricted_matches": 0,
+      "forwarded": true
+    }
+  ],
+  "report_checks": {
+    "state": "draft",
+    "checklist_revision": 1,
+    "selected_versions": 3,
+    "source_versions": 3,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "missing",
+      "deploy": "missing",
+      "issues": "missing"
+    },
+    "expected_item_statuses_match": true,
+    "unique_citation_sources": 3,
+    "unselected_body_paragraphs_absent": true
+  },
+  "review_summary": {
+    "case_id": "H09",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 3,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "6464dc5b4d3c58ac3272a211c4dedbe75867bcc39a2e9927656983523b084c86"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "H09/initial/snapshot.json": "fef4deeec3652b8ddff19900ab1c1f66815881374a7e51600fa8ea3ab1666ce5",
+    "H09/initial/audit.jsonl": "6ab05a189632310cb96ee7eee4a8c314ae20e66a2411f1088418bbd3bdb90ea1",
+    "H09/summary.json": "d89d46a694a1221c824d3adca9a0f8a6b6ccde4b66651557ac4ed9024cca62be",
+    "H09/review.json": "8f31e7e2dd9cca2db60b81d9fad652f30458f4737591f61391c18ed499b7c7c2",
+    "wire.jsonl": "1fde9666b7c3d5e710aa7d4ed2371d2e69d2a781659968710f251fb32dda38a0"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

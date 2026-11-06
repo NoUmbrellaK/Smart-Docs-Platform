@@ -9,14 +9,14 @@
   },
   "denominator": 30,
   "admission_observations": 3,
-  "model_tasks_not_run": 11,
-  "model_tasks_attempted": 16,
-  "model_tasks_completed": 16,
+  "model_tasks_not_run": 10,
+  "model_tasks_attempted": 17,
+  "model_tasks_completed": 17,
   "model_tasks_failed": 0,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 92,
+  "citations_observed": 95,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -606,10 +606,27 @@
     {
       "case_id": "H09",
       "category": "handover",
-      "execution": "not_run",
+      "execution": "completed",
       "business_verdict": null,
-      "evidence": null,
-      "admission_http": null
+      "evidence": "h09-live-20261106/result.json",
+      "admission_http": 201,
+      "error_code": null,
+      "provider_requests": 3,
+      "total_tokens": 14421,
+      "attempt_count": 1,
+      "cumulative_provider_requests": 3,
+      "cumulative_total_tokens": 14421,
+      "expected_item_statuses_match": true,
+      "unselected_fixture_wire_checks_passed": true,
+      "attempts": [
+        {
+          "evidence": "h09-live-20261106/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 3,
+          "total_tokens": 14421
+        }
+      ]
     },
     {
       "case_id": "H10",

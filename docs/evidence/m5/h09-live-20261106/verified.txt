@@ -1,0 +1,2 @@
+PASS H09: 3 observed requests/14421 tokens, 3 found/3 missing and 3 selected sources, draft; human verdict blank
+PASS private/public hashes, 41 fingerprint records, terminal service and 30-task ledger: 31/114/588129/95
