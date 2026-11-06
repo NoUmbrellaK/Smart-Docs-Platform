@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Existing A01 fixtures only: no model/key, no plan/confirmation/execution.
+set -euo pipefail
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+systemd-run --unit=smartdocs-a01-readiness-20261107 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v m3_fixed_inputs_test.FixedInputsE2E.test_pending_A01 m3_fixed_inputs_test.FixedInputsE2E.test_fixed_A01
