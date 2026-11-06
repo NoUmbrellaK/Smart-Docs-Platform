@@ -1,0 +1,24 @@
+Nov 06 19:22:56 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/a08_offline.py.
+Nov 06 19:22:57 aliyun-lou bash[1290178]: 2026-11-06T11:22:57.744618Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1290178
+Nov 06 19:22:57 aliyun-lou bash[1290178]: 2026-11-06T11:22:57.942333Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:23:13 aliyun-lou bash[1290178]: 2026-11-06T11:23:13.185302Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:23:20 aliyun-lou bash[1290178]: 2026-11-06T11:23:20.584972Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:24:06 aliyun-lou bash[1290362]: schema_version=16
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:24:35 aliyun-lou bash[1290508]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:24:39 aliyun-lou bash[1290626]: test_body_is_observed (__main__.ObserverTest) ... ok
+Nov 06 19:24:42 aliyun-lou bash[1290626]: test_metadata_is_not_body (__main__.ObserverTest) ... ok
+Nov 06 19:24:42 aliyun-lou bash[1290626]: ----------------------------------------------------------------------
+Nov 06 19:24:42 aliyun-lou bash[1290626]: Ran 2 tests in 6.084s
+Nov 06 19:24:42 aliyun-lou bash[1290626]: OK
+Nov 06 19:24:42 aliyun-lou bash[1290626]: PASS body versus metadata observation; both pre-cleanup probes retain waiting state, one plan, no decision or move; no real provider
+Nov 06 19:24:46 aliyun-lou systemd[1]: smartdocs-m5-a08-offline-20261106.service: Deactivated successfully.
+Nov 06 19:24:46 aliyun-lou systemd[1]: smartdocs-m5-a08-offline-20261106.service: Consumed 8.438s CPU time.

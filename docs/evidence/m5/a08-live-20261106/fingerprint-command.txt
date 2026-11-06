@@ -1,0 +1,25 @@
+set -e
+python3 -B - <<'PY'
+import pathlib,re,hashlib
+root=pathlib.Path.cwd(); runtime=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+old=(root/'docs/evidence/m5/archive-capture-20261106/postflight.txt').read_text()
+entries=re.findall(r'^([0-9a-f]{64}) (.+)$',old,re.M)
+assert len(entries)==47
+for prior,name in entries:
+ name=name.strip(); p=pathlib.Path(name)
+ paths=[p] if p.is_absolute() else [root/p,runtime/p]
+ values=[hashlib.sha256(x.read_bytes()).hexdigest() for x in paths]
+ assert all(value==prior for value in values),(name,'unexpected change')
+ print(values[0],name)
+for name in ('observe','offline'):
+ source=root/('docs/evidence/m5/a08-live-20261106/'+name+'.py')
+ target=runtime/('test/e2e/a08_'+name+'.py')
+ assert source.read_bytes()==target.read_bytes()
+ print(hashlib.sha256(source.read_bytes()).hexdigest(),str(source.relative_to(root)))
+print('49 fingerprint entries checked; 47 product/fixture baseline entries unchanged plus two test-only scripts')
+PY
+git diff --exit-code 24084e4 -- code python scripts test
+systemctl show smartdocsvectorcheck.slice -p TasksCurrent -p CPUQuotaPerSecUSec -p MemoryHigh -p MemoryMax -p MemorySwapMax -p TasksMax -p IOReadBandwidthMax -p IOWriteBandwidthMax -p IOReadIOPSMax -p IOWriteIOPSMax
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+systemctl is-active mysql

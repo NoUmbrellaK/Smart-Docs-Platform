@@ -1,0 +1,8 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+install -m0644 docs/evidence/m5/a08-live-20261106/observe.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a08_observe.py
+install -m0644 docs/evidence/m5/a08-live-20261106/offline.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a08_offline.py
+chown nobody:nogroup /tmp/smartdocs-m5-a08-offline.iVIcOP
+chmod 0700 /tmp/smartdocs-m5-a08-offline.iVIcOP
+systemd-run --unit=smartdocs-m5-a08-offline-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/a08_offline.py

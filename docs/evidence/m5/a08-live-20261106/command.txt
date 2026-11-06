@@ -1,0 +1,15 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+cmp docs/evidence/m5/a08-live-20261106/observe.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a08_observe.py
+chown nobody:nogroup /tmp/smartdocs-m5-a08-live.iPMQJV
+chmod 0700 /tmp/smartdocs-m5-a08-live.iPMQJV
+systemd-run --unit=smartdocs-m5-a08-live-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p LoadCredential=deepseek.env:/root/.config/smart-docs/deepseek.env --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import os,pathlib,shlex,runpy,sys,re
+from a08_observe import observe
+tokens=shlex.split((pathlib.Path(os.environ["CREDENTIALS_DIRECTORY"])/"deepseek.env").read_text(),comments=True)
+entries=[t.partition("=") for t in tokens if t.startswith("DEEPSEEK_API_KEY=")]
+if len(entries)!=1 or not re.fullmatch(r"[!-~]{1,256}",entries[0][2]): raise SystemExit("invalid credential configuration")
+os.environ["DEEPSEEK_API_KEY"]=entries[0][2]
+with observe(pathlib.Path("/tmp/smartdocs-m5-a08-live.iPMQJV")):
+ sys.argv=["test/e2e/benchmark_cli.py",*sys.argv[1:]]
+ runpy.run_path(sys.argv[0],run_name="__main__")' --case A08 --live --output /tmp/smartdocs-m5-a08-live.iPMQJV/A08 --code-revision 24084e47d9adce7164375d55cd2e7b0845c9fde0 --environment 'Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; repeated synthetic tests authorized; A08 first real attempt; unchanged product and collector baseline 24084e4 plus test-only wire/pre-cleanup observer; only approved synthetic injection@1, document text is not authorization; full body and file/version IDs matched in serialized successful tool results, original sender unchanged; no expected answers injected; <=6 calls x4096 output; no rerun, no archive confirmation or execution; zero hold, pre-cleanup evidence retained' --max-calls 6 --hold-seconds 0
