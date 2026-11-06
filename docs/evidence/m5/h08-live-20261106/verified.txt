@@ -1,0 +1,2 @@
+PASS H08: 3 requests/11193 tokens, required deploy found and optional test missing, 1 fixed source, draft; human verdict blank
+PASS private/public hashes, 39 fingerprint records, terminal service and 30-task ledger: 30/111/573708/92

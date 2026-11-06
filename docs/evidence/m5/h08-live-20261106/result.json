@@ -1,0 +1,123 @@
+{
+  "case_id": "H08",
+  "metadata": {
+    "code_revision": "a9d01bd25929727138d9608f348d944fcefa416b",
+    "recorded_at": "2026-11-06T10:08:40.302468+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; same-scope repeated synthetic tests authorized, execution 2026-11-06; H08 first attempt; no product or fixture changes; frozen question and single approved synthetic deployment@2 version; two-item optional_test checklist with required deployment and optional test; fixture expected answers not sent; <=6 calls x4096 output; no automatic retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h08-live.OUrwx4/H08"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 3,
+    "kind": "handover_report"
+  },
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "usage": {
+    "prompt_tokens": 10028,
+    "completion_tokens": 1165,
+    "total_tokens": 11193,
+    "prompt_cache_hit_tokens": 7168,
+    "prompt_cache_miss_tokens": 2860
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    1,
+    1
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 99,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "9fd606093588fdc2b34f1d27cde2fa91",
+        "sequence": 1,
+        "started_at": "2026-11-06 10:08:44.457085",
+        "status": "success",
+        "task_id": "b2d2eb9cd678c42bd5ba75428eff55f5",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 100,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "2529947eeab245d5f1508b147ef998b8",
+        "sequence": 2,
+        "started_at": "2026-11-06 10:08:45.555580",
+        "status": "success",
+        "task_id": "b2d2eb9cd678c42bd5ba75428eff55f5",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 192,
+        "parameters": {
+          "item_count": 2
+        },
+        "request_id": "3af8aa712e8ceeefc61c30d0564533cf",
+        "sequence": 3,
+        "started_at": "2026-11-06 10:08:51.868347",
+        "status": "success",
+        "task_id": "b2d2eb9cd678c42bd5ba75428eff55f5",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 1,
+    "save_handover_report": 1
+  },
+  "report_checks": {
+    "state": "draft",
+    "checklist_revision": 1,
+    "required_flags": {
+      "deploy": true,
+      "test": false
+    },
+    "selected_versions": 1,
+    "source_versions": 1,
+    "item_statuses": {
+      "deploy": "found",
+      "test": "missing"
+    },
+    "expected_item_statuses_match": true,
+    "unique_citation_sources": 1
+  },
+  "review_summary": {
+    "case_id": "H08",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "537ab13997efe1eef2fa9fefa96d037a62f087683f2a9dd8fa7c2f23285dadaf"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "edcc7ea1481105e38a9dbcb3c3fe7bc664e161add31ebdab070a39a6187d3b23",
+    "initial/audit.jsonl": "3a9ff72293a4276ce4b9dc92d078ac2044efa8823fa9276b6245beb0c3801e39",
+    "summary.json": "35a0411f54bc2da144b52a26e2055fff849927456f4d2fa447e84577e898c3b8",
+    "review.json": "a654a66817a267d5d5166bf5761f4aa52d9115eeecbfa9bd7885ccd62b68fad2"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}
