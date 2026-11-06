@@ -1,0 +1,28 @@
+Nov 06 15:44:00 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k report_runtime_read_coverage -v.
+Nov 06 15:44:01 aliyun-lou python[1245699]: test_report_runtime_read_coverage_excludes_search_status_and_failed_reads (test_agent_runner.AgentRunnerTests) ... FAIL
+Nov 06 15:44:01 aliyun-lou python[1245699]: ======================================================================
+Nov 06 15:44:01 aliyun-lou python[1245699]: FAIL: test_report_runtime_read_coverage_excludes_search_status_and_failed_reads (test_agent_runner.AgentRunnerTests)
+Nov 06 15:44:01 aliyun-lou python[1245699]: ----------------------------------------------------------------------
+Nov 06 15:44:01 aliyun-lou python[1245699]: Traceback (most recent call last):
+Nov 06 15:44:01 aliyun-lou python[1245699]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+Nov 06 15:44:01 aliyun-lou python[1245699]:     self._callMaybeAsync(method)
+Nov 06 15:44:01 aliyun-lou python[1245699]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+Nov 06 15:44:01 aliyun-lou python[1245699]:     return self._asyncioTestLoop.run_until_complete(fut)
+Nov 06 15:44:01 aliyun-lou python[1245699]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+Nov 06 15:44:01 aliyun-lou python[1245699]:     return future.result()
+Nov 06 15:44:01 aliyun-lou python[1245699]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+Nov 06 15:44:01 aliyun-lou python[1245699]:     ret = await awaitable
+Nov 06 15:44:01 aliyun-lou python[1245699]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 852, in test_report_runtime_read_coverage_excludes_search_status_and_failed_reads
+Nov 06 15:44:01 aliyun-lou python[1245699]:     self.assertEqual(len(rows),1,'each wire request needs exactly one current delivery record')
+Nov 06 15:44:01 aliyun-lou python[1245699]: AssertionError: 0 != 1 : each wire request needs exactly one current delivery record
+Nov 06 15:44:01 aliyun-lou python[1245699]: ----------------------------------------------------------------------
+Nov 06 15:44:01 aliyun-lou python[1245699]: Ran 1 test in 0.660s
+Nov 06 15:44:01 aliyun-lou python[1245699]: FAILED (failures=1)
+Nov 06 15:44:01 aliyun-lou systemd[1]: smartdocs-m5-read-coverage-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+Nov 06 15:44:01 aliyun-lou systemd[1]: smartdocs-m5-read-coverage-red-20261106.service: Failed with result 'exit-code'.
+TasksCurrent=0
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0

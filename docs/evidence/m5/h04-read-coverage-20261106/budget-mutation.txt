@@ -1,0 +1,33 @@
+Nov 06 15:49:07 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k report_read_coverage_counts -v.
+Nov 06 15:49:08 aliyun-lou python[1247424]: test_report_read_coverage_counts_toward_request_byte_limit (test_agent_runner.AgentRunnerTests) ... FAIL
+Nov 06 15:49:08 aliyun-lou python[1247424]: ======================================================================
+Nov 06 15:49:08 aliyun-lou python[1247424]: FAIL: test_report_read_coverage_counts_toward_request_byte_limit (test_agent_runner.AgentRunnerTests)
+Nov 06 15:49:08 aliyun-lou python[1247424]: ----------------------------------------------------------------------
+Nov 06 15:49:08 aliyun-lou python[1247424]: Traceback (most recent call last):
+Nov 06 15:49:08 aliyun-lou python[1247424]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+Nov 06 15:49:08 aliyun-lou python[1247424]:     self._callMaybeAsync(method)
+Nov 06 15:49:08 aliyun-lou python[1247424]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+Nov 06 15:49:08 aliyun-lou python[1247424]:     return self._asyncioTestLoop.run_until_complete(fut)
+Nov 06 15:49:08 aliyun-lou python[1247424]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+Nov 06 15:49:08 aliyun-lou python[1247424]:     return future.result()
+Nov 06 15:49:08 aliyun-lou python[1247424]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+Nov 06 15:49:08 aliyun-lou python[1247424]:     ret = await awaitable
+Nov 06 15:49:08 aliyun-lou python[1247424]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 900, in test_report_read_coverage_counts_toward_request_byte_limit
+Nov 06 15:49:08 aliyun-lou python[1247424]:     self.assertEqual(outcome,{'state':'failed','error_code':'budget_exhausted'})
+Nov 06 15:49:08 aliyun-lou python[1247424]: AssertionError: {'state': 'completed', 'kind': 'handover_report', 'r[383 chars]wn'}} != {'state': 'failed', 'error_code': 'budget_exhausted'}
+Nov 06 15:49:08 aliyun-lou python[1247424]: + {'error_code': 'budget_exhausted', 'state': 'failed'}
+Nov 06 15:49:08 aliyun-lou python[1247424]: - {'error_code': None,
+Nov 06 15:49:08 aliyun-lou python[1247424]: -  'handover_report': {'id': '22222222222222222222222222222222',
+Nov 06 15:49:08 aliyun-lou python[1247424]: -                      'markdown_url': '/api/v1/projects/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/agent-tasks/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/handover-report/markdown',
+Nov 06 15:49:08 aliyun-lou python[1247424]: -                      'url': '/api/v1/projects/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/agent-tasks/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/handover-report',
+Nov 06 15:49:08 aliyun-lou python[1247424]: -                      'version': 1},
+Nov 06 15:49:08 aliyun-lou python[1247424]: -  'kind': 'handover_report',
+Nov 06 15:49:08 aliyun-lou python[1247424]: -  'model_calls': 4,
+Nov 06 15:49:08 aliyun-lou python[1247424]: -  'result': None,
+Nov 06 15:49:08 aliyun-lou python[1247424]: -  'state': 'completed'}
+Nov 06 15:49:08 aliyun-lou python[1247424]: ----------------------------------------------------------------------
+Nov 06 15:49:08 aliyun-lou python[1247424]: Ran 1 test in 0.569s
+Nov 06 15:49:08 aliyun-lou python[1247424]: FAILED (failures=1)
+Nov 06 15:49:08 aliyun-lou systemd[1]: smartdocs-m5-read-coverage-budget-mutation-20261106.service: Main process exited, code=exited, status=1/FAILURE
+Nov 06 15:49:08 aliyun-lou systemd[1]: smartdocs-m5-read-coverage-budget-mutation-20261106.service: Failed with result 'exit-code'.
+TasksCurrent=0

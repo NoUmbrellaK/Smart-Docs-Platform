@@ -1,0 +1,7 @@
+PASS:15 events agree with private snapshot;failed/model_invalid;third response >=5 calls rejected before dispatch
+PASS:3requests <=6,4096cap;12807tokens=11922+885;cache7552/4370;no automatic retry or confirmation
+PASS:batches1/2/0;metadata7,two range chunks;no report/archive/citations;no fabricated business verdict
+PASS:private permissions/four hashes/frozen scope;37 current runtime fingerprints
+PASS:RED missing delivery record;budget mutation failed;restored119/119 final regression
+PASS:30cases latest11completed+1failed+3admission+15not-run;23attempts,80requests/382569tokens,51citations
+PASS:history preserved;links/secret-pattern scan;offline verification only;semantic improvement NOT proven

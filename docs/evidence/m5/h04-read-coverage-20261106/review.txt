@@ -1,0 +1,4 @@
+Read-only review by /root/read_coverage_review, base6454ddb, runner/tests diff.
+Initial sole Important: add handover-specific byte-budget test. Revocation concern was retracted after fixture inspection: successful read occurs before next check rejects.
+Added boundary test calibrates real handover history below 65536 without notice, above with notice; mutation excluding notice fails (incorrect completed), proper implementation blocks next model/save. Follow-up: no Critical/Important/Minor; proceed after119 regression passes.
+Review does not claim model semantic correctness. No product changes by reviewer.

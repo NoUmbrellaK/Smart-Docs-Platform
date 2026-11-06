@@ -1,0 +1,136 @@
+{
+  "case_id": "H04",
+  "attempt_number": 3,
+  "metadata": {
+    "code_revision": "6454ddbd799d3b29d6eff6fd6898669eba327464+agent_runner_sha256_ebe0ce07fcc25c144bcfb03daaa7a066ae86b7472f51619512475ef73a39c791",
+    "recorded_at": "2026-11-06T07:53:20.420233+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued same-scope user authorization 2026-11-05, execution 2026-11-06; H04 third attempt; runtime content-read chunk coverage and remaining tool budget; base6454ddb plus agent_runner SHA256; no previous rejected prompt candidate; seven approved synthetic versions requirements@1 design@1 api@2 tests@1 issues@1 conflict_a@1 conflict_b@1; conflicting deployment ports and authority records per frozen fixture; standard six-item checklist; <=6 calls x4096 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h04-read-coverage.8GWcR9/H04"
+  },
+  "implementation": {
+    "base_revision": "6454ddbd799d3b29d6eff6fd6898669eba327464",
+    "agent_runner_sha256": "ebe0ce07fcc25c144bcfb03daaa7a066ae86b7472f51619512475ef73a39c791",
+    "test_agent_runner_sha256": "19b5c5dd4ec5b03eb3720e97ff907b1cd2b06fd8ca01e056ff90aa15140afb40",
+    "runtime_read_coverage_local_tests_pass": true,
+    "model_semantic_effect_verified": false
+  },
+  "run_result": {
+    "state": "failed",
+    "error_code": "model_invalid",
+    "model_calls": 3,
+    "kind": null
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 10,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "65ee9803f9108ef802266ec3882693bb",
+        "sequence": 1,
+        "started_at": "2026-11-06 07:53:26.028512",
+        "status": "success",
+        "task_id": "44e7787f88e2bcd8c4e6c9f431813ef6",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "7141fcda0cac3672c578630676a66dc2",
+        "sequence": 2,
+        "started_at": "2026-11-06 07:53:27.316480",
+        "status": "success",
+        "task_id": "44e7787f88e2bcd8c4e6c9f431813ef6",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "12856451d4620033120bba2b20f3a80a",
+        "sequence": 3,
+        "started_at": "2026-11-06 07:53:27.330882",
+        "status": "success",
+        "task_id": "44e7787f88e2bcd8c4e6c9f431813ef6",
+        "tool": "read_document_version"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": false,
+  "archive_plan_present": false,
+  "review_summary": {
+    "case_id": "H04",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "6945a161186b9d2b796630d35aca8d10e92b95ded485283525d233acbac67494"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "03e762df77d3fa46f883d7b930fccc9ae208f213ff316a0f6686dc2dde6eeb57",
+    "initial/audit.jsonl": "deb4e408270b2520242e56631bdc87b27c583e7d6dcb2f90d30de97947fbd0ce",
+    "summary.json": "b32a36b43bf53de62dc92cca4980e37e4c4f87c7be8c5ee8a2adb5af84384b0d",
+    "review.json": "4681ac11e0471ae1e56c26c407287f53c3ef3ab4b09e05c5217fe929e2802d26"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 11922,
+    "completion_tokens": 885,
+    "total_tokens": 12807,
+    "prompt_cache_hit_tokens": 7552,
+    "prompt_cache_miss_tokens": 4370
+  },
+  "model_rejection": {
+    "stage": "tool_batch",
+    "finish_reason": "tool_calls",
+    "tool_call_count": 5,
+    "sequence": 3,
+    "content_kind": "string",
+    "tool_calls_kind": "list"
+  },
+  "tool_rejections": [],
+  "tools_by_name": {
+    "read_document_version": 2,
+    "search_documents": 1
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    2,
+    0
+  ],
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 4096,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "observation": "Third model response exceeded four-tool batch limit; rejection count5 is capped, meaning at least5. No rejected-batch calls dispatched, no report saved. Raw wire not retained; exact tool names/arguments and per-read files are not proven.",
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

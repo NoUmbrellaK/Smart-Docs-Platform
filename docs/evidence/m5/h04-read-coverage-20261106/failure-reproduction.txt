@@ -1,0 +1,3 @@
+Expected exit code: 1
+OBSERVED_FAILURE: third model response violates four-call batch cap (at least5); failed/model_invalid
+Only search + two content reads dispatched; no report saved. Offline artifact check, not another API run.

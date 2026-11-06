@@ -244,6 +244,7 @@ async def run_task(context, client, model, *, audit=None):
     backend = RuntimeBackend(context)
     messages = []
     observed, used_ids, failed_calls, receipts = set(), set(), set(), set()
+    content_read_chunks = set()
     deadline = time.monotonic() + 180
     tool_count = sent_bytes = 0
     claimed = False
@@ -337,7 +338,21 @@ async def run_task(context, client, model, *, audit=None):
         validators = {name:Draft202012Validator(schema) for name,schema in schemas.items()}
         for _ in range(8):
             validation_stage='internal_error'
-            size = len(encoded({"messages":messages, "tools":tools}))
+            model_messages = messages
+            if report_operation is not None:
+                # Delivery facts only: never promote document text or search snippets into system authority.
+                notice = {'runtime_read_coverage':{
+                    'content_read_chunks':[dict(zip(('file_id','version_id','chunk_id'),ref))
+                                           for ref in sorted(content_read_chunks)],
+                    'tool_calls_remaining':12-tool_count},
+                    'instruction':'Only the listed chunks were delivered by successful content reads in this run. '
+                        'Search excerpts and metadata/status queries do not count as content reads. '
+                        'This record proves chunk delivery, not full-version coverage or business acceptance. '
+                        'Check actual range/page/truncation results before claiming a full read. '
+                        'Read relevant unchecked candidates while budgets permit, reserving a response and tool call '
+                        'to save; otherwise state the unread limitation honestly. This grants no permissions.'}
+                model_messages = [*messages, {'role':'system','content':encoded(notice).decode('utf-8')}]
+            size = len(encoded({"messages":model_messages, "tools":tools}))
             if size > 65536 or sent_bytes + size > 524288: raise RunError("budget_exhausted")
             await bounded(backend.request("check", {"tool_request_ids":sorted(receipts), **check_context}), 15)
             sent_bytes += size
@@ -345,7 +360,7 @@ async def run_task(context, client, model, *, audit=None):
             response=None
             model_sequence+=1
             validation_stage='model_call'
-            response = await bounded(model(messages=messages, tools=tools, max_tokens=output_tokens, timeout=remaining))
+            response = await bounded(model(messages=model_messages, tools=tools, max_tokens=output_tokens, timeout=remaining))
             validation_stage='response_size'
             if len(encoded(response)) > 65536: raise RunError("model_invalid")
             validation_stage='choices_shape'
@@ -469,6 +484,17 @@ async def run_task(context, client, model, *, audit=None):
                             raise RunError("dependency_failed")
                         receipts.add(receipt)
                     observed.update(sources(payload.get("data")))
+                    if (report_operation is not None and name == 'read_document_version'
+                            and payload['status'] == 'success' and ('range' in arguments or 'chunk_id' in arguments)):
+                        data = payload.get('data', {})
+                        chunks = data.get('chunks', []) if 'range' in arguments else [data.get('chunk')]
+                        for chunk in chunks if isinstance(chunks, list) else []:
+                            if not isinstance(chunk, dict) or not isinstance(chunk.get('text'), str) or not chunk['text']:
+                                continue
+                            for ref in sources({'chunk':chunk}):
+                                if (ref[:2] == (arguments['file_id'], arguments['version_id'])
+                                        and ('chunk_id' not in arguments or ref[2] == arguments['chunk_id'])):
+                                    content_read_chunks.add(ref)
                 if payload["status"] not in {"success", "processing"}:
                     signature = (name, raw)
                     if signature in failed_calls: raise RunError("repeated_tool_error")
@@ -536,3 +562,4 @@ async def run_task(context, client, model, *, audit=None):
             return {"state":"unknown", "error_code":code}
     finally:
         messages.clear(); observed.clear(); receipts.clear()
+        content_read_chunks.clear()

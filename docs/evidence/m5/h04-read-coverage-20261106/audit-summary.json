@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "task_id": "44e7787f88e2bcd8c4e6c9f431813ef6",
+  "trace_complete": true,
+  "truncated_tail": false,
+  "outcome": {
+    "state": "failed",
+    "error_code": "model_invalid"
+  },
+  "model": {
+    "attempts": 3,
+    "results": 3,
+    "unresolved": 0,
+    "duration_ms_observed": 4966,
+    "usage_known_calls": 3,
+    "usage_unknown_calls": 0,
+    "usage_observed": {
+      "prompt_tokens": 11922,
+      "completion_tokens": 885,
+      "total_tokens": 12807,
+      "prompt_cache_hit_tokens": 7552,
+      "prompt_cache_miss_tokens": 4370
+    },
+    "usage_total": {
+      "prompt_tokens": 11922,
+      "completion_tokens": 885,
+      "total_tokens": 12807,
+      "prompt_cache_hit_tokens": 7552,
+      "prompt_cache_miss_tokens": 4370
+    }
+  },
+  "tools": {
+    "read_document_version": {
+      "attempts": 2,
+      "results": 2,
+      "unresolved": 0,
+      "duration_ms_observed": 104
+    },
+    "search_documents": {
+      "attempts": 1,
+      "results": 1,
+      "unresolved": 0,
+      "duration_ms_observed": 20
+    }
+  },
+  "model_rejection": {
+    "stage": "tool_batch",
+    "finish_reason": "tool_calls",
+    "tool_call_count": 5,
+    "sequence": 3,
+    "content_kind": "string",
+    "tool_calls_kind": "list"
+  },
+  "tool_rejections": [],
+  "cost_estimate": null,
+  "business_acceptance": "not_evaluated"
+}

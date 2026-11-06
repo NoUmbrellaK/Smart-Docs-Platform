@@ -1,0 +1,17 @@
+python3 -B - <<'PY'
+import pathlib,json,hashlib
+p=pathlib.Path('/tmp/smartdocs-m5-h04-read-coverage.8GWcR9/H04')
+s=json.loads((p/'initial/snapshot.json').read_text())
+assert hashlib.sha256((p/'initial/snapshot.json').read_bytes()).hexdigest()=='03e762df77d3fa46f883d7b930fccc9ae208f213ff316a0f6686dc2dde6eeb57'
+events=[json.loads(x) for x in (p/'initial/audit.jsonl').read_text().splitlines()]
+rejections=[x for x in events if x['event']=='model_rejection']
+assert len(rejections)==1
+rejection=rejections[0]
+assert (rejection['sequence'],rejection['stage'],rejection['finish_reason'],rejection['tool_call_count'])==(3,'tool_batch','tool_calls',5)
+assert s['run_result']['state']=='failed' and s['run_result']['error_code']=='model_invalid'
+assert s.get('handover_report') is None and s.get('archive_plan') is None
+assert [x['tool'] for x in s['tool_calls']['items']]==['search_documents','read_document_version','read_document_version']
+print('OBSERVED_FAILURE: third model response violates four-call batch cap (at least5); failed/model_invalid')
+print('Only search + two content reads dispatched; no report saved. Offline artifact check, not another API run.')
+raise SystemExit(1)
+PY
