@@ -96,6 +96,14 @@ DESCRIPTIONS = {
                           'query the ordinary archive result endpoint; do not automatically retry or claim failure.',
     REPORT_TOOL: 'Save one private handover draft for this task using the exact operation_id supplied at run start. '
                  'Cover each checklist key once, state limitations and uncertainty, cite only admitted tool evidence. '
+                 'Choose status from inspected content, not file existence or a final-version title: '
+                 'found means relevant substantive material was read, not that it is complete or accepted; '
+                 'a substantive test report with failed tests can be found, with failures retained in notes. '
+                 'uncertain means unresolved conflicting evidence, unread/unparsed candidates, or content too thin '
+                 'to establish the checklist material, including empty templates or placeholder-only instructions; '
+                 'cite observed content when available, even for uncertain. '
+                 'missing means no relevant candidate was found in the actually searched scope; '
+                 'unfinished coverage is uncertain, not proof of absence. Keep notes and status consistent. '
                  'Found requires citations; missing has none. Each note <=2000 UTF-8 bytes, summary <=8000, '
                  'limitations/recommendations <=4000 each. At most 100 citations total. '
                  'Does not move or share files. Successful save completes the task. Call it alone, never in a batch.',

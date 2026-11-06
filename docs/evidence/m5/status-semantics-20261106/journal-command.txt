@@ -1,0 +1,5 @@
+journalctl -u smartdocs-m5-status-semantics-20261106.service --no-pager -o short-iso
+systemctl show smartdocs-m5-status-semantics-20261106.service -p MainPID -p Result -p ExecMainStatus -p ActiveState -p SubState
+systemctl show smartdocsvectorcheck.slice -p TasksCurrent
+cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+systemctl is-active mysql

@@ -1,0 +1,17 @@
+python3 -B - <<'PY'
+import ast,pathlib,subprocess
+p=pathlib.Path('python/smartdocs/mcp_read.py')
+old=ast.parse(subprocess.check_output(['git','show','HEAD:'+str(p)]).decode())
+new=ast.parse(p.read_text())
+def descriptions(tree):
+ return next(n.value for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='DESCRIPTIONS' for t in n.targets))
+before,after=descriptions(old),descriptions(new)
+for bkey,akey,bvalue,avalue in zip(before.keys,after.keys,before.values,after.values):
+ assert ast.dump(bkey)==ast.dump(akey)
+ if isinstance(akey,ast.Name) and akey.id=='REPORT_TOOL':
+  assert bvalue.value!=avalue.value
+  bvalue.value=avalue.value=''
+assert ast.dump(old)==ast.dump(new)
+print('PASS:only shared REPORT_TOOL description changed; schemas and executable AST unchanged')
+PY
+git diff --check

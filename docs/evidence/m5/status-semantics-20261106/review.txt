@@ -1,0 +1,7 @@
+Read-only review: status_semantics_review, base e73e375.
+Critical: none. Important: none. Minor: none.
+Found substantive material is distinct from business acceptance; a failed-test report can remain found.
+Placeholder-only content maps to uncertain; schema/citation rules remain compatible.
+No schema, control-flow, permission or budget changes observed.
+Ready to commit and bounded H06 retest, subject to regression results.
+Reviewer ran no tests and made no edits; no live success claim.
