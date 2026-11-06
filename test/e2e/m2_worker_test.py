@@ -34,6 +34,8 @@ def source_examples():
 
 
 class WorkerE2E(unittest.TestCase):
+    admin_name = 'worker-e2e-admin'
+
     @classmethod
     def setUpClass(cls):
         socket = os.environ.get("SMARTDOCS_MYSQL_SOCKET", "")
@@ -50,7 +52,7 @@ class WorkerE2E(unittest.TestCase):
                           SMARTDOCS_LISTEN_ADDRESS="127.0.0.1", SMARTDOCS_SECURE_COOKIE="false")
         cls.token = secrets.token_hex(32)
         cls.password = "worker-e2e-only-password"
-        create_user(str(ROOT/"bin/smartdocs-admin"), "worker-e2e-admin", cls.password)
+        create_user(str(ROOT/"bin/smartdocs-admin"), cls.admin_name, cls.password)
         cls.server = ServerProcess(ROOT/"bin/server", cls.root/"logs")
         cls.server.start(environment_overrides={"SMARTDOCS_WORKER_TOKEN": cls.token})
 
@@ -64,7 +66,7 @@ class WorkerE2E(unittest.TestCase):
 
     def setUp(self):
         self.user = HttpClient(self.server.port)
-        login(self.user, "worker-e2e-admin", self.password)
+        login(self.user, self.admin_name, self.password)
         self.project = data(self.user.request("POST", "/api/v1/projects", {"name": "Worker " + secrets.token_hex(4)}), 201)
         self.jobs = []
         self.client = worker.Client(self.server.port, self.token)
@@ -246,7 +248,7 @@ class WorkerE2E(unittest.TestCase):
         job = self.upload("server-restart.txt", b"restart server", "text/plain")
         self.client.claim()
         self.server.stop(); self.server.start(environment_overrides={"SMARTDOCS_WORKER_TOKEN": self.token})
-        self.user = HttpClient(self.server.port); login(self.user, "worker-e2e-admin", self.password)
+        self.user = HttpClient(self.server.port); login(self.user, self.admin_name, self.password)
         self.assertEqual(self.state(job)["state"], "interrupted")
         data(self.user.request("POST", self.job_path(job) + "/retry"))
         self.cli()

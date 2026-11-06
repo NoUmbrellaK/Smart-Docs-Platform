@@ -1,0 +1,35 @@
+2026-11-06T18:29:22+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest -v m5_benchmark_cli_test.CliTests.test_h10_cli_records_unmet_precondition_without_retry_or_false_success.
+2026-11-06T18:29:22+0800 aliyun-lou bash[1280461]: 2026-11-06T10:29:22.643810Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1280461
+2026-11-06T18:29:22+0800 aliyun-lou bash[1280461]: 2026-11-06T10:29:22.648528Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T18:29:37+0800 aliyun-lou bash[1280461]: 2026-11-06T10:29:37.880566Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T18:29:45+0800 aliyun-lou bash[1280461]: 2026-11-06T10:29:45.892260Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-11-06T18:30:32+0800 aliyun-lou bash[1280765]: schema_version=16
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_run_migration_does_not_invent_execution
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_source_migration_does_not_invent_model_context
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-11-06T18:31:00+0800 aliyun-lou bash[1280864]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: test_h10_cli_records_unmet_precondition_without_retry_or_false_success (m5_benchmark_cli_test.CliTests) ... FAIL
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: ======================================================================
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: FAIL: test_h10_cli_records_unmet_precondition_without_retry_or_false_success (m5_benchmark_cli_test.CliTests)
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: ----------------------------------------------------------------------
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: Traceback (most recent call last):
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_cli_test.py", line 179, in test_h10_cli_records_unmet_precondition_without_retry_or_false_success
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]:     self.assertEqual(status, 1, 'completed draft alone cannot pass H10')
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: AssertionError: 0 != 1 : completed draft alone cannot pass H10
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: ----------------------------------------------------------------------
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: Ran 1 test in 3.021s
+2026-11-06T18:31:03+0800 aliyun-lou bash[1280980]: FAILED (failures=1)
+2026-11-06T18:31:08+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-cli-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T18:31:08+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-cli-red-20261106.service: Failed with result 'exit-code'.
+2026-11-06T18:31:08+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-cli-red-20261106.service: Consumed 8.028s CPU time.
+Result=exit-code
+ExecMainStatus=1
+TasksCurrent=[not set]
+ActiveState=failed
+SubState=failed

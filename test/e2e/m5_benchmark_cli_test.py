@@ -155,6 +155,36 @@ class CliTests(unittest.TestCase):
                     self.assertNotIn(access_seen[0]['password'], text)
             self.assertNotIn(access_seen[0]['password'], output.getvalue())
 
+    def test_h10_cli_records_unmet_precondition_without_retry_or_false_success(self):
+        cli = importlib.import_module('benchmark_cli')
+
+        def respond(body):
+            self.assertNotIn('DEEPSEEK_API_KEY', os.environ)
+            contexts = [json.loads(m['content']) for m in body['messages']
+                        if m['role'] == 'user' and m['content'].startswith('{')]
+            operation = next(c['report_operation_id'] for c in contexts if 'report_operation_id' in c)
+            checklist = next(c['handover_checklist'] for c in contexts if 'handover_checklist' in c)
+            return tool('save_handover_report', {'operation_id': operation, 'report': {
+                'summary': 'Not inspected.', 'limitations': 'No body reads.',
+                'recommendations': 'Review manually.', 'items': [
+                    {'key': i['key'], 'status': 'uncertain', 'notes': 'Unread.', 'citations': []}
+                    for i in checklist['items']]}})
+
+        with tempfile.TemporaryDirectory() as folder, self.provider(respond), patch.dict(
+                os.environ, {'DEEPSEEK_API_KEY': 'synthetic-execute-key'}), redirect_stdout(io.StringIO()):
+            destination = Path(folder) / 'h10'
+            args = self.args(destination, '--live')
+            args[args.index('A01')] = 'H10'
+            status = cli.main(args, run_kind='transport_fixture')
+            self.assertEqual(status, 1, 'completed draft alone cannot pass H10')
+            self.assertEqual(len(self.requests), 1)
+            self.assertEqual(read_private(destination / 'h10-revocation.json')['state'], 'preconditions_not_met')
+            summary = read_private(destination / 'summary.json')
+            self.assertEqual(summary['state'], 'completed')
+            self.assertEqual(summary['h10_boundary'], 'preconditions_not_met')
+            self.assertIsNone(summary['business_verdict'])
+            self.assertFalse((destination / 'failure.json').exists())
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

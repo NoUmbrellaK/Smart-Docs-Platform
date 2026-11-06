@@ -1,0 +1,67 @@
+2026-11-06T18:26:25+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_h10_revocation_test.py.
+2026-11-06T18:26:27+0800 aliyun-lou bash[1279885]: 2026-11-06T10:26:27.564705Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1279885
+2026-11-06T18:26:27+0800 aliyun-lou bash[1279885]: 2026-11-06T10:26:27.762421Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T18:26:43+0800 aliyun-lou bash[1279885]: 2026-11-06T10:26:43.076268Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T18:26:51+0800 aliyun-lou bash[1279885]: 2026-11-06T10:26:51.109835Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-11-06T18:27:38+0800 aliyun-lou bash[1280120]: schema_version=16
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_run_migration_does_not_invent_execution
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_source_migration_does_not_invent_model_context
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-11-06T18:28:06+0800 aliyun-lou bash[1280247]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-11-06T18:28:09+0800 aliyun-lou bash[1280362]: test_h10_explicit_design_citation_is_preserved_and_not_counted_as_uncited (__main__.H10E2E) ... FAIL
+2026-11-06T18:28:11+0800 aliyun-lou bash[1280362]: test_h10_failed_provider_request_is_not_successful_body_admission_evidence (__main__.H10E2E) ... FAIL
+2026-11-06T18:28:12+0800 aliyun-lou bash[1280362]: test_h10_metadata_only_does_not_fake_body_precondition_or_revoke (__main__.H10E2E) ... FAIL
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: test_h10_uncited_body_revocation_denies_existing_report_without_regeneration (__main__.H10E2E) ... FAIL
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ======================================================================
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: FAIL: test_h10_explicit_design_citation_is_preserved_and_not_counted_as_uncited (__main__.H10E2E)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ----------------------------------------------------------------------
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: Traceback (most recent call last):
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 101, in test_h10_explicit_design_citation_is_preserved_and_not_counted_as_uncited
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     prepared, _, probe = self.run_h10(cite_design=True)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 62, in run_h10
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     self.assertNotEqual(probe['state'], 'not_run', 'H10 interleaving must actually run')
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: AssertionError: 'not_run' == 'not_run' : H10 interleaving must actually run
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ======================================================================
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: FAIL: test_h10_failed_provider_request_is_not_successful_body_admission_evidence (__main__.H10E2E)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ----------------------------------------------------------------------
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: Traceback (most recent call last):
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 108, in test_h10_failed_provider_request_is_not_successful_body_admission_evidence
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     prepared, snapshot, probe = self.run_h10(reject_body=True)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 62, in run_h10
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     self.assertNotEqual(probe['state'], 'not_run', 'H10 interleaving must actually run')
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: AssertionError: 'not_run' == 'not_run' : H10 interleaving must actually run
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ======================================================================
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: FAIL: test_h10_metadata_only_does_not_fake_body_precondition_or_revoke (__main__.H10E2E)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ----------------------------------------------------------------------
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: Traceback (most recent call last):
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 94, in test_h10_metadata_only_does_not_fake_body_precondition_or_revoke
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     prepared, _, probe = self.run_h10(read_design=False)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 62, in run_h10
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     self.assertNotEqual(probe['state'], 'not_run', 'H10 interleaving must actually run')
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: AssertionError: 'not_run' == 'not_run' : H10 interleaving must actually run
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ======================================================================
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: FAIL: test_h10_uncited_body_revocation_denies_existing_report_without_regeneration (__main__.H10E2E)
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ----------------------------------------------------------------------
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: Traceback (most recent call last):
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 79, in test_h10_uncited_body_revocation_denies_existing_report_without_regeneration
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     prepared, snapshot, probe = self.run_h10()
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_h10_revocation_test.py", line 62, in run_h10
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]:     self.assertNotEqual(probe['state'], 'not_run', 'H10 interleaving must actually run')
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: AssertionError: 'not_run' == 'not_run' : H10 interleaving must actually run
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: ----------------------------------------------------------------------
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: Ran 4 tests in 6.629s
+2026-11-06T18:28:13+0800 aliyun-lou bash[1280362]: FAILED (failures=4)
+2026-11-06T18:28:19+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T18:28:19+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-red-20261106.service: Failed with result 'exit-code'.
+2026-11-06T18:28:19+0800 aliyun-lou systemd[1]: smartdocs-m5-h10-red-20261106.service: Consumed 8.012s CPU time.
+Result=exit-code
+ExecMainStatus=1
+TasksCurrent=[not set]
+ActiveState=failed
+SubState=failed

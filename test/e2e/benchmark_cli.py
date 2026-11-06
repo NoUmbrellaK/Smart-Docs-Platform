@@ -6,6 +6,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import secrets
 import time
 import unittest
 
@@ -59,6 +60,9 @@ def main(argv=None, *, run_kind='live_provider'):
     access_path = directory / 'review-access.json'
 
     class Case(FixedInputsE2E):
+        # Several CLI invocations in one disposable test DB must not reuse an account.
+        admin_name = 'benchmark-' + secrets.token_hex(8)
+
         @classmethod
         def cleanup_owned(cls):
             server, temp = cls.__dict__.get('server'), cls.__dict__.get('temp')
@@ -77,8 +81,13 @@ def main(argv=None, *, run_kind='live_provider'):
 
         def runTest(self):
             prepared = self.prepare_case(case)
-            snapshot = asyncio.run(execute(case['id'], prepared, metadata, directory / 'initial',
-                backend_port=self.server.port, api_key=key, max_calls=args.max_calls, run_kind=kind))
+            options = dict(backend_port=self.server.port, api_key=key, max_calls=args.max_calls, run_kind=kind)
+            if case['id'] == 'H10':
+                from benchmark_h10 import execute_h10
+                snapshot, probe = asyncio.run(execute_h10(self, prepared, metadata, directory, **options))
+                summary['h10_boundary'] = probe['state']
+            else:
+                snapshot = asyncio.run(execute(case['id'], prepared, metadata, directory / 'initial', **options))
             state = snapshot['run_result']['state'] if snapshot['run_result'] else 'rejected'
             if state in {'waiting_confirmation', 'waiting_execution'} and args.hold_seconds:
                 owner = data(prepared['actor'].request('GET', '/api/v1/me'))['user']
@@ -124,6 +133,8 @@ def main(argv=None, *, run_kind='live_provider'):
             (directory / 'review-access.pending').unlink(missing_ok=True)
     print(json.dumps(summary), flush=True)
     if not summary['capture_complete']:
+        return 1
+    if case['id'] == 'H10' and summary.get('h10_boundary') != 'boundary_verified':
         return 1
     if summary['state'] in {'completed', 'rejected'}:
         return 0

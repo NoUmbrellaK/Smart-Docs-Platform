@@ -1,0 +1,5 @@
+set -e
+install -m 0644 test/e2e/benchmark_cli.py test/e2e/benchmark_h10.py test/e2e/m5_h10_revocation_test.py test/e2e/m5_benchmark_cli_test.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+systemd-run --unit=smartdocs-m5-h10-green-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c '/tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_h10_revocation_test.py && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_cli_test.py'
