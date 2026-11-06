@@ -1,0 +1,353 @@
+{
+  "case_id": "H04",
+  "attempt_number": 2,
+  "metadata": {
+    "code_revision": "03d2bd7ce6dfbd127c3f76f5b10cb42709c1c395+agent_runner_sha256_ab4066dbd628f8c7116d923072eb0f9d1dc679b1cc6225e51a0c23a65aeecb12",
+    "recorded_at": "2026-11-06T07:33:46.254132+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued same-scope user authorization 2026-11-05, execution 2026-11-06; H04 second attempt; only REPORT_SYSTEM seven-line candidate; baseline 03d2bd7 plus recorded agent_runner SHA256; seven approved synthetic versions requirements@1 design@1 api@2 tests@1 issues@1 conflict_a@1 conflict_b@1; conflicting deployment ports and authority records per frozen fixture; standard six-item checklist; <=6 calls x4096 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h04-consistency.VkgB2U/H04"
+  },
+  "candidate": {
+    "base_revision": "03d2bd7ce6dfbd127c3f76f5b10cb42709c1c395",
+    "agent_runner_sha256": "ab4066dbd628f8c7116d923072eb0f9d1dc679b1cc6225e51a0c23a65aeecb12",
+    "patch": "candidate.patch",
+    "adopted": false,
+    "restored_agent_runner_sha256": "042d7ef9f94db685351fa0658a73e37a710a934c13e069eb9fbcaa1774c3fb31"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 10,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "bf54b4259b0d676cdc5e7f9265279cbe",
+        "sequence": 1,
+        "started_at": "2026-11-06 07:33:54.215421",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 213,
+        "parameters": {
+          "mode": "hybrid",
+          "query_bytes": 6
+        },
+        "request_id": "ce139eec8835e9a4858181b41e8ae239",
+        "sequence": 2,
+        "started_at": "2026-11-06 07:33:54.237119",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "e9c506977e17559c9499ae707a8c4657",
+        "sequence": 3,
+        "started_at": "2026-11-06 07:33:56.763652",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "8a8a49f1e0b08f0eb73dbfcbb0a430b9",
+        "sequence": 4,
+        "started_at": "2026-11-06 07:33:56.776687",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "0ef97b462d2950c4816ad6d3d89a8692",
+        "sequence": 5,
+        "started_at": "2026-11-06 07:33:56.788240",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "status"
+        },
+        "request_id": "9fc276958c64121d805327d3075b517a",
+        "sequence": 6,
+        "started_at": "2026-11-06 07:33:56.879240",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "6028ae6bb0a6fe1719404cb60a434102",
+        "sequence": 7,
+        "started_at": "2026-11-06 07:33:59.491812",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "1755b23685bcfa26e41385c2773ce86e",
+        "sequence": 8,
+        "started_at": "2026-11-06 07:33:59.505232",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "b2d740e1a66734901069d7114e81539c",
+        "sequence": 9,
+        "started_at": "2026-11-06 07:33:59.595214",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "77572232acd83e20542aa339aacf7c5b",
+        "sequence": 10,
+        "started_at": "2026-11-06 07:33:59.608763",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 20,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "17e58c0aee90548f7e9e6dae35b259d8",
+        "sequence": 11,
+        "started_at": "2026-11-06 07:34:08.819978",
+        "status": "success",
+        "task_id": "501097065a25eb8adce91873948ba882",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 7,
+    "source_version_count": 7,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses_match": true,
+    "citation_count": 7,
+    "captured_source_count": 7,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "adf1720bb0ca10acd85b21dac6de7a21",
+          "version_id": "785f49f70c4aedd8fe32b9acbba8cb47",
+          "chunk_id": "22095f7990c4ab6dc1595590d598409611761766a02a4d2e4f1dc700906d1abe"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 93,
+        "source_sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e"
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "e46d1de0008793b022f2614e7dc7ec1b",
+          "version_id": "c77282a94f4f6dae0fe826c8633c2e6d",
+          "chunk_id": "d123f014d670a8e75e14e64c7046b0625d6aba863d3b8e18e2106bee49409da2"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 86,
+        "source_sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed"
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "7cc99d7474779f7bd3d9d92de6afb2a9",
+          "version_id": "adf854c198207875aa1a7e9f67506769",
+          "chunk_id": "ac97f0d8d08fe3a64e94378830136eec3786e2e97de273342deaed4aa2ebd833"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 111,
+        "source_sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a"
+      },
+      {
+        "fixture_source": "tests@1",
+        "reference": {
+          "file_id": "e42f5baa6f3ff7e5ee2d1ec3848bd42d",
+          "version_id": "abfdbc443a1df099ba5d29f55807a32c",
+          "chunk_id": "78780204fa540d81f101e1e28ee1b36d1fe94d4d1b90078eac48f8667e057ab9"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 69,
+        "source_sha256": "ac84e207475cf9fb8ee13dfd48c3ec9e945b49dc0d6ecd358b4a34a3f08dbe56"
+      },
+      {
+        "fixture_source": "conflict_a@1",
+        "reference": {
+          "file_id": "73405fce2c543d1039fd5e6db9e9eb71",
+          "version_id": "a7eeb134d40d81c23d040f2eb4e13bac",
+          "chunk_id": "9aea6b6fd795fb562f74c93921486d57fe5394676e86e410c70dcf7fbaee4c53"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 46,
+        "source_sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8"
+      },
+      {
+        "fixture_source": "conflict_b@1",
+        "reference": {
+          "file_id": "c29b0c0f1459f9715ece40f6d71950ab",
+          "version_id": "d80cfc064ea90d10b70e0b5e5135dd11",
+          "chunk_id": "929535a01cc9f02c08a1b85fac31b75ecb723235bea3c62756e5cc5f27fe5406"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 46,
+        "source_sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610"
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "bd93eefad9d4723e678fc4d36e3efbc4",
+          "version_id": "df90fd303e1bbaf6b58ebc8a9d4b13fa",
+          "chunk_id": "b9e7f4309b07328cdcd83ef3711712296b6a7af1e0cc10be7f50dfd4d1958a27"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 34,
+        "source_sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366"
+      }
+    ],
+    "actual_checklist_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    },
+    "conflicting_ports_and_missing_authority_preserved": true,
+    "sample_test_failure_counts_preserved": true,
+    "observed_defects": [
+      "Report claims all seven current files fully read; only four range calls returned content. Four status reads each returned zero chunks. Search excerpts and later citation capture do not prove task-time read-tool use."
+    ],
+    "business_observation": "read_coverage_claim_contradicts_trace",
+    "inspection_method": "AI-assisted report/source comparison; not human semantic acceptance",
+    "limitations": "Raw provider payloads and per-tool file IDs are not captured. Do not assign exact files to each read. Seven valid captured citations do not prove seven source-content reads or semantic accuracy."
+  },
+  "review_summary": {
+    "case_id": "H04",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 7,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "afd68e7a468d32a437ff1eef99c8289448ca8b2f5b966277377ef3ce10704c22"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "a44cb759a4a1820d8716f2fc70cc8380497a6d01e8ddfc1198e174c42cda8eb5",
+    "initial/audit.jsonl": "a406cce8cac3c7c6e87f76d98694587b352a8a721a3a07e0ccdcfec658a218f1",
+    "summary.json": "4d7a1470ebcc497f2f1da5a0fc417e33b82dd8c36277d3532f61c92570d78499",
+    "review.json": "a72da2d35a023e30d46d8a15e3e84b5e29e781c9bd510a5248ce351029b15380"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 24493,
+    "completion_tokens": 2938,
+    "total_tokens": 27431,
+    "prompt_cache_hit_tokens": 14208,
+    "prompt_cache_miss_tokens": 10285
+  },
+  "model_rejection": null,
+  "tool_rejections": [],
+  "tools_by_name": {
+    "read_document_version": 8,
+    "save_handover_report": 1,
+    "search_documents": 2
+  },
+  "dispatched_tools_per_model_response": [
+    2,
+    4,
+    4,
+    1
+  ],
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 4096,
+    "automatic_retry": false,
+    "automatic_confirmation": false
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

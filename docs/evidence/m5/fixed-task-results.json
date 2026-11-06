@@ -16,7 +16,7 @@
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 44,
+  "citations_observed": 51,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -447,16 +447,16 @@
       "category": "handover",
       "execution": "completed",
       "business_verdict": null,
-      "evidence": "h04-live-20261105/result.json",
+      "evidence": "h04-consistency-20261106/result.json",
       "admission_http": 201,
       "error_code": null,
-      "provider_requests": 3,
-      "total_tokens": 18320,
-      "attempt_count": 1,
-      "cumulative_provider_requests": 3,
-      "cumulative_total_tokens": 18320,
-      "expected_item_statuses_match": false,
-      "business_observation": "does_not_meet_frozen_expectation",
+      "provider_requests": 4,
+      "total_tokens": 27431,
+      "attempt_count": 2,
+      "cumulative_provider_requests": 7,
+      "cumulative_total_tokens": 45751,
+      "expected_item_statuses_match": true,
+      "business_observation": "read_coverage_claim_contradicts_trace",
       "attempts": [
         {
           "evidence": "h04-live-20261105/result.json",
@@ -464,6 +464,13 @@
           "error_code": null,
           "provider_requests": 3,
           "total_tokens": 18320
+        },
+        {
+          "evidence": "h04-consistency-20261106/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 4,
+          "total_tokens": 27431
         }
       ]
     },

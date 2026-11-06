@@ -1,0 +1,18 @@
+diff --git a/python/smartdocs/agent_runner.py b/python/smartdocs/agent_runner.py
+index 436a9e0..1d7b1dc 100644
+--- a/python/smartdocs/agent_runner.py
++++ b/python/smartdocs/agent_runner.py
+@@ -46,6 +46,13 @@ When evidence exists, cite its actual file_id, version_id and chunk_id from tool
+ REPORT_SYSTEM = """For this handover task, the final-answer JSON instruction above is replaced:
+ finish by calling save_handover_report alone, using the supplied report_operation_id unchanged.
+ Save every checklist item with status, notes and observed citations; include limitations and recommendations.
++Before saving, review every item, including optional ones. If a relevant observed candidate still needs
++content checking and budgets permit, read it in another response, reserving a response and tool call to save.
++The 4-call batch limit is not a total reading limit. Do not stop after one batch merely because it is full.
++For each item distinguish metadata, search excerpts and actual read_document_version content results;
++claim a full read only when those reads cover that version without gaps or truncation.
++Before saving, reconcile summary and limitations with item evidence and actual tool results. Omit unsupported
++aggregate counts or length statistics; only attribute incomplete checks to a budget when the budget supports it.
+ Keep the summary concise and consistent with the item details and handover_checklist_counts.
+ Those counts describe checklist entries, not found documents or accepted work; do not confuse them.
+ Saving writes a private report draft, but does not move files or share the report. Do not claim no writes

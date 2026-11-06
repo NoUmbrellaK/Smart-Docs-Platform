@@ -1,0 +1,3 @@
+Read-only review: /root/h04_report_guidance_review; base 03d2bd7ce6dfbd127c3f76f5b10cb42709c1c395; seven-line REPORT_SYSTEM diff.
+No Critical/Important/Minor findings. Relevant observed candidates only, budgets respected, optional items included; unavailable evidence may remain uncertain. No permission/schema/budget/fixture changes. Save remains terminal after validated receipt.
+Ready for H04 comparison, not a guarantee of semantic correctness. Reviewer did not run or claim live acceptance.

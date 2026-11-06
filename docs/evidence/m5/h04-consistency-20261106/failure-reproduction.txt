@@ -1,0 +1,4 @@
+Expected exit code: 1
+Claimed full-read files: 7 Content reads: 4 Status-only reads: 4
+OBSERVED_FAILURE full-read claims cannot exceed single-file content reads
+Seven valid citations do not prove seven task-time content reads; no API call or human verdict.

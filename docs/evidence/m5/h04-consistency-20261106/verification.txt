@@ -1,0 +1,8 @@
+PASS:32 trace events; completed draft v1; four calls with 4096 cap;27431tokens=24493+2938; no retries/confirmation
+PASS:2/4/4/1 batches; metadata7/hybrid-request3;four status reads zero chunks;four range reads one chunk each;terminal save
+PASS:six statuses match frozen expectations;issues found;conflict8091/8092 and test failures preserved
+OBSERVED_FAILURE:seven distinct full-read claims exceed four source-content reads;candidate not accepted
+PASS:seven citations match frozen text,ID,version,SHA,location;seven selected/source versions;human review blank
+PASS:private permissions/hashes;37 fingerprints;candidate reconstructed;product/runtime restored to base
+PASS:30cases;22historical attempts,77requests/369762tokens,51citations;earlier failures preserved
+PASS:links/secret-pattern scan;offline evidence consistency only,NOT business acceptance

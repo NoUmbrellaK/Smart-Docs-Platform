@@ -1,0 +1,13 @@
+Running as unit: smartdocs-m5-h04-consistency-20261106.service
+TimeoutStopUSec=5s
+RuntimeMaxUSec=10min
+MainPID=1243773
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+NoNewPrivileges=yes
+KillMode=control-group
+LoadState=loaded
+ActiveState=active
