@@ -1,0 +1,3 @@
+PASS S01 failure retained: 3 requests / 8988 tokens / 0 citations; response 3 reached 512 output tokens
+PASS separate supplemental denominator 1; original 30 and historical packet unchanged; no human verdict
+PASS private hashes/modes, runtime fingerprints, and resource terminal state

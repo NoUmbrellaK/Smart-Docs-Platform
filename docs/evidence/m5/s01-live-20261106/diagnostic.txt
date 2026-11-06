@@ -1,0 +1,9 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_deepseek.DeepSeekTests.test_fixed_destination_limits_hidden_reasoning_and_safe_usage test_deepseek.DeepSeekTests.test_json_output_constraint_is_sent_only_for_read_answers test_deepseek.DeepSeekTests.test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps test_agent_runner.AgentRunnerTests.test_private_rejection_trace_identifies_validation_stage_without_model_text -v.
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... ok
+test_json_output_constraint_is_sent_only_for_read_answers (test_deepseek.DeepSeekTests) ... ok
+test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps (test_deepseek.DeepSeekTests) ... ok
+test_private_rejection_trace_identifies_validation_stage_without_model_text (test_agent_runner.AgentRunnerTests) ... ok
+----------------------------------------------------------------------
+Ran 4 tests in 0.767s
+OK
+smartdocs-m5-s01-diagnostic-20261106.service: Deactivated successfully.

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "dataset": "smartdocs-p0-supplemental-v1",
+  "updated_on": "2026-11-06",
+  "scope": "supplemental_observations_separate_from_original_30",
+  "manifest_sha256": "1f231b12dd1f216f07c7cb2cc4142d4cb77c73e664e24e7a9d4bc6ffec6b03e6",
+  "denominator": 1,
+  "business_completion_rate": null,
+  "citation_accuracy": null,
+  "citations_observed": 0,
+  "tasks": [
+    {
+      "case_id": "S01",
+      "execution": "failed",
+      "error_code": "model_invalid",
+      "business_verdict": null,
+      "attempt_count": 1,
+      "cumulative_provider_requests": 3,
+      "cumulative_total_tokens": 8988,
+      "attempts": [
+        {
+          "evidence": "s01-live-20261106/result.json",
+          "state": "failed",
+          "error_code": "model_invalid",
+          "provider_requests": 3,
+          "total_tokens": 8988,
+          "citations_total": 0
+        }
+      ]
+    }
+  ]
+}
