@@ -1,0 +1,6 @@
+PASS:26 events/private capture agree; completed private draft; human review blank
+PASS:4 requests/27094 tokens=23884+3210; batches1/4/2/1; one metadata search, six body reads, one save
+PASS:recorded H05 repeat deviation, not business success; all found differs from all-uncertain
+PASS:11 selected/10 source versions match first ten file IDs; placeholder@1 excluded; raw pagination wire not retained
+PASS:8 citation occurrences/6 unique current chunks; hashes/permissions; 37 unchanged runtime fingerprints; no added OOM
+PASS:30 tasks latest13completed+3admission+14not-run; history26attempts/94requests/476089tokens/73citations
