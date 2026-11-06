@@ -1,0 +1,6 @@
+Independent read-only review: h07_boundary_review, 2026-11-06.
+Initial P2: global archive_plans/decisions counts include earlier test cases.
+Verified shared database lifecycle and task_id schema; narrowed both assertions to H07 task_id.
+Reviewer follow-up: no remaining blockers; README clearly separates offline normal-path evidence,
+real model behavior and six-item business semantics. Adopted wording clarification:
+"本 H07 任务没有归档计划或确认记录". Reviewer did not run tests.

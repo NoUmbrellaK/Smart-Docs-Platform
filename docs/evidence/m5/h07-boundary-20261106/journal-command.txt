@@ -1,0 +1,2 @@
+journalctl -u smartdocs-m5-h07-boundary-final-20261106.service --no-pager
+systemctl show smartdocs-m5-h07-boundary-final-20261106.service -p ActiveState -p SubState -p Result -p ExecMainStatus

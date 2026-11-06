@@ -14,7 +14,7 @@ from benchmark_execute import execute
 from benchmark_review import prepare, read_private, summarize
 from m1_http_test import data
 from m3_agent_http_test import tool
-from m3_fixed_inputs_test import FixedInputsE2E, TASKS
+from m3_fixed_inputs_test import FixedInputsE2E, TASKS, VERSIONS, pair
 from smartdocs import agent_cli, deepseek
 
 
@@ -226,6 +226,78 @@ class ExecuteE2E(FixedInputsE2E):
                          {key: 'uncertain' for key in ('requirements', 'design', 'api', 'test', 'deploy', 'issues')})
         self.assertTrue(all(item['citations'] == [] for item in report['report']['items']))
         self.assertEqual(snapshot['citation_sources'], [])
+        self.assertIsNone(summarize(snapshot, prepare(snapshot))['business_verdict'])
+
+    def test_h07_restricted_material_stays_out_of_serialized_requests_and_report(self):
+        # Catch scope/approval filtering regressions at the actual provider boundary.
+        # Only model responses are scripted; SQL, MCP, serialization and report writes are real.
+        prepared = self.setup_case('H07')
+        self.assertEqual(len(prepared['loaded']), 8)
+        allowed = [pair(prepared['loaded'][ref]) for ref in (
+            'requirements@1', 'design@1', 'api@2', 'tests@1', 'deployment@2', 'issues@1')]
+        deployment = pair(prepared['loaded']['deployment@2'])
+        forbidden = ['INTERNAL-ONLY-MARKER-73', 'BETA-ONLY-MARKER-52']
+        for ref in ('internal@1', 'beta_private@1'):
+            document, version = VERSIONS[ref]
+            forbidden.extend([document['name'], *version['paragraphs']])
+        citation = {}
+
+        def respond(body):
+            serialized = json.dumps(body, ensure_ascii=False)
+            for secret in forbidden:
+                self.assertNotIn(secret, serialized)
+            self.assertIn({'role': 'user', 'content': '核查允许范围，不要读内部资料或其他项目资料。'},
+                          body['messages'])
+            if len(self.requests) == 1:
+                return tool('search_documents', {'mode': 'metadata', 'query': '', 'page_size': 10})
+            results = [json.loads(m['content']) for m in body['messages'] if m['role'] == 'tool']
+            metadata = results[0]['data']
+            self.assertCountEqual([pair(item) for item in metadata['items']], allowed)
+            self.assertEqual(metadata['coverage']['current_files'], 6)
+            self.assertFalse(metadata['has_more'])
+            if len(self.requests) == 2:
+                self.assertEqual(len(results), 1)
+                return tool('read_document_version', {**deployment, 'range': {}}, sequence=2)
+            self.assertEqual(len(results), 2)
+            self.assertEqual(results[1]['status'], 'success')
+            chunks = results[1]['data']['chunks']
+            self.assertEqual(len(chunks), 1)
+            self.assertEqual(chunks[0]['text'], '\n\n'.join(VERSIONS['deployment@2'][1]['paragraphs']))
+            self.assertIn('ORBIT-27', chunks[0]['text'])  # Positive control: body really reached provider.
+            citation.update({**deployment, 'chunk_id': chunks[0]['chunk_id']})
+            contexts = [json.loads(m['content']) for m in body['messages']
+                        if m['role'] == 'user' and m['content'].startswith('{')]
+            operation = next(c['report_operation_id'] for c in contexts if 'report_operation_id' in c)
+            checklist = next(c['handover_checklist'] for c in contexts if 'handover_checklist' in c)
+            return tool('save_handover_report', {'operation_id': operation, 'report': {
+                'summary': 'Offline boundary fixture: only deployment content inspected.',
+                'limitations': 'Other five bodies unread; no model semantic evaluation.',
+                'recommendations': 'Human review required.',
+                'items': [{'key': item['key'],
+                           'status': 'found' if item['key'] == 'deploy' else 'uncertain',
+                           'notes': 'Deployment requires backup ORBIT-27.' if item['key'] == 'deploy'
+                                    else 'Content not inspected.',
+                           'citations': [citation] if item['key'] == 'deploy' else []}
+                          for item in checklist['items']]}}, sequence=3)
+
+        with tempfile.TemporaryDirectory(dir=self.root) as folder, self.provider(respond):
+            output = Path(folder) / 'boundary'
+            snapshot = self.invoke(prepared, output, max_calls=3)
+            self.check_artifacts(output, snapshot, prepared)
+        self.assertEqual(len(self.requests), 3)
+        self.assertEqual(snapshot['execution']['outcome'], {'state': 'completed'})
+        self.assertTrue(snapshot['capture']['complete'], snapshot['capture'])
+        report = snapshot['handover_report']
+        self.assertEqual(report['state'], 'draft')
+        self.assertCountEqual(report['selected_versions'], allowed)
+        self.assertCountEqual(report['source_versions'], allowed)
+        self.assertEqual(len(snapshot['citation_sources']), 1)
+        self.assertEqual(snapshot['citation_sources'][0]['reference'], citation)
+        for secret in forbidden:
+            self.assertNotIn(secret, json.dumps(snapshot, ensure_ascii=False))
+        for table in ('archive_plans', 'archive_decisions'):
+            self.assertEqual(self.count("SELECT COUNT(*) FROM " + table +
+                                        " WHERE task_id='" + prepared['task']['id'] + "'"), 0)
         self.assertIsNone(summarize(snapshot, prepare(snapshot))['business_verdict'])
 
     def test_rejected_admission_never_starts_agent_or_needs_key(self):
