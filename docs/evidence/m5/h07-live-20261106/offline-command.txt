@@ -1,0 +1,1 @@
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=python:test/e2e /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/benchmark_wire_test.py

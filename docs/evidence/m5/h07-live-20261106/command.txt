@@ -1,0 +1,25 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+cmp test/e2e/benchmark_wire.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_wire.py
+cmp test/e2e/benchmark_wire_test.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_wire_test.py
+chown nobody:nogroup /tmp/smartdocs-m5-h07-live.40LnB6
+chmod 0700 /tmp/smartdocs-m5-h07-live.40LnB6
+systemd-run --unit=smartdocs-m5-h07-live-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p LoadCredential=deepseek.env:/root/.config/smart-docs/deepseek.env --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import os,pathlib,shlex,runpy,sys,re,json
+from benchmark_wire import observe_requests
+from m3_fixed_inputs_test import VERSIONS
+tokens=shlex.split((pathlib.Path(os.environ["CREDENTIALS_DIRECTORY"])/"deepseek.env").read_text(),comments=True)
+entries=[t.partition("=") for t in tokens if t.startswith("DEEPSEEK_API_KEY=")]
+if len(entries)!=1 or not re.fullmatch(r"[!-~]{1,256}",entries[0][2]): raise SystemExit("invalid credential configuration")
+os.environ["DEEPSEEK_API_KEY"]=entries[0][2]
+forbidden=["INTERNAL-ONLY-MARKER-73","BETA-ONLY-MARKER-52"]
+for ref in ("internal@1","beta_private@1"):
+ doc,version=VERSIONS[ref]
+ forbidden.extend([doc["name"],*version["paragraphs"]])
+fd=os.open("/tmp/smartdocs-m5-h07-live.40LnB6/wire.jsonl",os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+with os.fdopen(fd,"w") as output:
+ def record(event):
+  output.write(json.dumps(event)+"\n");output.flush();os.fsync(output.fileno())
+ with observe_requests(record,forbidden):
+  sys.argv=["test/e2e/benchmark_cli.py",*sys.argv[1:]]
+  runpy.run_path(sys.argv[0],run_name="__main__")' --case H07 --live --output /tmp/smartdocs-m5-h07-live.40LnB6/H07 --code-revision bdd569ec8c51365b3240b2e26297991f053ce645 --environment 'Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; synthetic repeated tests authorized; H07 first real attempt; unchanged product bdd569e, test-only benchmark_wire observer fingerprints retained separately; original serialized request body hashed before unchanged default sender, forbidden fixture names/body blocked if found, no raw request or key logged; six approved alpha versions only, internal and beta fixtures excluded; <=6 requests x4096 output; no retry or archive confirmation' --max-calls 6 --hold-seconds 0

@@ -1,0 +1,68 @@
+test_allowed_bytes_are_unchanged_and_record_contains_no_content_or_key (__main__.WireTests) ... FAIL
+test_record_failure_prevents_send (__main__.WireTests) ... FAIL
+test_restricted_nested_json_unicode_is_blocked_before_send (__main__.WireTests) ...
+======================================================================
+FAIL: test_allowed_bytes_are_unchanged_and_record_contains_no_content_or_key (__main__.WireTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 25, in test_allowed_bytes_are_unchanged_and_record_contains_no_content_or_key
+    self.assertEqual(records, [{'sequence': 1, 'request_bytes': len(body),
+AssertionError: Lists differ: [] != [{'sequence': 1, 'request_bytes': 58, 'sha[113 chars]rue}]
+
+Second list contains 1 additional elements.
+First extra element 0:
+{'sequence': 1, 'request_bytes': 58, 'sha256': '5a39d31a92a9793d445edeb166740c331121d4b2a99002fe72203b7e863fcae3', 'restricted_matches': 0, 'forwarded': True}
+
+- []
++ [{'forwarded': True,
++   'request_bytes': 58,
++   'restricted_matches': 0,
++   'sequence': 1,
++   'sha256': '5a39d31a92a9793d445edeb166740c331121d4b2a99002fe72203b7e863fcae3'}]
+
+======================================================================
+FAIL: test_record_failure_prevents_send (__main__.WireTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 54, in test_record_failure_prevents_send
+    asyncio.run(model._send(b'{"messages":[]}'))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 48, in send
+    self.fail('unrecorded request must not be sent')
+AssertionError: unrecorded request must not be sent
+
+======================================================================
+FAIL: test_restricted_nested_json_unicode_is_blocked_before_send (__main__.WireTests) (content='PRIVATE-MARKER')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 42, in test_restricted_nested_json_unicode_is_blocked_before_send
+    asyncio.run(model._send(body))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 36, in send
+    self.fail('restricted bytes must never reach the delegate')
+AssertionError: restricted bytes must never reach the delegate
+
+======================================================================
+FAIL: test_restricted_nested_json_unicode_is_blocked_before_send (__main__.WireTests) (content='{"name": "\\u5185\\u90e8\\u6e05\\u5355.txt"}')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 42, in test_restricted_nested_json_unicode_is_blocked_before_send
+    asyncio.run(model._send(body))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 36, in send
+    self.fail('restricted bytes must never reach the delegate')
+AssertionError: restricted bytes must never reach the delegate
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+FAILED (failures=4)

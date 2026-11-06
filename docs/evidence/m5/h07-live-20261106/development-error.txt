@@ -1,0 +1,31 @@
+test_allowed_bytes_are_unchanged_and_record_contains_no_content_or_key (__main__.WireTests) ... ok
+test_real_adapter_records_the_same_bytes_received_by_transport (__main__.WireTests) ... ERROR
+test_record_failure_prevents_send (__main__.WireTests) ... ok
+test_restricted_nested_json_unicode_is_blocked_before_send (__main__.WireTests) ... ok
+
+======================================================================
+ERROR: test_real_adapter_records_the_same_bytes_received_by_transport (__main__.WireTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire_test.py", line 24, in test_real_adapter_records_the_same_bytes_received_by_transport
+    asyncio.run(model(messages=[{'role': 'user', 'content': 'PUBLIC'}],
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/python/smartdocs/deepseek.py", line 95, in __call__
+    response=await asyncio.wait_for(self._send(body),timeout)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 445, in wait_for
+    return fut.result()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_wire.py", line 50, in observed
+    return await original(model, body)
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/python/smartdocs/deepseek.py", line 127, in _send
+    async for chunk in response.aiter_raw(chunk_size=8192):
+  File "/tmp/smartdocs-mcp.P7grAI/venv/lib/python3.10/site-packages/httpx/_models.py", line 1044, in aiter_raw
+    raise StreamConsumed()
+httpx.StreamConsumed: Attempted to read or stream some content, but the content has already been streamed. For requests, this could be due to passing a generator as request content, and then receiving a redirect response or a secondary request as part of an authentication flow.For responses, this could be due to attempting to stream the response content more than once.
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+FAILED (errors=1)

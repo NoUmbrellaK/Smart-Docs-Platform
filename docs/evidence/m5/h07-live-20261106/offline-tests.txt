@@ -1,0 +1,9 @@
+test_allowed_bytes_are_unchanged_and_record_contains_no_content_or_key (__main__.WireTests) ... ok
+test_real_adapter_records_the_same_bytes_received_by_transport (__main__.WireTests) ... ok
+test_record_failure_prevents_send (__main__.WireTests) ... ok
+test_restricted_nested_json_unicode_is_blocked_before_send (__main__.WireTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.004s
+
+OK

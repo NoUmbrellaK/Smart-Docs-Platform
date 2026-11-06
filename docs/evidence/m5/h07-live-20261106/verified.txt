@@ -1,0 +1,2 @@
+PASS H07: 4 observed requests/24516 tokens, 6 found statuses and source locations, draft; human verdict blank
+PASS private/public hashes, 41 fingerprint records, terminal service and 30-task ledger: 29/108/562515/91

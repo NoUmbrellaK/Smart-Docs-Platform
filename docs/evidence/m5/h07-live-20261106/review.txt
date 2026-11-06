@@ -1,0 +1,7 @@
+Independent read-only review by h07_wire_review, 2026-11-06, before live execution.
+No blocking findings in benchmark_wire.py, its four offline tests, command.txt, and CLI wiring.
+Original serialized bytes and default fixed-endpoint sender/HTTPX settings are preserved.
+Matches or record failures stop before the original sender. CLI pops key before fixture children.
+Scope: H07 known synthetic fixtures, <=6 requests; not general DLP or production authorization.
+forwarded=true means admitted to original sender, not proof of delivery to provider.
+Reviewer ran no tests/network calls and did not inspect credentials.
