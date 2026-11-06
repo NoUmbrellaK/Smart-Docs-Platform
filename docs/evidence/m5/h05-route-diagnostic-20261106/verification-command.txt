@@ -1,0 +1,7 @@
+set -e
+git diff --check
+git diff --exit-code HEAD -- code python scripts test/fixtures/agent-p0 docs/evidence/m5/fixed-task-results.json
+cmp test/e2e/m5_benchmark_execute_test.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_execute_test.py
+sha256sum test/e2e/m5_benchmark_execute_test.py
+rg -n 'Ran 9 tests|: OK$|Deactivated successfully|ExecMainStatus=0' docs/evidence/m5/h05-route-diagnostic-20261106/final-journal-and-status.txt
+if rg -n 'sk-[A-Za-z0-9]{12,}|BEGIN .*PRIVATE KEY|Bearer [A-Za-z0-9_-]{20,}' docs/evidence/m5/h05-route-diagnostic-20261106; then exit 1; fi

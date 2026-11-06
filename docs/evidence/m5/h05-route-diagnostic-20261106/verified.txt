@@ -1,0 +1,6 @@
+exit_code=0
+0c19df0b87466b86fee65896bf8f94e9d8bd94680db81d276bfa1c1890ac9d37  test/e2e/m5_benchmark_execute_test.py
+27:2026-11-06T17:10:29+0800 aliyun-lou bash[1264760]: Ran 9 tests in 23.101s
+28:2026-11-06T17:10:29+0800 aliyun-lou bash[1264760]: OK
+29:2026-11-06T17:10:33+0800 aliyun-lou systemd[1]: smartdocs-m5-h05-route-final-20261106.service: Deactivated successfully.
+33:ExecMainStatus=0

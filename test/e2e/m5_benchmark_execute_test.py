@@ -42,13 +42,18 @@ class ExecuteE2E(FixedInputsE2E):
     @contextmanager
     def provider(self, respond):
         self.requests = []
+        self.provider_errors = []
 
         async def transport(request):
             self.assertEqual(str(request.url), deepseek.URL)
             self.assertEqual(request.headers['Authorization'], 'Bearer synthetic-execute-key')
             body = json.loads(request.content)
             self.requests.append(body)
-            reply = respond(body)
+            try:
+                reply = respond(body)
+            except Exception as error:
+                self.provider_errors.append(error)
+                raise
             if isinstance(reply, httpx.Response):
                 return reply
             reply['usage'] = {'prompt_tokens': 10, 'completion_tokens': 5, 'total_tokens': 15}
@@ -64,10 +69,13 @@ class ExecuteE2E(FixedInputsE2E):
         options = dict(backend_port=self.server.port, api_key='synthetic-execute-key',
                        max_calls=3, run_kind='transport_fixture')
         options.update(changes)
-        return asyncio.run(execute(self.case_id, prepared, {
+        snapshot = asyncio.run(execute(self.case_id, prepared, {
             'code_revision': 'test-checkout', 'recorded_at': 'contract-test',
             'environment': 'isolated HTTP/SQL fixture', 'model': 'transport fixture',
             'evidence_path': 'm5_benchmark_execute_test.py'}, directory, **options))
+        if self.provider_errors:
+            raise self.provider_errors[0]  # Do not hide receiver assertions behind a runner error code.
+        return snapshot
 
     def check_artifacts(self, directory, snapshot, prepared):
         self.assertEqual(read_private(directory / 'snapshot.json'), snapshot)
@@ -94,7 +102,8 @@ class ExecuteE2E(FixedInputsE2E):
         def respond(body):
             if len(self.requests) == 1:
                 return tool('search_documents', {'mode': 'keyword', 'query': 'materials'})
-            found = json.loads(body['messages'][-1]['content'])['data']['items']
+            result = next(m for m in reversed(body['messages']) if m['role'] == 'tool')
+            found = json.loads(result['content'])['data']['items']
             self.assertEqual(len(found), 1)
             ref = {k: found[0]['chunk'][k] for k in ('file_id', 'version_id', 'chunk_id')}
             return {'choices': [{'finish_reason': 'stop', 'message': {'role': 'assistant',
@@ -161,6 +170,63 @@ class ExecuteE2E(FixedInputsE2E):
         self.assertEqual(data(prepared['actor'].request('GET', self.base() + '/files')), before)
         self.assertEqual(data(prepared['actor'].request('GET', prepared['path']))['state'],
                          'waiting_confirmation')
+
+    def test_h05_metadata_only_path_preserves_frozen_question_and_dependencies(self):
+        # Characterize the real C++/SQL/stdio path, not the scripted model's choices.
+        # Lost question/page flags or missing metadata-only source dependencies must fail.
+        prepared = self.setup_case('H05')
+        question = '本次只检查元数据搜索的第一页（最多10项），不翻页；报告必须说明没有完整核查。'
+        self.assertEqual(prepared['body']['question'], question)
+        first_page = []
+
+        def respond(body):
+            self.assertEqual([m for m in body['messages'] if m['content'] == question],
+                             [{'role': 'user', 'content': question}])
+            self.assertEqual({t['function']['name'] for t in body['tools']},
+                             {'search_documents', 'read_document_version', 'save_handover_report'})
+            if len(self.requests) == 1:
+                return tool('search_documents', {'mode': 'metadata', 'query': '', 'page': 1, 'page_size': 10})
+            results = [json.loads(m['content']) for m in body['messages'] if m['role'] == 'tool']
+            self.assertEqual(len(results), 1)
+            found = results[0]['data']
+            self.assertEqual((found['page'], found['page_size'], found['has_more'],
+                              found['next_page'], found['truncated']), (1, 10, True, 2, True))
+            self.assertEqual(found['coverage']['current_files'], 11)
+            self.assertEqual(len(found['items']), 10)
+            self.assertTrue(all('chunk' not in item and 'chunks' not in item for item in found['items']))
+            first_page.extend({k: item[k] for k in ('file_id', 'version_id')} for item in found['items'])
+            self.assertEqual(first_page, sorted(prepared['body']['versions'], key=lambda p: p['file_id'])[:10])
+            contexts = [json.loads(m['content']) for m in body['messages']
+                        if m['role'] == 'user' and m['content'].startswith('{')]
+            operation = next(c['report_operation_id'] for c in contexts if 'report_operation_id' in c)
+            checklist = next(c['handover_checklist'] for c in contexts if 'handover_checklist' in c)
+            self.assertEqual(checklist, {k: prepared['checklist'][k] for k in ('revision', 'items')})
+            return tool('save_handover_report', {'operation_id': operation, 'report': {
+                'summary': 'Offline protocol fixture: incomplete metadata-only inspection.',
+                'limitations': 'First page only; no body reads; no semantic evaluation.',
+                'recommendations': 'Inspect remaining materials only when requested.',
+                'items': [{'key': item['key'], 'status': 'uncertain', 'notes': 'Content not checked',
+                           'citations': []} for item in checklist['items']]}}, sequence=2)
+
+        with tempfile.TemporaryDirectory(dir=self.root) as folder, self.provider(respond):
+            output = Path(folder) / 'metadata'
+            snapshot = self.invoke(prepared, output, max_calls=2)
+            self.check_artifacts(output, snapshot, prepared)
+        self.assertEqual(len(self.requests), 2)
+        self.assertEqual(snapshot['execution']['outcome'], {'state': 'completed'})
+        self.assertTrue(snapshot['capture']['complete'], snapshot['capture'])
+        self.assertEqual([c['tool'] for c in snapshot['tool_calls']['items']],
+                         ['search_documents', 'save_handover_report'])
+        report = snapshot['handover_report']
+        self.assertEqual(report['state'], 'draft')
+        self.assertEqual(report['checklist']['revision'], 1)
+        self.assertEqual(len(report['selected_versions']), 11)
+        self.assertEqual(report['source_versions'], first_page)
+        self.assertEqual({item['key']: item['status'] for item in report['report']['items']},
+                         {key: 'uncertain' for key in ('requirements', 'design', 'api', 'test', 'deploy', 'issues')})
+        self.assertTrue(all(item['citations'] == [] for item in report['report']['items']))
+        self.assertEqual(snapshot['citation_sources'], [])
+        self.assertIsNone(summarize(snapshot, prepare(snapshot))['business_verdict'])
 
     def test_rejected_admission_never_starts_agent_or_needs_key(self):
         prepared = self.setup_case('Q08')
