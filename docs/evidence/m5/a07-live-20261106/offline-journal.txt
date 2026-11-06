@@ -1,0 +1,22 @@
+Nov 06 19:10:47 aliyun-lou bash[1288117]: 2026-11-06T11:10:47.110787Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1288117
+Nov 06 19:10:47 aliyun-lou bash[1288117]: 2026-11-06T11:10:47.115570Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:11:02 aliyun-lou bash[1288117]: 2026-11-06T11:11:02.448737Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:11:10 aliyun-lou bash[1288117]: 2026-11-06T11:11:10.153724Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:11:55 aliyun-lou bash[1288304]: schema_version=16
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:12:24 aliyun-lou bash[1288482]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:12:27 aliyun-lou bash[1288615]: test_capture_archive_name_conflict_without_plan (m5_benchmark_capture_test.CaptureE2E) ... ok
+Nov 06 19:12:27 aliyun-lou bash[1288615]: ----------------------------------------------------------------------
+Nov 06 19:12:27 aliyun-lou bash[1288615]: Ran 1 test in 2.644s
+Nov 06 19:12:27 aliyun-lou bash[1288615]: OK
+Nov 06 19:12:27 aliyun-lou bash[1288615]: PASS A07 cleanup observer: failed state retained before cancellation; SQL counts zero; both original files and hashes unchanged; no provider
+Nov 06 19:12:32 aliyun-lou systemd[1]: smartdocs-m5-a07-offline-20261106.service: Deactivated successfully.
+Nov 06 19:12:32 aliyun-lou systemd[1]: smartdocs-m5-a07-offline-20261106.service: Consumed 6.793s CPU time.

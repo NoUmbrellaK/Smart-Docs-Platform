@@ -1,0 +1,23 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+install -m0644 docs/evidence/m5/a07-live-20261106/observe.py /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a07_observe.py
+chown nobody:nogroup /tmp/smartdocs-m5-a07-offline.MO6aHf
+chmod 0700 /tmp/smartdocs-m5-a07-offline.MO6aHf
+systemd-run --unit=smartdocs-m5-a07-offline-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -c 'import json,unittest
+from pathlib import Path
+from a07_observe import observe
+from m5_benchmark_capture_test import CaptureE2E
+from benchmark_review import read_private
+output=Path("/tmp/smartdocs-m5-a07-offline.MO6aHf/probe.json")
+with observe(output):
+ result=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([CaptureE2E("test_capture_archive_name_conflict_without_plan")]))
+assert result.wasSuccessful()
+probe=read_private(output)
+assert probe["state"]["state"]=="failed"
+assert probe["files_before"]==probe["files_after"]
+assert probe["counts"]=={"archive_plans":0,"archive_decisions":0}
+assert len(probe["downloads"])==2
+assert all(r["http"]==200 and r["expected_sha256"]==r["actual_sha256"] for r in probe["downloads"])
+assert probe["business_verdict"] is None
+print("PASS A07 cleanup observer: failed state retained before cancellation; SQL counts zero; both original files and hashes unchanged; no provider")'

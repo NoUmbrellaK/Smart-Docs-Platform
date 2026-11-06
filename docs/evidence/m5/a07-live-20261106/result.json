@@ -1,0 +1,150 @@
+{
+  "case_id": "A07",
+  "metadata": {
+    "code_revision": "863f3f5dec99a030207a57aa4468077321284db6",
+    "recorded_at": "2026-11-06T11:15:05.082933+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; repeated synthetic tests authorized; A07 first real attempt; unchanged product and collector baseline 863f3f5 plus test-only pre-cleanup SQL/file observer; only selected approved deployment@2 in task scope, collision@1 present but unselected; collision body checked locally against original serialized request bytes, no expected answers injected; <=6 calls x4096 output; no rerun, no archive confirmation or execution; zero hold, pre-cleanup evidence retained",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-a07-live.qpzTqu/A07"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "failed",
+    "error_code": "scope_changed",
+    "model_calls": 2,
+    "kind": null
+  },
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "output_token_limits": [
+    1280,
+    1280
+  ],
+  "usage": {
+    "prompt_tokens": 5447,
+    "completion_tokens": 424,
+    "total_tokens": 5871,
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 3143
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    1
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "7e78424b7c0688252fd6fb094719ad20",
+        "sequence": 1,
+        "started_at": "2026-11-06 11:15:08.424006",
+        "status": "success",
+        "task_id": "e94d01d63d2e8cf4c41f9ea4a98bdee3",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 8,
+        "parameters": {
+          "expected_revision": 0,
+          "item_count": 1,
+          "policy_revision": 1
+        },
+        "request_id": "821d281ab44d63168bb34060abb28430",
+        "sequence": 2,
+        "started_at": "2026-11-06 11:15:10.524710",
+        "status": "conflict",
+        "task_id": "e94d01d63d2e8cf4c41f9ea4a98bdee3",
+        "tool": "create_archive_plan"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "tools_by_name": {
+    "read_document_version": 1,
+    "create_archive_plan": 1
+  },
+  "wire_checks": [
+    {
+      "sequence": 1,
+      "request_bytes": 9034,
+      "sha256": "eb10d29c978e4c8630f5b98f9dc17f30692b168543bc61f08628ab8a0aa14f88",
+      "restricted_matches": 0,
+      "forwarded": true
+    },
+    {
+      "sequence": 2,
+      "request_bytes": 11072,
+      "sha256": "ce6beb7942c284b7799ef5bdf2e13406da8cccdbd655b2fbf540d74d2183dc19",
+      "restricted_matches": 0,
+      "forwarded": true
+    }
+  ],
+  "archive_checks": {
+    "state_before_cleanup": "failed",
+    "counts": {
+      "archive_plans": 0,
+      "archive_decisions": 0
+    },
+    "files_unchanged": true,
+    "downloads": [
+      {
+        "source": "deployment@2",
+        "file_id": "f943286619a5dcd3313faa63447b6e45",
+        "version_id": "3a0ec447170ef54b509890682e8ac5e0",
+        "http": 200,
+        "expected_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7",
+        "actual_sha256": "e4bac1c4ee39d146c04ec50e7111e40636e48edfad79c03305a1ad8932d9ced7"
+      },
+      {
+        "source": "collision@1",
+        "file_id": "033464eb6418e1e9145f1801efd570de",
+        "version_id": "c3c1c3f92645815cd00408958e9f9e18",
+        "http": 200,
+        "expected_sha256": "1aca8c18ee545dd3710c16ec31035ca9d96775bdbe9d801808065f4f12bf9ec5",
+        "actual_sha256": "1aca8c18ee545dd3710c16ec31035ca9d96775bdbe9d801808065f4f12bf9ec5"
+      }
+    ],
+    "download_hashes_unchanged": true,
+    "plan_present": false,
+    "plan_http_observations": [
+      404,
+      404
+    ],
+    "plan_state": null,
+    "targets": null
+  },
+  "review_summary": {
+    "case_id": "A07",
+    "category": "archive",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "f0277a7ef8a0b4dad9fdd633d294302dd6f82f34204e09ee9028acf89d879bd1"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "A07/initial/snapshot.json": "128bbdda136dc50344e48f300b3ebf125e3b6587de860a0b14b4f99904059ffe",
+    "A07/initial/audit.jsonl": "0e55f98b63f9b7dc11f4780bac741ea95515ca8213ddd884e345762bbb1990eb",
+    "A07/summary.json": "1fe619c4ce64b078e9a3fdd746d810a4eba9f3faa457b6c5c1581898e2df91d8",
+    "A07/review.json": "98d3716dff7b09218fed41c829e741f9165274ad26ab1551be6cbc9ded2a507e",
+    "wire.jsonl": "e20b29209805ee8f9c2450c826859da285d306ea44c91fa837b98ec866cd4c39",
+    "probe.json": "c721ad7cc7bbd30315d4749735f3575a32e564868c9bf7618ecaed97d836e5ee"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

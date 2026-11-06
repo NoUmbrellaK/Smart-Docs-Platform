@@ -9,10 +9,10 @@
   },
   "denominator": 30,
   "admission_observations": 3,
-  "model_tasks_not_run": 9,
-  "model_tasks_attempted": 18,
+  "model_tasks_not_run": 8,
+  "model_tasks_attempted": 19,
   "model_tasks_completed": 18,
-  "model_tasks_failed": 0,
+  "model_tasks_failed": 1,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
@@ -291,10 +291,26 @@
     {
       "case_id": "A07",
       "category": "archive",
-      "execution": "not_run",
+      "execution": "failed",
       "business_verdict": null,
-      "evidence": null,
-      "admission_http": null
+      "evidence": "a07-live-20261106/result.json",
+      "admission_http": 201,
+      "error_code": "scope_changed",
+      "provider_requests": 2,
+      "total_tokens": 5871,
+      "attempt_count": 1,
+      "cumulative_provider_requests": 2,
+      "cumulative_total_tokens": 5871,
+      "archive_rejection_branch_observed": true,
+      "attempts": [
+        {
+          "evidence": "a07-live-20261106/result.json",
+          "state": "failed",
+          "error_code": "scope_changed",
+          "provider_requests": 2,
+          "total_tokens": 5871
+        }
+      ]
     },
     {
       "case_id": "A08",

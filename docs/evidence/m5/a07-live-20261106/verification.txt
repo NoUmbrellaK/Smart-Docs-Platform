@@ -1,0 +1,2 @@
+PASS A07: 2 requests/5871 tokens; actual conflict, failed/scope_changed, zero plans/decisions, both files unchanged; human verdict blank
+PASS private/public hashes, 48 fingerprints, terminal service, ledger 33/119/607214/96
