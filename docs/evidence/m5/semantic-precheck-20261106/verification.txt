@@ -1,0 +1,20 @@
+MemAvailable before read-only checks (KiB): 1651696
+REJECTED in-memory negative control: missing_source
+REJECTED in-memory negative control: wrong_version
+REJECTED in-memory negative control: wrong_text
+REJECTED in-memory negative control: wrong_hash
+REJECTED in-memory negative control: missing_occurrence
+PASS:37 historical attempts/96 occurrences match hashed originals; all 30 tasks retained
+PASS:49 latest +47 superseded; 11 fixture versions; no deduplication or business acceptance
+PASS:JSON/Markdown regenerated identically; all human assessments blank; zero API calls
+PASS: S01 attempt 2 completed; 3 requests / 8977 tokens; final output 521 within 1024 cap
+PASS: all 2 citations match fixed original text/version/hash/lines; human verdicts remain blank
+PASS: both S01 attempts retained, 6 requests / 17965 tokens; original 30 unchanged
+PASS: latest citation sample 49+2=51, historical 96+2=98; no accuracy claim
+PASS: runtime fingerprints and resource terminal state; offline regression 126/126
+PASS:98 unique review rows/source labels; latest51 + superseded47; no omissions/deduplication
+PASS:table negative controls reject missing row, duplicate row and wrong fixture
+PASS:4 frozen evidence/ledger files unchanged from2cded35; hashes documented
+PASS:F01 saved-report/write-denial and F02 name-conflict/zero-read evidence checked
+AI precheck labels (NOT human verdicts/accuracy): {'D': 68, 'J': 24, 'R': 6}
+PASS:diff whitespace; no model calls, services, credentials or human-review edits

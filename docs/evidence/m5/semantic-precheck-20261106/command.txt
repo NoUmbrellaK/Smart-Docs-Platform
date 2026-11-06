@@ -1,0 +1,68 @@
+# Run from the linked worktree; only the verification transcript is written.
+python3 -B - <<'PY' > docs/evidence/m5/semantic-precheck-20261106/verification.txt
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+base = Path('docs/evidence/m5')
+here = base / 'semantic-precheck-20261106'
+available = int(re.search(r'MemAvailable:\s+(\d+)', Path('/proc/meminfo').read_text())[1])
+assert available >= 512 * 1024
+print('MemAvailable before read-only checks (KiB):', available, flush=True)
+for name in ('citation-review-20261106/check.py', 'query-budget-20261106/verify.py'):
+    subprocess.run([sys.executable, '-B', str(base / name)], check=True)
+
+packet = json.loads((base / 'citation-review-20261106/packet.json').read_text())
+s01 = json.loads((base / 'query-budget-20261106/result.json').read_text())
+text = (here / 'README.md').read_text()
+expected = [(c['id'], c['fixture']) for c in packet['citations']]
+for number, citation in enumerate(s01['citations'], 97):
+    source, = [s for s in s01['citation_sources'] if s['reference'] == citation['citation']]
+    expected.append((f'C{number:03d}', source['fixture']))
+
+def check_rows(document):
+    rows = re.findall(r'^\| (C\d{3}) \| ([^|]+) \| ([DJR]) \| ([^|]+) \|$', document, re.M)
+    assert [(row[0], row[1].strip()) for row in rows] == expected
+    assert all(row[3].strip() for row in rows)
+    assert len(rows) == len({row[0] for row in rows}) == 98
+    return rows
+
+rows = check_rows(text)
+line = next(line for line in text.splitlines() if line.startswith('| C001 |'))
+for altered in (text.replace(line, ''), text.replace(line, line + '\n' + line),
+                text.replace('| C001 | api@2 |', '| C001 | deployment@2 |')):
+    try:
+        check_rows(altered)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError('invalid table accepted')
+assert sum(c['latest'] for c in packet['citations']) + len(s01['citations']) == 51
+assert sum(not c['latest'] for c in packet['citations']) == 47
+for name in ('citation-review-20261106/packet.json', 'query-budget-20261106/result.json',
+             'fixed-task-results.json', 'supplemental-task-results.json'):
+    raw = (base / name).read_bytes()
+    assert raw == subprocess.check_output(['git', 'show', '2cded35:docs/evidence/m5/' + name])
+    assert hashlib.sha256(raw).hexdigest() in text
+
+h07 = json.loads((base / 'h07-live-20261106/result.json').read_text())
+h05 = json.loads((base / 'h05-semantics-20261106/result.json').read_text())
+h07_context = next(a for a in packet['attempts'] if a['id'] == 'H07-01')['report_context']
+assert '未执行任何写入' in h07_context['limitations']
+assert h07['backend_tool_calls']['items'][7]['tool'] == 'save_handover_report'
+assert h07['backend_tool_calls']['items'][7]['status'] == 'success'
+assert h07['run_result']['state'] == 'completed'
+assert h05['report_checks']['content_read_calls'] == 0
+assert '三份部署类文件存在命名冲突' in h05['report_checks']['summary']
+assert '无法判断内容是否充分、是否存在冲突' in h05['report_checks']['limitations']
+print('PASS:98 unique review rows/source labels; latest51 + superseded47; no omissions/deduplication')
+print('PASS:table negative controls reject missing row, duplicate row and wrong fixture')
+print('PASS:4 frozen evidence/ledger files unchanged from2cded35; hashes documented')
+print('PASS:F01 saved-report/write-denial and F02 name-conflict/zero-read evidence checked')
+print('AI precheck labels (NOT human verdicts/accuracy):', {key: sum(r[2] == key for r in rows) for key in 'DJR'})
+subprocess.run(['git', 'diff', '--check'], check=True)
+print('PASS:diff whitespace; no model calls, services, credentials or human-review edits')
+PY

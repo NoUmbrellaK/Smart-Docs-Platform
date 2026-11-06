@@ -1,0 +1,8 @@
+2026-11-06 initial sandboxed verification, bash command.txt:
+MemAvailable before read-only checks (KiB): 1646544
+Failure occurred in citation-review-20261106/check.py -> collect.collect() -> private_json() -> path.lstat().
+PermissionError: [Errno 13] Permission denied: '/tmp/smartdocs-m5-q01-live.9xrdwh/Q01/initial/snapshot.json'
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '-B', 'docs/evidence/m5/citation-review-20261106/check.py']' returned non-zero exit status 1.
+This is a recorded excerpt of the tool stderr, not a successful integrity or semantic check.
+No file permissions, private artifacts, product code or human verdicts were changed.
+The observation shell also ran sed/git status afterward and returned 0; that outer status is NOT counted as verification success.
