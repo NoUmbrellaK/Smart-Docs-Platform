@@ -130,6 +130,52 @@ class HandoverReportE2E(HandoverContextE2E):
         self.assertEqual(actor.request('PUT',url,body).status,409)
         self.assertEqual(self.report_count(task),0)
 
+    def test_report_rejection_audit_classifies_without_content_or_permission_leak(self):
+        _,task,path,body,actor=self.prepared_report(reader=True); url=path+'/handover-report'
+        cases=[
+            (('operation_id',), 'PRIVATE-OPERATION', 'operation', 'invalid_request'),
+            (('report','summary'), '文'*2667, 'text_limit', 'invalid_request'),
+            (('report','items',0,'notes'), '文'*667, 'text_limit', 'invalid_request'),
+            (('report','limitations'), 'PRIVATE-TEXT\x01', 'text_value', 'invalid_request'),
+            (('report','recommendations'), ' \t\r\n', 'text_value', 'invalid_request'),
+            (('report','summary'), 123, 'text_value', 'invalid_request'),
+            (('report','items'), [], 'item_count', 'invalid_request'),
+            (('report','items',0,'key'), 'private_key', 'item_key', 'invalid_request'),
+            (('report','items',0,'status'), 'PRIVATE-STATUS', 'item_status', 'invalid_request'),
+            (('report','items',0,'citations'), [], 'citation_status', 'invalid_request'),
+            (('report','items',0,'citations'), body['report']['items'][0]['citations']*11, 'citation_count', 'invalid_request'),
+            (('report','items',0,'citations'), body['report']['items'][0]['citations']*2, 'citation_duplicate', 'invalid_source'),
+            (('report','items',0,'citations',0,'chunk_id'), '0'*64, 'citation_source', 'invalid_source'),
+            (('report','private_extra'), 'PRIVATE-FIELD', 'shape', 'invalid_request')]
+        for keys,value,reason,code in cases:
+            with self.subTest(reason=reason,field=keys):
+                bad=copy.deepcopy(body); target=bad
+                for key in keys[:-1]: target=target[key]
+                target[keys[-1]]=value
+                response=actor.request('PUT',url,bad)
+                self.assertEqual(response.status,400)
+                self.assertEqual(response.json()['error']['code'],code)
+                self.assertEqual(set(response.json()['error']),{'code','message','retryable'})
+                self.assertEqual(response.json()['error']['message'],
+                    'request body contains missing or unknown fields' if reason=='shape' else
+                    'report citation is invalid' if code=='invalid_source' else 'report is invalid')
+                self.assertEqual(self.report_count(task),0)
+                self.assertEqual(data(actor.request('GET',path))['state'],'running')
+                audit=data(actor.request('GET',path+'/tool-calls'))['items'][-1]
+                self.assertEqual(audit['status'],'invalid_request')
+                self.assertEqual(audit['parameters'].get('rejection_reason'),reason)
+                self.assertLessEqual(set(audit['parameters']),{'item_count','rejection_reason'})
+                self.assertNotIn('PRIVATE',json.dumps(audit)+response.body.decode())
+                self.assertNotIn('private_key',json.dumps(audit)+response.body.decode())
+        # A project admin still cannot inspect another user's private task or create an audit entry.
+        before=data(actor.request('GET',path+'/tool-calls'))['items']
+        self.assertEqual(self.user.request('GET',path+'/tool-calls').status,404)
+        self.assertEqual(self.user.request('PUT',url,body).status,404)
+        self.assertEqual(data(actor.request('GET',path+'/tool-calls'))['items'],before)
+        data(actor.request('PUT',url,body))
+        self.assertEqual(self.report_count(task),1)
+        self.assertNotIn('rejection_reason',data(actor.request('GET',path+'/tool-calls'))['items'][-1]['parameters'])
+
     def test_report_audit_failure_rolls_back_report_and_task_then_retry_succeeds(self):
         _,task,path,body,actor=self.prepared_report(); url=path+'/handover-report'
         self.sql("CREATE TRIGGER report_audit_failure BEFORE INSERT ON audit_records FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='test fault'")

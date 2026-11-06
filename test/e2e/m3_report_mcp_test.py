@@ -42,7 +42,10 @@ class ReportMcpE2E(HandoverReportE2E):
             if len(turns)==1:
                 calls=[tool('search_documents',{'mode':'metadata','query':'not-existing-unique-phrase'},'search')]
             elif len(turns)==2:
-                self.assertEqual(json.loads(messages[-1]['content'])['data']['items'],[])
+                # Runtime coverage is a trailing system message, not the tool result.
+                search=next(m for m in messages if m['role']=='tool' and m['tool_call_id']=='search')
+                self.assertEqual(json.loads(search['content'])['data']['items'],[])
+                self.assertEqual(json.loads(messages[-1]['content'])['runtime_read_coverage']['content_read_chunks'],[])
                 calls=[tool('read_document_version',{**create['versions'][0],'range':{}},'read'),
                        tool('read_document_version',create['versions'][1],'meta')]
             else:

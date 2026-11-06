@@ -24,7 +24,7 @@ public:
     std::string BeginToolCall(const SessionContext&, const std::string& project, const std::string& task,
         const std::string& tool, const nlohmann::json& body);
     void FinishToolCall(const std::string& request_id, const std::string& status, uint64_t duration_ms,
-        const nlohmann::json& data);
+        const nlohmann::json& data, const std::string& report_rejection="");
     nlohmann::json ToolCalls(const SessionContext&, const std::string& project, const std::string& task);
     nlohmann::json SaveArchivePlan(const SessionContext&, const std::string& project, const std::string& task,
         const nlohmann::json& body, const std::string& request_id);

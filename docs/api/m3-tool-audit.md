@@ -36,6 +36,24 @@ busy、timeout、dependency_failed、waiting_confirmation和unknown。waiting_co
 写摘要仅允许item_count及有效非负整数revision/expected_revision/policy_revision；
 不保存原查询、正文、文件名、文件ID、归档理由、operation_id、响应片段、密钥、Cookie或模型思维过程。
 写工具不写来源回执source_json/model_call，不能成为模型引用来源；原读工具来源台账不变。
+
+报告校验拒绝后，`save_handover_report` 的parameters可额外包含 `rejection_reason`，
+由C++实际失败分支产生，和状态/耗时一次更新，只接受以下固定分类：
+
+| 分类 | 含义 |
+| --- | --- |
+| shape / operation | 报告对象缺失或多余字段 / 操作ID格式不符 |
+| text_value / text_limit | 文本类型、空白或控制字符不合规 / UTF-8字节超限 |
+| item_count / item_key / item_status | 清单数量不符 / 键不匹配或重复 / 状态非法 |
+| citation_count / citation_status | 引用数组类型或数量不符 / 状态与引用有无矛盾 |
+| citation_source / citation_duplicate | 引用未准入或无法定位 / 单项内重复引用 |
+
+该字段不含实际key、ID、正文、字段值或长度；不包含多个错误的完整扫描结果。
+只有报告400校验拒绝可记录，正常保存、权限拒绝、409版本/幂等冲突和其他工具不附带分类。
+HTTP错误的状态/码/消息不变，分类不进入MCP返回或模型上下文；目前用于受保护的本地诊断，
+不声称模型已能据此纠正参数。审计更新失败仍返回未知结果，不伪造分类或自动重写。
+旧轨迹不回填；缺失不等于校验通过。JSON参数列复用schema16，无迁移或新增权限路径。
+
 没有接受客户端上传/修改轨迹的路由，不能通过POST伪造工具成功；允许范围内的
 实际HTTP调用仍会被记录，记录不是对调用方一定来自模型的证明。
 

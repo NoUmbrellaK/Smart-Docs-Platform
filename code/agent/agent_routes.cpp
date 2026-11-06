@@ -1,4 +1,5 @@
 #include "agent_tasks.h"
+#include "report_rejection.h"
 #include "auth/auth_routes.h"
 #include "core/app_error.h"
 #include "core/id.h"
@@ -35,12 +36,12 @@ HttpResponse AuditedTool(AgentTaskService& tasks,const SessionContext& session,c
             {"message","tool outcome is unknown; check the persisted result before any new action"},
             {"retryable",false}}}},false,{{"Cache-Control","no-store"}});
     };
-    const auto respond=[&](const std::string& status,int http,nlohmann::json payload) {
+    const auto respond=[&](const std::string& status,int http,nlohmann::json payload,const std::string& rejection="") {
         try {
             // Only read-tool responses can become model source receipts; write outcomes never do.
             tasks.FinishToolCall(request,status,static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::steady_clock::now()-started).count()),
-                reading ? payload.value("data",nlohmann::json(nullptr)) : nlohmann::json(nullptr));
+                reading ? payload.value("data",nlohmann::json(nullptr)) : nlohmann::json(nullptr),rejection);
         } catch(...) {
             return unknown();
         }
@@ -52,8 +53,10 @@ HttpResponse AuditedTool(AgentTaskService& tasks,const SessionContext& session,c
     catch(const AppError& error) {
         // A connection error may follow a successful COMMIT. Do not certify rollback or invite replay.
         if(!reading && error.http_status>=500) return unknown();
+        const auto* report=dynamic_cast<const ReportRejection*>(&error);
         return respond(ToolError(error.http_status),error.http_status,
-            {{"error",{{"code",error.code},{"message",error.message},{"retryable",error.retryable}}}});
+            {{"error",{{"code",error.code},{"message",error.message},{"retryable",error.retryable}}}},
+            report && tool=="save_handover_report" && error.http_status==400 ? report->reason : "");
     } catch(...) {
         if(!reading) return unknown();
         return respond("dependency_failed",500,{{"error",{{"code","internal_error"},

@@ -1,4 +1,5 @@
 #include "agent_tasks.h"
+#include "report_rejection.h"
 #include "core/app_error.h"
 #include "core/id.h"
 #include "db/mysql.h"
@@ -12,14 +13,19 @@
 
 namespace {
 using Json=nlohmann::json;
-[[noreturn]] void Invalid() { throw AppError(400,"invalid_request","report is invalid"); }
-[[noreturn]] void SourceInvalid() { throw AppError(400,"invalid_source","report citation is invalid"); }
+[[noreturn]] void Invalid(const char* reason) { throw ReportRejection(AppError(400,"invalid_request","report is invalid"),reason); }
+[[noreturn]] void SourceInvalid(const char* reason="citation_source") { throw ReportRejection(AppError(400,"invalid_source","report citation is invalid"),reason); }
 [[noreturn]] void Conflict() { throw AppError(409,"report_conflict","report operation differs or is unavailable"); }
+void Exact(const Json& value,std::initializer_list<const char*> fields) {
+    try { RequireExactObject(value,fields); }
+    catch(const AppError& error) { throw ReportRejection(error,"shape"); }
+}
 void Text(const Json& value,size_t maximum) {
-    if(!value.is_string()) Invalid();
+    if(!value.is_string()) Invalid("text_value");
     const auto& text=value.get_ref<const std::string&>();
-    if(text.size()>maximum || text.find_first_not_of(" \t\r\n")==std::string::npos ||
-       std::any_of(text.begin(),text.end(),[](unsigned char c){return (c<32 && c!=9 && c!=10 && c!=13) || c==127;})) Invalid();
+    if(text.size()>maximum) Invalid("text_limit");
+    if(text.find_first_not_of(" \t\r\n")==std::string::npos ||
+       std::any_of(text.begin(),text.end(),[](unsigned char c){return (c<32 && c!=9 && c!=10 && c!=13) || c==127;})) Invalid("text_value");
 }
 std::string Url(const std::string& project,const std::string& task) {
     return "/api/v1/projects/"+project+"/agent-tasks/"+task+"/handover-report";
@@ -39,7 +45,7 @@ Json Sources(MySqlConnection& db,const std::string& task) {
     return result;
 }
 Json Citation(MySqlConnection& db,const std::string& project,const Json& ref) {
-    RequireExactObject(ref,{"file_id","version_id","chunk_id"});
+    Exact(ref,{"file_id","version_id","chunk_id"});
     for(const char* key:{"file_id","version_id","chunk_id"})
         if(!ref[key].is_string()) SourceInvalid();
     const auto file=ref["file_id"].get<std::string>(),version=ref["version_id"].get<std::string>(),chunk=ref["chunk_id"].get<std::string>();
@@ -54,26 +60,29 @@ Json Citation(MySqlConnection& db,const std::string& project,const Json& ref) {
     return result;
 }
 Json ValidateReport(MySqlConnection& db,const std::string& project,const Json& input,const Json& checklist,const Json& sources) {
-    RequireExactObject(input,{"summary","limitations","recommendations","items"});
+    Exact(input,{"summary","limitations","recommendations","items"});
     Text(input["summary"],8000); Text(input["limitations"],4000); Text(input["recommendations"],4000);
-    if(!input["items"].is_array() || input["items"].size()!=checklist["items"].size()) Invalid();
+    if(!input["items"].is_array() || input["items"].size()!=checklist["items"].size()) Invalid("item_count");
     std::map<std::string,Json> expected;
     for(const auto& item:checklist["items"]) expected.emplace(item["key"].get<std::string>(),item);
     std::set<std::string> allowed;
     for(const auto& ref:sources["citations"]) allowed.insert(ref.dump());
     size_t count=0; Json result=input;
     for(auto& item:result["items"]) {
-        RequireExactObject(item,{"key","status","notes","citations"});
-        if(!item["key"].is_string() || !item["status"].is_string() || !item["citations"].is_array() || item["citations"].size()>10) Invalid();
+        Exact(item,{"key","status","notes","citations"});
+        if(!item["key"].is_string()) Invalid("item_key");
+        if(!item["status"].is_string()) Invalid("item_status");
+        if(!item["citations"].is_array() || item["citations"].size()>10) Invalid("citation_count");
         const auto found=expected.find(item["key"].get<std::string>());
-        if(found==expected.end()) Invalid();
+        if(found==expected.end()) Invalid("item_key");
         const auto status=item["status"].get<std::string>();
-        if((status!="found" && status!="missing" && status!="uncertain") ||
-            (status=="found" && item["citations"].empty()) || (status=="missing" && !item["citations"].empty())) Invalid();
-        Text(item["notes"],2000); count+=item["citations"].size(); if(count>100) Invalid();
+        if(status!="found" && status!="missing" && status!="uncertain") Invalid("item_status");
+        if((status=="found" && item["citations"].empty()) || (status=="missing" && !item["citations"].empty())) Invalid("citation_status");
+        Text(item["notes"],2000); count+=item["citations"].size(); if(count>100) Invalid("citation_count");
         std::set<std::string> seen;
         for(auto& ref:item["citations"]) {
-            if(!allowed.count(ref.dump()) || !seen.insert(ref.dump()).second) SourceInvalid();
+            if(!allowed.count(ref.dump())) SourceInvalid();
+            if(!seen.insert(ref.dump()).second) SourceInvalid("citation_duplicate");
             ref=Citation(db,project,ref);
         }
         item["title"]=found->second["title"]; item["required"]=found->second["required"]; expected.erase(found);
@@ -114,10 +123,10 @@ nlohmann::json ReadHandoverReport(MySqlConnection& db,const std::string& project
 }
 nlohmann::json AgentTaskService::SaveHandoverReport(const SessionContext& session,const std::string& project,
     const std::string& task,const Json& body,const std::string& request_id) {
-    RequireExactObject(body,{"operation_id","report"});
-    if(!body["operation_id"].is_string()) Invalid();
+    Exact(body,{"operation_id","report"});
+    if(!body["operation_id"].is_string()) Invalid("operation");
     const auto operation=body["operation_id"].get<std::string>();
-    if(operation.size()!=32 || operation.find_first_not_of("0123456789abcdef")!=std::string::npos) Invalid();
+    if(operation.size()!=32 || operation.find_first_not_of("0123456789abcdef")!=std::string::npos) Invalid("operation");
     auto db=pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db,session.user_id,project,Role::Reader);
     const auto state=LockArchiveTask(db,session,project,task);

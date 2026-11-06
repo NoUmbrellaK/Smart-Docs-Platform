@@ -437,11 +437,19 @@ std::string AgentTaskService::BeginToolCall(const SessionContext& session,const 
     transaction.Commit(); return request;
 }
 
-void AgentTaskService::FinishToolCall(const std::string& request,const std::string& status,uint64_t duration,const Json& data) {
+void AgentTaskService::FinishToolCall(const std::string& request,const std::string& status,uint64_t duration,const Json& data,
+    const std::string& report_rejection) {
+    static const std::set<std::string> reasons={"shape","operation","text_value","text_limit","item_count",
+        "item_key","item_status","citation_count","citation_status","citation_source","citation_duplicate"};
+    if(!report_rejection.empty() && (status!="invalid_request" || !data.is_null() || !reasons.count(report_rejection)))
+        throw AppError(503,"agent_unavailable","tool outcome could not be recorded");
     const auto sources=data.is_null() ? SqlValue::Null() : SqlValue(ExtractToolSources(data).dump());
     auto db=pool_.Acquire();
-    if(db.Execute("UPDATE agent_tool_calls SET status=?,duration_ms=?,source_json=? WHERE request_id=? AND status='unknown'",
-        {SqlValue(status),SqlValue(duration),sources,SqlValue(request)})!=1)
+    if(db.Execute("UPDATE agent_tool_calls SET status=?,duration_ms=?,source_json=?,"
+        "parameters=IF(?='',parameters,JSON_SET(parameters,'$.rejection_reason',?)) "
+        "WHERE request_id=? AND status='unknown' AND (?='' OR tool='save_handover_report')",
+        {SqlValue(status),SqlValue(duration),sources,SqlValue(report_rejection),SqlValue(report_rejection),
+         SqlValue(request),SqlValue(report_rejection)})!=1)
         throw AppError(503,"agent_unavailable","tool outcome could not be recorded");
 }
 
