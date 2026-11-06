@@ -1,0 +1,11 @@
+set -e
+cd /root/Smart-Docs-Platform/.worktrees/m1-file-business
+cmp python/smartdocs/agent_runner.py /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/agent_runner.py
+cmp python/smartdocs/audit_summary.py /tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py
+cmp test/mcp/test_agent_runner.py /tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py
+cmp test/mcp/test_audit_summary.py /tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+systemd-run --unit=smartdocs-m5-batch-feedback-reviewed-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p 'test_*.py' -v
+# Reproduction requires an equivalently synchronized runtime and the documented capped slice.
+# Choose a new unit name for a new run; this is the final regression invocation, not a live API test.

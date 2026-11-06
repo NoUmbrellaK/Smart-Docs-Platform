@@ -1,6 +1,6 @@
 """Bounded read/report/archive-proposal execution with an authenticated MCP session and model transport.
 
-No key loading, public endpoint, model retry, shell tools, or third-party tracing.
+No key loading, public endpoint, transport retry, shell tools, or third-party tracing.
 """
 import asyncio
 import http.client
@@ -255,6 +255,7 @@ async def run_task(context, client, model, *, audit=None):
     report_operation = None
     output_tokens = 1024
     model_sequence=0
+    batch_rejection_sequence=0
     response=None
     validation_stage='internal_error'
 
@@ -352,6 +353,16 @@ async def run_task(context, client, model, *, audit=None):
                         'Read relevant unchecked candidates while budgets permit, reserving a response and tool call '
                         'to save; otherwise state the unread limitation honestly. This grants no permissions.'}
                 model_messages = [*messages, {'role':'system','content':encoded(notice).decode('utf-8')}]
+            if batch_rejection_sequence and batch_rejection_sequence == model_sequence:
+                # One correction within the existing budget; never replay rejected model text/calls.
+                notice = {'runtime_batch_rejection':{'dispatched':0,'max_calls_per_response':4,
+                                                     'corrections_remaining':0},
+                    'instruction':'The previous response exceeded the tool-call batch limit and was discarded. '
+                        'None of its calls executed. Choose a new batch of at most 4 independent calls '
+                        'using evidence already received; wait for results before dependent calls. '
+                        'Call a saving tool alone. Existing budgets and permissions are unchanged; '
+                        'reserve the final response for completion and state any limitations honestly.'}
+                model_messages = [*model_messages, {'role':'system','content':encoded(notice).decode('utf-8')}]
             size = len(encoded({"messages":model_messages, "tools":tools}))
             if size > 65536 or sent_bytes + size > 524288: raise RunError("budget_exhausted")
             await bounded(backend.request("check", {"tool_request_ids":sorted(receipts), **check_context}), 15)
@@ -398,6 +409,13 @@ async def run_task(context, client, model, *, audit=None):
                 completion_body = {"status":"completed", "result":result, "error_code":None}
                 return await bounded(backend.request("finish", completion_body), 15)
             validation_stage='tool_batch'
+            if (choice.get('finish_reason') == 'tool_calls' and isinstance(calls,list)
+                    and len(calls) > 4 and not batch_rejection_sequence):
+                if audit is not None:
+                    try: audit({'event':'model_batch_rejection','sequence':model_sequence,'tool_call_count':5})
+                    except (OSError,ValueError): raise RunError('dependency_failed') from None
+                batch_rejection_sequence=model_sequence
+                continue  # Reject the whole batch before IDs, tool budgets, history or dispatch change.
             if choice.get("finish_reason") != "tool_calls" or not isinstance(calls, list) or not 1 <= len(calls) <= 4:
                 raise RunError("model_invalid")
             normalized = []

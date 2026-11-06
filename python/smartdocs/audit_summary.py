@@ -67,6 +67,7 @@ def summarize(path):
         models, tools, request_ids = {}, {}, set()
         outcome = None
         rejection = None
+        batch_rejection = None
         tool_rejections = []
         for index, event in enumerate(records):
             if (not isinstance(event, dict) or event.get('task_id') != task or outcome is not None):
@@ -75,12 +76,31 @@ def summarize(path):
             kind = event.get('event')
             if index == 0:
                 continue
+            correction = models.get(batch_rejection['sequence']+1,{}).get('result') if batch_rejection else None
             if kind == 'task_outcome':
                 outcome = safe_outcome(event)
-                if rejection is not None and outcome['state'] not in {'failed','unknown','cancelled','interrupted'}:
+                correction_incomplete = batch_rejection is not None and (correction is None or correction['reason']!='success')
+                if (rejection is not None or correction_incomplete) and outcome['state'] not in {'failed','unknown','cancelled','interrupted'}:
                     raise ValueError('invalid audit')
                 continue
             if rejection is not None: raise ValueError('invalid audit')
+            if batch_rejection is not None:
+                if correction is None:
+                    expected = 'model_attempt' if batch_rejection['sequence']==len(models) else 'model_result'
+                    if kind != expected: raise ValueError('invalid audit')
+                elif correction['reason']!='success' and kind!='model_rejection': raise ValueError('invalid audit')
+            if kind == 'model_batch_rejection':
+                if set(event)!={'event','task_id','time_unix_ms','sequence','tool_call_count'}:
+                    raise ValueError('invalid audit')
+                sequence=integer(event['sequence'],8,1)
+                integer(event['tool_call_count'],5,5)  # Capped: at least five, never an exact raw count.
+                if (batch_rejection is not None or sequence!=len(models)
+                        or records[index-1].get('event')!='model_result'
+                        or models[sequence]['result'] is None
+                        or models[sequence]['result']['reason']!='success'):
+                    raise ValueError('invalid audit')
+                batch_rejection={'sequence':sequence,'tool_call_count':5}
+                continue
             if kind == 'tool_rejection':
                 fields = {'sequence', 'call_index', 'tool', 'reason', 'schema_path'}
                 if set(event) != fields | {'event','task_id','time_unix_ms'}: raise ValueError('invalid audit')
@@ -177,6 +197,7 @@ def summarize(path):
             'model': {**model_counts, 'usage_known_calls': len(known), 'usage_unknown_calls': unknown,
                       'usage_observed': observed, 'usage_total': observed if complete and not unknown else None},
             'tools': tool_counts, 'model_rejection': rejection, 'tool_rejections': tool_rejections,
+            **({'model_batch_rejection':batch_rejection} if batch_rejection is not None else {}),
             'cost_estimate': None, 'business_acceptance': 'not_evaluated'}
     except (OSError, ValueError, TypeError, KeyError, RecursionError):
         raise ValueError('audit unavailable or invalid') from None

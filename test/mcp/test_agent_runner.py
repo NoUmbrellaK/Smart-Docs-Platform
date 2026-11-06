@@ -186,16 +186,130 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(len(diagnostics),1,'validation rejection missing from private trace')
                     diagnostic=diagnostics[0]
                     self.assertEqual((diagnostic['sequence'],diagnostic['stage'],diagnostic['finish_reason']),
-                                     (1,stage,finish))
+                                     (2 if index==8 else 1,stage,finish))
                     self.assertEqual(diagnostic['content_kind'],'null' if index>=6 else 'other' if index==5 else 'string')
                     self.assertEqual(diagnostic['tool_call_count'],5 if index==8 else 1 if index>=6 else None)
                     value=summarize(path)
                     self.assertTrue(value['trace_complete'])
                     self.assertEqual(value['model_rejection']['stage'],stage)
-                    self.assertEqual(value['model']['attempts'],1)
+                    self.assertEqual(value['model']['attempts'],2 if index==8 else 1)
                     self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value))
                     self.assertIsNone(self.result)
         self.assertFalse(any('/tools/' in path for path,_ in self.requests))
+
+    async def test_oversized_batch_is_discarded_then_replanned_within_original_budget(self):
+        # Dispatching any rejected call, replaying its text, or bypassing accounting must fail.
+        import tempfile
+        from pathlib import Path
+        import httpx
+        from smartdocs.agent_cli import run_session
+        from smartdocs.deepseek import DeepSeekModel, open_audit
+        from smartdocs.audit_summary import summarize
+        arguments=self.report_fixture(); wire=[]
+        read=call('read_document_version',{'file_id':FILE,'version_id':VERSION,'range':{'offset':0,'limit':1}},'read')
+        rejected=[read,call('save_handover_report',arguments,'save'),
+                  call('PRIVATE-TOOL',{'PRIVATE':'ARGUMENT'},'private'),call(ident='four'),call(ident='five')]
+        responses=iter([reply(calls=[call()]),reply('PRIVATE-CONTENT',calls=rejected),
+                        reply(calls=[read]),reply(calls=[call('save_handover_report',arguments,'save')])])
+        def receive(request):
+            wire.append(json.loads(request.content))
+            return httpx.Response(200,stream=httpx.ByteStream(json.dumps(next(responses)).encode()))
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'trace.jsonl'
+            with open_audit(path,TASK) as audit:
+                audit({'event':'task_start'})
+                model=DeepSeekModel('PRIVATE-KEY',audit,max_calls=4,transport=httpx.MockTransport(receive))
+                async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                    outcome=await run_session(self.context,client,model,audit)
+                audit({'event':'task_outcome',**outcome})
+            self.assertEqual((outcome.get('state'),outcome.get('kind')),('completed','handover_report'))
+            value=summarize(path)
+            self.assertTrue(value['trace_complete'])
+            self.assertIsNone(value['model_rejection'])
+            self.assertEqual(value['model_batch_rejection'],{'sequence':2,'tool_call_count':5})
+            self.assertEqual(value['model']['usage_total'],{'prompt_tokens':80,'completion_tokens':40,'total_tokens':120})
+            self.assertEqual({k:v['attempts'] for k,v in value['tools'].items()},
+                             {'search_documents':1,'read_document_version':1,'save_handover_report':1})
+            self.assertNotIn('PRIVATE',path.read_text()+json.dumps(value)+json.dumps(wire))
+        self.assertEqual(len(wire),4)
+        self.assertEqual([json.loads(w['messages'][-1]['content'])['runtime_budget']
+                          ['model_requests_remaining_including_this'] for w in wire],[4,3,2,1])
+        for index,w in enumerate(wire):
+            notices=[json.loads(m['content']) for m in w['messages']
+                     if m['role']=='system' and '"runtime_batch_rejection"' in m['content']]
+            self.assertEqual(len(notices),1 if index==2 else 0)
+            if notices: self.assertEqual(notices[0]['runtime_batch_rejection'],
+                                        {'dispatched':0,'max_calls_per_response':4,'corrections_remaining':0})
+        self.assertEqual(sum('/tools/read' in p for p,_ in self.requests),1)
+        self.assertEqual(sum(p.endswith('/handover-report') for p,_ in self.requests),1)
+        checks=[body for p,body in self.requests if p.endswith('/run/check')]
+        self.assertEqual(len(checks),4)
+        self.assertTrue(checks[1]['tool_request_ids'])
+        self.assertEqual(checks[1],checks[2])  # Previously delivered evidence revalidated on correction.
+
+    async def test_oversized_batch_correction_respects_revocation_audit_and_provider_limits(self):
+        import httpx
+        from smartdocs.deepseek import DeepSeekModel
+        for mode,expected in [('revoked','scope_changed'),('audit_failed','dependency_failed'),
+                              ('provider_limit','budget_exhausted'),('repeated','model_invalid')]:
+            with self.subTest(mode=mode):
+                self.denied=False; self.requests=[]; wire=[]; events=[]
+                def audit(event):
+                    events.append(event)
+                    if mode=='audit_failed' and event['event']=='model_batch_rejection': raise OSError('PRIVATE')
+                def receive(request):
+                    wire.append(json.loads(request.content))
+                    if mode=='revoked': self.denied=True
+                    response=reply(calls=[call(ident=str(i)) for i in range(6)])
+                    return httpx.Response(200,stream=httpx.ByteStream(json.dumps(response).encode()))
+                model=DeepSeekModel('PRIVATE-KEY',audit,max_calls=1 if mode=='provider_limit' else 4,
+                                    transport=httpx.MockTransport(receive))
+                async with create_connected_server_and_client_session(create_server(self.context)) as client:
+                    outcome=await self.agent.run_task(self.context,client,model,audit=audit)
+                self.assertEqual(outcome,{'state':'failed','error_code':expected})
+                self.assertEqual(len(wire),2 if mode=='repeated' else 1)
+                self.assertEqual(sum(e['event']=='model_batch_rejection' for e in events),1)
+                self.assertFalse(any('/tools/' in p or p.endswith('/handover-report') for p,_ in self.requests))
+
+    async def test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate(self):
+        for mode in ('tool_budget','mixed_write'):
+            with self.subTest(mode=mode):
+                arguments=self.report_fixture(); self.requests=[]; sent=[]
+                oversized=reply(calls=[call(ident=str(i)) for i in range(5)])
+                responses=iter(([reply(calls=[call(ident=f'{r}_{i}') for i in range(4)]) for r in range(3)]
+                                +[oversized,reply(calls=[call(ident='last')])]) if mode=='tool_budget' else
+                               [oversized,reply(calls=[call('save_handover_report',arguments,'save'),call()])])
+                async def model(**kwargs):
+                    sent.append(copy.deepcopy(kwargs)); return next(responses)
+                outcome=await self.run_model(model)
+                self.assertEqual(outcome.get('error_code'),'budget_exhausted' if mode=='tool_budget' else 'model_invalid')
+                self.assertEqual(sum('/tools/' in p for p,_ in self.requests),12 if mode=='tool_budget' else 0)
+                self.assertFalse(any(p.endswith('/handover-report') for p,_ in self.requests))
+                self.assertEqual(len(sent),5 if mode=='tool_budget' else 2)
+
+    async def test_oversized_batch_feedback_counts_toward_request_bytes(self):
+        # Excluding the ephemeral correction from the byte gate would send a forbidden third request.
+        arguments=self.report_fixture(); captured=[]
+        async def model(messages,tools,**kwargs):
+            captured.append({'messages':copy.deepcopy(messages),'tools':copy.deepcopy(tools)})
+            if len(captured)==1:
+                return reply(calls=[call('read_document_version',{'file_id':FILE,'version_id':VERSION,'range':{}})])
+            if len(captured)==2: return reply(calls=[call(ident=str(i)) for i in range(5)])
+            return reply(calls=[call('save_handover_report',arguments,'save')])
+        self.assertEqual((await self.run_model(model)).get('kind'),'handover_report')
+        sample=captured[2]
+        plain=[m for m in sample['messages'] if not (m['role']=='system' and '"runtime_batch_rejection"' in m['content'])]
+        plain_size=len(json.dumps({'messages':plain,'tools':sample['tools']},ensure_ascii=False,allow_nan=False).encode())
+        padding=65536-plain_size-128
+        self.assertGreater(padding,0)
+        self.assertGreater(len(json.dumps(sample,ensure_ascii=False,allow_nan=False).encode())+padding,65536)
+        self.read_results=[(200,{'parse_state':'completed','chunks':[
+            {**CITATION,'text':'Public deployment: run documented checks.'+'x'*padding}]})]
+        captured.clear(); self.requests.clear()
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome,{'state':'failed','error_code':'budget_exhausted'})
+        self.assertEqual(len(captured),2)
+        self.assertFalse(any(p.endswith('/handover-report') for p,_ in self.requests))
 
     async def test_fourth_response_rejection_keeps_prior_tools_and_usage_without_replay(self):
         import tempfile

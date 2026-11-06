@@ -112,6 +112,38 @@ class AuditSummaryTests(unittest.TestCase):
         self.write(events())
         self.assertIsNone(self.summary.summarize(self.path)['model_rejection'])
 
+    def test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch(self):
+        diagnostic={'event':'model_batch_rejection','sequence':1,'tool_call_count':5}
+        next_model=[{**e,'sequence':2,'request_id':'c'*32} for e in events()[1:3]]
+        records=events()[:3]+[diagnostic]+next_model+events()[3:]
+        self.write(records)
+        try: value=self.summary.summarize(self.path)
+        except ValueError: self.fail('bounded batch correction audit unsupported')
+        self.assertEqual(value['model_batch_rejection'],{'sequence':1,'tool_call_count':5})
+        self.assertTrue(value['trace_complete'])
+        self.assertEqual(value['model']['usage_total']['total_tokens'],60)
+        self.assertIsNone(value['model_rejection'])
+        for update in ({'sequence':2},{'tool_call_count':4},{'tool_call_count':6},
+                       {'tool_call_count':True},{'content':'PRIVATE'}):
+            changed=copy.deepcopy(records); changed[3].update(update); self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        for changed in (records[:4]+events()[3:], records[:4]+[diagnostic]+records[4:],
+                        records[:6]+[{**diagnostic,'sequence':2}]+records[6:],
+                        records[:2]+[diagnostic]+records[2:],
+                        records[:4]+records[-1:],
+                        records[:5]+records[6:],
+                        records[:5]+[{**records[5],'reason':'timeout'}]+records[6:],
+                        records[:5]+[records[-1]],
+                        records[:5]+[{**records[5],'reason':'timeout'},records[-1]]):
+            self.write(changed)
+            with self.assertRaises(ValueError): self.summary.summarize(self.path)
+        self.write(records[:4]+[{'event':'task_outcome','state':'failed','error_code':'budget_exhausted'}])
+        self.assertTrue(self.summary.summarize(self.path)['trace_complete'])
+        self.write(records[:4])
+        self.assertFalse(self.summary.summarize(self.path)['trace_complete'])
+        self.write(events())
+        self.assertNotIn('model_batch_rejection',self.summary.summarize(self.path))
+
     def test_tool_rejection_schema_paths_are_allowlisted_and_nonterminal(self):
         diagnostic={'event':'tool_rejection','sequence':1,'call_index':1,'tool':'search_documents',
                     'reason':'schema_invalid','schema_path':['properties','query','type']}

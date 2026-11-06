@@ -1,0 +1,150 @@
+2026-11-06T16:05:48+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k oversized_batch -v.
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate (test_agent_runner.AgentRunnerTests) ... test_oversized_batch_correction_respects_revocation_audit_and_provider_limits (test_agent_runner.AgentRunnerTests) ... test_oversized_batch_is_discarded_then_replanned_within_original_budget (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate (test_agent_runner.AgentRunnerTests) (mode='tool_budget')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 285, in test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(outcome.get('error_code'),'budget_exhausted' if mode=='tool_budget' else 'model_invalid')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: 'model_invalid' != 'budget_exhausted'
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: - model_invalid
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: + budget_exhausted
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate (test_agent_runner.AgentRunnerTests) (mode='mixed_write')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 288, in test_oversized_batch_correction_does_not_reset_tool_budget_or_relax_write_gate
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(len(sent),5 if mode=='tool_budget' else 2)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: 1 != 2
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_respects_revocation_audit_and_provider_limits (test_agent_runner.AgentRunnerTests) (mode='revoked')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 269, in test_oversized_batch_correction_respects_revocation_audit_and_provider_limits
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(outcome,{'state':'failed','error_code':expected})
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'scope_changed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: - {'error_code': 'model_invalid', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                 ^ ^ - ^ ^^^^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: + {'error_code': 'scope_changed', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                 ^^ ^  ^^^ ^^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_respects_revocation_audit_and_provider_limits (test_agent_runner.AgentRunnerTests) (mode='audit_failed')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 269, in test_oversized_batch_correction_respects_revocation_audit_and_provider_limits
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(outcome,{'state':'failed','error_code':expected})
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: - {'error_code': 'model_invalid', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                 --   ^^^^^^^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: + {'error_code': 'dependency_failed', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                   ++++++++++++ ^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_respects_revocation_audit_and_provider_limits (test_agent_runner.AgentRunnerTests) (mode='provider_limit')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 269, in test_oversized_batch_correction_respects_revocation_audit_and_provider_limits
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(outcome,{'state':'failed','error_code':expected})
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'budget_exhausted'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: - {'error_code': 'model_invalid', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                 ^^  ^ ^^^ ^^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: + {'error_code': 'budget_exhausted', 'state': 'failed'}
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ?                 ^^ + ^ ^^^ ^^^^
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_correction_respects_revocation_audit_and_provider_limits (test_agent_runner.AgentRunnerTests) (mode='repeated')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 270, in test_oversized_batch_correction_respects_revocation_audit_and_provider_limits
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual(len(wire),2 if mode=='repeated' else 1)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: 1 != 2
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ======================================================================
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAIL: test_oversized_batch_is_discarded_then_replanned_within_original_budget (test_agent_runner.AgentRunnerTests)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Traceback (most recent call last):
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self._callMaybeAsync(method)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     return future.result()
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     ret = await awaitable
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 225, in test_oversized_batch_is_discarded_then_replanned_within_original_budget
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]:     self.assertEqual((outcome.get('state'),outcome.get('kind')),('completed','handover_report'))
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: AssertionError: Tuples differ: ('failed', None) != ('completed', 'handover_report')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: First differing element 0:
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: 'failed'
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: 'completed'
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: - ('failed', None)
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: + ('completed', 'handover_report')
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: ----------------------------------------------------------------------
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: Ran 3 tests in 1.748s
+2026-11-06T16:05:51+0800 aliyun-lou python[1250327]: FAILED (failures=7)
+2026-11-06T16:05:51+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-feedback-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T16:05:51+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-feedback-red-20261106.service: Failed with result 'exit-code'.
+2026-11-06T16:06:38+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_audit_summary.py -k batch_rejection -v.
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch (test_audit_summary.AuditSummaryTests) ... FAIL
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: ======================================================================
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: FAIL: test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch (test_audit_summary.AuditSummaryTests)
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: ----------------------------------------------------------------------
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: Traceback (most recent call last):
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 120, in test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:     try: value=self.summary.summarize(self.path)
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:   File "/tmp/smartdocs-safe.h4SzvX/repo/python/smartdocs/audit_summary.py", line 182, in summarize
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:     raise ValueError('audit unavailable or invalid') from None
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: ValueError: audit unavailable or invalid
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: During handling of the above exception, another exception occurred:
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: Traceback (most recent call last):
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 121, in test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]:     except ValueError: self.fail('bounded batch correction audit unsupported')
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: AssertionError: bounded batch correction audit unsupported
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: ----------------------------------------------------------------------
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: Ran 1 test in 0.009s
+2026-11-06T16:06:38+0800 aliyun-lou python[1250430]: FAILED (failures=1)
+2026-11-06T16:06:38+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-audit-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T16:06:38+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-audit-red-20261106.service: Failed with result 'exit-code'.
+2026-11-06T16:09:29+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k oversized_batch_feedback_counts -v.
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: test_oversized_batch_feedback_counts_toward_request_bytes (test_agent_runner.AgentRunnerTests) ... FAIL
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: ======================================================================
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: FAIL: test_oversized_batch_feedback_counts_toward_request_bytes (test_agent_runner.AgentRunnerTests)
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: ----------------------------------------------------------------------
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: Traceback (most recent call last):
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:   File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:     self._callMaybeAsync(method)
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:   File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:     return self._asyncioTestLoop.run_until_complete(fut)
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:     return future.result()
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:   File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:     ret = await awaitable
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 310, in test_oversized_batch_feedback_counts_toward_request_bytes
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]:     self.assertEqual(outcome,{'state':'failed','error_code':'budget_exhausted'})
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: AssertionError: {'state': 'completed', 'kind': 'handover_report', 'r[383 chars]wn'}} != {'state': 'failed', 'error_code': 'budget_exhausted'}
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: + {'error_code': 'budget_exhausted', 'state': 'failed'}
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: - {'error_code': None,
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -  'handover_report': {'id': '22222222222222222222222222222222',
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -                      'markdown_url': '/api/v1/projects/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/agent-tasks/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/handover-report/markdown',
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -                      'url': '/api/v1/projects/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/agent-tasks/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/handover-report',
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -                      'version': 1},
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -  'kind': 'handover_report',
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -  'model_calls': 6,
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -  'result': None,
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: -  'state': 'completed'}
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: ----------------------------------------------------------------------
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: Ran 1 test in 0.574s
+2026-11-06T16:09:31+0800 aliyun-lou python[1252005]: FAILED (failures=1)
+2026-11-06T16:09:31+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-feedback-byte-mutation-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T16:09:31+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-feedback-byte-mutation-20261106.service: Failed with result 'exit-code'.
+2026-11-06T16:13:23+0800 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_audit_summary.py -k batch_rejection -v.
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch (test_audit_summary.AuditSummaryTests) ... FAIL
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: ======================================================================
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: FAIL: test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch (test_audit_summary.AuditSummaryTests)
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: ----------------------------------------------------------------------
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: Traceback (most recent call last):
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_audit_summary.py", line 139, in test_batch_rejection_is_once_nonterminal_and_cannot_dispatch_rejected_batch
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]:     with self.assertRaises(ValueError): self.summary.summarize(self.path)
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: AssertionError: ValueError not raised
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: ----------------------------------------------------------------------
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: Ran 1 test in 0.511s
+2026-11-06T16:13:24+0800 aliyun-lou python[1253249]: FAILED (failures=1)
+2026-11-06T16:13:24+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-audit-review-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+2026-11-06T16:13:24+0800 aliyun-lou systemd[1]: smartdocs-m5-batch-audit-review-red-20261106.service: Failed with result 'exit-code'.
