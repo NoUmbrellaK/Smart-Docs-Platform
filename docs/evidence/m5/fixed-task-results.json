@@ -11,12 +11,12 @@
   "admission_observations": 3,
   "model_tasks_not_run": 15,
   "model_tasks_attempted": 12,
-  "model_tasks_completed": 11,
-  "model_tasks_failed": 1,
+  "model_tasks_completed": 12,
+  "model_tasks_failed": 0,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
-  "citations_observed": 51,
+  "citations_observed": 58,
   "citations_observed_scope": "all_recorded_attempts",
   "citation_accuracy": null,
   "tasks": [
@@ -445,18 +445,18 @@
     {
       "case_id": "H04",
       "category": "handover",
-      "execution": "failed",
+      "execution": "completed",
       "business_verdict": null,
-      "evidence": "h04-read-coverage-20261106/result.json",
+      "evidence": "h04-batch-feedback-20261106/result.json",
       "admission_http": 201,
-      "error_code": "model_invalid",
-      "provider_requests": 3,
-      "total_tokens": 12807,
-      "attempt_count": 3,
-      "cumulative_provider_requests": 10,
-      "cumulative_total_tokens": 58558,
-      "expected_item_statuses_match": null,
-      "business_observation": "report_not_produced_tool_batch_rejected",
+      "error_code": null,
+      "provider_requests": 6,
+      "total_tokens": 38684,
+      "attempt_count": 4,
+      "cumulative_provider_requests": 16,
+      "cumulative_total_tokens": 97242,
+      "expected_item_statuses_match": true,
+      "business_observation": "bounded_batch_correction_then_report_saved_semantics_pending",
       "attempts": [
         {
           "evidence": "h04-live-20261105/result.json",
@@ -478,6 +478,13 @@
           "error_code": "model_invalid",
           "provider_requests": 3,
           "total_tokens": 12807
+        },
+        {
+          "evidence": "h04-batch-feedback-20261106/result.json",
+          "state": "completed",
+          "error_code": null,
+          "provider_requests": 6,
+          "total_tokens": 38684
         }
       ]
     },

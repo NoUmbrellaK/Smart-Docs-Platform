@@ -1,0 +1,333 @@
+{
+  "case_id": "H04",
+  "attempt_number": 4,
+  "metadata": {
+    "code_revision": "47375c4d1c4336429916df0013d9b8299c4d4769",
+    "recorded_at": "2026-11-06T08:21:21.730152+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; continued same-scope user authorization 2026-11-05, execution 2026-11-06; H04 fourth attempt; committed47375c4 runtime content-read coverage and one bounded oversized-batch correction; same original budgets; no previous rejected prompt candidate; seven approved synthetic versions requirements@1 design@1 api@2 tests@1 issues@1 conflict_a@1 conflict_b@1; conflicting deployment ports and authority records per frozen fixture; standard six-item checklist; <=6 calls x4096 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h04-batch-feedback.xOPQcS/H04"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 6,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 10,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "1d0ceb0699ca90ecda21509bc6e7cecb",
+        "sequence": 1,
+        "started_at": "2026-11-06 08:21:27.752280",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "c7c5d75f9e5cdcea4b6d22a4a6b2e249",
+        "sequence": 2,
+        "started_at": "2026-11-06 08:21:28.982717",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 58,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "e836b8582aed2e34afded781e340d99b",
+        "sequence": 3,
+        "started_at": "2026-11-06 08:21:28.997929",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "c2321c6ba1d1fa99abc57d0d4b54e62c",
+        "sequence": 4,
+        "started_at": "2026-11-06 08:21:34.219685",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 19,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "3cc2549aa4329b35a6ab6d8c80a624c7",
+        "sequence": 5,
+        "started_at": "2026-11-06 08:21:34.233162",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "981fe941c2a376460228151e70d7627b",
+        "sequence": 6,
+        "started_at": "2026-11-06 08:21:34.259732",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "14a2d1cffae676a23cad1d607809aef6",
+        "sequence": 7,
+        "started_at": "2026-11-06 08:21:34.350095",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 102,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "734b0e9efa0fd0203f14063ea397ed6a",
+        "sequence": 8,
+        "started_at": "2026-11-06 08:21:35.651532",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 20,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "5b974b3b688a5ab1e7e78eaecb892ab9",
+        "sequence": 9,
+        "started_at": "2026-11-06 08:21:46.126667",
+        "status": "success",
+        "task_id": "f691fecdd319a02785017dcf24657286",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "handover_report_present": true,
+  "archive_plan_present": false,
+  "report_checks": {
+    "report_state": "draft",
+    "report_version": 1,
+    "checklist_revision": 1,
+    "selected_version_count": 7,
+    "source_version_count": 7,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses_match": true,
+    "citation_count": 7,
+    "captured_source_count": 7,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "4c4ad3e0eb118d404b8aa6281eb0a800",
+          "version_id": "f84c8c89f2e1cdae923704fb51c51709",
+          "chunk_id": "3460455002e593bda0de3f169c2af8e07f6144aa865fa157ae7cd3df318ab5c3"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 93,
+        "source_sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e"
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "1892f0d8661ba3cd288defcc4fced5be",
+          "version_id": "584c261e03b943bb14c37259ecd1a23f",
+          "chunk_id": "87428058a118e852a9b9b6a63a51a100197517698e38f9a7f962612382686918"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 86,
+        "source_sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed"
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "24683cd454506cee7c07f729761744ee",
+          "version_id": "e62d12acf126a6f7aaecbdedd7b5fa35",
+          "chunk_id": "4427e4cdd7fedbcfb518d4a9d259653631350170d3a7d25b919773a3162e95fc"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 111,
+        "source_sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a"
+      },
+      {
+        "fixture_source": "tests@1",
+        "reference": {
+          "file_id": "a61843c409dcaded630b49fa7e0642e9",
+          "version_id": "8d869981d6b45d5786d4b48cbf0e12cf",
+          "chunk_id": "25d0af39db1e585a67a062129c2c294b434a0009e9e1c64be749d9b36b125865"
+        },
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 69,
+        "source_sha256": "ac84e207475cf9fb8ee13dfd48c3ec9e945b49dc0d6ecd358b4a34a3f08dbe56"
+      },
+      {
+        "fixture_source": "conflict_a@1",
+        "reference": {
+          "file_id": "b99c0aa63e6213a287a6ecc94cde819e",
+          "version_id": "16bc290d42992109edb291dd344576f0",
+          "chunk_id": "5bbc583640454154ac3411959fab96ca2a42c5bfa0910f2b895c946a587ae74c"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 46,
+        "source_sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8"
+      },
+      {
+        "fixture_source": "conflict_b@1",
+        "reference": {
+          "file_id": "c1f97eb3298ab5c74ea2ca9e099e75b0",
+          "version_id": "c19408009d615eeef641020d7db63b00",
+          "chunk_id": "785849aa6c8722e126d0cd79c00c53f28f08e3f0bb84314788ec185f95d3f4e1"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 46,
+        "source_sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610"
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "6137eeea95271fbe569c4b40bc22be2f",
+          "version_id": "e59616f5b177dfc7bdec356691a71a1f",
+          "chunk_id": "c4335f1784e7ab1cd1a6886c853b3b8eb5b2930db35e5ee1c28465b979f6c58e"
+        },
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 34,
+        "source_sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366"
+      }
+    ],
+    "actual_checklist_counts": {
+      "total": 6,
+      "required": 5,
+      "optional": 1
+    },
+    "conflicting_ports_and_missing_authority_preserved": true,
+    "sample_test_failure_counts_preserved": true,
+    "scope_explicitly_limited": true,
+    "business_observation": "bounded_batch_correction_then_report_saved_semantics_pending",
+    "inspection_method": "AI-assisted report/source comparison; not human semantic acceptance",
+    "review_notes": [
+      "Seven range calls each returned one chunk. Unlike prior attempts, no simple seven-claims-versus-four-reads count contradiction is observed; raw provider messages and per-read file IDs are absent, so seven distinct full-version reads are not independently proven by this trace.",
+      "Summary says index ready while limitations explicitly say vector_state pending and metadata/direct-read only; review this wording without claiming a hybrid-search test.",
+      "Recommendation refers to service address in the API description and test environment configuration, neither present in the captured brief source text; treat this as wording to clarify, not established evidence."
+    ],
+    "limitations": "No raw model responses or wire notices retained; do not infer exact rejected call count/names/arguments, individual read-to-file mapping, or semantic accuracy from valid citations."
+  },
+  "review_summary": {
+    "case_id": "H04",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 7,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "b3c67464469dff1371d3a54ad588b3289668220e8102bdf12bfad9772313ada3"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "8ccc51e1bab14a48325100a79dbb8a0fc1a4a10f3684cc17dfd5c0a7610ad828",
+    "initial/audit.jsonl": "780d6bd30920cb201afcabc89ddfe1e2f10bf6d549d35edcf9e24d379919e2b9",
+    "summary.json": "4d7a1470ebcc497f2f1da5a0fc417e33b82dd8c36277d3532f61c92570d78499",
+    "review.json": "6d0f267ef971a8c1c7034de0e155648616b6dac757a3e740c60f714593967fe6"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "provider_attempts": 6,
+  "provider_results": 6,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 35152,
+    "completion_tokens": 3532,
+    "total_tokens": 38684,
+    "prompt_cache_hit_tokens": 24704,
+    "prompt_cache_miss_tokens": 10448
+  },
+  "model_rejection": null,
+  "model_batch_rejection": {
+    "sequence": 3,
+    "tool_call_count": 5
+  },
+  "tool_rejections": [],
+  "tools_by_name": {
+    "read_document_version": 7,
+    "save_handover_report": 1,
+    "search_documents": 1
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    2,
+    0,
+    4,
+    1,
+    1
+  ],
+  "execution_policy": {
+    "max_model_calls": 6,
+    "max_output_tokens_per_request": 4096,
+    "automatic_retry": false,
+    "automatic_confirmation": false,
+    "bounded_batch_correction_limit": 1
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

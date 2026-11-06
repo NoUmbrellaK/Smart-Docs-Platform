@@ -1,0 +1,6 @@
+PASS:33 events/private capture agree; completed draft, 6 expected statuses, 7 located current citations; human review remains blank
+PASS:6 requests within original caps, 38684 tokens=35152+3532, cache24704/10448; batches1/2/0/4/1/1
+PASS:third batch rejected >=5, zero dispatch, correction followed; no archive or automatic rerun
+PASS:private permissions and hashes, 37 unchanged runtime fingerprints, old/new audit summaries, resource terminal status
+PASS:30 tasks latest12completed+3admission+15not-run; 24attempts/86requests/421253tokens/58citations; history retained
+PASS:evidence consistency only; not independent proof of per-file task-time reads or semantic acceptance
