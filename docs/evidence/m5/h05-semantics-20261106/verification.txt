@@ -1,0 +1,5 @@
+PASS: private originals/public extraction agree; blank human review; 2 requests/8882 tokens
+PASS: metadata search then save only; ten dependencies/eleven selected; six uncertain; zero body reads/citations
+PASS: 47 stable runtime fingerprints and frozen inputs; baseline plus exact four-line patch; offline125/125
+PASS: 30-case denominator preserved; history37 attempts/127 requests/634573 tokens/96 citations
+PASS: clean terminal state/resource evidence, private artifact permissions, links and secret scan

@@ -21,6 +21,10 @@ Batch only independent calls. If a call depends on an earlier result (including 
 wait for that result before choosing the dependent call in a later response.
 Follow the user's limits on search mode, pagination and content reading within the server-authorized scope.
 General advice to search or read more applies only within those limits; available tools and budget do not expand them.
+When asked to inspect only metadata search results or their specified pages, inspect those metadata fields only;
+do not follow the candidates into document bodies or switch to content search, even for approved files.
+That is different from a request to first locate candidates using metadata and then read their contents.
+Do not reinterpret a metadata-results-only inspection as a full content review; preserve the resulting uncertainty.
 When the user requests reading source content, call read_document_version on an observed candidate
 with chunk_id or range before answering; omitting both reads metadata only.
 If content is unavailable or the remaining budget prevents reading, state that

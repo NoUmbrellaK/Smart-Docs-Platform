@@ -1,0 +1,128 @@
+{
+  "case_id": "H05",
+  "attempt_number": 3,
+  "metadata": {
+    "code_revision": "b6670d687cb685b49c2c00342fa09feffb8f3e7e+candidate.patch",
+    "recorded_at": "2026-11-06T12:13:54.097438+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; user authorized repeated synthetic tests; execution2026-11-06; H05 third attempt; uncommitted four-line SYSTEM clarification recorded in candidate.patch and preflight hashes relative to b6670d6; frozen question/checklist/budgets unchanged; eleven approved parsed synthetic versions requirements@1 design@1 api@2 tests@1 deployment@2 issues@1 rollback@1 conflict_a@1 conflict_b@1 placeholder@1 ambiguous@1; only metadata first page <=10 requested; first-page membership depends on fresh file IDs; frozen expected answers not sent; fixed https://api.deepseek.com/chat/completions; <=6 calls x4096 output; no automatic retry/archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h05-semantics.n9xpRJ/H05"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 103,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "6ff7a020e5ef306396e84828245d10dc",
+        "sequence": 1,
+        "started_at": "2026-11-06 12:14:01.784794",
+        "status": "success",
+        "task_id": "a07ca2a78af9da676562f3fcb4fab3ba",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 20,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "aaf2a807fad1bfd92ba3194183d8f057",
+        "sequence": 2,
+        "started_at": "2026-11-06 12:14:08.873778",
+        "status": "success",
+        "task_id": "a07ca2a78af9da676562f3fcb4fab3ba",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "max_tokens_observed": [
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 7621,
+    "completion_tokens": 1261,
+    "total_tokens": 8882,
+    "prompt_cache_hit_tokens": 2560,
+    "prompt_cache_miss_tokens": 5061
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "save_handover_report": 1
+  },
+  "report_checks": {
+    "state": "draft",
+    "selected_version_count": 11,
+    "source_version_count": 10,
+    "source_dependencies_match_first_ten_file_ids": true,
+    "omitted_fixture_sources": [
+      "conflict_b@1"
+    ],
+    "item_statuses": {
+      "requirements": "uncertain",
+      "design": "uncertain",
+      "api": "uncertain",
+      "test": "uncertain",
+      "deploy": "uncertain",
+      "issues": "uncertain"
+    },
+    "expected_item_statuses": {
+      "requirements": "uncertain",
+      "design": "uncertain",
+      "api": "uncertain",
+      "test": "uncertain",
+      "deploy": "uncertain",
+      "issues": "uncertain"
+    },
+    "expected_item_statuses_match": true,
+    "metadata_only_requirement_met": true,
+    "search_item_counts": [
+      10
+    ],
+    "content_read_calls": 0,
+    "citation_occurrences": 0,
+    "summary": "本次仅按用户限制执行了一次元数据搜索的第一页（page_size=10，未翻页），未读取任何文档正文，因此所有清单项均无法确认内容是否满足要求，状态统一为 uncertain。第一页返回 10 个候选文件（均为 text/markdown，parse_state=completed，keyword_state=completed，vector_state=pending），覆盖范围快照显示 current_files=11、unsearched_files=0，但 has_more=true、truncated=true，说明至少还有 1 个文件未出现在本页，未核查。按名称可初步对应：需求说明.md、设计说明.md、接口说明.md、测试报告.md、部署说明.md / 部署说明最终版.md / 正式部署说明甲.md（三份部署类文件存在命名冲突，需人工确认哪份为准）、问题清单.md、回滚指南.md、便笺.md。以上仅为文件名层面的观察，不构成内容核查，也不代表验收通过。",
+    "limitations": "1) 用户明确限定只检查元数据搜索第一页（最多 10 项）且不翻页，因此未查看第 2 页及之后的候选，未核查项属于不确定而非已证明缺失。2) 未调用任何正文读取，所有结论仅基于文件名与元数据状态，无法判断内容是否充分、是否存在冲突或占位内容。3) 元数据快照显示 current_files=11，本页仅 10 项，存在 1 个未在本页出现的文件，其身份未知。4) 部署类文件出现三个不同名称（部署说明.md、部署说明最终版.md、正式部署说明甲.md），版本关系与有效性未核实。5) 所有候选 vector_state=pending，向量检索可能不可用，本次未使用内容检索。6) 本报告为私有草稿，未移动或共享任何文件，也不代表任何审批或验收结论。",
+    "raw_pagination_wire_retained": false
+  },
+  "review_summary": {
+    "case_id": "H05",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "b69475a6974a9b4367f66c894bb3fb1a382f9e0fd090e13973d9e6d2a93aeff3"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null,
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "d87d2b6b67ef6292774feec92c9bbbf2bfccc98186ef004b6437745265a3b0c1",
+    "initial/audit.jsonl": "0803875aa17831de702190afd787436d9d626e1ef7bb6983a44174a042ee8825",
+    "summary.json": "083c34434234f4d5b0d42e86c748d9e46b2419af4570de34d30ac15d20c17863",
+    "review.json": "4ad7fef9a8fc5a7a9644f12169594d17c1b2fe279e8df1e5b216d0532397b6bd"
+  }
+}
