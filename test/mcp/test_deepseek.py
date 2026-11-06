@@ -43,7 +43,7 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(request.headers["authorization"],"Bearer test-secret")
         self.assertNotIn("test-secret",request.content.decode())
         self.assertEqual(body["thinking"],{"type":"disabled"})
-        self.assertFalse(body["stream"]); self.assertLessEqual(body["max_tokens"],512)
+        self.assertFalse(body["stream"]); self.assertEqual(body["max_tokens"],1024)
         self.assertNotIn("reasoning_content",result["choices"][0]["message"])
         self.assertEqual([e["event"] for e in self.events],["model_attempt","model_result"])
         self.assertEqual(self.events[-1]["usage"],RESPONSE["usage"])
@@ -74,7 +74,7 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
                 body=json.loads(self.requests[-1].content)
                 self.assertEqual(body.get('response_format'),expected)
                 self.assertEqual(body['tools'],tools)
-                self.assertEqual(body['max_tokens'],512 if expected else 1280)
+                self.assertEqual(body['max_tokens'],1024 if expected else 1280)
                 self.assertEqual(body['thinking'],{'type':'disabled'})
 
     async def test_whole_request_deadline_cancels_transport(self):
@@ -109,7 +109,7 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
                         'model_requests_total':2,'model_requests_remaining_including_this':remaining,
                         'final_response':remaining==1,'terminal_tool':terminal})
                     self.assertEqual(body['tools'],tools)
-                    self.assertEqual(body['max_tokens'],1024 if terminal else 512)
+                    self.assertEqual(body['max_tokens'],1024)
                     self.assertNotIn('tool_choice',body)
                     self.assertEqual(self.events[-2]['request_bytes'],len(self.requests[-1].content))
                     self.assertEqual(messages,original)
@@ -122,6 +122,21 @@ class DeepSeekTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(notice['runtime_budget']['model_requests_remaining_including_this'],1)
                 self.assertEqual(notice['runtime_budget']['model_requests_total'],1)
                 self.assertTrue(notice['runtime_budget']['final_response'])
+
+    async def test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send(self):
+        # A hidden 512 clamp, raising a smaller caller budget, or removing validation must fail.
+        for requested, expected in [(1,1),(128,128),(512,512),(1024,1024),(1280,1024),(8192,1024)]:
+            with self.subTest(requested=requested):
+                await self.model()(**{**ARGS,'max_tokens':requested})
+                self.assertEqual(json.loads(self.requests[-1].content)['max_tokens'],expected)
+                self.assertEqual(self.events[-2]['max_tokens'],expected)
+        sent = len(self.requests)
+        for invalid in (0,-1,8193,True,1024.0,'1024',None):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(RunError) as caught:
+                    await self.model()(**{**ARGS,'max_tokens':invalid})
+                self.assertEqual(caught.exception.code,'model_invalid')
+                self.assertEqual(len(self.requests),sent)
 
     async def test_external_cancellation_is_propagated_and_recorded(self):
         started=asyncio.Event()

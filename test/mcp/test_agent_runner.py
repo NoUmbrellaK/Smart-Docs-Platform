@@ -705,7 +705,7 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                          [{'file_id':FILE,'version_id':VERSION,'range':{}}])
         for body in requests:
             self.assertEqual(body.get('response_format'),{'type':'json_object'})
-            self.assertEqual(body['max_tokens'],512)
+            self.assertEqual(body['max_tokens'],1024)
             self.assertEqual({t['function']['name'] for t in body['tools']},{'search_documents','read_document_version'})
         system=requests[0]['messages'][0]['content']
         example, _=json.JSONDecoder().raw_decode(system[system.index('{"answer"'):])

@@ -1,0 +1,12 @@
+set -e
+test "$(systemctl show smartdocs-m5-query-budget-final-20261106.service -p ActiveState --value)" = inactive
+test "$(systemctl show smartdocs-m5-query-budget-final-20261106.service -p ExecMainStatus --value)" = 0
+journalctl -u smartdocs-m5-query-budget-final-20261106.service --no-pager -o cat > docs/evidence/m5/query-budget-20261106/final.txt
+{
+  systemctl show smartdocs-m5-query-budget-final-20261106.service -p ActiveState -p Result -p ExecMainStatus
+  systemctl show smartdocsvectorcheck.slice -p TasksCurrent
+  cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+  systemctl is-active mysql
+} > docs/evidence/m5/query-budget-20261106/offline-status.txt
+python3 -B docs/evidence/m5/query-budget-20261106/fingerprints.py > docs/evidence/m5/query-budget-20261106/postflight.txt
+cmp docs/evidence/m5/query-budget-20261106/preflight.txt docs/evidence/m5/query-budget-20261106/postflight.txt

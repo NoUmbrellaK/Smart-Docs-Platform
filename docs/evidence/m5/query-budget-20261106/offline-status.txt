@@ -1,0 +1,10 @@
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+TasksCurrent=0
+low 0
+high 82471
+max 0
+oom 0
+oom_kill 0
+active

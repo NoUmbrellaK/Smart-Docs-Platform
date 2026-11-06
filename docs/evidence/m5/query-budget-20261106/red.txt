@@ -1,0 +1,66 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest test_deepseek -v.
+test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps (test_deepseek.DeepSeekTests) ... test_external_cancellation_is_propagated_and_recorded (test_deepseek.DeepSeekTests) ... ok
+test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests) ... FAIL
+test_http_rejections_are_not_retried_or_leaked (test_deepseek.DeepSeekTests) ... ok
+test_invalid_credentials_and_configuration_never_reach_transport (test_deepseek.DeepSeekTests) ... ok
+test_json_output_constraint_is_sent_only_for_read_answers (test_deepseek.DeepSeekTests) ... test_malformed_response_is_safe_and_audit_failure_prevents_send (test_deepseek.DeepSeekTests) ... ok
+test_private_audit_is_exclusive_durable_and_task_bound (test_deepseek.DeepSeekTests) ... ok
+test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send (test_deepseek.DeepSeekTests) ... test_request_and_call_caps_block_before_network (test_deepseek.DeepSeekTests) ... ok
+test_stream_response_cap_and_compression_rejection_close_response (test_deepseek.DeepSeekTests) ... ok
+test_unknown_or_invalid_usage_never_becomes_zero_cost (test_deepseek.DeepSeekTests) ... ok
+test_whole_request_deadline_cancels_transport (test_deepseek.DeepSeekTests) ... ok
+======================================================================
+FAIL: test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps (test_deepseek.DeepSeekTests) (terminal=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 112, in test_actual_budget_is_sent_without_mutating_history_or_relaxing_caps
+    self.assertEqual(body['max_tokens'],1024)
+AssertionError: 512 != 1024
+======================================================================
+FAIL: test_fixed_destination_limits_hidden_reasoning_and_safe_usage (test_deepseek.DeepSeekTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 46, in test_fixed_destination_limits_hidden_reasoning_and_safe_usage
+    self.assertFalse(body["stream"]); self.assertEqual(body["max_tokens"],1024)
+AssertionError: 512 != 1024
+======================================================================
+FAIL: test_json_output_constraint_is_sent_only_for_read_answers (test_deepseek.DeepSeekTests) (names=['search_documents', 'read_document_version'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 77, in test_json_output_constraint_is_sent_only_for_read_answers
+    self.assertEqual(body['max_tokens'],1024 if expected else 1280)
+AssertionError: 512 != 1024
+======================================================================
+FAIL: test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send (test_deepseek.DeepSeekTests) (requested=1024)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 131, in test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send
+    self.assertEqual(json.loads(self.requests[-1].content)['max_tokens'],expected)
+AssertionError: 512 != 1024
+======================================================================
+FAIL: test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send (test_deepseek.DeepSeekTests) (requested=1280)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 131, in test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send
+    self.assertEqual(json.loads(self.requests[-1].content)['max_tokens'],expected)
+AssertionError: 512 != 1024
+======================================================================
+FAIL: test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send (test_deepseek.DeepSeekTests) (requested=8192)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_deepseek.py", line 131, in test_read_output_budget_preserves_lower_caps_and_rejects_invalid_before_send
+    self.assertEqual(json.loads(self.requests[-1].content)['max_tokens'],expected)
+AssertionError: 512 != 1024
+----------------------------------------------------------------------
+Ran 13 tests in 0.112s
+FAILED (failures=6)
+smartdocs-m5-query-budget-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-m5-query-budget-red-20261106.service: Failed with result 'exit-code'.

@@ -67,7 +67,7 @@ class DeepSeekModel:
         terminal = next((tool['function']['name'] for tool in tools
                      if isinstance(tool,dict) and isinstance(tool.get('function'),dict)
                      and tool['function'].get('name') in {REPORT_TOOL,CREATE_ARCHIVE_TOOL}), None)
-        output_tokens = max_tokens if terminal else min(max_tokens,512)
+        output_tokens = max_tokens if terminal else min(max_tokens,1024)
         remaining = self._limit - self._calls
         notice = {'role':'system','content':encoded({
             'runtime_budget':{'model_requests_total':self._limit,
