@@ -1,0 +1,49 @@
+Nov 06 19:04:38 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /bin/bash -c /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_capture_test.py && /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/python -p "test_benchmark_*.py" -v.
+Nov 06 19:04:39 aliyun-lou bash[1286757]: 2026-11-06T11:04:39.204854Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1286757
+Nov 06 19:04:39 aliyun-lou bash[1286757]: 2026-11-06T11:04:39.307030Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:04:54 aliyun-lou bash[1286757]: 2026-11-06T11:04:54.643785Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:05:03 aliyun-lou bash[1286757]: 2026-11-06T11:05:03.494508Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:05:48 aliyun-lou bash[1287023]: schema_version=16
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:06:17 aliyun-lou bash[1287144]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:06:19 aliyun-lou bash[1287297]: test_capture_admission_rejection_preserves_absent_execution (__main__.CaptureE2E) ... ok
+Nov 06 19:06:21 aliyun-lou bash[1287297]: test_capture_answer_retains_actual_original (__main__.CaptureE2E) ... {"collector": "Q01", "citations": 1, "unique_sources": 1, "business_task": "not_run", "provider_requests": 0}
+Nov 06 19:06:21 aliyun-lou bash[1287297]: ok
+Nov 06 19:06:23 aliyun-lou bash[1287297]: test_capture_archive_name_conflict_without_plan (__main__.CaptureE2E) ... ok
+Nov 06 19:06:25 aliyun-lou bash[1287297]: test_capture_archive_preview_never_confirms_or_moves (__main__.CaptureE2E) ... ok
+Nov 06 19:06:26 aliyun-lou bash[1287297]: test_capture_committed_archive_receipt_without_reexecution (__main__.CaptureE2E) ... ok
+Nov 06 19:06:27 aliyun-lou bash[1287297]: test_capture_failed_run_keeps_failure_not_a_synthetic_answer (__main__.CaptureE2E) ... ok
+Nov 06 19:06:31 aliyun-lou bash[1287297]: test_capture_report_and_dependency_revocation (__main__.CaptureE2E) ... ok
+Nov 06 19:06:31 aliyun-lou bash[1287297]: ----------------------------------------------------------------------
+Nov 06 19:06:31 aliyun-lou bash[1287297]: Ran 7 tests in 14.127s
+Nov 06 19:06:31 aliyun-lou bash[1287297]: OK
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_committed_receipt_mismatch_marks_capture_incomplete (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_failed_archive_existing_plan_is_retained (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_failed_archive_missing_plan_is_observed_twice_without_auto_pass (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_failure_and_changed_reads_cannot_be_reviewed_as_complete (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_missing_plan_exception_is_narrow_and_rechecked (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_path_validation_does_not_follow_supplied_urls (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_preserves_result_and_sources_without_credentials_or_auto_grading (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_private_exclusive_output_and_size_bound (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_rejected_admission_does_not_issue_requests_or_create_a_run (test_benchmark_capture.BenchmarkCaptureTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_cli_private_exclusive_files_no_raw_output_and_strict_json (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_empty_citations_and_denied_admission_remain_explicit (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_incomplete_or_inconsistent_assessment_cannot_be_business_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_missing_report_and_removed_changed_or_reordered_rows_are_rejected (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_prepare_preserves_every_occurrence_without_semantic_auto_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_report_receipt_mismatch_cannot_replace_actual_citation_denominator (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids (test_benchmark_review.BenchmarkReviewTest) ... ok
+Nov 06 19:06:32 aliyun-lou bash[1287296]: ----------------------------------------------------------------------
+Nov 06 19:06:32 aliyun-lou bash[1287296]: Ran 17 tests in 0.291s
+Nov 06 19:06:32 aliyun-lou bash[1287296]: OK
+Nov 06 19:06:36 aliyun-lou systemd[1]: smartdocs-m5-capture-green-20261106.service: Deactivated successfully.
+Nov 06 19:06:36 aliyun-lou systemd[1]: smartdocs-m5-capture-green-20261106.service: Consumed 8.699s CPU time.

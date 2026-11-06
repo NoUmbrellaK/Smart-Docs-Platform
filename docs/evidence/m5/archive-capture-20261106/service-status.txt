@@ -1,0 +1,15 @@
+Result=exit-code
+ExecMainStartTimestamp=Fri 2026-11-06 19:01:36 CST
+ExecMainExitTimestamp=Fri 2026-11-06 19:03:37 CST
+ExecMainStatus=1
+Id=smartdocs-m5-capture-red-20261106.service
+ActiveState=failed
+SubState=failed
+
+Result=success
+ExecMainStartTimestamp=n/a
+ExecMainExitTimestamp=n/a
+ExecMainStatus=0
+Id=smartdocs-m5-capture-green-20261106.service
+ActiveState=inactive
+SubState=dead

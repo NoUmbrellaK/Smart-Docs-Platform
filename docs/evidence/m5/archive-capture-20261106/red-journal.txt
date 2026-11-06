@@ -1,0 +1,37 @@
+Nov 06 19:01:36 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m5_benchmark_capture_test.py.
+Nov 06 19:01:39 aliyun-lou bash[1285746]: 2026-11-06T11:01:38.913799Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1285746
+Nov 06 19:01:39 aliyun-lou bash[1285746]: 2026-11-06T11:01:39.008315Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:01:54 aliyun-lou bash[1285746]: 2026-11-06T11:01:54.244766Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:02:01 aliyun-lou bash[1285746]: 2026-11-06T11:02:01.947262Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:02:49 aliyun-lou bash[1286048]: schema_version=16
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:03:17 aliyun-lou bash[1286138]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:03:20 aliyun-lou bash[1286399]: test_capture_admission_rejection_preserves_absent_execution (__main__.CaptureE2E) ... ok
+Nov 06 19:03:22 aliyun-lou bash[1286399]: test_capture_answer_retains_actual_original (__main__.CaptureE2E) ... {"collector": "Q01", "citations": 1, "unique_sources": 1, "business_task": "not_run", "provider_requests": 0}
+Nov 06 19:03:22 aliyun-lou bash[1286399]: ok
+Nov 06 19:03:24 aliyun-lou bash[1286399]: test_capture_archive_name_conflict_without_plan (__main__.CaptureE2E) ... FAIL
+Nov 06 19:03:26 aliyun-lou bash[1286399]: test_capture_archive_preview_never_confirms_or_moves (__main__.CaptureE2E) ... ok
+Nov 06 19:03:27 aliyun-lou bash[1286399]: test_capture_committed_archive_receipt_without_reexecution (__main__.CaptureE2E) ... ok
+Nov 06 19:03:28 aliyun-lou bash[1286399]: test_capture_failed_run_keeps_failure_not_a_synthetic_answer (__main__.CaptureE2E) ... ok
+Nov 06 19:03:32 aliyun-lou bash[1286399]: test_capture_report_and_dependency_revocation (__main__.CaptureE2E) ... ok
+Nov 06 19:03:32 aliyun-lou bash[1286399]: ======================================================================
+Nov 06 19:03:32 aliyun-lou bash[1286399]: FAIL: test_capture_archive_name_conflict_without_plan (__main__.CaptureE2E)
+Nov 06 19:03:32 aliyun-lou bash[1286399]: ----------------------------------------------------------------------
+Nov 06 19:03:32 aliyun-lou bash[1286399]: Traceback (most recent call last):
+Nov 06 19:03:32 aliyun-lou bash[1286399]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m5_benchmark_capture_test.py", line 185, in test_capture_archive_name_conflict_without_plan
+Nov 06 19:03:32 aliyun-lou bash[1286399]:     self.assertTrue(snapshot['capture']['complete'], snapshot['capture'])
+Nov 06 19:03:32 aliyun-lou bash[1286399]: AssertionError: False is not true : {'complete': False, 'reads': [{'path': '/api/v1/projects/cfd9b2d7426d563285eba4337214f669/agent-tasks/f2952aed1bbda5e9135a4bd0fde5e2b0', 'http': 200}, {'path': '/api/v1/projects/cfd9b2d7426d563285eba4337214f669/agent-tasks/f2952aed1bbda5e9135a4bd0fde5e2b0/run/result', 'http': 200}, {'path': '/api/v1/projects/cfd9b2d7426d563285eba4337214f669/agent-tasks/f2952aed1bbda5e9135a4bd0fde5e2b0/tool-calls', 'http': 200}, {'path': '/api/v1/projects/cfd9b2d7426d563285eba4337214f669/agent-tasks/f2952aed1bbda5e9135a4bd0fde5e2b0/archive-plan', 'http': 404}], 'error': 'read_failed_invalid_or_changed'}
+Nov 06 19:03:32 aliyun-lou bash[1286399]: ----------------------------------------------------------------------
+Nov 06 19:03:32 aliyun-lou bash[1286399]: Ran 7 tests in 14.293s
+Nov 06 19:03:32 aliyun-lou bash[1286399]: FAILED (failures=1)
+Nov 06 19:03:37 aliyun-lou systemd[1]: smartdocs-m5-capture-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+Nov 06 19:03:37 aliyun-lou systemd[1]: smartdocs-m5-capture-red-20261106.service: Failed with result 'exit-code'.
+Nov 06 19:03:37 aliyun-lou systemd[1]: smartdocs-m5-capture-red-20261106.service: Consumed 8.539s CPU time.

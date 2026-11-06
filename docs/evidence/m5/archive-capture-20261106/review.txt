@@ -1,0 +1,6 @@
+Read-only independent review of pending collector/test diff against 767ac39.
+No actionable correctness/security issues found.
+C++ failed GetResult omits kind; GetArchivePlan 404 can mean absent plan or dependency validation failure.
+Documentation correctly treats it as an observation, not SQL-absence proof or a business pass.
+Narrow failed-state exception, second observation, existing-plan preservation, status-error rejection,
+and receipt requirements reviewed. Integration GREEN was pending at review time.

@@ -6,7 +6,7 @@ import unittest
 
 from benchmark_capture import capture, write_snapshot
 from benchmark_review import prepare, read_private, summarize
-from m1_http_test import data
+from m1_http_test import data, digest
 from m3_fixed_inputs_test import FixedInputsE2E, TASKS
 
 
@@ -161,6 +161,41 @@ class CaptureE2E(FixedInputsE2E):
         self.assertEqual(snapshot['run_result']['error_code'], 'provider_unavailable')
         self.assertIsNone(snapshot['run_result']['result'])
         self.assertIsNone(prepare(snapshot)['business']['verdict'])
+
+    def test_capture_archive_name_conflict_without_plan(self):
+        prepared = self.setup_case('A07')
+        actor, path = prepared['actor'], prepared['path']
+        data(actor.request('POST', path + '/run/start'))
+        before = data(actor.request('GET', self.base() + '/files'))
+        source = prepared['mapping']['deployment@2']
+        collision = prepared['mapping']['collision@1']
+        version = prepared['body']['versions'][0]
+        response = actor.request('PUT', path + '/archive-plan', {
+            'expected_revision': 0, 'policy_revision': prepared['policy']['revision'],
+            'items': [{**version, 'source_directory_id': source['directory_id'],
+                       'target_directory_id': collision['directory_id'],
+                       'reason': 'Scripted name conflict, not model classification'}]})
+        self.assertEqual(response.status, 409, response.body)
+        self.assertEqual(response.json()['error']['code'], 'name_conflict')
+        data(actor.request('POST', path + '/run/finish', {
+            'status': 'failed', 'result': None, 'error_code': 'scope_changed'}))
+        task = prepared['task']['id']
+        self.assertEqual(self.count("SELECT COUNT(*) FROM archive_plans WHERE task_id='" + task + "'"), 0)
+        snapshot = self.collect('A07', prepared)
+        self.assertTrue(snapshot['capture']['complete'], snapshot['capture'])
+        self.assertIsNone(snapshot['archive_plan'])
+        self.assertEqual(snapshot['run_result']['state'], 'failed')
+        self.assertEqual(snapshot['run_result']['error_code'], 'scope_changed')
+        self.assertIsNone(snapshot['run_result']['result'])
+        self.assertEqual([r['http'] for r in snapshot['capture']['reads']
+                          if r['path'] == path + '/archive-plan'], [404, 404])
+        self.assertIsNone(prepare(snapshot)['business']['verdict'])
+        self.assertEqual(data(actor.request('GET', self.base() + '/files')), before)
+        self.assertEqual(self.count("SELECT COUNT(*) FROM archive_decisions WHERE task_id='" + task + "'"), 0)
+        for original in (source, collision):
+            content = actor.request('GET', self.base() + '/files/' + original['file_id'] + '/content')
+            self.assertEqual(content.status, 200)
+            self.assertEqual(digest(content.body), original['sha256'])
 
 
 if __name__ == '__main__':

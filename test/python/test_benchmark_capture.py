@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 E2E = Path(__file__).resolve().parents[1] / 'e2e'
@@ -127,6 +128,67 @@ class BenchmarkCaptureTest(unittest.TestCase):
         self.assertFalse(result['capture']['complete'])
         with self.assertRaises(ValueError):
             prepare(result)
+
+    def archive_failure(self, state='failed', kind=None):
+        self.client.values[PATH].update(state=state, archive_policy_revision=1)
+        self.client.values[PATH + '/run/result'] = {
+            'state': state, 'kind': kind, 'result': None, 'error_code': 'scope_changed'}
+
+    def test_failed_archive_missing_plan_is_observed_twice_without_auto_pass(self):
+        self.archive_failure()
+        request = self.client.request
+        replies = []
+
+        def missing(method, path):
+            if path == PATH + '/archive-plan':
+                replies.append(path)
+                return Reply({'message': 'SECRET ERROR BODY'}, 404)
+            return request(method, path)
+
+        with patch.object(self.client, 'request', side_effect=missing):
+            result = self.capture()
+        self.assertTrue(result['capture']['complete'], result['capture'])
+        self.assertEqual(len(replies), 2)
+        self.assertIsNone(result['archive_plan'])
+        self.assertEqual(result['run_result']['error_code'], 'scope_changed')
+        self.assertIsNone(result['run_result']['result'])
+        self.assertIsNone(prepare(result)['business']['verdict'])
+        self.assertNotIn('SECRET', json.dumps(result))
+
+    def test_missing_plan_exception_is_narrow_and_rechecked(self):
+        scenarios = [
+            ('pending', None, (404,)), ('running', None, (404,)),
+            ('waiting_confirmation', None, (404,)), ('waiting_execution', None, (404,)),
+            ('completed', 'archive_operation', (404,)),
+            ('failed', 'archive_operation', (404,)),
+            ('failed', None, (403,)), ('failed', None, (409,)),
+            ('failed', None, (503,)), ('failed', None, (404, 200)),
+            ('failed', None, (200, 404)), ('failed', None, (404, 403)),
+        ]
+        for state, kind, statuses in scenarios:
+            with self.subTest(state=state, kind=kind, statuses=statuses):
+                self.archive_failure(state, kind)
+                request = self.client.request
+                remaining = iter(statuses)
+
+                def changing(method, path):
+                    if path == PATH + '/archive-plan':
+                        return Reply({'task_id': TID, 'project_id': PID}, next(remaining))
+                    return request(method, path)
+
+                with patch.object(self.client, 'request', side_effect=changing):
+                    result = self.capture()
+                self.assertFalse(result['capture']['complete'])
+                with self.assertRaises(ValueError):
+                    prepare(result)
+
+    def test_failed_archive_existing_plan_is_retained(self):
+        self.archive_failure()
+        plan = {'task_id': TID, 'project_id': PID, 'state': 'proposed'}
+        self.client.values[PATH + '/archive-plan'] = plan
+        result = self.capture()
+        self.assertTrue(result['capture']['complete'])
+        self.assertEqual(result['archive_plan'], plan)
 
     def test_private_exclusive_output_and_size_bound(self):
         result = self.capture()

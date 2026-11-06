@@ -13,8 +13,10 @@ def capture(case_id, prepared, metadata, *, run_kind):
     """Use prepare_case's owner client; never serialize that client or its cookies.
 
     Sequential GETs are NOT a transactional snapshot. Re-read the observed objects
-    to detect changes; any failed read or difference makes the capture unusable for
-    review. This does not prove that permissions cannot change after collection.
+    to detect changes; failed reads or differences make the capture unusable for
+    review, except a stable missing plan on a failed run without a report/receipt.
+    That 404 observation is not proof of SQL absence or a business pass. This does
+    not prove that permissions cannot change after collection.
     """
     manifest = json.loads((FIXTURES / 'tasks.json').read_text())
     require(case_id in {case['id'] for case in manifest['tasks']})
@@ -41,11 +43,15 @@ def capture(case_id, prepared, metadata, *, run_kind):
     project, task = match.groups()
     require(prepared['task']['id'] == task and prepared['task']['project_id'] == project)
     observed = {}
+    missing_allowed = set()
 
     def read(url):
         response = prepared['actor'].request('GET', url)
         result['capture']['reads'].append({'path': url, 'http': response.status})
-        require(response.status == 200 and len(response.body) <= MAX_BYTES)
+        require(len(response.body) <= MAX_BYTES)
+        if response.status == 404 and url in missing_allowed:
+            return None
+        require(response.status == 200)
         value = json.loads(response.body)['data']
         require(isinstance(value, dict))
         return value
@@ -69,8 +75,11 @@ def capture(case_id, prepared, metadata, *, run_kind):
             report = result['handover_report'] = first(path + '/handover-report')
             require(report.get('task_id') == task and report.get('project_id') == project)
         if 'archive_policy_revision' in state:
+            if state.get('state') == 'failed' and run.get('kind') is None:
+                missing_allowed.add(path + '/archive-plan')
             plan = result['archive_plan'] = first(path + '/archive-plan')
-            require(plan.get('task_id') == task and plan.get('project_id') == project)
+            if plan is not None:
+                require(plan.get('task_id') == task and plan.get('project_id') == project)
         if run.get('kind') == 'archive_operation':
             receipt = result['archive_receipt'] = first(path + '/archive-plan/result')
             require(receipt == run.get('archive_operation'))

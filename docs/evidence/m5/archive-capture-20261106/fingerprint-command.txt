@@ -1,0 +1,26 @@
+set -e
+python3 -B - <<'PY'
+import pathlib,re,hashlib
+root=pathlib.Path.cwd(); runtime=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+old=(root/'docs/evidence/m5/h10-live-20261106/postflight.txt').read_text()
+entries=re.findall(r'^([0-9a-f]{64}) (.+)$',old,re.M)
+assert len(entries)==45
+for prior,name in entries:
+ name=name.strip(); p=pathlib.Path(name)
+ paths=[p] if p.is_absolute() else [root/p,runtime/p]
+ values=[hashlib.sha256(x.read_bytes()).hexdigest() for x in paths]
+ assert len(set(values))==1,(name,'runtime mismatch')
+ if name!='test/e2e/benchmark_capture.py':
+  assert values[0]==prior,(name,'unexpected change')
+ print(values[0],name)
+for name in ('test/e2e/m5_benchmark_capture_test.py','test/python/test_benchmark_capture.py'):
+ values=[hashlib.sha256((p/name).read_bytes()).hexdigest() for p in (root,runtime)]
+ assert values[0]==values[1],name
+ print(values[0],name)
+print('47 fingerprint entries checked; only collector differs from prior 45-entry baseline')
+PY
+git diff --exit-code 767ac39 -- code python scripts test/fixtures
+systemctl show smartdocsvectorcheck.slice -p TasksCurrent -p CPUQuotaPerSecUSec -p MemoryHigh -p MemoryMax -p MemorySwapMax -p TasksMax -p IOReadBandwidthMax -p IOWriteBandwidthMax -p IOReadIOPSMax -p IOWriteIOPSMax
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+systemctl is-active mysql
