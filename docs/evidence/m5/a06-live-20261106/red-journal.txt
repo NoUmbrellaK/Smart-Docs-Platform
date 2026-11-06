@@ -1,0 +1,27 @@
+Nov 06 19:45:26 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/a06_offline.py /tmp/smartdocs-m5-a06-offline.HjqUgY/red.json.
+Nov 06 19:45:29 aliyun-lou bash[1294277]: 2026-11-06T11:45:29.740994Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1294277
+Nov 06 19:45:29 aliyun-lou bash[1294277]: 2026-11-06T11:45:29.839313Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:45:45 aliyun-lou bash[1294277]: 2026-11-06T11:45:45.052058Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:45:52 aliyun-lou bash[1294277]: 2026-11-06T11:45:52.890980Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:46:39 aliyun-lou bash[1294578]: schema_version=16
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:47:07 aliyun-lou bash[1294647]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:47:10 aliyun-lou bash[1294785]: test_capture_archive_preview_never_confirms_or_moves (m5_benchmark_capture_test.CaptureE2E) ... ok
+Nov 06 19:47:10 aliyun-lou bash[1294785]: ----------------------------------------------------------------------
+Nov 06 19:47:10 aliyun-lou bash[1294785]: Ran 1 test in 2.658s
+Nov 06 19:47:10 aliyun-lou bash[1294785]: OK
+Nov 06 19:47:10 aliyun-lou bash[1294785]: Traceback (most recent call last):
+Nov 06 19:47:10 aliyun-lou bash[1294785]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/a06_offline.py", line 17, in <module>
+Nov 06 19:47:10 aliyun-lou bash[1294785]:     assert probe['counts'] == {'archive_plans': 1, 'archive_decisions': 1}, probe['counts']
+Nov 06 19:47:10 aliyun-lou bash[1294785]: AssertionError: {'archive_plans': 1, 'archive_decisions': 0}
+Nov 06 19:47:16 aliyun-lou systemd[1]: smartdocs-m5-a06-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+Nov 06 19:47:16 aliyun-lou systemd[1]: smartdocs-m5-a06-red-20261106.service: Failed with result 'exit-code'.
+Nov 06 19:47:16 aliyun-lou systemd[1]: smartdocs-m5-a06-red-20261106.service: Consumed 6.738s CPU time.

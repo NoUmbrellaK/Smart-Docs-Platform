@@ -1,0 +1,2 @@
+PASS A06: model proposal and scripted revision-bound rejection, no confirmation or move; human verdict blank
+PASS private/public hashes, 49 fingerprints, terminal service and complete ledger: [36, 125, 625691, 96]

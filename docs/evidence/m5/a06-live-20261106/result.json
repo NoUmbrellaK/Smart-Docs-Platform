@@ -1,0 +1,200 @@
+{
+  "case_id": "A06",
+  "metadata": {
+    "code_revision": "fd20356408c54abc13ff721142842f8ab568974d",
+    "recorded_at": "2026-11-06T11:59:26.258384+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 SQL localhost C++/stdio MCP; repeated synthetic tests authorized; A06 first real attempt; unchanged product and collector baseline fd20356 plus test-only pre-cleanup observer adapted from A10 plus explicit scripted test-operator rejection after model capture; only approved synthetic conflict_a@1 and conflict_b@1; no expected answers injected; <=6 calls x4096 output; no rerun, no archive confirmation or execution; zero hold, pre-cleanup evidence retained; no additional wire-body observer",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-a06-live.meDhAR/A06"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "waiting_confirmation",
+    "error_code": null,
+    "model_calls": 2,
+    "kind": null
+  },
+  "provider_attempts": 2,
+  "provider_results": 2,
+  "output_token_limits": [
+    1536,
+    1536
+  ],
+  "usage": {
+    "prompt_tokens": 6239,
+    "completion_tokens": 635,
+    "total_tokens": 6874,
+    "prompt_cache_hit_tokens": 3840,
+    "prompt_cache_miss_tokens": 2399
+  },
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "b6a15b69014c8f80ee62d5725f6f2d23",
+        "sequence": 1,
+        "started_at": "2026-11-06 11:59:35.808299",
+        "status": "success",
+        "task_id": "3c331af08da3651712fd4c4a41d73f31",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "401e17dbf101ec975b9d27b7d9a7252b",
+        "sequence": 2,
+        "started_at": "2026-11-06 11:59:35.824250",
+        "status": "success",
+        "task_id": "3c331af08da3651712fd4c4a41d73f31",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 12,
+        "parameters": {
+          "expected_revision": 0,
+          "item_count": 2,
+          "policy_revision": 1
+        },
+        "request_id": "23bd77e5eb73a5d0bf9c72a989f63e5f",
+        "sequence": 3,
+        "started_at": "2026-11-06 11:59:38.161903",
+        "status": "waiting_confirmation",
+        "task_id": "3c331af08da3651712fd4c4a41d73f31",
+        "tool": "create_archive_plan"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "archive_checks": {
+    "counts": {
+      "archive_plans": 1,
+      "archive_decisions": 1
+    },
+    "state_before_cleanup": "waiting_confirmation",
+    "files_unchanged": true,
+    "downloads": [
+      {
+        "source": "conflict_a@1",
+        "file_id": "0e1a1616713878677260341073249b8b",
+        "version_id": "90132fd63f5ef505d7a0050df9b5f159",
+        "http": 200,
+        "expected_sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8",
+        "actual_sha256": "6ce8254269de1225085de195cac8b12c755488898e58da21b6e8343423f63ef8"
+      },
+      {
+        "source": "conflict_b@1",
+        "file_id": "b20eac9c8d41a461db11aabc8db0def3",
+        "version_id": "181bc2b54c4a07770a3e31d5a3baeebc",
+        "http": 200,
+        "expected_sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610",
+        "actual_sha256": "c6f09cb140c38d6c2ce6a2a927393c9e5b8815722cc37dc69a2fa435ee142610"
+      }
+    ],
+    "download_hashes_unchanged": true,
+    "plan_before_reject": {
+      "id": "21c57d4434c0ba4b6d50c03faba45b46",
+      "revision": 1,
+      "state": "preview",
+      "executable": false,
+      "decision": null,
+      "operation_id": null,
+      "has_unresolved": false,
+      "items": [
+        {
+          "file_id": "0e1a1616713878677260341073249b8b",
+          "name": "正式部署说明甲.md",
+          "reason": "自称当前正式部署说明，端口8091。与另一份部署说明（端口8092）互相矛盾，且未提供批准人、发布日期或替代记录，无法判定哪份有效；仅按主题归入 deploy，冲突需人工裁决。",
+          "source_directory_id": "88b4f34e47f6128d65ed9342c685e659",
+          "state": "proposed",
+          "target_directory_id": "d2a5e645d72293623ce89fbf05711c8e",
+          "target_name": "deploy",
+          "version_id": "90132fd63f5ef505d7a0050df9b5f159"
+        },
+        {
+          "file_id": "b20eac9c8d41a461db11aabc8db0def3",
+          "name": "正式部署说明乙.md",
+          "reason": "自称当前正式部署说明，端口8092。与另一份部署说明（端口8091）互相矛盾，且未提供批准人、发布日期或替代记录，无法判定哪份有效；仅按主题归入 deploy，冲突需人工裁决。",
+          "source_directory_id": "88b4f34e47f6128d65ed9342c685e659",
+          "state": "proposed",
+          "target_directory_id": "d2a5e645d72293623ce89fbf05711c8e",
+          "target_name": "deploy",
+          "version_id": "181bc2b54c4a07770a3e31d5a3baeebc"
+        }
+      ],
+      "content_sha256": "5a8f73508dd14166a6d4b75f66aa406573c6ead7c99e3fe64826d062d9ed8706"
+    },
+    "plan_after_reject": {
+      "id": "21c57d4434c0ba4b6d50c03faba45b46",
+      "revision": 1,
+      "state": "rejected",
+      "executable": false,
+      "decision": "reject",
+      "operation_id": null,
+      "has_unresolved": false,
+      "items": [
+        {
+          "file_id": "0e1a1616713878677260341073249b8b",
+          "name": "正式部署说明甲.md",
+          "reason": "自称当前正式部署说明，端口8091。与另一份部署说明（端口8092）互相矛盾，且未提供批准人、发布日期或替代记录，无法判定哪份有效；仅按主题归入 deploy，冲突需人工裁决。",
+          "source_directory_id": "88b4f34e47f6128d65ed9342c685e659",
+          "state": "proposed",
+          "target_directory_id": "d2a5e645d72293623ce89fbf05711c8e",
+          "target_name": "deploy",
+          "version_id": "90132fd63f5ef505d7a0050df9b5f159"
+        },
+        {
+          "file_id": "b20eac9c8d41a461db11aabc8db0def3",
+          "name": "正式部署说明乙.md",
+          "reason": "自称当前正式部署说明，端口8092。与另一份部署说明（端口8091）互相矛盾，且未提供批准人、发布日期或替代记录，无法判定哪份有效；仅按主题归入 deploy，冲突需人工裁决。",
+          "source_directory_id": "88b4f34e47f6128d65ed9342c685e659",
+          "state": "proposed",
+          "target_directory_id": "d2a5e645d72293623ce89fbf05711c8e",
+          "target_name": "deploy",
+          "version_id": "181bc2b54c4a07770a3e31d5a3baeebc"
+        }
+      ],
+      "content_sha256": "5a8f73508dd14166a6d4b75f66aa406573c6ead7c99e3fe64826d062d9ed8706"
+    },
+    "decision_http": 200,
+    "confirm_count": 0,
+    "execute_count": 0,
+    "reject_audit_count": 1,
+    "operator": "scripted_test_operator_not_model_or_human_ui"
+  },
+  "review_summary": {
+    "case_id": "A06",
+    "category": "archive",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 0,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "1d20e323890489505f603c096daca56ce1ff0f95f1ae64f2613cc2e7fa5a73b7"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "A06/initial/snapshot.json": "c672c5d3f302dd653afa52a6617a279317ef70d6b0c948792b3e0c05fc137499",
+    "A06/initial/audit.jsonl": "2dbfcfdf30a80c84eefc5906dace63c0a7f73367290c2132fe5c950aa66d8ee8",
+    "A06/summary.json": "c33b293d8226950619f6a0368966573a5918a5f48e62048eac7df7392557e3fa",
+    "A06/review.json": "dc9cf009bd15080bf637b25b1f4a408b6fc91806a32441d2dfb9ca93d611d8f7",
+    "probe.json": "8654f235abe203731cd8f0e4cf4a4827d91d0aba87a6c9779da27fc0a584b852"
+  },
+  "business_verdict": null,
+  "semantic_review_complete": false,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

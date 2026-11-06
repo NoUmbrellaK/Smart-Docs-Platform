@@ -1,0 +1,11 @@
+set -e
+test "$(systemctl show smartdocs-m5-a06-live-20261106.service -p ActiveState --value)" = failed
+test "$(systemctl show smartdocs-m5-a06-live-20261106.service -p ExecMainStatus --value)" = 3
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+runuser -u nobody -- env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m smartdocs.audit_summary /tmp/smartdocs-m5-a06-live.meDhAR/A06/initial/audit.jsonl > docs/evidence/m5/a06-live-20261106/audit-summary.json
+runuser -u nobody -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B /tmp/smartdocs-safe.h4SzvX/repo/test/e2e/benchmark_review.py prepare /tmp/smartdocs-m5-a06-live.meDhAR/A06/initial/snapshot.json /tmp/smartdocs-m5-a06-live.meDhAR/A06/review.json
+python3 -B docs/evidence/m5/a06-live-20261106/inspect.py > docs/evidence/m5/a06-live-20261106/result.json
+install -m 0644 /tmp/smartdocs-m5-a06-live.meDhAR/A06/initial/audit.jsonl docs/evidence/m5/a06-live-20261106/trace.jsonl
+systemctl show smartdocs-m5-a06-live-20261106.service -p ActiveState -p SubState -p Result -p ExecMainStatus > docs/evidence/m5/a06-live-20261106/journal-and-status.txt
+journalctl -u smartdocs-m5-a06-live-20261106.service --no-pager >> docs/evidence/m5/a06-live-20261106/journal-and-status.txt
+bash docs/evidence/m5/a06-live-20261106/fingerprint-command.txt > docs/evidence/m5/a06-live-20261106/postflight.txt

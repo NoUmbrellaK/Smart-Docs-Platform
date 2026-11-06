@@ -1,0 +1,23 @@
+Result=exit-code
+ExecMainStatus=3
+ActiveState=failed
+SubState=failed
+Nov 06 19:57:44 aliyun-lou bash[1296131]: 2026-11-06T11:57:44.634190Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1296131
+Nov 06 19:57:44 aliyun-lou bash[1296131]: 2026-11-06T11:57:44.639357Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:57:59 aliyun-lou bash[1296131]: 2026-11-06T11:57:59.944509Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:58:09 aliyun-lou bash[1296131]: 2026-11-06T11:58:09.400361Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:58:55 aliyun-lou bash[1296432]: schema_version=16
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:59:25 aliyun-lou bash[1296505]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:59:38 aliyun-lou bash[1296614]: {"case_id": "A06", "run_kind": "live_provider", "state": "waiting_confirmation", "business_verdict": null, "capture_complete": true, "review_wait": "not_requested"}
+Nov 06 19:59:41 aliyun-lou systemd[1]: smartdocs-m5-a06-live-20261106.service: Main process exited, code=exited, status=3/NOTIMPLEMENTED
+Nov 06 19:59:41 aliyun-lou systemd[1]: smartdocs-m5-a06-live-20261106.service: Failed with result 'exit-code'.
+Nov 06 19:59:41 aliyun-lou systemd[1]: smartdocs-m5-a06-live-20261106.service: Consumed 8.442s CPU time.

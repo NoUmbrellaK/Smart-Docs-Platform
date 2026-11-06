@@ -9,11 +9,11 @@
   },
   "denominator": 30,
   "admission_observations": 3,
-  "model_tasks_not_run": 6,
-  "model_tasks_attempted": 21,
+  "model_tasks_not_run": 5,
+  "model_tasks_attempted": 22,
   "model_tasks_completed": 18,
   "model_tasks_failed": 1,
-  "model_tasks_waiting_confirmation": 2,
+  "model_tasks_waiting_confirmation": 3,
   "business_verdicts_recorded": 0,
   "objective_contract_cases_verified": 3,
   "business_completion_rate": null,
@@ -284,10 +284,27 @@
     {
       "case_id": "A06",
       "category": "archive",
-      "execution": "not_run",
+      "execution": "waiting_confirmation",
       "business_verdict": null,
-      "evidence": null,
-      "admission_http": null
+      "evidence": "a06-live-20261106/result.json",
+      "admission_http": 201,
+      "error_code": null,
+      "provider_requests": 2,
+      "total_tokens": 6874,
+      "attempt_count": 1,
+      "cumulative_provider_requests": 2,
+      "cumulative_total_tokens": 6874,
+      "scripted_operator_rejection_without_movement_observed": true,
+      "semantic_review_complete": false,
+      "attempts": [
+        {
+          "evidence": "a06-live-20261106/result.json",
+          "state": "waiting_confirmation",
+          "error_code": null,
+          "provider_requests": 2,
+          "total_tokens": 6874
+        }
+      ]
     },
     {
       "case_id": "A07",

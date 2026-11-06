@@ -1,0 +1,23 @@
+Nov 06 19:48:09 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/a06_offline.py /tmp/smartdocs-m5-a06-offline.HjqUgY/green.json.
+Nov 06 19:48:09 aliyun-lou bash[1295022]: 2026-11-06T11:48:09.402471Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1295022
+Nov 06 19:48:09 aliyun-lou bash[1295022]: 2026-11-06T11:48:09.407340Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 06 19:48:24 aliyun-lou bash[1295022]: 2026-11-06T11:48:24.636571Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 06 19:48:33 aliyun-lou bash[1295022]: 2026-11-06T11:48:33.084563Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 06 19:49:20 aliyun-lou bash[1295250]: schema_version=16
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_agent_migration_does_not_invent_tasks_or_consent
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_run_migration_does_not_invent_execution
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_source_migration_does_not_invent_model_context
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 06 19:49:50 aliyun-lou bash[1295481]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 06 19:49:54 aliyun-lou bash[1295626]: test_capture_archive_preview_never_confirms_or_moves (m5_benchmark_capture_test.CaptureE2E) ... ok
+Nov 06 19:49:54 aliyun-lou bash[1295626]: ----------------------------------------------------------------------
+Nov 06 19:49:54 aliyun-lou bash[1295626]: Ran 1 test in 3.841s
+Nov 06 19:49:54 aliyun-lou bash[1295626]: OK
+Nov 06 19:49:54 aliyun-lou bash[1295626]: PASS A06 test-operator rejection: one reject, no confirm/execute/move, original content unchanged; no provider
+Nov 06 19:49:59 aliyun-lou systemd[1]: smartdocs-m5-a06-offline-20261106.service: Deactivated successfully.
+Nov 06 19:49:59 aliyun-lou systemd[1]: smartdocs-m5-a06-offline-20261106.service: Consumed 7.951s CPU time.
