@@ -1,0 +1,130 @@
+set -e
+python3 -B - <<'PY'
+import pathlib,json,hashlib,stat,collections,re,sys,subprocess
+r=pathlib.Path.cwd(); e=r/'docs/evidence/m5/h05-live-20261106'
+p=pathlib.Path('/tmp/smartdocs-m5-h05-live.WUrTKH/H05')
+runtime=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+sys.path.insert(0,str(r/'test/e2e'))
+from benchmark_review import prepare,summarize
+s=json.loads((p/'initial/snapshot.json').read_text()); review=json.loads((p/'review.json').read_text())
+v=json.loads((e/'result.json').read_text()); a=json.loads((e/'audit-summary.json').read_text())
+trace=[json.loads(x) for x in (e/'trace.jsonl').read_text().splitlines()]
+assert trace==[json.loads(x) for x in (p/'initial/audit.jsonl').read_text().splitlines()] and len(trace)==30
+assert v['metadata']==s['metadata'] and v['metadata']['code_revision']=='eef29706ae60ed20b7b79ba150f4cac7c281e1f5'
+assert v['run_result']=={k:s['run_result'].get(k) for k in ('state','error_code','model_calls','kind')}
+assert v['run_result']=={'state':'completed','error_code':None,'model_calls':4,'kind':'handover_report'}
+assert s['task']['state']=='completed' and s['capture']['complete'] and v['capture_complete']
+assert s.get('archive_plan') is None and 'archive_policy_revision' not in s['task']
+assert s['execution']=={'outcome':{'state':'completed'},'max_model_calls':6,'automatic_retry':False,'automatic_confirmation':False}
+assert review==prepare(s) and v['review_summary']==summarize(s,review)
+assert v['review_summary']['citations_total']==7 and v['review_summary']['citations_reviewed']==0
+models=[x for x in trace if x['event']=='model_result']; attempts=[x for x in trace if x['event']=='model_attempt']
+assert len(models)==len(attempts)==v['provider_attempts']==v['provider_results']==4
+assert all(x['reason']=='success' for x in models)
+assert [x['max_tokens'] for x in attempts]==v['max_tokens_observed']==[4096]*4
+usage={k:sum(x['usage'][k] for x in models) for k in models[0]['usage']}
+assert usage==v['usage']==a['model']['usage_total']
+assert usage==dict(prompt_tokens=24725,completion_tokens=3017,total_tokens=27742,prompt_cache_hit_tokens=14464,prompt_cache_miss_tokens=10261)
+assert [x['usage']['total_tokens'] for x in models]==[2859,4668,7806,12409]
+assert a['outcome']=={'state':'completed'} and a['trace_complete'] and a['tool_rejections']==[]
+assert v['model_rejection'] is a['model_rejection'] is None
+assert not any(x['event']=='model_batch_rejection' for x in trace)
+batches=[]
+for x in trace:
+ if x['event']=='model_result':batches.append(0)
+ if x['event']=='tool_attempt':batches[-1]+=1
+assert batches==v['dispatched_tools_per_model_response']==[1,4,4,1]
+returns=[x for x in trace if x['event']=='tool_result']; calls=s['tool_calls']['items']
+expected=['search_documents']+['read_document_version']*8+['save_handover_report']
+assert v['backend_tool_calls']==s['tool_calls']
+assert [x['tool'] for x in returns]==[x['tool'] for x in calls]==expected
+assert collections.Counter(expected)==v['tools_by_name']
+assert all(x['status']=='success' for x in returns+calls)
+assert returns[0]['item_count']==10 and calls[0]['parameters']=={'mode':'metadata','query_bytes':0}
+assert [x['parameters'] for x in calls[1:9]]==[{'selector':'range'}]*8
+assert [x['chunk_count'] for x in returns[1:9]]==[1]*8 and calls[-1]['parameters']=={'item_count':6}
+case=next(x for x in json.loads((r/'test/fixtures/agent-p0/tasks.json').read_text())['tasks'] if x['id']=='H05')
+mapping=s['fixture_mapping']; report=s['handover_report']; checks=v['report_checks']
+assert set(mapping)==set(case['scope'])==set(case['present']) and len(mapping)==11
+assert all(x['approved'] and x['parse_state']=='completed' and x['project_id']==s['task']['project_id'] for x in mapping.values())
+selected=sorted([{k:mapping[ref][k] for k in ('file_id','version_id')} for ref in case['scope']],key=lambda x:x['file_id'])
+assert sorted(s['task']['versions'],key=lambda x:x['file_id'])==report['selected_versions']==selected
+assert report['source_versions']==selected[:10]
+assert selected[-1]['file_id']==mapping['tests@1']['file_id']
+assert checks['source_dependencies_match_first_ten_file_ids'] and checks['omitted_fixture_source']=='tests@1'
+assert report['state']==checks['state']=='draft' and report['version']==report['checklist']['revision']==checks['checklist_revision']==1
+assert len(report['selected_versions'])==checks['selected_version_count']==11
+assert len(report['source_versions'])==checks['source_version_count']==10
+statuses={x['key']:x['status'] for x in report['report']['items']}
+assert statuses==checks['item_statuses']==dict(requirements='found',design='found',api='found',test='missing',deploy='uncertain',issues='found')
+assert case['expected']['statuses']==checks['expected_item_statuses']=={k:'uncertain' for k in statuses}
+assert checks['expected_item_statuses_match'] is False and checks['metadata_only_requirement_met'] is False
+assert '没有完整核查' in report['report']['summary'] and '未翻页' in report['report']['limitations']
+assert checks['incomplete_inspection_disclosed'] and checks['metadata_search_count']==1 and checks['metadata_item_count']==10 and checks['content_read_calls']==8
+assert len(report['checklist']['items'])==6 and sum(x['required'] for x in report['checklist']['items'])==5
+assert len(s['citation_sources'])==len(checks['reference_location_checks'])==7
+for saved,source in zip(checks['reference_location_checks'],s['citation_sources']):
+ c=source['source']['chunk']; m=mapping[saved['fixture_source']]
+ assert source['reference']==saved['reference']=={k:c[k] for k in ('file_id','version_id','chunk_id')}
+ assert (c['file_id'],c['version_id'])==(m['file_id'],m['version_id'])
+ assert c['source_sha256']==saved['source_sha256']==m['sha256']==hashlib.sha256(c['text'].encode()).hexdigest()
+ assert (saved['line_start'],saved['line_end'])==(c['line_start'],c['line_end'])
+ assert c['line_start']==1 and c['line_end']==c['text'].count('\n')+1
+ assert saved['char_count']==source['source']['char_count']==len(c['text'])
+ assert source['source']['is_current']==saved['is_current']==True and source['source']['vector_state']=='pending'
+refs=[c for item in report['report']['items'] for c in item['citations']]
+assert len(refs)==7
+for c in refs:
+ source=next(x['source']['chunk'] for x in s['citation_sources'] if x['reference']=={k:c[k] for k in ('file_id','version_id','chunk_id')})
+ assert c['text']==source['text'] and (c['line_start'],c['line_end'])==(source['line_start'],source['line_end'])
+for name,digest in v['private_artifact_sha256'].items():
+ f=p/name; assert hashlib.sha256(f.read_bytes()).hexdigest()==digest and stat.S_IMODE(f.stat().st_mode)==0o600 and f.stat().st_uid==65534
+for d in (p.parent,p,p/'initial'):assert stat.S_IMODE(d.stat().st_mode)==0o700 and d.stat().st_uid==65534
+for name,digest in v['fixture_sha256'].items():assert hashlib.sha256((r/'test/fixtures/agent-p0'/name).read_bytes()).hexdigest()==digest
+output=subprocess.check_output(['runuser','-u','nobody','--','env','PYTHONPATH='+str(runtime/'python'),
+ '/tmp/smartdocs-mcp.P7grAI/venv/bin/python','-B','-m','smartdocs.audit_summary',str(p/'initial/audit.jsonl')])
+assert json.loads(output)==a
+before=re.findall(r'^([0-9a-f]{64}) (.+)$',(e/'preflight.txt').read_text(),re.M)
+after=re.findall(r'^([0-9a-f]{64}) (.+)$',(e/'postflight.txt').read_text(),re.M)
+assert before==after and len(after)==37
+for sha,name in after:
+ f=pathlib.Path(name); actual=f if f.is_absolute() else r/f
+ assert hashlib.sha256(actual.read_bytes()).hexdigest()==sha
+ if not f.is_absolute():assert actual.read_bytes()==(runtime/f).read_bytes()
+base=e.parent; ledger=json.loads((base/'fixed-task-results.json').read_text())
+assert len(ledger['tasks'])==len({x['case_id'] for x in ledger['tasks']})==ledger['denominator']==30
+assert collections.Counter(x['execution'] for x in ledger['tasks'])=={'completed':13,'admission_rejected':3,'not_run':14}
+assert (ledger['model_tasks_attempted'],ledger['model_tasks_completed'],ledger['model_tasks_failed'],ledger['model_tasks_not_run'])==(13,13,0,14)
+totals=[0,0,0,0]
+for item in ledger['tasks']:
+ assert item['business_verdict'] is None
+ history=item.get('attempts',[])
+ if not history:continue
+ assert len(history)==item['attempt_count']
+ assert sum(x['provider_requests'] for x in history)==item['cumulative_provider_requests']
+ assert sum(x['total_tokens'] for x in history)==item['cumulative_total_tokens']
+ for attempt in history:
+  saved=json.loads((base/attempt['evidence']).read_text())
+  assert saved['run_result']['state']==attempt['state'] and saved['usage']['total_tokens']==attempt['total_tokens']
+  assert saved['provider_attempts']==attempt['provider_requests']
+  totals=[a+b for a,b in zip(totals,[1,attempt['provider_requests'],attempt['total_tokens'],saved.get('review_summary',{}).get('citations_total',0)])]
+assert totals==[25,90,448995,65]
+h=next(x for x in ledger['tasks'] if x['case_id']=='H05')
+assert h['evidence']=='h05-live-20261106/result.json' and h['expected_item_statuses_match'] is False and h['metadata_only_requirement_met'] is False
+assert ledger['citations_observed']==65 and ledger['business_completion_rate'] is None and ledger['citation_accuracy'] is None
+assert v['business_verdict'] is None and v['citation_accuracy'] is None and v['cost_estimate'] is None
+for f in (r/'README.md',e/'README.md',base/'acceptance-index.md'):
+ for target in re.findall(r'\]\(([^)]+)\)',f.read_text()):
+  if '://' in target or target.startswith('#'):continue
+  assert (f.parent/target.split('#')[0]).exists(),target
+for f in e.iterdir():assert not re.search(r'sk-[A-Za-z0-9_-]{16,}|-----BEGIN '+r'[A-Z ]*'+'PRIVATE KEY-----',f.read_text())
+log=(e/'journal-and-status.txt').read_text()
+assert all(x in log for x in ('Result=success','ExecMainStatus=0','ActiveState=inactive','TasksCurrent=0','high 82471','max 0','oom 0','oom_kill 0'))
+print('PASS:30 events/private capture agree; completed private draft; human review blank')
+print('PASS:4 requests/27742 tokens=24725+3017; batches1/4/4/1; one metadata search, eight body reads, one save')
+print('PASS:recorded H05 contract deviation, not business success; statuses differ from all-uncertain expectation')
+print('PASS:11 selected/10 source versions match first ten file IDs; tests@1 excluded; raw pagination wire not retained')
+print('PASS:7 current located citations; private hashes/permissions; 37 unchanged runtime fingerprints; terminal success/no added OOM')
+print('PASS:30 tasks latest13completed+3admission+14not-run; history25attempts/90requests/448995tokens/65citations')
+PY
+git diff --check
