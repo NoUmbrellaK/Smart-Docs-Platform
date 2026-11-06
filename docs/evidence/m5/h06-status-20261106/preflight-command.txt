@@ -1,0 +1,21 @@
+set -e
+python3 -B - <<'PY'
+import pathlib,re,hashlib,subprocess
+root=pathlib.Path.cwd(); runtime=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+old=(root/'docs/evidence/m5/status-semantics-20261106/postflight.txt').read_text()
+count=0
+for sha,name in re.findall(r'^([0-9a-f]{64}) (.+)$',old,re.M):
+ p=pathlib.Path(name)
+ paths=[p] if p.is_absolute() else [root/p,runtime/p]
+ values=[hashlib.sha256(x.read_bytes()).hexdigest() for x in paths]
+ assert len(set(values))==1,(name,'runtime mismatch')
+ assert values[0]==sha,(name,'unexpected change')
+ print(values[0],name);count+=1
+assert count==37,count
+print('fingerprints checked',count)
+PY
+systemctl show smartdocsvectorcheck.slice -p TasksCurrent -p CPUQuotaPerSecUSec -p MemoryHigh -p MemoryMax -p MemorySwapMax -p TasksMax -p IOReadBandwidthMax -p IOWriteBandwidthMax -p IOReadIOPSMax -p IOWriteIOPSMax
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+systemctl is-active mysql
+journalctl -u smartdocs-m5-status-semantics-20261106.service --no-pager -n 5

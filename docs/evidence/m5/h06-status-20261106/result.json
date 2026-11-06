@@ -1,0 +1,291 @@
+{
+  "case_id": "H06",
+  "attempt_number": 2,
+  "metadata": {
+    "code_revision": "3892d01c2846f105e564bc6403fbd5ee4b55b102",
+    "recorded_at": "2026-11-06T09:31:35.371957+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; same-scope repeated synthetic tests authorized, execution 2026-11-06; H06 second attempt after shared handover status semantics clarification; no validator or fixture changes; frozen question and six approved synthetic versions requirements@1 design@1 api@2 tests@1 issues@1 placeholder@1; standard six-item checklist; fixture expected answers not sent; <=6 calls x4096 output; no automatic retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h06-status.IOlQr6/H06"
+  },
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 4,
+    "kind": "handover_report"
+  },
+  "capture_complete": true,
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 9,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "11193b881c3f054c1ecfe3c0872a3dfa",
+        "sequence": 1,
+        "started_at": "2026-11-06 09:31:41.925179",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 7,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "f2c409def947ebabf5a75f6fd2c2a101",
+        "sequence": 2,
+        "started_at": "2026-11-06 09:31:43.924081",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "a89fc55131cecd6e0b103a028700cc68",
+        "sequence": 3,
+        "started_at": "2026-11-06 09:31:43.938600",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "c67751cdf7b1b33e5c6c797fed68c612",
+        "sequence": 4,
+        "started_at": "2026-11-06 09:31:46.216418",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "82bb40d9cfcd551e01e01677b97f350b",
+        "sequence": 5,
+        "started_at": "2026-11-06 09:31:46.229685",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "f4cde75266109857c2bb3b3ed75cf1a3",
+        "sequence": 6,
+        "started_at": "2026-11-06 09:31:46.319709",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 6,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "81b04b0dd50da24eb0feafbd1fc96cbd",
+        "sequence": 7,
+        "started_at": "2026-11-06 09:31:46.332511",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 18,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "710d05c41d56700b29e2c07e6bba32ff",
+        "sequence": 8,
+        "started_at": "2026-11-06 09:31:55.112791",
+        "status": "success",
+        "task_id": "99b7ff20914b0702a202313fb9b394d9",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "provider_attempts": 4,
+  "provider_results": 4,
+  "max_tokens_observed": [
+    4096,
+    4096,
+    4096,
+    4096
+  ],
+  "usage": {
+    "prompt_tokens": 20995,
+    "completion_tokens": 2533,
+    "total_tokens": 23528,
+    "prompt_cache_hit_tokens": 12032,
+    "prompt_cache_miss_tokens": 8963
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    2,
+    4,
+    1
+  ],
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 6,
+    "save_handover_report": 1
+  },
+  "model_rejection": null,
+  "model_batch_rejection": null,
+  "report_checks": {
+    "state": "draft",
+    "checklist_revision": 1,
+    "selected_version_count": 6,
+    "source_version_count": 6,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses": {
+      "requirements": "found",
+      "design": "found",
+      "api": "found",
+      "test": "found",
+      "deploy": "uncertain",
+      "issues": "found"
+    },
+    "expected_item_statuses_match": true,
+    "placeholder_deficiency_disclosed": true,
+    "deployment_status_requirement_met": true,
+    "citation_occurrences": 6,
+    "unique_citation_sources": 6,
+    "reference_location_checks": [
+      {
+        "fixture_source": "requirements@1",
+        "reference": {
+          "file_id": "7308664439d05123e984cc30939c8705",
+          "version_id": "d44fef9b2b6e5c301cd662790a77bef7",
+          "chunk_id": "cf34d303b4c8fbc7c1947b03d16fa5ae472e1d2c6ba5a1d0d7a18e670e3105fd"
+        },
+        "source_sha256": "231e87b44c28b1abe1a530f3cbc9471cc23aeaa2da9bda6b61a7b3038455733e",
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 93,
+        "is_current": true
+      },
+      {
+        "fixture_source": "design@1",
+        "reference": {
+          "file_id": "f9f9062db7b031e72e54dddfb730b613",
+          "version_id": "a8d5f4350d55c37cc36138b105348a6a",
+          "chunk_id": "ccc136b6c525733059547b2a943ae1fc3e0f00fbb4c8305d15c73daea5bf2435"
+        },
+        "source_sha256": "4c107fb668728cb1fba396742298d5f3abd8cba6e834edb8a3a6abeffc2cd4ed",
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 86,
+        "is_current": true
+      },
+      {
+        "fixture_source": "api@2",
+        "reference": {
+          "file_id": "0e43c58261d7a55108a5d2b0a16c8942",
+          "version_id": "55663fb449f2db2e8466fdf0fcac4017",
+          "chunk_id": "7d7bf605e3970ee16e799e8d4b0b56a6201c3fe4b628b004344b614c91bbb17d"
+        },
+        "source_sha256": "770607b56cef792f607d3d35da479600a122b3e1eba9ae284d1004bc8fcd3a0a",
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 111,
+        "is_current": true
+      },
+      {
+        "fixture_source": "tests@1",
+        "reference": {
+          "file_id": "d1bc04dc3696debbe9d4a31a228556ab",
+          "version_id": "1eeb5d899cdf1157cab877cd7057eefb",
+          "chunk_id": "e4110dc466c5a74ef794f4cdff6ec9fbe5618e2c44e09e1efece55af56b6169a"
+        },
+        "source_sha256": "ac84e207475cf9fb8ee13dfd48c3ec9e945b49dc0d6ecd358b4a34a3f08dbe56",
+        "line_start": 1,
+        "line_end": 5,
+        "char_count": 69,
+        "is_current": true
+      },
+      {
+        "fixture_source": "placeholder@1",
+        "reference": {
+          "file_id": "8376ca877046d26203a1e8d58372448b",
+          "version_id": "6956add862bebf3cf954873fbdb6ac69",
+          "chunk_id": "d2b728decba3c52ed2dc1872f3f15eb599d44d0d2e3e414732199adf9c2730fe"
+        },
+        "source_sha256": "ab83c13dfc4e0cd991cafc16fb6c68f1294303867578f0cbfc5f1111ed5ebe89",
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 31,
+        "is_current": true
+      },
+      {
+        "fixture_source": "issues@1",
+        "reference": {
+          "file_id": "c7ed6ec463628b81051814681baa3676",
+          "version_id": "fc0e817146fb96225473619a1172c322",
+          "chunk_id": "8ec9f9e70397390f5820f4a81c2b9a3c2ced411f81c747a06dfab33e26d47f69"
+        },
+        "source_sha256": "cb75e160bd13355fa6ad7a5f62e8176cb57815091dcc43b82e5ed73efbe3b366",
+        "line_start": 1,
+        "line_end": 3,
+        "char_count": 34,
+        "is_current": true
+      }
+    ]
+  },
+  "observations": [
+    "本次deploy=uncertain且保留占位正文引用，其余五项found，符合冻结状态判据；不等于完整业务验收或真人引用评审。",
+    "正文仍披露部署只有TODO及测试失败、备份演练待办；没有将文档存在等同于业务通过。",
+    "一次metadata空查询、六次range读取、一次保存，无批次超限纠错或自动传输重试。",
+    "limitations仍泛称关键词/元数据检索，轨迹没有keyword搜索；按实际metadata统计。",
+    "新随机ID/模型输出存在波动；本次4请求低于首次6请求，不宣称通用成本改善或稳定通过率。",
+    "逐次range文件ID、原始供应商请求/响应未留存；不能只凭读取计数证明六份全文全部读完；采集复读非执行工具调用。"
+  ],
+  "review_summary": {
+    "case_id": "H06",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 6,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "bc7422e4362b94c11ab7f6b73f712bd07a288ed878e9ee93d07ed6f05da70bb7"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "initial/snapshot.json": "9838a29f1b4aa3aa35cbee0852c93389be7842ef403e9f58d00a1d2beb466253",
+    "initial/audit.jsonl": "816be155edec49275ff84d01af0e7263e7fa9479305e3842d138b49bacab9118",
+    "summary.json": "a545d545e7bdf8b234a206ea0f0dab6927a442883de042b11e4859cd79ea7c13",
+    "review.json": "ac258b7d4bf91ade897d71610f834814b9e9845eb21ad977571857a01af11410"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

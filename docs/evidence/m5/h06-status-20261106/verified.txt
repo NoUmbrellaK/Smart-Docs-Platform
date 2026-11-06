@@ -1,0 +1,5 @@
+PASS:26 events/private capture agree; completed private draft; human review blank
+PASS:4 requests/23528 tokens=20995+2533; batches1/2/4/1; no batch rejection or retry
+PASS:placeholder deficiency disclosed; deploy=uncertain with real citation; frozen statuses match; prior failure preserved
+PASS:6 selected/source versions and 6 current citation locations checked; 37 unchanged runtime fingerprints; no added OOM
+PASS:30 tasks latest14completed+3admission+13not-run; history28attempts/104requests/537999tokens/85citations

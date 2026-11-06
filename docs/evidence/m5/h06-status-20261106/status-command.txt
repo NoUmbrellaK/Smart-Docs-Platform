@@ -1,0 +1,9 @@
+PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B - <<'PY'
+import json,pathlib
+root=pathlib.Path('/tmp/smartdocs-safe.h4SzvX/repo')
+s=json.loads(pathlib.Path('/tmp/smartdocs-m5-h06-status.IOlQr6/H06/initial/snapshot.json').read_text())
+case=next(x for x in json.loads((root/'test/fixtures/agent-p0/tasks.json').read_text())['tasks'] if x['id']=='H06')
+actual={x['key']:x['status'] for x in s['handover_report']['report']['items']}
+assert actual==case['expected']['statuses'], {'actual':actual,'expected':case['expected']['statuses']}
+print('PASS H06 frozen structured statuses')
+PY

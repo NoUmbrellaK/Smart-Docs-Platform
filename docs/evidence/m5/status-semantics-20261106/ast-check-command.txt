@@ -1,7 +1,7 @@
 python3 -B - <<'PY'
 import ast,pathlib,subprocess
 p=pathlib.Path('python/smartdocs/mcp_read.py')
-old=ast.parse(subprocess.check_output(['git','show','HEAD:'+str(p)]).decode())
+old=ast.parse(subprocess.check_output(['git','show','e73e3751cd1acb135693759a06ba0a87098f6ec7:'+str(p)]).decode())
 new=ast.parse(p.read_text())
 def descriptions(tree):
  return next(n.value for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='DESCRIPTIONS' for t in n.targets))
