@@ -1,0 +1,24 @@
+2026-11-07T00:42:57+0800 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_backup_restore_test.py.
+2026-11-07T00:42:57+0800 aliyun-lou bash[1353714]: 2026-11-06T16:42:57.232763Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1353714
+2026-11-07T00:42:57+0800 aliyun-lou bash[1353714]: 2026-11-06T16:42:57.237363Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-07T00:43:12+0800 aliyun-lou bash[1353714]: 2026-11-06T16:43:12.441187Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-07T00:43:22+0800 aliyun-lou bash[1353714]: 2026-11-06T16:43:22.302212Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-11-07T00:44:12+0800 aliyun-lou bash[1354129]: schema_version=17
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_inspection_migration_preserves_legacy_task_without_inventing_constraints
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m2_migration_preserves_103_files_without_fabricating_results
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_agent_migration_preserves_only_fixture_task_without_inventing_scope_or_consent
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_run_migration_does_not_invent_execution
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_tool_audit_migration_does_not_invent_history
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_source_migration_does_not_invent_model_context
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_checklist_context_migration_does_not_invent_selection
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_report_migration_does_not_invent_reports_or_operations
+2026-11-07T00:44:42+0800 aliyun-lou bash[1354323]: PASS m3_archive_context_migration_does_not_invent_selection
+2026-11-07T00:45:07+0800 aliyun-lou bash[1354460]: test_backup_restore_paired_snapshot_and_authoritative_http (__main__.BackupRestoreE2E) ... {"case": "T20-isolated-keyword-restore", "result": "pass", "database_rows_sha256": "f86544a3b6646a85e7c02ede1e11404aad86577a968f7c5f5803af0a907c41ae", "storage_files": 9, "file_versions": 4, "report_citations": 1, "resumed_uploads": 1, "keyword_order_changed": true, "inspection_constraints_restored": true, "restricted_calls_denied": 8, "remote_model_calls": 0, "local_embedding_requests": 0, "vector_rebuild": "not_run", "production_restore": "not_run"}
+2026-11-07T00:45:07+0800 aliyun-lou bash[1354460]: ok
+2026-11-07T00:45:07+0800 aliyun-lou bash[1354460]: ----------------------------------------------------------------------
+2026-11-07T00:45:07+0800 aliyun-lou bash[1354460]: Ran 1 test in 25.178s
+2026-11-07T00:45:07+0800 aliyun-lou bash[1354460]: OK
+2026-11-07T00:45:11+0800 aliyun-lou systemd[1]: smartdocs-restore-inspection-keyword-20261107.service: Deactivated successfully.
+2026-11-07T00:45:11+0800 aliyun-lou systemd[1]: smartdocs-restore-inspection-keyword-20261107.service: Consumed 8.286s CPU time.

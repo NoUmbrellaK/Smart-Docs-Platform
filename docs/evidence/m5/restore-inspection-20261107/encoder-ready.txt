@@ -1,0 +1,19 @@
+Type=notify
+NotifyAccess=main
+TimeoutStartUSec=3min 10s
+RuntimeMaxUSec=15min
+MainPID=1354608
+Result=success
+Slice=smartdocsvectorcheck.slice
+UMask=0077
+Nice=10
+User=nobody
+Group=nogroup
+PrivateNetwork=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+KillMode=control-group
+ActiveState=active
+SubState=running
+nobody nogroup 700 /tmp/smartdocs-restore-inspection.JddQu8
+nobody nogroup 600 /tmp/smartdocs-restore-inspection.JddQu8/encoder.sock

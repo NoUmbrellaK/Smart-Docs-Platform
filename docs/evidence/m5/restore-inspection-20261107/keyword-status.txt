@@ -1,0 +1,15 @@
+RuntimeMaxUSec=infinity
+MainPID=0
+Result=success
+ExecMainStatus=0
+Slice=
+IPAddressAllow=
+IPAddressDeny=
+UMask=0022
+Nice=0
+User=
+Group=
+NoNewPrivileges=no
+KillMode=control-group
+ActiveState=inactive
+SubState=dead

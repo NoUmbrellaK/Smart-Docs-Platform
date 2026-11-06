@@ -180,7 +180,7 @@ metadata搜索返回10项后额外状态查询access_denied，任务scope_change
 
 | 编号 | 必须证明的行为 | 测试入口和实际证据 | 已有范围及剩余限制 |
 | --- | --- | --- | --- |
-| T-20 | 恢复后文件、版本、成员权限、固定引用匹配，索引能重建 | [m3_backup_restore_test.py](../../../test/e2e/m3_backup_restore_test.py)的`--vectors`模式；[完整向量恢复原始记录](../m3/vector-restore/verified.txt)、[默认模式回归](../m3/vector-restore/default-regression.txt)及[操作说明](../m3/vector-restore/README.md) | 本机隔离恢复直接证据：全库行摘要与成对storage、9存储文件/4版本/角色/私人报告/固定来源/续传；真实本地向量重建与关键词降级。新库新目录，原库/备份不变。不是生产恢复、异机兼容、冷模型缓存或RPO/RTO证明。 |
+| T-20 | 恢复后文件、版本、成员权限、固定引用匹配，索引能重建 | [m3_backup_restore_test.py](../../../test/e2e/m3_backup_restore_test.py)的`--vectors`模式；[schema17两模式复验及显式任务限制](restore-inspection-20261107/README.md)；历史[向量记录](../m3/vector-restore/verified.txt)、[默认模式](../m3/vector-restore/default-regression.txt)及[操作说明](../m3/vector-restore/README.md) | 本机隔离恢复直接证据：全库行摘要与成对storage、9存储文件/4版本/角色/私人报告/固定来源/续传；真实本地向量重建与关键词降级。schema17恢复后限制保留，8类越界请求被拒绝；新库新目录，原库/备份不变。不是生产恢复、异机兼容、冷模型缓存或RPO/RTO证明。 |
 
 ## 版本绑定与发布复验
 

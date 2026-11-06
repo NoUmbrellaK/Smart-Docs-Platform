@@ -269,6 +269,11 @@ ALTER TABLE document_chunks ADD FULLTEXT INDEX ft_document_body (body) WITH PARS
 才运行受限测试。使用既有固定模型/依赖/编码修订，不在运行中联网下载或替换模型；
 模型缓存文件丢失或换机器后的重建需另验。实际记录见[向量恢复证据](../evidence/m3/vector-restore/README.md)。
 
+schema17 的恢复检查还需包含非空 `agent_tasks.inspection_constraints`：恢复后不仅要核对字段，
+还须用原任务验证元数据搜索上限与正文读取拒绝，防止限制丢失后任务变成无限制。
+当前主机的[补充恢复记录](../evidence/m5/restore-inspection-20261107/README.md)扩展上述同一个脚本，
+不修改旧任务选择，不代表生产恢复或模型效果验收。
+
 ## 发布前检查
 
 - `bin/server` 与 `bin/smartdocs-admin` 来自目标提交；

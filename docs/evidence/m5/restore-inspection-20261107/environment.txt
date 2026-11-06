@@ -1,0 +1,19 @@
+Observed 2026-11-07T00:47:30+08:00
+Base: 23ccb1f9e07da72ddbc026d06f117cab5b4c38ef plus this test/documentation increment
+Linux: 5.15.0-142-generic; online CPUs: 2; host RAM: 3495 MiB; swap: 0
+Python: 3.10.12
+MySQL: 8.0.46-0ubuntu0.22.04.4 (Linux x86_64 Ubuntu)
+Offline dependencies: fastembed=0.9.0, onnxruntime=1.23.2, numpy=2.2.6,
+tokenizers=0.23.3, huggingface-hub=1.33.0
+Model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+Model cache: /tmp/smartdocs-safe.h4SzvX/vector-probe/model
+Encoder Python: /tmp/smartdocs-safe.h4SzvX/vector-probe/venv/bin/python
+Parent/parser Python: /tmp/smartdocs-safe.h4SzvX/venv/bin/python
+Test Python: /tmp/smartdocs-mcp.P7grAI/venv/bin/python
+Runtime: /tmp/smartdocs-safe.h4SzvX/repo
+This run socket: /tmp/smartdocs-restore-inspection.JddQu8/encoder.sock
+Baseline before tests: TasksCurrent=0; MemAvailable about 1360 MiB;
+memory.events high=82471, max=0, oom=0, oom_kill=0; original mysql active.
+During vector DB initialization: MemAvailable=908744 kB;
+memory.events high=82471, max=0, oom=0, oom_kill=0.
+No build, downloads, provider key access, remote model requests or production restore.

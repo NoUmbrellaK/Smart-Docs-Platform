@@ -147,6 +147,13 @@ class BackupRestoreE2E(HandoverReportE2E):
         ongoing = self.create_task(jobs[0])
         ongoing_path = self.tasks_path() + '/' + ongoing['id']
         data(self.user.request('POST', ongoing_path + '/run/start'))
+        constraints = {'mode': 'metadata', 'max_page': 1, 'page_size': 2}
+        constrained = data(self.user.request('POST', self.tasks_path(), {
+            'question': 'Inspect only metadata', 'confirm_remote_ai': True,
+            'versions': [{key: jobs[0][key] for key in ('file_id', 'version_id')}],
+            'inspection_constraints': constraints}), 201)
+        constrained_path = self.tasks_path() + '/' + constrained['id']
+        self.assertEqual(constrained['inspection_constraints'], constraints)
         partial_bytes = b'Synthetic resumable upload\n' * 3000
         partial = create_upload(self.user, self.project['id'], target['id'],
             'partial.txt', partial_bytes, 'text/plain')
@@ -252,6 +259,32 @@ class BackupRestoreE2E(HandoverReportE2E):
             self.assertEqual(restored_reader.request('POST', self.base() + '/directories', {
                 'parent_id': target['id'], 'name': 'Denied'}).status, 403)
             self.assertEqual(data(admin.request('GET', ongoing_path))['state'], 'interrupted')
+            # A restored task must retain its authority boundary, not merely its ID/state.
+            restored_task = data(admin.request('GET', constrained_path))
+            self.assertEqual(restored_task['state'], 'pending')
+            self.assertEqual(restored_task['inspection_constraints'], constraints)
+            self.assertEqual(data(admin.request('POST', constrained_path + '/run/start'))[
+                'inspection_constraints'], constraints)
+            allowed = data(admin.request('POST', constrained_path + '/tools/search', {
+                'mode': 'metadata', 'query': '', 'page': 1, 'page_size': 2}))
+            self.assertEqual([hit['version_id'] for hit in allowed['items']], [jobs[0]['version_id']])
+            denied = [admin.request('POST', constrained_path + '/tools/search', body) for body in (
+                {'mode': 'metadata', 'query': '', 'page': 2, 'page_size': 2},
+                {'mode': 'metadata', 'query': '', 'page': 1, 'page_size': 3},
+                {'mode': 'metadata', 'query': ''},  # default size 10 exceeds this cap
+                {'mode': 'keyword', 'query': 'Evidence', 'page': 1, 'page_size': 2},
+                {'mode': 'hybrid', 'query': 'Evidence', 'page': 1, 'page_size': 2})]
+            for extra in ({}, {'chunk_id': citation['chunk_id']}, {'range': {}}):
+                denied.append(admin.request('POST', constrained_path + '/tools/read', {
+                    'file_id': jobs[0]['file_id'], 'version_id': jobs[0]['version_id'], **extra}))
+            for response in denied:
+                self.assertEqual(response.status, 403)
+                self.assertEqual(response.json()['error']['code'], 'task_inspection_restricted')
+                self.assertNotIn('data', response.json())
+                self.assertNotIn(b'Evidence found.txt', response.body)
+            calls = data(admin.request('GET', constrained_path + '/tool-calls'))['items']
+            self.assertEqual([call['status'] for call in calls], ['success'] + ['access_denied'] * 8)
+            data(admin.request('POST', constrained_path + '/cancel'))
             after_partial = data(admin.request('GET', partial_url))
             self.assertEqual(after_partial['confirmed_parts'], before_partial['confirmed_parts'])
             self.assertEqual(after_partial['state'], 'interrupted')
@@ -285,6 +318,7 @@ class BackupRestoreE2E(HandoverReportE2E):
             'database_rows_sha256': digest(backup / 'rows.sql'), 'storage_files': len(manifest),
             'file_versions': len(versions), 'report_citations': 1, 'resumed_uploads': 1,
             'keyword_order_changed': keyword_order_changed,
+            'inspection_constraints_restored': True, 'restricted_calls_denied': 8,
             'remote_model_calls': 0, 'local_embedding_requests': self.encoding_requests if self.with_vectors else 0,
             'vector_rebuild': 'pass' if self.with_vectors else 'not_run', 'production_restore': 'not_run'}), flush=True)
 
