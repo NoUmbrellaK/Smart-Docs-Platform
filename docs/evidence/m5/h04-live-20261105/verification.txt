@@ -1,0 +1,11 @@
+PASS:22 public/private events; runtime completed draft v1/full capture; no archive or retry
+PASS:3 requests <=6,4096 cap;18320tokens=15722 input+2598 output;cache8960/6762
+PASS:batches2/4/1;metadata7,hybrid-request3,four range reads each1,one terminal save;no rejections
+OBSERVED_FAILURE:issues uncertain instead of found; summary all-read contradicts explicit unread notes
+OBSERVED_FAILURE:blanket no-write claim after save; unsupported call-budget claim at3/6requests,7/12tools
+OBSERVED_FAILURE:claimed69-111chars excludes both46char conflict sources
+PASS:conflict8091/8092 preserved; six fixed sources/IDs/SHA/locations match; seven source dependencies
+PASS:private0700/0600 nobody ownership,four hashes,37 postflight runtime/source fingerprints
+PASS:30cases=12completed+3admission+15not-run;21attempts,73requests/342331tokens,44citations;history preserved
+LIMIT:evidence consistency checks pass, NOT business acceptance; human verdicts blank; no raw wire/full DB comparison
+PASS:links and secret-pattern scan; offline only,no API/key access,not full product regression

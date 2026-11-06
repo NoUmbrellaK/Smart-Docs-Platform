@@ -1,0 +1,7 @@
+Snapshot SHA256 3200ebd4c2ca72c5b6da634dc204cbf54d70252aa13d54714ffc4c5dafbeee3a
+OBSERVED_FAILURE frozen_item_statuses_match
+OBSERVED_FAILURE no_all_read_vs_unread_contradiction
+OBSERVED_FAILURE no_blanket_no_write_claim_after_save
+OBSERVED_FAILURE budget_exhaustion_claim_supported
+Runtime completed; this is saved-artifact reproduction, not another API call or human semantic verdict.
+Expected exit code: 1

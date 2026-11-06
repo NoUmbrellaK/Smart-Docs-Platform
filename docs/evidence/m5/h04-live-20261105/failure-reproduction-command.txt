@@ -1,0 +1,17 @@
+python3 -B - <<'PY'
+import pathlib,json,hashlib
+r=pathlib.Path.cwd();p=pathlib.Path('/tmp/smartdocs-m5-h04-live.JQo4Yq/H04/initial/snapshot.json')
+s=json.loads(p.read_text()); case=next(x for x in json.loads((r/'test/fixtures/agent-p0/tasks.json').read_text())['tasks'] if x['id']=='H04')
+report=s['handover_report']['report']; statuses={x['key']:x['status'] for x in report['items']}
+issues=next(x for x in report['items'] if x['key']=='issues')
+checks={
+ 'frozen_item_statuses_match':statuses==case['expected']['statuses'],
+ 'no_all_read_vs_unread_contradiction':not ('六项清单均找到候选材料并已读取其当前版本全文' in report['summary'] and '未读取其正文' in issues['notes']),
+ 'no_blanket_no_write_claim_after_save':not (s['run_result']['kind']=='handover_report' and '未执行任何写入' in report['limitations']),
+ 'budget_exhaustion_claim_supported':not ('受调用预算限制' in issues['notes'] and s['run_result']['model_calls']<s['execution']['max_model_calls'] and len(s['tool_calls']['items'])<12)
+}
+print('Snapshot SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+for name,ok in checks.items():print(('PASS' if ok else 'OBSERVED_FAILURE'),name)
+print('Runtime completed; this is saved-artifact reproduction, not another API call or human semantic verdict.')
+raise SystemExit(0 if all(checks.values()) else 1)
+PY
