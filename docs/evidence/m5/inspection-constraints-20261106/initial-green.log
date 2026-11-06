@@ -1,0 +1,12 @@
+Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_inspection_constraints_test.py.
+2026-11-06T15:33:02.995053Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1338260
+2026-11-06T15:33:03.100094Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T15:33:18.402940Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T15:33:27.231396Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=17
+PASS m3_inspection_migration_preserves_legacy_task_without_inventing_constraints
+PASS m2_migration_preserves_103_files_without_fabricating_results
+migration_agent_state_failed: 1/0/1
+smartdocs-inspection-green-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-inspection-green-20261106.service: Failed with result 'exit-code'.
+smartdocs-inspection-green-20261106.service: Consumed 6.242s CPU time.

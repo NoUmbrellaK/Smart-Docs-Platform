@@ -19,6 +19,14 @@ export class AgentPanel {
     });
     get("agent-context-refresh").addEventListener("click", () => this.loadContext());
     get("agent-question").addEventListener("input", () => { get("agent-consent").checked = false; });
+    get("agent-inspection-enabled").addEventListener("change", () => {
+      if (this.busy || this.creating || this.archiveWriting) return;
+      get("agent-consent").checked = false; this.controls();
+    });
+    for (const id of ["agent-inspection-max-page", "agent-inspection-page-size"])
+      get(id).addEventListener("input", () => {
+        if (!this.busy && !this.creating && !this.archiveWriting) get("agent-consent").checked = false;
+      });
     get("agent-new-draft").addEventListener("click", () => { if (!this.busy) this.newDraft(); });
     get("agent-refresh").addEventListener("click", () => this.refresh());
     get("agent-next").addEventListener("click", () => { if (this.next) return this.refresh(this.next); });
@@ -43,6 +51,9 @@ export class AgentPanel {
     this.get("agent-mode-archive").disabled = !["editor", "admin"].includes(this.role);
     this.get("agent-context-fields").hidden = this.mode === "question";
     this.get("agent-context-refresh").disabled = blocked || !this.contextModeAllowed();
+    this.get("agent-inspection-enabled").disabled = blocked;
+    for (const id of ["agent-inspection-max-page", "agent-inspection-page-size"])
+      this.get(id).disabled = blocked || !this.get("agent-inspection-enabled").checked;
     this.get("agent-consent").disabled = blocked || !this.contextReady();
     this.get("agent-create").disabled = blocked || this.uncertain || !this.contextReady();
     this.get("agent-refresh").disabled = blocked;
@@ -52,6 +63,9 @@ export class AgentPanel {
     this.mode = "question"; this.get("agent-mode").value = this.mode; this.clearContext();
     this.scope = new Map();
     this.get("agent-question").value = "";
+    this.get("agent-inspection-enabled").checked = false;
+    this.get("agent-inspection-max-page").value = "1";
+    this.get("agent-inspection-page-size").value = "10";
     this.get("agent-consent").checked = false;
     this.get("agent-scope").replaceChildren();
   }
@@ -159,6 +173,15 @@ export class AgentPanel {
     const generation = this.generation, project = this.project;
     const versions = Array.from(this.scope.values(), ({file_id, version_id}) => ({file_id, version_id}));
     const command = {question, versions, confirm_remote_ai: true};
+    if (this.get("agent-inspection-enabled").checked) {
+      const max_page=Number(this.get("agent-inspection-max-page").value);
+      const page_size=Number(this.get("agent-inspection-page-size").value);
+      if (!Number.isInteger(max_page) || max_page < 1 || max_page > 1000 ||
+          !Number.isInteger(page_size) || page_size < 1 || page_size > 10) {
+        this.status("create", "Inspection limits require whole numbers: maximum page 1–1000 and page size 1–10."); return;
+      }
+      command.inspection_constraints={mode:"metadata",max_page,page_size};
+    }
     if (this.mode === "handover") command.handover_checklist_revision = this.contextRevision;
     if (this.mode === "archive") command.archive_policy_revision = this.contextRevision;
     this.creating = true; this.controls(); this.status("create", "Creating pending task…");
@@ -248,6 +271,7 @@ export class AgentPanel {
     this.status("detail", `Task ${task.id} · ${state}. ${report ? "Personal handover report draft; not business acceptance." : archive ? "Archive operation committed; this is not a model answer or a handover report." : labels[state] || "Unknown state; refresh."}`);
     const box = this.get("agent-detail");
     box.replaceChildren(this.node("p", `Created ${task.created_at} UTC · Updated ${task.updated_at} UTC`));
+    if (task.inspection_constraints) box.append(this.node("p", `Metadata search only · Maximum page ${task.inspection_constraints.max_page} · Page size limit ${task.inspection_constraints.page_size}.`));
     for (const item of task.versions) box.append(this.node("p", `File ${item.file_id} · Version ${item.version_id}`));
     if (state === "pending" && (!task.archive_policy_revision || ["editor", "admin"].includes(this.role))) {
       box.append(this.node("p", task.archive_policy_revision ? `Archive proposal · Approved policy revision ${task.archive_policy_revision}. No automatic confirmation or file move.` :

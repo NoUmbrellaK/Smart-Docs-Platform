@@ -39,6 +39,8 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.reject_source=False
         self.receipt=True
         self.start_context=None
+        self.include_inspection_constraints=False
+        self.inspection_constraints=None
         self.question='find public deployment instructions'
         self.search_result=None
         self.read_results=[]
@@ -65,6 +67,8 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
                     if owner.start_context is not None: payload['handover_checklist']=owner.start_context
                     if owner.start_context is not None: payload['report_operation_id']=owner.report_operation
                     if owner.archive_context is not None: payload['archive_context']=owner.archive_context
+                    if owner.include_inspection_constraints:
+                        payload['inspection_constraints']=owner.inspection_constraints
                 elif self.path.endswith('/archive-plan/execute'):
                     if owner.commit_execution:
                         owner.state='completed'
@@ -674,6 +678,87 @@ class AgentRunnerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.result["citations"],[CITATION])
         self.assertEqual(seen[0][1]["content"],"find public deployment instructions")
         self.assertNotIn(self.context["session_token"],json.dumps(seen))
+
+    async def test_inspection_constraints_narrow_copied_schema_and_hide_read_tool(self):
+        # Reusing SCHEMAS directly, keeping read, or omitting any bound must fail this.
+        original=copy.deepcopy(self.agent.SCHEMAS)
+        self.include_inspection_constraints=True
+        self.inspection_constraints={'mode':'metadata','max_page':2,'page_size':3}
+        turns=[]
+        async def model(messages,tools,**kwargs):
+            turns.append(copy.deepcopy({'messages':messages,'tools':tools}))
+            search=next(tool['function'] for tool in tools if tool['function']['name']=='search_documents')
+            self.assertEqual({tool['function']['name'] for tool in tools},{'search_documents'})
+            self.assertEqual(search['parameters']['required'],['mode','query','page_size'])
+            self.assertEqual(search['parameters']['properties']['mode'],{'const':'metadata'})
+            self.assertEqual(search['parameters']['properties']['page']['maximum'],2)
+            self.assertEqual(search['parameters']['properties']['page_size']['maximum'],3)
+            if len(turns)==1:
+                return reply(calls=[call('read_document_version',{
+                    'file_id':FILE,'version_id':VERSION,'range':{}},'blocked_read')])
+            rejection=json.loads(next(message['content'] for message in messages
+                if message['role']=='tool' and message['tool_call_id']=='blocked_read'))
+            self.assertEqual(rejection['error']['reason'],'unknown_tool')
+            return reply(json.dumps({'answer':'Metadata inspection cannot read document bodies.','citations':[]}))
+        outcome=await self.run_model(model)
+        self.assertEqual(outcome['state'],'completed')
+        self.assertEqual(len(turns),2)
+        self.assertFalse(any(path.endswith('/tools/read') for path,_ in self.requests))
+        notice=[json.loads(message['content']) for message in turns[0]['messages']
+            if message['role']=='system' and message['content'].startswith('{')]
+        self.assertIn({'inspection_constraints':self.inspection_constraints,
+            'instruction':'This trusted task constraint permits metadata search only. '
+                'Every search must explicitly provide page_size at or below the limit and page at or below the limit. '
+                'Document reads are unavailable. Preserve uncertainty; this grants no archive approval.'},notice)
+        self.assertEqual(self.agent.SCHEMAS,original)
+
+    async def test_inspection_constraints_keep_mode_terminal_tools(self):
+        self.include_inspection_constraints=True
+        self.inspection_constraints={'mode':'metadata','max_page':1,'page_size':10}
+        for mode,expected in [('report',{'search_documents','save_handover_report'}),
+                              ('archive',{'search_documents','create_archive_plan'})]:
+            with self.subTest(mode=mode):
+                self.state='pending'; self.calls=0; self.requests=[]
+                if mode=='report': self.report_fixture()
+                else: self.start_context=None; self.archive_fixture()
+                observed=[]
+                async def model(tools,**kwargs):
+                    observed.append({tool['function']['name'] for tool in tools})
+                    return reply('invalid terminal response')
+                outcome=await self.run_model(model)
+                self.assertEqual(outcome['error_code'],'model_invalid')
+                self.assertEqual(observed,[expected])
+
+    async def test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted(self):
+        # Strict trusted-input validation must happen before provider admission.
+        invalid=[None,True,{},
+            {'mode':'keyword','max_page':1,'page_size':10},
+            {'mode':'metadata','max_page':True,'page_size':10},
+            {'mode':'metadata','max_page':1.0,'page_size':10},
+            {'mode':'metadata','max_page':0,'page_size':10},
+            {'mode':'metadata','max_page':1001,'page_size':10},
+            {'mode':'metadata','max_page':1,'page_size':1.5},
+            {'mode':'metadata','max_page':1,'page_size':10.0},
+            {'mode':'metadata','max_page':1,'page_size':11},
+            {'mode':'metadata','max_page':1,'page_size':10,'extra':1}]
+        async def forbidden_model(**kwargs): self.fail('malformed trusted constraints reached model')
+        self.include_inspection_constraints=True
+        for value in invalid:
+            with self.subTest(value=value):
+                self.state='pending'; self.calls=0; self.requests=[]; self.inspection_constraints=value
+                outcome=await self.run_model(forbidden_model)
+                self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+                self.assertEqual(self.calls,0)
+
+        self.state='pending'; self.calls=0; self.requests=[]
+        self.include_inspection_constraints=False
+        async def unrestricted_model(tools,**kwargs):
+            self.assertEqual({tool['function']['name'] for tool in tools},
+                             {'search_documents','read_document_version'})
+            self.assertEqual(next(tool['function']['parameters'] for tool in tools
+                if tool['function']['name']=='search_documents'),self.agent.SCHEMAS['search_documents'])
+            return reply(json.dumps({'answer':'Legacy task remains unrestricted.','citations':[]}))
+        self.assertEqual((await self.run_model(unrestricted_model))['state'],'completed')
 
     async def test_json_transport_preserves_multistep_tools_and_strict_final_citations(self):
         import httpx

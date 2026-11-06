@@ -155,6 +155,69 @@ async function mode(view, value) {
   await view.get("agent-mode").fire("change");
 }
 
+function constrain(view,maxPage="1",pageSize="10") {
+  const enabled=view.get("agent-inspection-enabled");
+  enabled.checked=true;enabled.fire("change");
+  view.get("agent-inspection-max-page").value=maxPage;
+  view.get("agent-inspection-max-page").fire("input");
+  view.get("agent-inspection-page-size").value=pageSize;
+  view.get("agent-inspection-page-size").fire("input");
+}
+
+test("explicit inspection limits require fresh consent and create the exact immutable payload",async()=>{
+  const view=await setup();draft(view);
+  constrain(view,"2","3");
+  assert.equal(view.get("agent-consent").checked,false);
+  view.get("agent-consent").checked=true;await view.panel.create();
+  assert.deepEqual(view.calls.filter(call=>call[0]==="create"),[["create","p",{
+    question:"Check public sample",versions:[{file_id:"f",version_id:"v"}],confirm_remote_ai:true,
+    inspection_constraints:{mode:"metadata",max_page:2,page_size:3}}]]);
+
+  const legacy=await setup();draft(legacy);await legacy.panel.create();
+  assert.equal("inspection_constraints" in legacy.calls.find(call=>call[0]==="create")[2],false);
+});
+
+test("inspection edits revoke consent and invalid integer bounds prevent creation",async()=>{
+  const view=await setup();draft(view);constrain(view);
+  for(const [maxPage,pageSize,field] of [["0","10","agent-inspection-max-page"],
+    ["1001","10","agent-inspection-max-page"],["1.5","10","agent-inspection-max-page"],
+    ["1","0","agent-inspection-page-size"],["1","11","agent-inspection-page-size"],
+    ["1","1.5","agent-inspection-page-size"]]) {
+    view.get("agent-inspection-max-page").value=maxPage;
+    view.get("agent-inspection-page-size").value=pageSize;
+    view.get("agent-consent").checked=true;view.get(field).fire("input");
+    assert.equal(view.get("agent-consent").checked,false);
+    view.get("agent-consent").checked=true;await view.panel.create();
+    assert.equal(view.calls.filter(call=>call[0]==="create").length,0);
+  }
+});
+
+test("inspection controls lock in flight and reset for new drafts and projects",async()=>{
+  const late=deferred();const view=await setup({createAgentTask:()=>late.promise});draft(view);constrain(view,"4","5");
+  view.get("agent-consent").checked=true;const pending=view.panel.create();
+  for(const id of ["agent-inspection-enabled","agent-inspection-max-page","agent-inspection-page-size"])
+    assert.equal(view.get(id).disabled,true,id);
+  view.panel.newDraft();assert.equal(view.get("agent-inspection-enabled").checked,true,"in-flight draft is immutable");
+  view.panel.setProject("other");
+  assert.equal(view.get("agent-inspection-enabled").checked,false);
+  assert.equal(view.get("agent-inspection-max-page").value,"1");
+  assert.equal(view.get("agent-inspection-page-size").value,"10");
+  late.resolve(task);await pending;
+
+  const fresh=await setup();constrain(fresh,"6","7");fresh.panel.newDraft();
+  assert.equal(fresh.get("agent-inspection-enabled").checked,false);
+  assert.equal(fresh.get("agent-inspection-max-page").value,"1");
+  assert.equal(fresh.get("agent-inspection-page-size").value,"10");
+});
+
+test("task detail renders persisted inspection constraints as text",async()=>{
+  const view=await setup({getAgentTask:async()=>({...task,
+    inspection_constraints:{mode:"metadata",max_page:2,page_size:3}})});
+  await view.panel.view("t");
+  assert.match(text(view.get("agent-detail")),/Metadata search only.*Maximum page 2.*Page size limit 3/);
+  assert.equal(descendants(view.get("agent-detail")).filter(node=>["SCRIPT","IMG"].includes(node.tagName)).length,0);
+});
+
 test("task modes bind only the reviewed server revision and never send metadata bodies",async()=>{
   for(const [choice,role,field,revision] of [["question","reader",null,null],
     ["handover","reader","handover_checklist_revision",7],["archive","editor","archive_policy_revision",9]]) {

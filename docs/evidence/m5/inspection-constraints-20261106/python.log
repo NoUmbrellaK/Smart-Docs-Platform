@@ -1,0 +1,10 @@
+Nov 07 00:06:18 aliyun-lou systemd[1]: Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_*.py.
+Nov 07 00:07:11 aliyun-lou python[1345141]: ...............................................................................................................Tool 'create_archive_plan' not listed, no validation will be performed
+Nov 07 00:07:48 aliyun-lou python[1345141]: ....................Tool 'save_handover_report' not listed, no validation will be performed
+Nov 07 00:07:49 aliyun-lou python[1345141]: .Tool 'execute_archive_plan' not listed, no validation will be performed
+Nov 07 00:07:49 aliyun-lou python[1345141]: .
+Nov 07 00:07:49 aliyun-lou python[1345141]: ----------------------------------------------------------------------
+Nov 07 00:07:49 aliyun-lou python[1345141]: Ran 133 tests in 90.486s
+Nov 07 00:07:49 aliyun-lou python[1345141]: OK
+Nov 07 00:07:49 aliyun-lou systemd[1]: smartdocs-inspection-python-20261106.service: Deactivated successfully.
+Nov 07 00:07:49 aliyun-lou systemd[1]: smartdocs-inspection-python-20261106.service: Consumed 7.621s CPU time.

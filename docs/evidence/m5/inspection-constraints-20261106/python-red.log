@@ -1,0 +1,136 @@
+Started /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest discover -s test/mcp -p test_agent_runner.py -k inspection -v.
+test_inspection_constraints_keep_mode_terminal_tools (test_agent_runner.AgentRunnerTests) ... ok
+test_inspection_constraints_narrow_copied_schema_and_hide_read_tool (test_agent_runner.AgentRunnerTests) ... FAIL
+test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) ...
+======================================================================
+FAIL: test_inspection_constraints_narrow_copied_schema_and_hide_read_tool (test_agent_runner.AgentRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/async_case.py", line 64, in _callTestMethod
+    self._callMaybeAsync(method)
+  File "/usr/lib/python3.10/unittest/async_case.py", line 87, in _callMaybeAsync
+    return self._asyncioTestLoop.run_until_complete(fut)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.10/unittest/async_case.py", line 101, in _asyncioLoopRunner
+    ret = await awaitable
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 704, in test_inspection_constraints_narrow_copied_schema_and_hide_read_tool
+    self.assertEqual(outcome['state'],'completed')
+AssertionError: 'failed' != 'completed'
+- failed
++ completed
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'keyword', 'max_page': 1, 'page_size': 10})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': True, 'page_size': 10})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': 0, 'page_size': 10})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': 1001, 'page_size': 10})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': 1, 'page_size': 1.5})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': 1, 'page_size': 11})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+======================================================================
+FAIL: test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted (test_agent_runner.AgentRunnerTests) (value={'mode': 'metadata', 'max_page': 1, 'page_size': 10, 'extra': 1})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartdocs-safe.h4SzvX/repo/test/mcp/test_agent_runner.py", line 746, in test_invalid_trusted_inspection_constraints_stop_before_model_then_legacy_run_is_unrestricted
+    self.assertEqual(outcome,{'state':'failed','error_code':'dependency_failed'})
+AssertionError: {'state': 'failed', 'error_code': 'model_invalid'} != {'state': 'failed', 'error_code': 'dependency_failed'}
+- {'error_code': 'model_invalid', 'state': 'failed'}
+?                 --   ^^^^^^^
++ {'error_code': 'dependency_failed', 'state': 'failed'}
+?                   ++++++++++++ ^
+----------------------------------------------------------------------
+Ran 3 tests in 1.782s
+FAILED (failures=11)
+smartdocs-inspection-python-red-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-inspection-python-red-20261106.service: Failed with result 'exit-code'.

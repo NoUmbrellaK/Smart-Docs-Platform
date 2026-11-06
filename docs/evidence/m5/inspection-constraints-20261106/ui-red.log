@@ -1,0 +1,5 @@
+Started /root/.nvm/versions/node/v24.18.0/bin/node --test --test-name-pattern=inspection test/e2e/agent_ui_test.mjs.
+smartdocs-inspection-ui-red-20261106.service: Failed to execute /root/.nvm/versions/node/v24.18.0/bin/node: Permission denied
+smartdocs-inspection-ui-red-20261106.service: Failed at step EXEC spawning /root/.nvm/versions/node/v24.18.0/bin/node: Permission denied
+smartdocs-inspection-ui-red-20261106.service: Main process exited, code=exited, status=203/EXEC
+smartdocs-inspection-ui-red-20261106.service: Failed with result 'exit-code'.

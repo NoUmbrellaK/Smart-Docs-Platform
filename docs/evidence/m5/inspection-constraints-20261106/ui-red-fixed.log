@@ -1,0 +1,82 @@
+Started /tmp/smartdocs-safe.h4SzvX/bin/node --test --test-name-pattern=inspection test/e2e/agent_ui_test.mjs.
+✖ explicit inspection limits require fresh consent and create the exact immutable payload (6.595852ms)
+✖ inspection edits revoke consent and invalid integer bounds prevent creation (0.53837ms)
+✖ inspection controls lock in flight and reset for new drafts and projects (1.116735ms)
+✖ task detail renders persisted inspection constraints as text (1.029266ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 579.683981
+✖ failing tests:
+test at test/e2e/agent_ui_test.mjs:167:1
+✖ explicit inspection limits require fresh consent and create the exact immutable payload (6.595852ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:170:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:180:1
+✖ inspection edits revoke consent and invalid integer bounds prevent creation (0.53837ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:186:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:192:1
+✖ inspection controls lock in flight and reset for new drafts and projects (1.116735ms)
+  AssertionError [ERR_ASSERTION]: agent-inspection-enabled
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:196:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+test at test/e2e/agent_ui_test.mjs:210:1
+✖ task detail renders persisted inspection constraints as text (1.029266ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Metadata search only.*Maximum page 2.*Page size limit 3/. Input:
+  
+  ' Created 2026-10-18 UTC · Updated 2026-10-18 UTC File f · Version v Question and answer · No checklist or directory policy attached.   Start this task with the remote AI provider; this may incur charges. Use only the versions and configuration already approved for this task. Start this task Refresh task Load / refresh tool calls View archive plan Check archive receipt Cancel task'
+  
+      at TestContext.<anonymous> (file:///tmp/smartdocs-safe.h4SzvX/repo/test/e2e/agent_ui_test.mjs:214:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: ' Created 2026-10-18 UTC · Updated 2026-10-18 UTC File f · Version v Question and answer · No checklist or directory policy attached.   Start this task with the remote AI provider; this may incur charges. Use only the versions and configuration already approved for this task. Start this task Refresh task Load / refresh tool calls View archive plan Check archive receipt Cancel task',
+    expected: /Metadata search only.*Maximum page 2.*Page size limit 3/,
+    operator: 'match',
+    diff: 'simple'
+  }
+smartdocs-inspection-ui-red-fixed-20261106.service: Main process exited, code=exited, status=1/FAILURE
+smartdocs-inspection-ui-red-fixed-20261106.service: Failed with result 'exit-code'.

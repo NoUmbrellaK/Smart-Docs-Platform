@@ -1,0 +1,37 @@
+Nov 07 00:10:54 aliyun-lou systemd[1]: Started /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B test/e2e/m3_inspection_browser_test.py.
+Nov 07 00:10:56 aliyun-lou bash[1347415]: 2026-11-06T16:10:56.245126Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1347415
+Nov 07 00:10:56 aliyun-lou bash[1347415]: 2026-11-06T16:10:56.343431Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+Nov 07 00:11:11 aliyun-lou bash[1347415]: 2026-11-06T16:11:11.578090Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+Nov 07 00:11:19 aliyun-lou bash[1347415]: 2026-11-06T16:11:19.699135Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+Nov 07 00:12:06 aliyun-lou bash[1347714]: schema_version=17
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_inspection_migration_preserves_legacy_task_without_inventing_constraints
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m2_migration_preserves_103_files_without_fabricating_results
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_agent_migration_preserves_only_fixture_task_without_inventing_scope_or_consent
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_run_migration_does_not_invent_execution
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_tool_audit_migration_does_not_invent_history
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_archive_migration_does_not_invent_policy_or_plans
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_handover_migration_does_not_invent_checklist_or_approval
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_source_migration_does_not_invent_model_context
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_checklist_context_migration_does_not_invent_selection
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_report_migration_does_not_invent_reports_or_operations
+Nov 07 00:12:36 aliyun-lou bash[1347846]: PASS m3_archive_context_migration_does_not_invent_selection
+Nov 07 00:14:37 aliyun-lou bash[1347936]: test_inspection_browser_explicit_choice_reset_detail_and_mobile_layout (__main__.InspectionBrowserE2E) ... ERROR
+Nov 07 00:14:37 aliyun-lou bash[1347936]: ======================================================================
+Nov 07 00:14:37 aliyun-lou bash[1347936]: ERROR: test_inspection_browser_explicit_choice_reset_detail_and_mobile_layout (__main__.InspectionBrowserE2E)
+Nov 07 00:14:37 aliyun-lou bash[1347936]: ----------------------------------------------------------------------
+Nov 07 00:14:37 aliyun-lou bash[1347936]: Traceback (most recent call last):
+Nov 07 00:14:37 aliyun-lou bash[1347936]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m3_inspection_browser_test.py", line 24, in test_inspection_browser_explicit_choice_reset_detail_and_mobile_layout
+Nov 07 00:14:37 aliyun-lou bash[1347936]:     browser.start()
+Nov 07 00:14:37 aliyun-lou bash[1347936]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 253, in start
+Nov 07 00:14:37 aliyun-lou bash[1347936]:     value = self.request('POST', '/session', {'capabilities': {'alwaysMatch': {
+Nov 07 00:14:37 aliyun-lou bash[1347936]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 224, in request
+Nov 07 00:14:37 aliyun-lou bash[1347936]:     return webdriver_value(response.status, response.read())
+Nov 07 00:14:37 aliyun-lou bash[1347936]:   File "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/m1_browser_test.py", line 42, in webdriver_value
+Nov 07 00:14:37 aliyun-lou bash[1347936]:     raise RuntimeError(f'WebDriver {safe}')
+Nov 07 00:14:37 aliyun-lou bash[1347936]: RuntimeError: WebDriver session not created
+Nov 07 00:14:37 aliyun-lou bash[1347936]: ----------------------------------------------------------------------
+Nov 07 00:14:37 aliyun-lou bash[1347936]: Ran 1 test in 120.978s
+Nov 07 00:14:37 aliyun-lou bash[1347936]: FAILED (errors=1)
+Nov 07 00:14:40 aliyun-lou systemd[1]: smartdocs-inspection-browser-20261106.service: Main process exited, code=exited, status=1/FAILURE
+Nov 07 00:14:40 aliyun-lou systemd[1]: smartdocs-inspection-browser-20261106.service: Failed with result 'exit-code'.
+Nov 07 00:14:40 aliyun-lou systemd[1]: smartdocs-inspection-browser-20261106.service: Consumed 8.691s CPU time.
