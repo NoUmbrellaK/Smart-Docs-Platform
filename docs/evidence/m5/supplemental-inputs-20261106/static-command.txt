@@ -1,0 +1,6 @@
+set -e
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=test/e2e python3 -B -m unittest discover -s test/python -p test_benchmark_review.py -v > docs/evidence/m5/supplemental-inputs-20261106/review-green.txt 2>&1
+PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s test/python -p test_agent_benchmark_fixtures.py -v > docs/evidence/m5/supplemental-inputs-20261106/original-fixtures.txt 2>&1
+python3 -B docs/evidence/m5/citation-review-20261106/check.py > docs/evidence/m5/supplemental-inputs-20261106/historical-compatibility.txt
+python3 -B docs/evidence/m5/supplemental-inputs-20261106/fingerprints.py > docs/evidence/m5/supplemental-inputs-20261106/fingerprints.txt
+git diff --check

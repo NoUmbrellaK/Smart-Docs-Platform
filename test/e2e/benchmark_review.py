@@ -19,6 +19,18 @@ def require(condition):
         raise ValueError('invalid review input')
 
 
+def load_cases():
+    """Fixed local manifests only; supplemental cases never replace the original 30."""
+    cases = {}
+    for name in ('tasks.json', 'supplemental-tasks.json'):
+        manifest = json.loads((FIXTURES / name).read_text())
+        files = ('corpus.json', 'tasks.json') + (() if name == 'tasks.json' else (name,))
+        for case in manifest['tasks']:
+            require(case['id'] not in cases)
+            cases[case['id']] = {'case': case, 'dataset': manifest['dataset'], 'fixture_files': files}
+    return cases
+
+
 def digest(value):
     return hashlib.sha256(json.dumps(value, ensure_ascii=True, sort_keys=True,
                                     allow_nan=False, separators=(',', ':')).encode()).hexdigest()
@@ -28,9 +40,9 @@ def prepare(source):
     require(isinstance(source, dict))
     if 'capture' in source:
         require(isinstance(source['capture'], dict) and source['capture'].get('complete') is True)
-    manifest = json.loads((FIXTURES / 'tasks.json').read_text())
-    case = next((case for case in manifest['tasks'] if case['id'] == source.get('case_id')), None)
-    require(case is not None)
+    definition = load_cases().get(source.get('case_id'))
+    require(definition is not None)
+    case = definition['case']
     require(source.get('run_kind') in {'live_provider', 'admission_rejection', 'transport_fixture', 'not_run'})
     metadata = source.get('metadata')
     require(isinstance(metadata, dict) and all(isinstance(metadata.get(key), str) and metadata[key].strip()
@@ -78,9 +90,9 @@ def prepare(source):
             require(isinstance(item, dict))
             append(item.get('citations'), f'/handover_report/report/items/{index}/citations', item.get('notes'))
     return {'schema_version': 1, 'case_id': case['id'], 'category': case['category'],
-        'dataset': manifest['dataset'], 'input': case['input'], 'expected': copy.deepcopy(case['expected']),
+        'dataset': definition['dataset'], 'input': case['input'], 'expected': copy.deepcopy(case['expected']),
         'fixture_sha256': {name: hashlib.sha256((FIXTURES / name).read_bytes()).hexdigest()
-                           for name in ('corpus.json', 'tasks.json')},
+                           for name in definition['fixture_files']},
         'snapshot_sha256': digest(source), 'snapshot': copy.deepcopy(source), 'citations': citations,
         'business': {'verdict': None, 'reviewer': '', 'notes': ''}}
 

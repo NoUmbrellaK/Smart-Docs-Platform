@@ -1,0 +1,13 @@
+set -e
+test "$(systemctl show smartdocs-m5-s01-isolated-20261106.service -p ActiveState --value)" = inactive
+test "$(systemctl show smartdocs-m5-s01-isolated-20261106.service -p ExecMainStatus --value)" = 0
+journalctl -u smartdocs-m5-s01-isolated-20261106.service --no-pager -o cat > docs/evidence/m5/supplemental-inputs-20261106/offline-isolated.txt
+{
+  systemctl show smartdocs-m5-s01-isolated-20261106.service -p ActiveState -p Result -p ExecMainStatus
+  systemctl show smartdocsvectorcheck.slice -p TasksCurrent -p CPUQuotaPerSecUSec -p MemoryHigh -p MemoryMax -p MemorySwapMax -p TasksMax -p IOReadBandwidthMax -p IOWriteBandwidthMax -p IOReadIOPSMax -p IOWriteIOPSMax
+  awk '/MemAvailable/ {print}' /proc/meminfo
+  cat /sys/fs/cgroup/smartdocsvectorcheck.slice/memory.events
+  systemctl is-active mysql
+} > docs/evidence/m5/supplemental-inputs-20261106/final-status.txt
+python3 -B docs/evidence/m5/supplemental-inputs-20261106/fingerprints.py > docs/evidence/m5/supplemental-inputs-20261106/postflight.txt
+cmp docs/evidence/m5/supplemental-inputs-20261106/fingerprints.txt docs/evidence/m5/supplemental-inputs-20261106/postflight.txt

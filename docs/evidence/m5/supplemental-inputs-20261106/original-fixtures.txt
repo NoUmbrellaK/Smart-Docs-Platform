@@ -1,0 +1,9 @@
+test_fixed_denominator_and_unique_task_inputs (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_handover_keys_and_archive_targets_use_declared_configuration (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_scope_and_oracle_anchors_resolve_without_cross_project_leaks (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+test_sources_have_real_literal_paragraphs_and_no_duplicate_versions (test_agent_benchmark_fixtures.AgentBenchmarkFixtures) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.005s
+
+OK

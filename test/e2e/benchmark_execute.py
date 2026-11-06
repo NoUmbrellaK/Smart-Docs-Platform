@@ -4,13 +4,12 @@ Trusted local harness, not an HTTP endpoint or an authorization to call a provid
 The caller owns the fixture lifetime and a private output parent. Never pass the
 prepared mapping, expected answers, or cookies to the model. No archive confirmation.
 """
-import json
 from pathlib import Path
 import re
 import tempfile
 
 from benchmark_capture import capture, write_snapshot
-from benchmark_review import FIXTURES, require
+from benchmark_review import load_cases, require
 from smartdocs import agent_cli
 
 
@@ -23,8 +22,7 @@ async def execute(case_id, prepared, metadata, output_dir, *, backend_port,
     for separate, real human review; this function neither confirms nor resumes.
     run_kind is a caller assertion, not proof of provider execution.
     """
-    cases = json.loads((FIXTURES / 'tasks.json').read_text())['tasks']
-    case = next((item for item in cases if item['id'] == case_id), None)
+    case = load_cases().get(case_id, {}).get('case')
     require(case is not None and prepared['body']['question'] == case['input'])
     require(type(max_calls) is int and 1 <= max_calls <= 8)
     require(type(backend_port) is int and 1 <= backend_port <= 65535)

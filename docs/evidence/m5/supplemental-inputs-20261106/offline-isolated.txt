@@ -1,0 +1,82 @@
+Started /bin/bash -c set -e; for suite in m5_benchmark_cli_test m5_benchmark_execute_test m5_benchmark_capture_test; do /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B "test/e2e/$suite.py"; done.
+2026-11-06T12:38:47.145300Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1303810
+2026-11-06T12:38:47.243577Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T12:39:02.450793Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T12:39:12.330996Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_archive_cli_keeps_http_alive_for_separate_review_then_captures_receipt (__main__.CliTests) ... ok
+test_h10_cli_records_unmet_precondition_without_retry_or_false_success (__main__.CliTests) ... ok
+test_help_does_not_require_database_or_key (__main__.CliTests) ... ok
+test_interrupt_during_partial_setup_stops_owned_child_and_removes_temp (__main__.CliTests) ... ok
+test_no_opt_in_and_bad_admission_mode_stop_before_artifacts (__main__.CliTests) ... ok
+test_setup_failure_retains_private_diagnostic_without_exception_text (__main__.CliTests) ... ok
+test_supplemental_cli_uses_frozen_input_and_captures_both_sources (__main__.CliTests) ... ok
+----------------------------------------------------------------------
+Ran 7 tests in 9.322s
+OK
+2026-11-06T12:40:43.648383Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1304370
+2026-11-06T12:40:43.653235Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T12:40:58.872121Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T12:41:06.528302Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_query_runs_real_agent_and_captures_original_before_cleanup (__main__.ExecuteE2E) ... ok
+test_report_uses_backend_checklist_without_oracle_and_is_captured (__main__.ExecuteE2E) ... ok
+test_archive_stays_unconfirmed_and_keeps_fixture_alive (__main__.ExecuteE2E) ... ok
+test_h05_metadata_only_path_preserves_frozen_question_and_dependencies (__main__.ExecuteE2E) ... ok
+test_h07_restricted_material_stays_out_of_serialized_requests_and_report (__main__.ExecuteE2E) ... ok
+test_rejected_admission_never_starts_agent_or_needs_key (__main__.ExecuteE2E) ... ok
+test_provider_failure_is_retained_without_retry (__main__.ExecuteE2E) ... ok
+test_budget_cannot_be_silently_expanded (__main__.ExecuteE2E) ... ok
+test_existing_destination_or_bad_case_fails_before_claim (__main__.ExecuteE2E) ... ok
+test_mismatched_backend_is_rejected_before_http_or_artifacts (__main__.ExecuteGuards) ... ok
+----------------------------------------------------------------------
+Ran 10 tests in 28.302s
+OK
+2026-11-06T12:42:55.016250Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46-0ubuntu0.22.04.4) initializing of server in progress as process 1304950
+2026-11-06T12:42:55.315501Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-11-06T12:43:10.528022Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-11-06T12:43:18.760661Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+schema_version=16
+PASS m2_migration_preserves_103_files_without_fabricating_results
+PASS m3_agent_migration_does_not_invent_tasks_or_consent
+PASS m3_run_migration_does_not_invent_execution
+PASS m3_tool_audit_migration_does_not_invent_history
+PASS m3_archive_migration_does_not_invent_policy_or_plans
+PASS m3_handover_migration_does_not_invent_checklist_or_approval
+PASS m3_source_migration_does_not_invent_model_context
+PASS m3_checklist_context_migration_does_not_invent_selection
+PASS m3_report_migration_does_not_invent_reports_or_operations
+PASS m3_archive_context_migration_does_not_invent_selection
+test_capture_admission_rejection_preserves_absent_execution (__main__.CaptureE2E) ... ok
+test_capture_answer_retains_actual_original (__main__.CaptureE2E) ... {"collector": "Q01", "citations": 1, "unique_sources": 1, "business_task": "not_run", "provider_requests": 0}
+ok
+test_capture_archive_name_conflict_without_plan (__main__.CaptureE2E) ... ok
+test_capture_archive_preview_never_confirms_or_moves (__main__.CaptureE2E) ... ok
+test_capture_committed_archive_receipt_without_reexecution (__main__.CaptureE2E) ... ok
+test_capture_failed_run_keeps_failure_not_a_synthetic_answer (__main__.CaptureE2E) ... ok
+test_capture_report_and_dependency_revocation (__main__.CaptureE2E) ... ok
+----------------------------------------------------------------------
+Ran 7 tests in 13.269s
+OK
+smartdocs-m5-s01-isolated-20261106.service: Deactivated successfully.
+smartdocs-m5-s01-isolated-20261106.service: Consumed 33.049s CPU time.

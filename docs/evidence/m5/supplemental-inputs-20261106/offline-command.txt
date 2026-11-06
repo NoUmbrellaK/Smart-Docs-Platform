@@ -1,0 +1,8 @@
+set -e
+test "$(systemctl show smartdocsvectorcheck.slice -p TasksCurrent --value)" = 0
+awk '/MemAvailable/ {print;exit ($2<524288)}' /proc/meminfo
+for name in benchmark_review.py benchmark_capture.py benchmark_execute.py benchmark_cli.py m5_benchmark_cli_test.py; do
+  install -m0644 "test/e2e/$name" "/tmp/smartdocs-safe.h4SzvX/repo/test/e2e/$name"
+done
+install -m0644 test/fixtures/agent-p0/supplemental-tasks.json /tmp/smartdocs-safe.h4SzvX/repo/test/fixtures/agent-p0/supplemental-tasks.json
+systemd-run --unit=smartdocs-m5-s01-offline-20261106 --slice=smartdocsvectorcheck.slice --uid=nobody --gid=nogroup -p Nice=10 -p UMask=0077 -p NoNewPrivileges=yes -p RuntimeMaxSec=600 -p TimeoutStopSec=5 -p KillMode=control-group -p IPAddressDeny=any -p IPAddressAllow=localhost --working-directory=/tmp/smartdocs-safe.h4SzvX/repo --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONPATH=/tmp/smartdocs-safe.h4SzvX/repo/python:/tmp/smartdocs-safe.h4SzvX/repo/test/e2e /bin/bash scripts/test-with-mysql.sh -- /tmp/smartdocs-mcp.P7grAI/venv/bin/python -B -m unittest m5_benchmark_cli_test m5_benchmark_execute_test m5_benchmark_capture_test -v

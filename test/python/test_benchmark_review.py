@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / 'e2e/benchmark_review.py'
@@ -30,6 +31,30 @@ class BenchmarkReviewTest(unittest.TestCase):
         spec = importlib.util.spec_from_file_location('benchmark_review', SCRIPT)
         self.tool = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.tool)
+
+    def test_supplemental_case_keeps_separate_dataset_and_original_hashes(self):
+        try:
+            review = self.tool.prepare(snapshot('S01'))
+        except ValueError:
+            self.fail('frozen supplemental S01 cannot be reviewed')
+        self.assertEqual(review['dataset'], 'smartdocs-p0-supplemental-v1')
+        self.assertEqual(review['category'], 'query')
+        self.assertEqual(set(review['fixture_sha256']), {'corpus.json', 'tasks.json', 'supplemental-tasks.json'})
+        self.assertEqual(len(review['citations']), 1)
+        self.assertIsNone(review['business']['verdict'])
+        original = self.tool.prepare(snapshot('Q01'))
+        self.assertEqual(original['dataset'], 'smartdocs-p0-synthetic-v1')
+        self.assertEqual(set(original['fixture_sha256']), {'corpus.json', 'tasks.json'})
+        with self.assertRaises(ValueError):
+            self.tool.prepare(snapshot('S99'))
+
+    def test_supplemental_duplicate_id_cannot_replace_original_case(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for name, question in (('tasks.json', 'Original'), ('supplemental-tasks.json', 'Replacement')):
+                (root / name).write_text(json.dumps({'dataset': name, 'tasks': [{'id': 'Q01', 'input': question}]}))
+            with patch.object(self.tool, 'FIXTURES', root), self.assertRaises(ValueError):
+                self.tool.load_cases()
 
     def test_prepare_preserves_every_occurrence_without_semantic_auto_pass(self):
         source = snapshot('H01')

@@ -13,7 +13,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from benchmark_review import read_private
+from benchmark_review import load_cases, prepare, read_private
 from m1_http_test import HttpClient, ServerProcess, data, login
 from m3_agent_http_test import tool
 import m5_benchmark_execute_test as execute_test
@@ -32,6 +32,57 @@ class CliTests(unittest.TestCase):
                                  '--help'], capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('--case', result.stdout)
+
+    def test_supplemental_cli_uses_frozen_input_and_captures_both_sources(self):
+        cli = importlib.import_module('benchmark_cli')
+        case = load_cases()['S01']['case']
+
+        def respond(body):
+            self.assertNotIn('DEEPSEEK_API_KEY', os.environ)
+            self.assertIn(case['input'], [message['content'] for message in body['messages'] if message['role'] == 'user'])
+            self.assertNotIn('"expected"', json.dumps(body))
+            self.assertNotIn('"fixture_mapping"', json.dumps(body))
+            if len(self.requests) == 1:
+                return tool('search_documents', {'mode': 'metadata', 'query': ''})
+            results = [json.loads(message['content'])['data'] for message in body['messages'] if message['role'] == 'tool']
+            if len(self.requests) == 2:
+                self.assertEqual(len(results[0]['items']), 2)
+                replies = [tool('read_document_version', {
+                    **{key: item[key] for key in ('file_id', 'version_id')}, 'range': {}}, sequence=index+2)
+                    for index, item in enumerate(results[0]['items'])]
+                replies[0]['choices'][0]['message']['tool_calls'] += replies[1]['choices'][0]['message']['tool_calls']
+                return replies[0]
+            chunks = [result['chunks'][0] for result in results[1:]]
+            self.assertEqual(len(chunks), 2)
+            refs = [{key: chunk[key] for key in ('file_id', 'version_id', 'chunk_id')} for chunk in chunks]
+            return {'choices': [{'finish_reason': 'stop', 'message': {'role': 'assistant',
+                'content': json.dumps({'answer': 'Protocol fixture, not semantic acceptance.', 'citations': refs})}}]}
+
+        with tempfile.TemporaryDirectory() as folder, self.provider(respond), patch.dict(
+                os.environ, {'DEEPSEEK_API_KEY': 'synthetic-execute-key'}), redirect_stdout(io.StringIO()) as output:
+            destination = Path(folder) / 's01'
+            args = self.args(destination, '--live')
+            args[args.index('A01')] = 'S01'
+            args[args.index('--max-calls')+1] = '3'
+            args[args.index('--hold-seconds')+1] = '0'
+            status = cli.main(args, run_kind='transport_fixture')
+            if self.provider_errors:
+                raise self.provider_errors[0]
+            self.assertEqual(status, 0, output.getvalue())
+            saved = read_private(destination / 'initial/snapshot.json')
+            self.assertEqual(saved['run_result']['state'], 'completed')
+            self.assertEqual(len(self.requests), 3)
+            self.assertEqual(set(saved['fixture_mapping']), {'deployment@2', 'rollback@1'})
+            self.assertEqual(len(saved['citation_sources']), 2)
+            review = prepare(saved)
+            self.assertEqual(review['dataset'], 'smartdocs-p0-supplemental-v1')
+            self.assertEqual(review['fixture_sha256'], saved['fixture_sha256'])
+            self.assertEqual(len(review['citations']), 2)
+            self.assertIsNone(review['business']['verdict'])
+            self.assertFalse(saved['execution']['automatic_retry'])
+            self.assertFalse(saved['execution']['automatic_confirmation'])
+            self.assertNotIn('archive_plan', saved)
+            self.assertFalse((destination / 'review-access.json').exists())
 
     def test_no_opt_in_and_bad_admission_mode_stop_before_artifacts(self):
         cli = importlib.import_module('benchmark_cli')

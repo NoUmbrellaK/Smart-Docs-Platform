@@ -1,0 +1,33 @@
+test_cli_private_exclusive_files_no_raw_output_and_strict_json (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_completed_answer_cannot_omit_result_or_mislabel_run_as_not_run (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_empty_citations_and_denied_admission_remain_explicit (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_incomplete_or_inconsistent_assessment_cannot_be_business_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_missing_report_and_removed_changed_or_reordered_rows_are_rejected (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_prepare_preserves_every_occurrence_without_semantic_auto_pass (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_report_receipt_mismatch_cannot_replace_actual_citation_denominator (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_summary_counts_wrong_location_and_unsupported_claim_not_only_valid_ids (test_benchmark_review.BenchmarkReviewTest) ... ok
+test_supplemental_case_keeps_separate_dataset_and_original_hashes (test_benchmark_review.BenchmarkReviewTest) ... FAIL
+
+======================================================================
+FAIL: test_supplemental_case_keeps_separate_dataset_and_original_hashes (test_benchmark_review.BenchmarkReviewTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 36, in test_supplemental_case_keeps_separate_dataset_and_original_hashes
+    review = self.tool.prepare(snapshot('S01'))
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_review.py", line 33, in prepare
+    require(case is not None)
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/e2e/benchmark_review.py", line 19, in require
+    raise ValueError('invalid review input')
+ValueError: invalid review input
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/test/python/test_benchmark_review.py", line 38, in test_supplemental_case_keeps_separate_dataset_and_original_hashes
+    self.fail('frozen supplemental S01 cannot be reviewed')
+AssertionError: frozen supplemental S01 cannot be reviewed
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.285s
+
+FAILED (failures=1)

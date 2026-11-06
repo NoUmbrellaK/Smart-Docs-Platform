@@ -12,14 +12,16 @@ import unittest
 
 from benchmark_capture import capture, write_snapshot
 from benchmark_execute import execute
+from benchmark_review import load_cases
 from m1_http_test import data
-from m3_fixed_inputs_test import FixedInputsE2E, TASKS
+from m3_fixed_inputs_test import FixedInputsE2E
 from smartdocs.deepseek import MODEL
 
 
 def main(argv=None, *, run_kind='live_provider'):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', required=True, choices=[case['id'] for case in TASKS])
+    cases = load_cases()
+    parser.add_argument('--case', required=True, choices=cases)
     parser.add_argument('--output', required=True, help='new directory under a trusted private parent')
     parser.add_argument('--code-revision', required=True)
     parser.add_argument('--environment', required=True, help='actual hardware/index/dependency configuration')
@@ -30,7 +32,7 @@ def main(argv=None, *, run_kind='live_provider'):
     mode.add_argument('--live', action='store_true', help='requires separate data/fee authorization and key in environment')
     mode.add_argument('--admission-only', action='store_true', help='Q08/Q09/A09 only; no key or model')
     args = parser.parse_args(argv)
-    case = next(case for case in TASKS if case['id'] == args.case)
+    case = cases[args.case]['case']
     rejected = case['id'] in {'Q08', 'Q09', 'A09'}
     if (not (args.live or args.admission_only) or args.admission_only != rejected
             or run_kind not in {'live_provider', 'transport_fixture'}

@@ -1,0 +1,8 @@
+REJECTED in-memory negative control: missing_source
+REJECTED in-memory negative control: wrong_version
+REJECTED in-memory negative control: wrong_text
+REJECTED in-memory negative control: wrong_hash
+REJECTED in-memory negative control: missing_occurrence
+PASS:37 historical attempts/96 occurrences match hashed originals; all 30 tasks retained
+PASS:49 latest +47 superseded; 11 fixture versions; no deduplication or business acceptance
+PASS:JSON/Markdown regenerated identically; all human assessments blank; zero API calls

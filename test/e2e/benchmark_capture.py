@@ -6,7 +6,7 @@ import json
 import os
 import re
 
-from benchmark_review import FIXTURES, MAX_BYTES, prepare, require
+from benchmark_review import FIXTURES, MAX_BYTES, load_cases, prepare, require
 
 
 def capture(case_id, prepared, metadata, *, run_kind):
@@ -18,8 +18,8 @@ def capture(case_id, prepared, metadata, *, run_kind):
     That 404 observation is not proof of SQL absence or a business pass. This does
     not prove that permissions cannot change after collection.
     """
-    manifest = json.loads((FIXTURES / 'tasks.json').read_text())
-    require(case_id in {case['id'] for case in manifest['tasks']})
+    definition = load_cases().get(case_id)
+    require(definition is not None)
     require(run_kind in ('live_provider', 'transport_fixture', 'admission_rejection'))
     fields = ('code_revision', 'recorded_at', 'environment', 'model', 'evidence_path')
     require(isinstance(metadata, dict) and set(metadata) == set(fields))
@@ -28,7 +28,7 @@ def capture(case_id, prepared, metadata, *, run_kind):
               'admission_http': prepared['admission_http'], 'run_result': None,
               'fixture_mapping': copy.deepcopy(prepared['mapping']),
               'fixture_sha256': {name: hashlib.sha256((FIXTURES / name).read_bytes()).hexdigest()
-                                 for name in ('corpus.json', 'tasks.json')},
+                                 for name in definition['fixture_files']},
               'citation_sources': [], 'capture': {'complete': False, 'reads': [], 'error': None}}
     if run_kind == 'admission_rejection':
         require(prepared['task'] is None and prepared['path'] is None
