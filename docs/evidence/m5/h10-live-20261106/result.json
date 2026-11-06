@@ -1,0 +1,206 @@
+{
+  "case_id": "H10",
+  "metadata": {
+    "code_revision": "4133cf1e1331bc83e62aa5b113d0ee196a2a5e7a",
+    "recorded_at": "2026-11-06T10:48:08.551354+00:00",
+    "environment": "Current ECS 2 vCPU 3495MiB; CPU100% MemoryHigh1200MiB Max1600MiB Swap0 IO5MB/s 200IOPS Tasks256; Python3.10.12 MCP1.30.0 HTTPX0.28.1; TXT keyword indexes, no encoder; isolated schema16 MySQL localhost C++/stdio MCP; repeated synthetic tests authorized; H10 first real attempt; product unchanged, test-only observer and post-draft revocation per frozen setup; approved synthetic requirements@1 and design@1; actual serialized tool bodies matched locally with fixed fixture text and IDs, request hashes only; after successful uncited-design draft fixture admin revokes design approval then reads same report/Markdown/run-result, no regeneration; expected answers not sent; <=6 calls x4096 output; no retry or archive confirmation",
+    "model": "deepseek-flash",
+    "evidence_path": "/tmp/smartdocs-m5-h10-live.HGop4D/H10"
+  },
+  "admission_http": 201,
+  "capture_complete": true,
+  "run_result": {
+    "state": "completed",
+    "error_code": null,
+    "model_calls": 3,
+    "kind": "handover_report"
+  },
+  "provider_attempts": 3,
+  "provider_results": 3,
+  "usage": {
+    "prompt_cache_hit_tokens": 7680,
+    "prompt_tokens": 11603,
+    "prompt_cache_miss_tokens": 3923,
+    "total_tokens": 13214,
+    "completion_tokens": 1611
+  },
+  "dispatched_tools_per_model_response": [
+    1,
+    2,
+    1
+  ],
+  "backend_tool_calls": {
+    "capacity": 64,
+    "items": [
+      {
+        "duration_ms": 101,
+        "parameters": {
+          "mode": "metadata",
+          "query_bytes": 0
+        },
+        "request_id": "08e1af6f06e906d54f24d40b3e9e41fb",
+        "sequence": 1,
+        "started_at": "2026-11-06 10:48:15.380669",
+        "status": "success",
+        "task_id": "79ac7646999c648f6ad9d521a3fac332",
+        "tool": "search_documents"
+      },
+      {
+        "duration_ms": 5,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "e107afa39bd7b5c063d90de09bc4ef5a",
+        "sequence": 2,
+        "started_at": "2026-11-06 10:48:17.797011",
+        "status": "success",
+        "task_id": "79ac7646999c648f6ad9d521a3fac332",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 4,
+        "parameters": {
+          "selector": "range"
+        },
+        "request_id": "6723d0adff6f587a2807e09ec20dd2fe",
+        "sequence": 3,
+        "started_at": "2026-11-06 10:48:17.809869",
+        "status": "success",
+        "task_id": "79ac7646999c648f6ad9d521a3fac332",
+        "tool": "read_document_version"
+      },
+      {
+        "duration_ms": 12,
+        "parameters": {
+          "item_count": 6
+        },
+        "request_id": "c70064cac7d73aea94f9ee38ae537c02",
+        "sequence": 4,
+        "started_at": "2026-11-06 10:48:25.445571",
+        "status": "success",
+        "task_id": "79ac7646999c648f6ad9d521a3fac332",
+        "tool": "save_handover_report"
+      }
+    ],
+    "kind": "backend_requests"
+  },
+  "tools_by_name": {
+    "search_documents": 1,
+    "read_document_version": 2,
+    "save_handover_report": 1
+  },
+  "wire_checks": [
+    {
+      "sequence": 1,
+      "request_bytes": 12429,
+      "sha256": "e3fb83a76a22806a33f8278f6ee4fb69e2c4d3d30c1e13867a01198f546ec503",
+      "body_sources": []
+    },
+    {
+      "sequence": 2,
+      "request_bytes": 14012,
+      "sha256": "d04523d14458608f105dc79b64fa3a584fc41eea4214e7f130974d1e94f3a961",
+      "body_sources": []
+    },
+    {
+      "sequence": 3,
+      "request_bytes": 18348,
+      "sha256": "93ba323e87dc0837f3d9a7636bd46dee6d6309c30c0c017ba97a67b037ac8dfb",
+      "body_sources": [
+        "requirements@1",
+        "design@1"
+      ]
+    }
+  ],
+  "report_checks": {
+    "state": "draft",
+    "checklist_revision": 1,
+    "selected_versions": 2,
+    "source_versions": 2,
+    "item_statuses": {
+      "requirements": "found",
+      "design": "uncertain",
+      "api": "missing",
+      "test": "missing",
+      "deploy": "missing",
+      "issues": "missing"
+    },
+    "expected_item_statuses_match": true,
+    "unique_citation_sources": 1
+  },
+  "post_revocation": {
+    "case_id": "H10",
+    "state": "boundary_verified",
+    "business_verdict": null,
+    "preconditions": {
+      "captured_draft": true,
+      "wire_audit_matched": true,
+      "requirements_body_sent": true,
+      "design_body_sent": true,
+      "requirements_cited": true,
+      "design_uncited": true
+    },
+    "before_http": [
+      200,
+      200,
+      200
+    ],
+    "after": [
+      {
+        "path": "/api/v1/projects/6f2d02fc133ebeae3a164e063f6681a2/agent-tasks/79ac7646999c648f6ad9d521a3fac332/handover-report",
+        "http": 409,
+        "bytes": 148,
+        "sha256": "48e81a6b11e74dda47cb8b8d457431eedd8feb0cfc0856b960bf5845b9fac5b1",
+        "content_matches": 0
+      },
+      {
+        "path": "/api/v1/projects/6f2d02fc133ebeae3a164e063f6681a2/agent-tasks/79ac7646999c648f6ad9d521a3fac332/handover-report/markdown",
+        "http": 409,
+        "bytes": 148,
+        "sha256": "426883897f1818781f760e209e772abf62f2cc88e4fe3506158a4868a2500a7a",
+        "content_matches": 0
+      },
+      {
+        "path": "/api/v1/projects/6f2d02fc133ebeae3a164e063f6681a2/agent-tasks/79ac7646999c648f6ad9d521a3fac332/run/result",
+        "http": 409,
+        "bytes": 148,
+        "sha256": "c97429624fc68c2e6e619b027529584aab19a72bb8f5d4de5d61fc7b2d0f709f",
+        "content_matches": 0
+      }
+    ],
+    "revoked": true,
+    "reports_before": 1,
+    "design_in_dependencies": true,
+    "reports_after": 1,
+    "archive_plans": 0
+  },
+  "review_summary": {
+    "case_id": "H10",
+    "category": "handover",
+    "declared_run_kind": "live_provider",
+    "business_verdict": null,
+    "live_provider_declared": true,
+    "execution_verified": false,
+    "citations_total": 1,
+    "citations_reviewed": 0,
+    "citations_correct": 0,
+    "citation_errors": {},
+    "citation_accuracy": null,
+    "snapshot_sha256": "f3cf1c5b2f22e137bfea97c8ab94dd0cd412af3b73040fe9fa96d148435dfbb8"
+  },
+  "fixture_sha256": {
+    "corpus.json": "5017ba0c127dda074eab2b5522405453f7586a582c67adeb75e0874f0a0e0228",
+    "tasks.json": "9762b6352897562ccba1d3f38ce05de8f4c64766d99c3fbccd104468c2338099"
+  },
+  "private_artifact_sha256": {
+    "H10/initial/snapshot.json": "7add807a1506eee2110d3d54ca167e4ad609d305b2e9089eaf562fca7c93ec23",
+    "H10/initial/audit.jsonl": "ad7d59a58a5c125d0d4c8ee269b2bee27e9860e6f3cc462772408bd0027a63b7",
+    "H10/summary.json": "8fb4bdbc8b2a104a44fed3314c155cbc7a1aed6a61f6327ebc905b73f8042c8c",
+    "H10/review.json": "3af30983e13d8519fe5739e33908635630408693c8c42ef03dfe732f3a64d0bd",
+    "H10/h10-wire.jsonl": "0c3e3822499908b748b52d4bca1cc6c38a749a9bea0d9d20b18756d7d5aec114",
+    "H10/h10-revocation.json": "36a921c53fa215737ddf7030ee52b4e9f5d420dbfa68a8974cdaea05b61c971d"
+  },
+  "business_verdict": null,
+  "citation_accuracy": null,
+  "cost_estimate": null
+}

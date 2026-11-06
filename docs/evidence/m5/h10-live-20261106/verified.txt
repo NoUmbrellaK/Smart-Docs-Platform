@@ -1,0 +1,2 @@
+PASS H10: 3 observed requests/13214 tokens, uncited design body observed, all 3 old report endpoints denied after revocation; human verdict blank
+PASS private/public hashes, 45 fingerprint records, terminal service and 30-task ledger: 32/117/601343/96
