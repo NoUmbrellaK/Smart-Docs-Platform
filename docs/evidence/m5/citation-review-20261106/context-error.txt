@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/docs/evidence/m5/citation-review-20261106/collect.py", line 126, in <module>
+    packet = collect()
+  File "/root/Smart-Docs-Platform/.worktrees/m1-file-business/docs/evidence/m5/citation-review-20261106/collect.py", line 82, in collect
+    item = report['items'][int(row['pointer'].split('/')[3])] if row['pointer'].startswith('/handover_report/') else None
+ValueError: invalid literal for int() with base 10: 'items'
