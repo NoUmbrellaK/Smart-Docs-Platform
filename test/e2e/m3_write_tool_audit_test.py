@@ -22,12 +22,15 @@ class WriteToolAuditE2E(HandoverReportE2E, ArchiveExecutionE2E, ToolAuditE2E):
                  "ADD CONSTRAINT ck_agent_tool_name CHECK (tool IN ('search_documents','read_document_version')), "
                  "ADD CONSTRAINT ck_agent_tool_status CHECK (status IN ('unknown','success','processing','unavailable',"
                  "'invalid_request','access_denied','conflict','busy','timeout','dependency_failed'))")
-        self.sql('DELETE FROM schema_migrations WHERE version=16')
+        self.sql('ALTER TABLE agent_tasks DROP CHECK ck_agent_inspection_constraints, '
+                 'DROP COLUMN inspection_constraints')
+        self.sql('DELETE FROM schema_migrations WHERE version>=16')
         for _ in range(2):
             result = subprocess.run([str(ROOT/'scripts/migrate.sh')], capture_output=True, text=True, timeout=60)
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(result.stdout.strip(), 'schema_version=16')
+            self.assertEqual(result.stdout.strip(), 'schema_version=17')
         self.assertEqual(self.trace(path), before)
+        self.assertEqual(self.count("SELECT COUNT(*) FROM agent_tasks WHERE inspection_constraints IS NOT NULL"), 0)
 
     def test_write_audit_archive_waiting_rejection_execution_and_replay(self):
         jobs, target, task, path, body, plan = self.prepared()

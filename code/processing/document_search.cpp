@@ -139,7 +139,10 @@ Json ProcessingService::Search(const SessionContext& session, const std::string&
 
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
-    if (!task_id.empty()) RequireAgentTaskScope(db,session,project,task_id);
+    if (!task_id.empty()) {
+        RequireAgentTaskScope(db,session,project,task_id);
+        RequireAgentTaskInspection(db,task_id,"search_documents",request);
+    }
     if (!directory.empty() && db.Query("SELECT id FROM directories WHERE id=? AND project_id=?",
         {SqlValue(directory), SqlValue(project)}).empty())
         throw AppError(404, "resource_not_found", "resource was not found");

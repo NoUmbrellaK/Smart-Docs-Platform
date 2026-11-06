@@ -44,6 +44,9 @@ private:
 // Caller owns transaction and membership lock. Locks are held through content construction/commit.
 void RequireAgentTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
     const std::string& task, const std::string& file="", const std::string& version="");
+// Caller has already validated the tool request and holds the task scope locks.
+void RequireAgentTaskInspection(MySqlConnection&, const std::string& task, const std::string& tool,
+    const nlohmann::json& request);
 // Preview never claims an execution slot. Caller owns membership/transaction locks.
 std::string RequireArchiveTaskScope(MySqlConnection&, const SessionContext&, const std::string& project,
     const std::string& task, bool writing, bool exclusive=false);

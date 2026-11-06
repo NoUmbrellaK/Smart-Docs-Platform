@@ -64,7 +64,7 @@ C++全局最多两个运行任务，不新增隐藏队列/重试。
 
 ## systemd 模板（未安装）
 
-先部署匹配[schema16](m3-tool-audit.md#schema16和部署)的 C++、已有 MCP 虚拟环境；复用
+先部署匹配[schema17](m3-task-inspection.md)的 C++、已有 MCP 虚拟环境；复用
 [处理资源组](../deployment/m2-vector-worker.md)，不提高同机总预算。
 以下为独立服务示例；配置路径、账号与域名由管理员替换。EnvironmentFile仅含
 DEEPSEEK_API_KEY，仓库外 root 管理0600，不打印、不放命令行、不提交。

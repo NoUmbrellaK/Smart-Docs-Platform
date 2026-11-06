@@ -19,7 +19,7 @@
 
 网络服务器基线来自 [`markparticle/WebServer`](https://github.com/markparticle/WebServer) 的源码快照，固定于提交 `3b375204a80cc0de1caf5c076e95d6b5567a8159`；上述 M1 业务是在本仓库中实现的。许可证和来源信息见“开源来源与许可证”。
 
-当前完整组件部署从[P0单机部署入口（schema16）](./docs/deployment/p0-single-host.md)开始，
+当前完整组件部署从[P0单机部署入口（schema17）](./docs/deployment/p0-single-host.md)开始，
 明确组件/凭据隔离、同源路由、停写备份、启动与恢复顺序；文档接线核对不代表生产已安装。
 M1 的历史[单机部署手册](./docs/deployment/m1-single-host.md)、[HTTP API](./docs/api/m1-http-api.md)、[验收说明](./docs/evidence/m1/README.md)和[资源耗尽事故记录](./docs/operations/2026-09-15-m1-acceptance-resource-exhaustion.md)仍在仓库内维护。
 
@@ -294,7 +294,7 @@ M5后续[冻结准入案例业务条件补验](./docs/evidence/m5/admission-busi
 
 现已实现[普通问答的JSON输出约束](./docs/evidence/m3/json-output/README.md)：发送官方json_object参数，仅问答增加裸JSON与不足证据格式示例，报告/归档请求保持原样；不改严格解析、引用、预算或重试。完整MCP/执行器 **109/109**、Python **114/114**离线通过，无新增OOM、API调用或生产部署。真实组合效果尚未验证，前两次失败不改记成功；第三次限定测试仍需明确批准，M3/P0未验收。
 
-当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema16](./docs/api/m3-tool-audit.md#schema16和部署)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema15及更早数据库。
+当前开发分支新增[有界执行核心](./docs/api/m3-read-agent.md)、[个人报告后端](./docs/api/m3-handover-report.md)及[归档提案 Agent](./docs/api/m3-archive-agent.md)，C++要求[schema17](./docs/api/m3-task-inspection.md)；原业务库未迁移。部署前须停服务并备份，按迁移说明升级；不要直接用新二进制启动schema16及更早数据库。
 
 已建立 [M3 设计](./docs/superpowers/specs/2026-10-18-m3-mcp-agent-design.md)和[首个增量计划](./docs/superpowers/plans/2026-10-18-m3-read-boundary.md)：先为搜索与固定版本读取增加 [C++ 远程 AI 门禁](./docs/api/m3-remote-read-api.md)，复用项目权限与版本批准，不能把普通内部资料检索直接转发给模型。当前五工具、分模式有界执行、受控供应商适配器、网页入口及五类后端请求轨迹已接通；真实供应商验证、生产部署、完整MCP/模型审计和固定任务评测仍未完成。以下增量记录按时间排列，“待实现”表示当时状态。
 
@@ -609,7 +609,7 @@ set +a
 scripts/migrate.sh
 ```
 
-当前分支迁移成功输出 `schema_version=16`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema16说明](./docs/api/m3-tool-audit.md#schema16和部署)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
+当前分支迁移成功输出 `schema_version=17`。升级前停止应用并备份数据库及文件，先阅读 [M2 迁移说明](./docs/api/m2-processing-api.md)及[M3 schema17说明](./docs/api/m3-task-inspection.md)。目录权限、systemd、HTTPS 和备份基线见 [M1 单机部署手册](./docs/deployment/m1-single-host.md)（其中 schema 2 为历史基线）。
 
 ### 编译
 

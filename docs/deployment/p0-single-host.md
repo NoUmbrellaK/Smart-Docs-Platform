@@ -1,4 +1,4 @@
-# P0 单机部署入口（schema16）
+# P0 单机部署入口（schema17）
 
 核对基线`2bbe48e`，2026-10-21。本文把已有组件手册接成同一套部署流程，
 不另造安装器或服务管理系统。**当前仓库具备M1–M4功能证据，但没有完成这套
@@ -14,7 +14,7 @@
 
 | 组件/约定服务名 | 入口与依赖 | 网络与身份 | 完整模板 |
 | --- | --- | --- | --- |
-| `smart-docs.service` | `bin/server`，MySQL 8.0，schema16；`bin/smartdocs-admin`仅管理命令 | smartdocs账号；127.0.0.1:1316；独占storage及DB凭据 | [M1手册](m1-single-host.md)，用本文schema与配置覆盖历史值 |
+| `smart-docs.service` | `bin/server`，MySQL 8.0，schema17；`bin/smartdocs-admin`仅管理命令 | smartdocs账号；127.0.0.1:1316；独占storage及DB凭据 | [M1手册](m1-single-host.md)，用本文schema与配置覆盖历史值 |
 | `smartdocs-worker.service` | `smartdocs.worker`，parser venv | smartdocs-worker账号；仅本机C++；独立worker token | [解析worker](m2-local-worker.md) |
 | `smartdocs-vector.service` | `smartdocs.vector_worker`，parser venv及编码socket | 同一worker账号；本机C++及Unix socket；独立于解析的锁路径 | [向量调度](m2-vector-worker.md) |
 | `smartdocs-encoder.socket` + `smartdocs-encoder@.service` | 逐请求编码，parser监督层 + embedding venv + 固定模型 | worker账号；0600 Unix socket；禁IP；不接收任何凭据 | [编码模板](m2-vector-worker.md) |
@@ -82,7 +82,8 @@ SMARTDOCS_SECURE_COOKIE=true
 
 ## 3. 迁移、启动和路由
 
-当前server要求schema16；`scripts/migrate.sh`按仓库中001–016迁移执行。
+当前server要求schema17；`scripts/migrate.sh`按仓库中001–017迁移执行。
+schema17增加[显式任务检查限制](../api/m3-task-inspection.md)，旧任务保持NULL，不补造用户选择。
 M1手册里的`schema_version=2`仅是历史基线，M2的schema5也不是当前启动目标。
 管理员升级前阻止新业务接入，停止所有写入方并确认退出：Agent网关（等待在途收尾）、
 搜索网关、两个worker、编码socket及所有活动实例，最后C++。MySQL保留运行供备份/迁移。
@@ -96,9 +97,9 @@ sudo -u smartdocs bash -c \
   'set -a; . /etc/smart-docs/smart-docs.env; set +a; /opt/smart-docs/scripts/migrate.sh'
 ```
 
-当前匹配版本成功输出应为`schema_version=16`；不要把shell可source配置文件交给不可信用户修改。
+当前匹配版本成功输出应为`schema_version=17`；不要把shell可source配置文件交给不可信用户修改。
 DDL不是整批事务，失败停止部署并从成对备份恢复；不能只退二进制、
-手改schema版本号或自动重放半套迁移。详细规则见[schema16说明](../api/m3-tool-audit.md#schema16和部署)。
+手改schema版本号或自动重放半套迁移。详细规则见[schema17说明](../api/m3-task-inspection.md)。
 
 按完整模板准备unit并核对路径/账号/权限后，先验证unit和代理配置；这不等于启动成功。
 不要直接拼接多个ExecStart或把示例差异片段当完整unit。

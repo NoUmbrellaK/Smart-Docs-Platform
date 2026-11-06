@@ -1,6 +1,6 @@
 # M2 本机向量调度与隔离编码服务
 
-本部署手册负责源于schema5的C++队列与固定MiniLM编码器；当前C++要求schema16，
+本部署手册负责源于schema5的C++队列与固定MiniLM编码器；当前C++要求schema17，
 完整接线见[P0统一入口](p0-single-host.md)。搜索入口另见
 [同源混合检索网关](m2-hybrid-search.md)。这些模板
 不表示生产库已升级或生产服务已安装。先阅读 [解析 worker 手册](m2-local-worker.md)：

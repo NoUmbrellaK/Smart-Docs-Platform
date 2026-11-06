@@ -473,7 +473,10 @@ nlohmann::json ProcessingService::ReadDocument(const SessionContext& session, co
     }
     auto db = pool_.Acquire(); MySqlTransaction transaction(db);
     projects_.RequireRole(db, session.user_id, project, Role::Reader);
-    if (!task_id.empty()) RequireAgentTaskScope(db,session,project,task_id,file,version);
+    if (!task_id.empty()) {
+        RequireAgentTaskScope(db,session,project,task_id,file,version);
+        RequireAgentTaskInspection(db,task_id,"read_document_version",Json::object());
+    }
     const auto files = db.Query("SELECT current_version_id,remote_ai_policy FROM files WHERE id=? AND project_id=? AND deleted_at IS NULL FOR SHARE",
                                {SqlValue(file), SqlValue(project)});
     if (files.empty()) throw AppError(404, "resource_not_found", "resource was not found");

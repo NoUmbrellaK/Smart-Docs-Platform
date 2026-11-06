@@ -66,6 +66,26 @@ Json TaskArchive(MySqlConnection& db,const std::string& task) {
     if(rows.empty()) Missing();
     return rows[0].IsNull(0) ? Json(nullptr) : Json::parse(rows[0].String(0));
 }
+[[noreturn]] void InvalidInspection() {
+    throw AppError(400,"invalid_request","inspection constraints are invalid");
+}
+Json ValidateInspection(const Json& value) {
+    RequireExactObject(value,{"mode","max_page","page_size"});
+    const auto number=[](const Json& item,uint64_t maximum) {
+        if(!item.is_number_integer() || (!item.is_number_unsigned() && item.get<int64_t>()<1)) InvalidInspection();
+        const auto result=item.get<uint64_t>();
+        if(result<1 || result>maximum) InvalidInspection();
+        return result;
+    };
+    if(!value["mode"].is_string() || value["mode"]!="metadata") InvalidInspection();
+    return {{"mode","metadata"},{"max_page",number(value["max_page"],1000)},
+        {"page_size",number(value["page_size"],10)}};
+}
+Json TaskInspection(MySqlConnection& db,const std::string& task) {
+    const auto rows=db.Query("SELECT inspection_constraints FROM agent_tasks WHERE id=? FOR SHARE",{SqlValue(task)});
+    if(rows.empty()) Missing();
+    return rows[0].IsNull(0) ? Json(nullptr) : Json::parse(rows[0].String(0));
+}
 void Scope(MySqlConnection& db,const std::string& project,const std::string& task,
     const std::string& file="",const std::string& version="",bool exclusive=false) {
     const auto checklist=TaskChecklist(db,task);
@@ -138,6 +158,8 @@ Json Status(MySqlConnection& db,const MySqlRow& row,const std::string& project) 
     if(!checklist.is_null()) result["handover_checklist_revision"]=checklist["revision"];
     const auto archive=TaskArchive(db,row.String(0));
     if(!archive.is_null()) result["archive_policy_revision"]=archive["revision"];
+    const auto inspection=TaskInspection(db,row.String(0));
+    if(!inspection.is_null()) result["inspection_constraints"]=inspection;
     return result;
 }
 }
@@ -146,12 +168,16 @@ nlohmann::json AgentTaskService::Create(const SessionContext& session,const std:
     Id(project);
     const bool handover=body.is_object() && body.contains("handover_checklist_revision");
     const bool archive=body.is_object() && body.contains("archive_policy_revision");
+    const bool constrained=body.is_object() && body.contains("inspection_constraints");
     if(handover || archive) {
         const char* key=handover ? "handover_checklist_revision" : "archive_policy_revision";
-        RequireExactObject(body,{"question","versions","confirm_remote_ai",key});
+        if(constrained) RequireExactObject(body,{"question","versions","confirm_remote_ai",key,"inspection_constraints"});
+        else RequireExactObject(body,{"question","versions","confirm_remote_ai",key});
         if(!body[key].is_number_unsigned() || body[key].get<uint64_t>()==0 || body[key].get<uint64_t>()>4294967295ULL)
             throw AppError(400,"invalid_request","context revision is invalid");
-    } else RequireExactObject(body,{"question","versions","confirm_remote_ai"});
+    } else if(constrained) RequireExactObject(body,{"question","versions","confirm_remote_ai","inspection_constraints"});
+    else RequireExactObject(body,{"question","versions","confirm_remote_ai"});
+    const auto inspection=constrained ? ValidateInspection(body["inspection_constraints"]) : Json(nullptr);
     if(!body["question"].is_string() || !body["confirm_remote_ai"].is_boolean() || !body["confirm_remote_ai"].get<bool>() ||
         !body["versions"].is_array() || body["versions"].empty() || body["versions"].size()>100)
         throw AppError(400,"invalid_request","task confirmation and scope are required");
@@ -176,10 +202,12 @@ nlohmann::json AgentTaskService::Create(const SessionContext& session,const std:
     for(const auto& item:versions) if(!Allowed(db,project,item.first,item.second)) Missing();
     const auto targets=archive ? ArchiveContext(db,project,body["archive_policy_revision"].get<uint64_t>()) : Json(nullptr);
     const auto id=GenerateId();
-    db.Execute("INSERT INTO agent_tasks(id,owner_user_id,project_id,question,handover_context,archive_context) VALUES (?,?,?,?,?,?)",
+    db.Execute("INSERT INTO agent_tasks(id,owner_user_id,project_id,question,handover_context,archive_context,inspection_constraints) "
+        "VALUES (?,?,?,?,?,?,?)",
         {SqlValue(id),SqlValue(session.user_id),SqlValue(project),SqlValue(question),
          checklist.is_null() ? SqlValue::Null() : SqlValue(checklist.dump()),
-         targets.is_null() ? SqlValue::Null() : SqlValue(targets.dump())});
+         targets.is_null() ? SqlValue::Null() : SqlValue(targets.dump()),
+         inspection.is_null() ? SqlValue::Null() : SqlValue(inspection.dump())});
     for(const auto& item:versions)
         db.Execute("INSERT INTO agent_task_versions(task_id,project_id,file_id,version_id) VALUES (?,?,?,?)",
             {SqlValue(id),SqlValue(project),SqlValue(item.first),SqlValue(item.second)});
@@ -250,6 +278,8 @@ nlohmann::json AgentTaskService::StartRun(const SessionContext& session,const st
                 {"source_directory_id",item.String(2)}});
         result["archive_context"]=archive;
     }
+    const auto inspection=TaskInspection(db,task);
+    if(!inspection.is_null()) result["inspection_constraints"]=inspection;
     if(result.dump().size()>64000) {
         FailRun(db,task,"budget_exhausted"); transaction.Commit();
         throw AppError(409,"budget_exhausted","task context exceeds the response budget");
@@ -397,6 +427,16 @@ void RequireAgentTaskScope(MySqlConnection& db,const SessionContext& session,con
             throw AppError(429,"agent_busy","agent execution slots are full",true);
         db.Execute("UPDATE agent_tasks SET state='running' WHERE id=?",{SqlValue(task)});
     }
+}
+
+void RequireAgentTaskInspection(MySqlConnection& db,const std::string& task,const std::string& tool,
+    const Json& request) {
+    const auto constraints=TaskInspection(db,task);
+    if(constraints.is_null()) return;
+    if(tool!="search_documents" || request.at("mode")!="metadata" ||
+        request.value("page",uint64_t(1))>constraints.at("max_page").get<uint64_t>() ||
+        request.value("page_size",uint64_t(10))>constraints.at("page_size").get<uint64_t>())
+        throw AppError(403,"task_inspection_restricted","task inspection is restricted");
 }
 
 std::string AgentTaskService::BeginToolCall(const SessionContext& session,const std::string& project,

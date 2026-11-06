@@ -45,8 +45,17 @@ INSERT INTO document_results(version_id,source_sha256,parser_revision,result_sha
 INSERT INTO document_chunks(id,version_id,ordinal,char_start,char_end,line_start,line_end,body)
  VALUES (REPEAT('c',64),LPAD('1001',32,'0'),0,0,3,1,1,'abc');
 SQL
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=16' ]]
-[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=16' ]]
+for migration in "$repo_root"/db/migrations/{005..016}_*.sql; do
+    "${mysql_test[@]}" smart_docs_upgrade < "$migration"
+done
+"${mysql_test[@]}" smart_docs_upgrade <<'SQL'
+INSERT INTO agent_tasks(id,owner_user_id,project_id,question)
+VALUES (LPAD('9000',32,'0'),LPAD('1',32,'0'),LPAD('2',32,'0'),'Legacy unrestricted task');
+SQL
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=17' ]]
+[[ $("$repo_root/scripts/migrate.sh") == 'schema_version=17' ]]
+[[ $("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT COUNT(*) FROM agent_tasks WHERE id=LPAD('9000',32,'0') AND inspection_constraints IS NULL;") == 1 ]]
+printf '%s\n' 'PASS m3_inspection_migration_preserves_legacy_task_without_inventing_constraints'
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
  (SELECT COUNT(*) FROM processing_jobs WHERE state='pending'),'/',
  (SELECT COUNT(*) FROM processing_jobs WHERE state='failed' AND last_error_code='queue_full'),'/',
@@ -67,10 +76,13 @@ result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
 [[ $result == '1/0/0' ]] || { printf 'migration_vector_state_failed: %s\n' "$result" >&2; exit 1; }
 printf '%s\n' 'PASS m2_migration_preserves_103_files_without_fabricating_results'
 result=$("${mysql_test[@]}" smart_docs_upgrade --execute="SELECT CONCAT(
- (SELECT COUNT(*) FROM agent_tasks),'/',(SELECT COUNT(*) FROM agent_task_versions),'/',
+ (SELECT COUNT(*) FROM agent_tasks),'/',
+ (SELECT COUNT(*) FROM agent_tasks WHERE id=LPAD('9000',32,'0') AND owner_user_id=LPAD('1',32,'0')
+   AND project_id=LPAD('2',32,'0') AND question='Legacy unrestricted task' AND inspection_constraints IS NULL),'/',
+ (SELECT COUNT(*) FROM agent_task_versions),'/',
  (SELECT COUNT(*) FROM agent_queue_guard WHERE id=1));")
-[[ $result == '0/0/1' ]] || { printf 'migration_agent_state_failed: %s\n' "$result" >&2; exit 1; }
-printf '%s\n' 'PASS m3_agent_migration_does_not_invent_tasks_or_consent'
+[[ $result == '1/1/0/1' ]] || { printf 'migration_agent_state_failed: %s\n' "$result" >&2; exit 1; }
+printf '%s\n' 'PASS m3_agent_migration_preserves_only_fixture_task_without_inventing_scope_or_consent'
 [[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT COUNT(*) FROM agent_runs;') == 0 ]]
 printf '%s\n' 'PASS m3_run_migration_does_not_invent_execution'
 [[ $("${mysql_test[@]}" smart_docs_upgrade --execute='SELECT COUNT(*) FROM agent_tool_calls;') == 0 ]]

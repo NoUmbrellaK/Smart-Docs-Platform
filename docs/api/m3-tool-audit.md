@@ -60,7 +60,7 @@ HTTP错误的状态/码/消息不变，分类不进入MCP返回或模型上下�
 ## schema16和部署
 
 schema8新增agent_tool_calls；schema16扩展同表工具名和状态CHECK，保留已有记录，
-不回填历史写请求、不新增表。当前C++要求schema16，升级前停止应用/worker/
+不回填历史写请求、不新增表。当前C++要求[schema17](m3-task-inspection.md)，升级前停止应用/worker/
 网关并备份数据库与文件，再运行scripts/migrate.sh；先升级库再换匹配二进制。
 MySQL DDL非整批原子，失败应按备份恢复，不盲目重放半套DDL；回退恢复匹配备份。
 只在隔离测试库验证，未迁移当前业务库，也未部署生产服务。
